@@ -100,6 +100,9 @@ input:focus, textarea:focus, select:focus {
   background: rgba(255,255,255,0.06);
   box-shadow: 0 0 0 4px rgba(139,92,246,0.12);
 }
+/* Force dark options in dropdowns (some browsers default to white) */
+select option { background: #15102a; color: var(--text); padding: 8px; }
+select { color-scheme: dark; }
 input[type="checkbox"] { width: auto; accent-color: var(--accent); }
 textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
 a { color: var(--accent2); text-decoration: none; transition: opacity .15s; }
@@ -283,9 +286,8 @@ header {
   border-top: 1px solid var(--border);
   display: flex; align-items: center; padding: 0 28px; gap: 12px; z-index: 20;
 }
-.save-status { font-size: 12px; color: var(--text2); display: flex; align-items: center; gap: 8px; }
+.save-status { font-size: 12px; color: var(--text2); transition: color .2s ease; }
 .save-status.saved { color: var(--green); }
-.save-status.saved::before { content: '✓'; font-weight: 700; }
 
 /* Criteres */
 .critere {
@@ -592,7 +594,7 @@ small.muted { color: var(--text3); font-size: 11px; }
     <button class="sync-btn" onclick="document.getElementById('importFile').click()" title="Importer JSON">📤</button>
     <input type="file" id="importFile" accept=".json" style="display:none" onchange="importAll(event)">
     <span class="dot"></span>
-    <span id="saveInd" style="font-size:11px;">Prêt</span>
+    <span id="saveInd" style="font-size:11px;min-width:60px;display:inline-block;">Prêt</span>
   </div>
 </header>
 
@@ -602,7 +604,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 </div>
 
 <div class="save-bar">
-  <span class="save-status" id="saveStatus">Toutes les modifications sont sauvegardées</span>
+  <span class="save-status" id="saveStatus" style="min-width:280px;display:inline-block;">Toutes les modifications sont sauvegardées</span>
   <div class="spacer"></div>
   <button class="btn btn-sm" onclick="saveAll()">💾 Sauvegarder</button>
 </div>
@@ -1868,35 +1870,115 @@ function gammeFilter(price, gamme) {
   return true;
 }
 
+// Score a candidate: higher = better. Factors:
+//  - price in target gamme (+30)
+//  - title specificity (longer = more niche, +up to 15)
+//  - has rating + reviews (+20)
+//  - non-marketplace source (+15)
+//  - reasonable price > 0 (+10 base)
+function scoreCandidate(s, gamme) {
+  let score = 0;
+  if (s.extracted_price) score += 10;
+  if (gamme && gammeFilter(s.extracted_price, gamme)) score += 30;
+  else if (!gamme) score += 15;
+  const titleLen = (s.title||'').split(' ').length;
+  score += Math.min(15, titleLen * 1.5);
+  if (s.rating) score += 10;
+  if (s.reviews && s.reviews > 5) score += 10;
+  const d = s.domain || '';
+  // Penalize marketplaces (they give 0 differentiation), reward indie shops
+  if (/amazon|cdiscount|fnac|darty|leroy|boulanger|manomano|temu|aliexpress|rakuten|ebay/i.test(d)) score -= 30;
+  else if (d) score += 15;
+  return score;
+}
+
+// Try a SerpAPI search; if shopping returns < 3 fresh candidates, retry with broader query
+async function discoverBatch(query, gamme, seen) {
+  let data = await serpFetch(query, true);
+  let shopping = (data.shopping || []).filter(s => !s.institutionnel);
+  let fresh = shopping.filter(s => !seen.has(_shortKey(s.title)));
+  // Try gamme-filter
+  let inGamme = fresh.filter(s => !gamme || gammeFilter(s.extracted_price, gamme));
+  let usedQuery = query;
+  // Fallback 1: if 0 inGamme, drop gamme filter
+  if (inGamme.length === 0 && fresh.length >= 3) inGamme = fresh.slice(0, 12);
+  // Fallback 2: if still 0, broaden the query (drop last word, retry once)
+  if (inGamme.length === 0 && query.includes(' ')) {
+    const broader = query.split(' ').slice(0, -1).join(' ');
+    if (broader.length > 3) {
+      try {
+        const data2 = await serpFetch(broader, true);
+        const shopping2 = (data2.shopping || []).filter(s => !s.institutionnel);
+        const fresh2 = shopping2.filter(s => !seen.has(_shortKey(s.title)));
+        const inGamme2 = fresh2.filter(s => !gamme || gammeFilter(s.extracted_price, gamme));
+        if (inGamme2.length > 0) { inGamme = inGamme2; data = data2; usedQuery = broader; shopping = shopping2; fresh = fresh2; }
+      } catch(e) {}
+    }
+  }
+  // Sort by score
+  inGamme.sort((a,b) => scoreCandidate(b, gamme) - scoreCandidate(a, gamme));
+  return { data, shopping, fresh, inGamme, query: usedQuery, totalRaw: shopping.length, filteredOut: fresh.length - inGamme.length };
+}
+
 async function runDiscover() {
   const mode = document.getElementById('discoverMode').value;
   const gamme = document.getElementById('discoverGamme').value;
   const auto = document.getElementById('discoverAutoCreate').value === '1';
-  let q;
-  if (mode === 'auto') {
-    q = pickRandomNiche();
-    markNicheSeen(q);
-  } else {
-    q = document.getElementById('discoverQuery').value.trim();
-    if (!q) { alert('Donne un mot-clé ou passe en mode Auto'); return; }
-  }
   const btn = document.getElementById('discoverBtn');
   const res = document.getElementById('discoverResults');
   btn.disabled = true;
-  btn.textContent = '⏳ ' + q.slice(0, 30) + '…';
-  res.innerHTML = `<div style="text-align:center;padding:24px;color:var(--text2)"><div style="font-size:12px;color:var(--text3);margin-bottom:8px">Niche choisie :</div><div style="font-weight:600;color:var(--accent2);font-size:15px;margin-bottom:14px">${escapeHtml(q)}</div>⏳ Scrape SerpAPI…</div>`;
+  res.innerHTML = `<div style="text-align:center;padding:30px;color:var(--text2)"><div style="display:inline-block;width:24px;height:24px;border:2px solid var(--accent);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;"></div><div style="font-size:12px;color:var(--text3);margin-top:14px">${mode==='auto'?'Sélection de la niche optimale…':'Recherche en cours…'}</div></div>`;
+  if (!document.getElementById('_spinStyle')) {
+    const sty = document.createElement('style'); sty.id = '_spinStyle'; sty.textContent = '@keyframes spin{to{transform:rotate(360deg)}}'; document.head.appendChild(sty);
+  }
+  let result;
+  let q;
+  const seen = getSeenKeys();
   try {
-    const data = await serpFetch(q, true);
-    const seen = getSeenKeys();
-    let shoppingAll = (data.shopping || []).filter(s => !s.institutionnel && (!gamme || gammeFilter(s.extracted_price, gamme)));
-    const shoppingFresh = shoppingAll.filter(s => !seen.has(_shortKey(s.title)));
-    const filteredOut = shoppingAll.length - shoppingFresh.length;
+    if (mode === 'auto') {
+      // Try up to 3 niches; pick the best result
+      const candidates = [];
+      const tried = new Set();
+      for (let i = 0; i < 3; i++) {
+        const niche = pickRandomNiche();
+        if (tried.has(niche)) continue;
+        tried.add(niche);
+        markNicheSeen(niche);
+        btn.textContent = `⏳ Niche ${i+1}/3…`;
+        try {
+          const r = await discoverBatch(niche, gamme, seen);
+          if (r.inGamme.length >= 3) { candidates.push({ niche, r }); break; }  // good enough — stop early
+          if (r.inGamme.length > 0) candidates.push({ niche, r });
+        } catch(e) { console.warn('niche fail', niche, e); }
+      }
+      if (candidates.length === 0) {
+        // Final fallback: just take the last attempted regardless
+        const last = pickRandomNiche();
+        const r = await discoverBatch(last, gamme, seen);
+        candidates.push({ niche: last, r });
+      }
+      // Pick the best (most fresh in gamme)
+      candidates.sort((a,b) => b.r.inGamme.length - a.r.inGamme.length);
+      const best = candidates[0];
+      q = best.niche; result = best.r;
+    } else {
+      q = document.getElementById('discoverQuery').value.trim();
+      if (!q) { alert('Donne un mot-clé ou passe en mode Auto'); btn.disabled=false; btn.textContent='🔄 Re-lancer'; return; }
+      btn.textContent = '⏳ ' + q.slice(0, 22) + '…';
+      result = await discoverBatch(q, gamme, seen);
+    }
+    const data = result.data;
+    const shoppingAll = result.shopping;
+    const shoppingFresh = result.fresh;
+    const candidates = result.inGamme;
+    const filteredOut = result.totalRaw - shoppingFresh.length;
 
-    if (shoppingFresh.length === 0) {
+    const queryUsed = result.query;
+    if (candidates.length === 0) {
       res.innerHTML = `<div class="empty" style="padding:30px">
         <div class="emoji" style="font-size:32px">🤷</div>
-        <h3 style="font-size:14px">Aucun candidat frais</h3>
-        <p style="font-size:12px">${filteredOut > 0 ? filteredOut+' produits trouvés mais déjà vus avant.' : 'Niche vide ou trop précise.'} Re-lance pour piocher une autre niche.</p>
+        <h3 style="font-size:14px">Aucun candidat frais sur "${escapeHtml(queryUsed)}"</h3>
+        <p style="font-size:12px">${filteredOut > 0 ? filteredOut+' produits trouvés mais déjà vus avant.' : 'Cette niche est vide ou trop précise.'}<br>Re-clique pour piocher une autre niche.</p>
       </div>`;
     } else {
       const stats = data.autoChecks?.stats || {};
@@ -1905,26 +1987,32 @@ async function runDiscover() {
         '<span class="pill success">✓ Top 3 propre</span>';
       const adsPill = stats.n_ads ? '<span class="pill success">✓ ' + stats.n_ads + ' Google Ads</span>' : '<span class="pill warning">⚠ Pas d\'ads search</span>';
       const dedupPill = filteredOut > 0 ? `<span class="pill">−${filteredOut} déjà vus</span>` : '';
+      const broadenedPill = (queryUsed !== q) ? `<span class="pill warning">↺ élargi en "${escapeHtml(queryUsed)}"</span>` : '';
       res.innerHTML = `
-        <div style="margin-bottom:10px;padding:10px 14px;border-radius:10px;background:var(--grad-soft);border:1px solid rgba(139,92,246,0.25);">
-          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:2px">Niche analysée</div>
-          <div style="font-weight:600;color:var(--text)">${escapeHtml(q)}</div>
+        <div style="margin-bottom:12px;padding:12px 16px;border-radius:12px;background:var(--grad-soft);border:1px solid rgba(139,92,246,0.25);">
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px">Niche analysée</div>
+          <div style="font-weight:600;color:var(--text);font-size:15px">${escapeHtml(q)}</div>
         </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">${verdict} ${adsPill} <span class="pill">${shoppingFresh.length} candidats</span>${dedupPill}${stats.avg_shopping_price?'<span class="pill">~'+stats.avg_shopping_price+'€ moy</span>':''}</div>
-        ${shoppingFresh.map(s => `
-          <div style="display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;background:rgba(255,255,255,0.02);">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">${verdict} ${adsPill} <span class="pill">${candidates.length} candidats</span>${dedupPill}${broadenedPill}${stats.avg_shopping_price?'<span class="pill">~'+stats.avg_shopping_price+'€ moy</span>':''}</div>
+        ${candidates.slice(0,12).map((s,i) => {
+          const sc = scoreCandidate(s, gamme);
+          const scoreClass = sc >= 60 ? 'success' : sc >= 40 ? '' : 'warning';
+          return `
+          <div style="display:flex;gap:12px;align-items:center;padding:14px;border:1px solid ${i<3?'rgba(139,92,246,0.3)':'var(--border)'};border-radius:12px;margin-bottom:8px;background:${i<3?'linear-gradient(135deg,rgba(139,92,246,0.05),rgba(217,70,239,0.03))':'rgba(255,255,255,0.02)'};">
+            <div style="font-size:11px;font-weight:700;color:var(--accent2);min-width:24px;">#${i+1}</div>
             <div style="flex:1;min-width:0;">
               <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml((s.title||'').slice(0,80))}</div>
-              <div style="font-size:11px;color:var(--text2);">${escapeHtml(s.source||s.domain||'')} · <strong style="color:var(--accent2)">${escapeHtml(s.price||'—')}</strong></div>
+              <div style="font-size:11px;color:var(--text2);margin-top:2px;">${escapeHtml(s.source||s.domain||'')} · <strong style="color:var(--accent2)">${escapeHtml(s.price||'—')}</strong>${s.rating?' · ⭐ '+s.rating+(s.reviews?' ('+s.reviews+')':''):''}</div>
             </div>
+            <span class="pill ${scoreClass}" style="font-size:10px;">${sc}pts</span>
             <button class="btn btn-sm btn-primary" onclick='discoverAdd(${JSON.stringify(s).replace(/'/g,"&apos;")}, ${JSON.stringify(q).replace(/'/g,"&apos;")})'>+</button>
           </div>
-        `).join('')}
+        `;}).join('')}
       `;
       if (auto && state.sessions.length) {
         const sid = activeSessionId || state.sessions[0].id;
         let added = 0;
-        const toAdd = shoppingFresh.slice(0, 5);
+        const toAdd = candidates.slice(0, 5);
         for (const s of toAdd) {
           const pid = 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
           const priceVente = s.extracted_price || 0;
