@@ -6,7 +6,7 @@
 <title>Robot Validation Produit — Ecom Inner Circle</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%238b5cf6'/%3E%3Cstop offset='1' stop-color='%23d946ef'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='%230f0f1a'/%3E%3Cpath d='M32 8 12 17v17c0 13 8 21 20 24 12-3 20-11 20-24V17L32 8zm0 10 13 6v10c0 8-5 13-13 16-8-3-13-8-13-16V24l13-6z' fill='url(%23g)'/%3E%3C/svg%3E">
 <script src="formation_data.js"></script>
-<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 <script type="module">
   // Firebase Firestore + Auth for SaaS-style multi-device app
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js';
@@ -660,7 +660,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 </div>
 
 <header>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.8.1-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.8.2-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -1008,14 +1008,21 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.8.1-beta';
-const APP_VERSION_NOTES = 'Filtre live sur la page Produits retenus (recherche par nom, niche ou session)';
+const APP_VERSION = '0.8.2-beta';
+const APP_VERSION_NOTES = 'Export Excel stylisé : palette Arthur (bleu marine + bandeau bleu + colonnes calculées surlignées + format euro)';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.8.2-beta', date: '2026-04-25', time: '16:05', source: 'Arthur (Ecom Inner Circle)', summary: 'Export Excel vraiment stylisé comme le template Arthur',
+    items: [
+      {type:'feat', text:'Switch xlsx-js-style : la lib Excel supporte maintenant fills, fonts, borders et number formats'},
+      {type:'feat', text:'Palette Arthur reproduite : titre bleu marine #0D1B6E + sous-titre bleu pâle italique + bandeau de colonnes bleu vif #1A6FD8 blanc bold'},
+      {type:'feat', text:'Colonnes calculées (D=CPA, G=marge €, H=marge %) en bleu pâle + texte bold bleu marine + format auto € / %'},
+      {type:'ux', text:'Format euro "€#,##0.00" sur toutes les cellules monétaires, hyperlinks bleus sur les liens concurrents, en-têtes wrap-text et figés (xSplit/ySplit)'},
+    ]},
   { v: '0.8.1-beta', date: '2026-04-25', source: 'Sell The Trend', summary: 'Filtre live sur Produits retenus',
     items: [
       {type:'feat', text:'Barre de recherche dans la page Produits retenus : filtre par nom, niche ou session, en live, sans rerender complet'},
@@ -2192,22 +2199,56 @@ function exportTemplateXLSX(scope) {
   const arr = scope === 'kept' ? keptProducts() : (state.products || []);
   if (!arr.length) { alert('Aucun produit à exporter.'); return; }
 
+  // Palette Arthur (campix_recherche_produits.xlsx)
+  const C_DARKBLUE='0D1B6E', C_BLUE='1A6FD8', C_BLUEPALE='EEF3FC',
+        C_GRAYBG='F4F6FB', C_LINK='1155CC', C_BORDER='D0D7E8',
+        C_TEXT='000000', C_GRAYTXT='6B7280', C_WHITE='FFFFFF';
+  const BORDER = {
+    top:    {style:'thin',color:{rgb:C_BORDER}},
+    bottom: {style:'thin',color:{rgb:C_BORDER}},
+    left:   {style:'thin',color:{rgb:C_BORDER}},
+    right:  {style:'thin',color:{rgb:C_BORDER}},
+  };
+  const S_TITLE = { font:{bold:true,color:{rgb:C_WHITE},sz:14,name:'Calibri'},
+                    fill:{patternType:'solid',fgColor:{rgb:C_DARKBLUE}},
+                    alignment:{horizontal:'center',vertical:'center',wrapText:true}, border:BORDER };
+  const S_SUB   = { font:{italic:true,color:{rgb:C_GRAYTXT},sz:10,name:'Calibri'},
+                    fill:{patternType:'solid',fgColor:{rgb:C_BLUEPALE}},
+                    alignment:{horizontal:'center',vertical:'center',wrapText:true}, border:BORDER };
+  const S_HEAD  = { font:{bold:true,color:{rgb:C_WHITE},sz:10,name:'Calibri'},
+                    fill:{patternType:'solid',fgColor:{rgb:C_BLUE}},
+                    alignment:{horizontal:'center',vertical:'center',wrapText:true}, border:BORDER };
+  const S_NAME  = { font:{bold:true,color:{rgb:C_TEXT},sz:10,name:'Calibri'},
+                    fill:{patternType:'solid',fgColor:{rgb:C_GRAYBG}},
+                    alignment:{horizontal:'left',vertical:'center',wrapText:true}, border:BORDER };
+  const S_NUM   = { font:{color:{rgb:C_TEXT},sz:10,name:'Calibri'},
+                    fill:{patternType:'solid',fgColor:{rgb:C_WHITE}},
+                    alignment:{horizontal:'center',vertical:'center'}, border:BORDER, numFmt:'"€"#,##0.00' };
+  const S_CALC  = { font:{bold:true,color:{rgb:C_DARKBLUE},sz:10,name:'Calibri'},
+                    fill:{patternType:'solid',fgColor:{rgb:C_BLUEPALE}},
+                    alignment:{horizontal:'center',vertical:'center'}, border:BORDER, numFmt:'"€"#,##0.00' };
+  const S_CALCP = { ...S_CALC, numFmt:'0.00%' };
+  const S_TXT   = { font:{color:{rgb:C_TEXT},sz:10,name:'Calibri'},
+                    fill:{patternType:'solid',fgColor:{rgb:C_WHITE}},
+                    alignment:{horizontal:'center',vertical:'center',wrapText:true}, border:BORDER };
+  const S_LINK  = { font:{color:{rgb:C_LINK},sz:9,name:'Calibri',underline:true},
+                    fill:{patternType:'solid',fgColor:{rgb:C_WHITE}},
+                    alignment:{horizontal:'left',vertical:'center'}, border:BORDER };
+  const S_FOOT  = { font:{italic:true,color:{rgb:C_GRAYTXT},sz:9,name:'Calibri'},
+                    alignment:{horizontal:'left',vertical:'center'} };
+
   const headers = [
-    'Nom du produit',
-    'Volume de recherche\n(mensuel)',
-    'CPC moyen (€)',
-    'CPA estimé\n(CPC x 150)',
-    'Prix de revente (€)',
-    'Prix achat\nAliExpress + livraison (€)',
-    'Marge brute (€)',
-    'Marge brute (%)',
-    'Concurrents\nen drop ?',
-    'Lien concurrent 1',
-    'Lien concurrent 2',
-    'Lien concurrent 3',
-    'Besoin\nd\'expert ?',
-    'Fonctionne\nen Search ?'
+    'Nom du produit', 'Volume de recherche\n(mensuel)', 'CPC moyen (€)',
+    'CPA estimé\n(CPC x 150)', 'Prix de revente (€)', 'Prix achat\nAliExpress + livraison (€)',
+    'Marge brute (€)', 'Marge brute (%)', 'Concurrents\nen drop ?',
+    'Lien concurrent 1', 'Lien concurrent 2', 'Lien concurrent 3',
+    'Besoin\nd\'expert ?', 'Fonctionne\nen Search ?'
   ];
+  const NCOL = headers.length;
+  // Column groups for styling
+  const CALC_COLS = [3, 6, 7];           // D, G, H (calculées)
+  const CURRENCY_COLS = [2, 4, 5];       // C, E, F (€)
+  const LINK_COLS = [9, 10, 11];         // J, K, L
 
   const rows = arr.map(p => {
     const volMens = (p.volume_mensuel || '').toString().trim();
@@ -2221,67 +2262,102 @@ function exportTemplateXLSX(scope) {
     const achat = p.prix_achat !== undefined && p.prix_achat !== '' ? Number(p.prix_achat) : 0;
     const livraison = p.prix_livraison !== undefined && p.prix_livraison !== '' ? Number(p.prix_livraison) : 0;
     const fCell = (achat || livraison) ? (Number(achat) + Number(livraison)) : '';
-    // Competitor links: explicit fields first, then serp_scan competitors as fallback
     const compFromScan = (p.serp_scan?.competitors || []).map(c => c.link || ('https://' + (c.domain || '')));
     const c1 = p.concurrent_1 || compFromScan[0] || '';
     const c2 = p.concurrent_2 || compFromScan[1] || '';
     const c3 = p.concurrent_3 || compFromScan[2] || '';
-    // Concurrents en drop ? "oui" if scan found drops or any link is set
     const hasDrop = (p.serp_scan?.competitors || []).some(c => c.is_drop) || !!(c1 || c2 || c3);
-    const dropCell = hasDrop ? 'oui' : (c1 || c2 || c3 ? 'oui' : '');
-    // Besoin d'expert = critère 8, Fonctionne en search = critère 12
+    const dropCell = hasDrop ? 'oui' : '';
     const expertCell = p.criteres?.[8] ? 'OUI' : '';
     const searchCell = p.criteres?.[12] ? 'Oui' : '';
     return [
-      p.name || '',
-      volCell,
-      cpc,
-      '', // D — formula injected after
-      prixVente,
-      fCell,
-      '', // G — formula
-      '', // H — formula
-      dropCell,
-      c1, c2, c3,
-      expertCell,
-      searchCell
+      p.name || '', volCell, cpc, '', prixVente, fCell, '', '',
+      dropCell, c1, c2, c3, expertCell, searchCell
     ];
   });
 
-  const aoa = [headers, ...rows];
+  const date = new Date().toLocaleDateString('fr-FR');
+  const titleRow = ['ROBOT VALIDATION PRODUIT — Export ' + (scope === 'kept' ? 'Produits Retenus' : 'Tous les produits')];
+  const subRow = [`${arr.length} produit${arr.length>1?'s':''} · Méthode Arthur (Ecom Inner Circle) · ${date}`];
+  const aoa = [titleRow, subRow, [], headers, ...rows];
   const ws = XLSX.utils.aoa_to_sheet(aoa);
 
-  // Inject formulas + format for each data row
-  for (let i = 0; i < rows.length; i++) {
-    const r = i + 2; // 1-based, header is row 1
-    ws[`D${r}`] = { t: 'n', f: `IF(C${r}="","",C${r}*150)` };
-    ws[`G${r}`] = { t: 'n', f: `IF(OR(E${r}="",F${r}=""),"",E${r}-F${r})` };
-    ws[`H${r}`] = { t: 'n', f: `IF(OR(E${r}="",F${r}=""),"",G${r}/E${r})`, z: '0.00%' };
-    // Number formats for currency
-    ['C','E','F'].forEach(col => {
-      const cell = ws[`${col}${r}`];
-      if (cell && cell.t === 'n') cell.z = '0.00';
-    });
+  // Merge title + subtitle across all columns
+  ws['!merges'] = [
+    { s:{r:0,c:0}, e:{r:0,c:NCOL-1} },
+    { s:{r:1,c:0}, e:{r:1,c:NCOL-1} },
+  ];
+
+  // Style row 0 (title) and row 1 (subtitle) — fill all merged cells so the bg covers
+  for (let c = 0; c < NCOL; c++) {
+    const a0 = XLSX.utils.encode_cell({r:0,c}); if (!ws[a0]) ws[a0] = { v:'', t:'s' }; ws[a0].s = S_TITLE;
+    const a1 = XLSX.utils.encode_cell({r:1,c}); if (!ws[a1]) ws[a1] = { v:'', t:'s' }; ws[a1].s = S_SUB;
   }
 
-  // Column widths matching the template feel
-  ws['!cols'] = [
-    {wch:28},{wch:18},{wch:10},{wch:14},{wch:14},{wch:18},
-    {wch:14},{wch:14},{wch:12},{wch:32},{wch:32},{wch:32},{wch:12},{wch:14}
-  ];
-  // Row 1 header height
-  ws['!rows'] = [{hpt: 38}];
+  // Style header row (index 3 → Excel row 4)
+  for (let c = 0; c < NCOL; c++) {
+    const addr = XLSX.utils.encode_cell({r:3,c});
+    if (ws[addr]) ws[addr].s = S_HEAD;
+  }
 
-  // Footer note like the original
-  const footerRow = rows.length + 3;
-  XLSX.utils.sheet_add_aoa(ws, [['Colonnes en bleu = calculées automatiquement (ne pas modifier les colonnes D, G, H)']], { origin: `A${footerRow}` });
+  // Inject formulas + style data cells
+  for (let i = 0; i < rows.length; i++) {
+    const r0 = i + 4;     // 0-based row index
+    const r  = r0 + 1;    // Excel 1-based
+    // Formulas (calculated cols)
+    ws[`D${r}`] = { t:'n', f:`IF(C${r}="","",C${r}*150)`, s:S_CALC };
+    ws[`G${r}`] = { t:'n', f:`IF(OR(E${r}="",F${r}=""),"",E${r}-F${r})`, s:S_CALC };
+    ws[`H${r}`] = { t:'n', f:`IF(OR(E${r}="",F${r}=""),"",G${r}/E${r})`, z:'0.00%', s:S_CALCP };
+    // Style every column for this row
+    for (let c = 0; c < NCOL; c++) {
+      const addr = XLSX.utils.encode_cell({r:r0,c});
+      if (!ws[addr]) ws[addr] = { v:'', t:'s' };
+      if (CALC_COLS.includes(c)) continue; // already styled above
+      if (c === 0) ws[addr].s = S_NAME;
+      else if (CURRENCY_COLS.includes(c)) {
+        ws[addr].s = S_NUM;
+        if (ws[addr].t === 'n') ws[addr].z = '"€"#,##0.00';
+      }
+      else if (LINK_COLS.includes(c)) {
+        ws[addr].s = S_LINK;
+        // Add hyperlink if cell value looks like a URL
+        const v = ws[addr].v;
+        if (typeof v === 'string' && /^https?:\/\//i.test(v)) ws[addr].l = { Target: v };
+      }
+      else ws[addr].s = S_TXT;
+    }
+  }
+
+  // Column widths — generous for wrapped headers
+  ws['!cols'] = [
+    {wch:32}, {wch:20}, {wch:13}, {wch:15}, {wch:15}, {wch:20},
+    {wch:15}, {wch:15}, {wch:14}, {wch:36}, {wch:36}, {wch:36}, {wch:13}, {wch:15}
+  ];
+  // Row heights — title 36, subtitle 22, spacer 8, header 42, data rows 30
+  const rowHeights = [
+    {hpt:36}, {hpt:22}, {hpt:8}, {hpt:42},
+    ...rows.map(() => ({hpt:30}))
+  ];
+  ws['!rows'] = rowHeights;
+
+  // Freeze top 4 rows + first column
+  ws['!freeze'] = { xSplit:1, ySplit:4 };
+  ws['!sheetView'] = [{ pane: { state:'frozen', xSplit:1, ySplit:4, activePane:'bottomRight' } }];
+
+  // Footer note
+  const footerRow = rows.length + 6; // title+sub+spacer+header+data + 1 spacer
+  XLSX.utils.sheet_add_aoa(ws, [['Colonnes en bleu = calculées automatiquement (ne pas modifier les colonnes D, G, H)']], { origin:`A${footerRow}` });
+  ws[`A${footerRow}`].s = S_FOOT;
+
+  // Update sheet range to include title/subtitle/footer
+  ws['!ref'] = `A1:${XLSX.utils.encode_col(NCOL-1)}${footerRow}`;
 
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Recherche Produit');
 
-  const date = new Date().toISOString().slice(0, 10);
+  const dateFile = new Date().toISOString().slice(0, 10);
   const suffix = scope === 'kept' ? 'retenus' : 'tous';
-  XLSX.writeFile(wb, `recherche_produit_${suffix}_${date}.xlsx`);
+  XLSX.writeFile(wb, `recherche_produit_${suffix}_${dateFile}.xlsx`);
 }
 
 function exportKeptCSV() {
