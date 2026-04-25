@@ -2459,19 +2459,37 @@ function scoreCandidate(s, gamme) {
   return score;
 }
 
-// Merge shopping + inline_shopping (search) and dedup by title shortkey
+// Merge shopping + inline_shopping (search) and dedup by title shortkey.
+// Tags each item with _source ('shopping' = Google Shopping tab, 'inline_shopping' = Shopping module
+// inside Search results) and _alsoInAds = true if its domain also appears in search Ads slots.
 function _mergeShopping(data) {
   const out = [];
   const seen = new Set();
+  const adsDomainMap = new Map(); // domain → ad object (link, title)
+  for (const a of (data.ads || [])) {
+    const d = (a.domain || '').toLowerCase();
+    if (d && !adsDomainMap.has(d)) adsDomainMap.set(d, a);
+  }
+  const tag = (s, src) => {
+    s._source = src;
+    const d = (s.domain || '').toLowerCase();
+    const ad = adsDomainMap.get(d);
+    if (ad) {
+      s._alsoInAds = true;
+      s._adLink = ad.link || '';
+      s._adTitle = ad.title || '';
+      s._adSlot = ad.slot || '';
+    }
+    return s;
+  };
   for (const s of (data.shopping || [])) {
     const k = _shortKey(s.title || '');
     if (!k || seen.has(k)) continue;
-    seen.add(k); out.push(s);
+    seen.add(k); out.push(tag(s, 'shopping'));
   }
   for (const s of (data.inline_shopping || [])) {
     const k = _shortKey(s.title || '');
     if (!k || seen.has(k)) continue;
-    // inline_shopping doesn't always include institutionnel/extracted_price flags
     if (!('institutionnel' in s)) {
       const d = (s.domain || '').toLowerCase();
       s.institutionnel = /amazon|cdiscount|fnac|darty|leroy|boulanger|manomano|temu|aliexpress|rakuten|ebay|carrefour|auchan|conforama|but/i.test(d);
@@ -2480,7 +2498,7 @@ function _mergeShopping(data) {
       const m = s.price.replace(/\s/g,'').match(/([\d]+[,.]?[\d]*)/);
       if (m) s.extracted_price = parseFloat(m[1].replace(',', '.'));
     }
-    seen.add(k); out.push(s);
+    seen.add(k); out.push(tag(s, 'inline_shopping'));
   }
   return out;
 }
@@ -2511,6 +2529,14 @@ async function discoverBatch(query, gamme, seen) {
   }
   inGamme.sort((a,b) => scoreCandidate(b, gamme) - scoreCandidate(a, gamme));
   return { data, shopping, fresh, inGamme, query: usedQuery, totalRaw: shopping.length, filteredOut: fresh.length - inGamme.length };
+}
+
+function toggleAdsList(btn) {
+  const wrap = btn.closest('div').parentElement.querySelector('.ads-list');
+  if (!wrap) return;
+  const open = wrap.style.display !== 'none';
+  wrap.style.display = open ? 'none' : 'block';
+  btn.innerHTML = btn.innerHTML.replace(open ? '▴' : '▾', open ? '▾' : '▴');
 }
 
 function renderCompetitorsSection(competitors, gamme) {
@@ -2778,7 +2804,20 @@ async function runDiscover() {
       const verdict = stats.has_institutionnels_top3 ?
         '<span class="pill danger">Institutionnels top 3</span>' :
         '<span class="pill success">Top 3 propre</span>';
-      const adsPill = stats.n_ads ? '<span class="pill success">' + stats.n_ads + ' Google Ads</span>' : '<span class="pill warning">Pas d\'ads search</span>';
+      const adsPill = stats.n_ads
+        ? `<button class="pill success" onclick="toggleAdsList(this)" style="cursor:pointer;border:none;font-family:inherit">${stats.n_ads} Google Ads ▾</button>`
+        : '<span class="pill warning">Pas d\'ads search</span>';
+      // Pre-rendered expandable ads list
+      const adsList = (data.ads || []).slice(0, 12).map((a,i) => `
+        <div style="display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--border);border-radius:8px;margin-bottom:4px;font-size:12px;">
+          <span style="color:var(--yellow);min-width:14px;">${ico('zap',12)}</span>
+          <div style="flex:1;min-width:0;">
+            <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml((a.title||'').slice(0,80))}</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:2px;">${escapeHtml(a.domain||'')}${a.slot?' · '+escapeHtml(a.slot):''}</div>
+          </div>
+          <a href="${escapeHtml(a.link||'')}" target="_blank" rel="noopener" class="btn btn-sm" style="font-size:10px;text-decoration:none">Voir l'annonce ↗</a>
+        </div>
+      `).join('');
       const dedupPill = filteredOut > 0 ? `<span class="pill">−${filteredOut} déjà vus</span>` : '';
       const broadenedPill = (queryUsed !== q) ? `<span class="pill warning">élargi en "${escapeHtml(queryUsed)}"</span>` : '';
       res.innerHTML = `
@@ -2787,6 +2826,7 @@ async function runDiscover() {
           <div style="font-weight:600;color:var(--text);font-size:15px">${escapeHtml(q)}</div>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">${verdict} ${adsPill} <span class="pill">${candidates.length} candidats</span>${dedupPill}${broadenedPill}${stats.avg_shopping_price?'<span class="pill">~'+stats.avg_shopping_price+'€ moy</span>':''}</div>
+        ${adsList ? `<div class="ads-list" style="display:none;margin-bottom:14px;padding:10px;border-radius:10px;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);"><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:6px;font-weight:600">Annonces Search détectées (clic = ouvrir)</div>${adsList}</div>` : ''}
         ${sortCands(candidates, gamme).slice(0,12).map((s,i) => {
           const sc = scoreCandidate(s, gamme);
           const scoreClass = sc >= 60 ? 'success' : sc >= 40 ? '' : 'warning';
@@ -2794,16 +2834,32 @@ async function runDiscover() {
           // Estimate net margin: vente − achat (vente/4) − cpa (12.5%)
           const v = +s.extracted_price || 0;
           const margeEst = v ? Math.round((v - v/4 - v*0.125) * 100)/100 : null;
+          // Source badge: where the product was actually found on Google
+          const srcLabel = s._source === 'shopping' ? 'Google Shopping' : s._source === 'inline_shopping' ? 'Shopping (Search)' : 'SERP';
+          const srcLink = s.link || '';
+          const srcBadge = srcLink
+            ? `<a href="${escapeHtml(srcLink)}" target="_blank" rel="noopener" class="pill" style="background:rgba(139,92,246,0.15);border-color:rgba(139,92,246,0.35);color:var(--accent2);font-size:10px;text-decoration:none;display:inline-flex;align-items:center;gap:4px" title="Voir l'annonce sur ${escapeHtml(s.domain||'')}">${ico('cart',11)} ${srcLabel} ↗</a>`
+            : `<span class="pill" style="background:rgba(139,92,246,0.15);color:var(--accent2);font-size:10px;">${srcLabel}</span>`;
+          const adsBadge = s._alsoInAds && s._adLink
+            ? `<a href="${escapeHtml(s._adLink)}" target="_blank" rel="noopener" class="pill" style="background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.35);color:var(--yellow);font-size:10px;text-decoration:none;display:inline-flex;align-items:center;gap:4px" title="Voir l'annonce Search">${ico('zap',11)} Ads Search ↗</a>`
+            : '';
           return `
           <div style="display:flex;gap:12px;align-items:center;padding:14px;border:1px solid ${i<3?'rgba(139,92,246,0.3)':'var(--border)'};border-radius:12px;margin-bottom:8px;background:${i<3?'linear-gradient(135deg,rgba(139,92,246,0.05),rgba(217,70,239,0.03))':'rgba(255,255,255,0.02)'};transition:transform .15s ease,box-shadow .15s ease" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px -8px rgba(139,92,246,0.35)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
             ${thumb ? `<img src="${escapeHtml(thumb)}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;flex-shrink:0;background:#000" alt="" onerror="this.style.display='none'">` : `<div style="width:48px;height:48px;border-radius:8px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;color:var(--text3);flex-shrink:0">${ico('cart',20)}</div>`}
             <div style="font-size:11px;font-weight:700;color:var(--accent2);min-width:24px;">#${i+1}</div>
             <div style="flex:1;min-width:0;">
-              <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml((s.title||'').slice(0,80))}</div>
-              <div style="font-size:11px;color:var(--text2);margin-top:2px;">${escapeHtml(s.source||s.domain||'')} · <strong style="color:var(--accent2)">${escapeHtml(s.price||'—')}</strong>${s.rating?' · '+s.rating+'/5'+(s.reviews?' ('+s.reviews+')':''):''}${margeEst?` · <span style="color:var(--green)">~${margeEst}€ marge</span>`:''}</div>
+              <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${srcLink ? `<a href="${escapeHtml(srcLink)}" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none">${escapeHtml((s.title||'').slice(0,80))}</a>` : escapeHtml((s.title||'').slice(0,80))}</div>
+              <div style="font-size:11px;color:var(--text2);margin-top:2px;display:flex;flex-wrap:wrap;align-items:center;gap:6px">
+                <span>${escapeHtml(s.source||s.domain||'')}</span>
+                <strong style="color:var(--accent2)">${escapeHtml(s.price||'—')}</strong>
+                ${s.rating?`<span>· ${s.rating}/5${s.reviews?' ('+s.reviews+')':''}</span>`:''}
+                ${margeEst?`<span style="color:var(--green)">· ~${margeEst}€ marge</span>`:''}
+                ${srcBadge}
+                ${adsBadge}
+              </div>
             </div>
             <span class="pill ${scoreClass}" style="font-size:10px;">${sc}pts</span>
-            <button class="btn btn-sm btn-primary" onclick='discoverAdd(${JSON.stringify(s).replace(/'/g,"&apos;")}, ${JSON.stringify(q).replace(/'/g,"&apos;")})'>+</button>
+            <button class="btn btn-sm btn-primary" onclick='discoverAdd(${JSON.stringify(s).replace(/'/g,"&apos;")}, ${JSON.stringify(q).replace(/'/g,"&apos;")})' title="Ajouter ce produit">+</button>
           </div>
         `;}).join('')}
         ${renderCompetitorsSection(data.competitors || [], gamme)}
