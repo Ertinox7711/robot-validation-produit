@@ -996,12 +996,14 @@ function renderProductNotes(p) {
 }
 
 /* ═════════ SERP AUTO-SCAN ═════════ */
-const SERP_ENDPOINT = 'http://localhost:7789';
+// Auto-detect: works only on local machine where serp_scout.py runs.
+const SERP_ENDPOINT = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:7789' : null;
 window._scanning = window._scanning || {};
 
 async function scanSerp(pid) {
   const p = findProduct(pid);
   if (!p) return;
+  if (!SERP_ENDPOINT) { alert('🔎 SERP scan disponible uniquement sur PC (où serp_scout.py tourne).\n\nDepuis ton téléphone, tu peux consulter les scans déjà faits dans l\'onglet 🔎 SERP auto.'); return; }
   const q = (p.name || '').trim();
   if (!q) { alert('Donne un nom au produit avant de scanner'); return; }
   window._scanning[pid] = true;
