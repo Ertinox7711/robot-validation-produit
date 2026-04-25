@@ -767,20 +767,42 @@ small.muted { color: var(--text3); font-size: 11px; }
       </div>
       <div class="field">
         <label>Total produits</label>
-        <input type="number" id="discoverTotal" min="1" max="500" value="5" step="1">
-        <div class="hint">ex: 50 = couvre plusieurs niches</div>
+        <input type="number" id="discoverTotal" min="1" max="500" value="50" step="1">
+        <div class="hint">Combien de candidats au total</div>
       </div>
       <div class="field">
-        <label>Produits par niche (max)</label>
-        <input type="number" id="discoverPerNiche" min="1" max="20" value="5" step="1">
-        <div class="hint">5 produits × 10 niches = 50</div>
+        <label>Nombre de niches</label>
+        <input type="number" id="discoverNiches" min="1" max="50" value="10" step="1">
+        <div class="hint" id="discoverPerNicheHint">5 produits / niche</div>
       </div>
+      <div class="field">
+        <label>Tri des candidats</label>
+        <select id="discoverSort">
+          <option value="score" selected>Score (qualité)</option>
+          <option value="price_asc">Prix croissant</option>
+          <option value="price_desc">Prix décroissant</option>
+          <option value="reviews">Avis (volume)</option>
+          <option value="rating">Note ⭐ (4.5+)</option>
+        </select>
+      </div>
+    </div>
+    <div class="field" style="margin-top:14px;">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+        <input type="checkbox" id="discoverUseManual" onchange="onManualNichesToggle()" style="width:auto;margin:0;">
+        <span>Utiliser <strong>mes propres niches</strong> (au lieu du tirage aléatoire)</span>
+      </label>
+    </div>
+    <div class="field" id="discoverManualNichesWrap" style="display:none;margin-top:8px;">
+      <label>Mes niches personnalisées</label>
+      <textarea id="discoverManualNiches" rows="4" placeholder="Une niche par ligne, ex:&#10;tente de toit voiture&#10;starter batterie portable&#10;projecteur 4K led&#10;…"></textarea>
+      <div class="hint">Le bot scrape ces niches au lieu de piocher dans la liste interne. Idéal si tu veux cibler un univers précis.</div>
     </div>
     <div id="discoverStats" style="margin-top:14px;font-size:12px;color:var(--text3);"></div>
     <div id="discoverQuota" style="margin-top:6px;font-size:11px;color:var(--text3);display:flex;align-items:center;gap:6px;"></div>
     <div id="discoverResults" style="margin-top:18px;max-height:380px;overflow-y:auto;"></div>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('modalDiscover')">Fermer</button>
+      <button class="btn" id="discoverCancelBtn" onclick="cancelDiscover()" style="display:none;background:rgba(248,113,113,0.12);color:var(--red);border-color:rgba(248,113,113,0.35)">Annuler</button>
       <button class="btn btn-primary" id="discoverBtn" onclick="runDiscover()"><span id="discoverBtnIco" style="display:inline-flex;margin-right:6px;vertical-align:-2px;"></span>Lancer la recherche</button>
     </div>
   </div>
@@ -2320,11 +2342,67 @@ function refreshDiscoverStats() {
   el.innerHTML = `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;color:var(--accent2)">${ico('chart',13)}</span><strong>${remaining}</strong>/${pool.length} niches inexplorées (${gammeLbl}) · <strong>${seenProds}</strong> produits déjà vus`;
 }
 
+const DISCOVER_PREFS_KEY = 'discover_prefs_v2';
+function loadDiscoverPrefs() {
+  try { return JSON.parse(localStorage.getItem(DISCOVER_PREFS_KEY) || '{}'); } catch(e) { return {}; }
+}
+function saveDiscoverPrefs() {
+  const p = {
+    gamme: document.getElementById('discoverGamme')?.value,
+    total: document.getElementById('discoverTotal')?.value,
+    niches: document.getElementById('discoverNiches')?.value,
+    sort: document.getElementById('discoverSort')?.value,
+    autoCreate: document.getElementById('discoverAutoCreate')?.value,
+    useManual: document.getElementById('discoverUseManual')?.checked,
+    manualNiches: document.getElementById('discoverManualNiches')?.value,
+  };
+  try { localStorage.setItem(DISCOVER_PREFS_KEY, JSON.stringify(p)); } catch(e) {}
+}
+function onManualNichesToggle() {
+  const on = document.getElementById('discoverUseManual').checked;
+  document.getElementById('discoverManualNichesWrap').style.display = on ? 'block' : 'none';
+  saveDiscoverPrefs();
+}
+function updatePerNicheHint() {
+  const t = +document.getElementById('discoverTotal')?.value || 0;
+  const n = +document.getElementById('discoverNiches')?.value || 1;
+  const per = Math.max(1, Math.ceil(t / Math.max(1, n)));
+  const hint = document.getElementById('discoverPerNicheHint');
+  if (hint) hint.textContent = `≈ ${per} produits / niche · total ${t}`;
+}
+function cancelDiscover() {
+  if (window._discoverAbort) {
+    window._discoverAbort.aborted = true;
+    const btn = document.getElementById('discoverBtn');
+    if (btn) { btn.disabled = false; btn.innerHTML = `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('dice',14)}</span>Surprends-moi`; }
+    document.getElementById('discoverCancelBtn').style.display = 'none';
+    const res = document.getElementById('discoverResults');
+    if (res) res.innerHTML = `<div class="empty" style="padding:24px"><h3 style="font-size:14px">Recherche annulée</h3><p style="font-size:12px">Les niches déjà scannées sont gardées comme "vues".</p></div>`;
+  }
+}
+
 function openDiscoverModal() {
+  const prefs = loadDiscoverPrefs();
   document.getElementById('discoverQuery').value = '';
   document.getElementById('discoverResults').innerHTML = '';
   document.getElementById('discoverMode').value = 'auto';
   document.getElementById('discoverManualWrap').style.display = 'none';
+  document.getElementById('discoverCancelBtn').style.display = 'none';
+  // restore prefs
+  if (prefs.gamme !== undefined) document.getElementById('discoverGamme').value = prefs.gamme;
+  if (prefs.total) document.getElementById('discoverTotal').value = prefs.total;
+  if (prefs.niches) document.getElementById('discoverNiches').value = prefs.niches;
+  if (prefs.sort) document.getElementById('discoverSort').value = prefs.sort;
+  if (prefs.autoCreate !== undefined) document.getElementById('discoverAutoCreate').value = prefs.autoCreate;
+  document.getElementById('discoverUseManual').checked = !!prefs.useManual;
+  document.getElementById('discoverManualNiches').value = prefs.manualNiches || '';
+  document.getElementById('discoverManualNichesWrap').style.display = prefs.useManual ? 'block' : 'none';
+  // listeners for auto-saving + hint
+  ['discoverTotal','discoverNiches','discoverGamme','discoverSort','discoverAutoCreate','discoverManualNiches'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && !el._wired) { el.addEventListener('input', () => { updatePerNicheHint(); saveDiscoverPrefs(); refreshDiscoverStats(); }); el._wired = true; }
+  });
+  updatePerNicheHint();
   const hdr = document.getElementById('discoverHeaderIco'); if (hdr) hdr.innerHTML = ico('search',18);
   const btnIco = document.getElementById('discoverBtnIco'); if (btnIco) btnIco.innerHTML = ico('dice',14);
   const btn = document.getElementById('discoverBtn'); if (btn) btn.innerHTML = `<span id="discoverBtnIco" style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('dice',14)}</span>Surprends-moi`;
@@ -2514,37 +2592,64 @@ async function runDiscover() {
   let result;
   let q;
   const seen = getSeenKeys();
-  // Read flexible quantity controls (default 5 each)
-  const totalTarget = Math.max(1, Math.min(500, parseInt(document.getElementById('discoverTotal')?.value || '5', 10) || 5));
-  const perNiche = Math.max(1, Math.min(20, parseInt(document.getElementById('discoverPerNiche')?.value || '5', 10) || 5));
-  const nichesNeeded = Math.max(1, Math.ceil(totalTarget / perNiche));
-  // Use multi-niche batch flow when auto + auto-create is on AND user wants > perNiche products
-  const multiNiche = (mode === 'auto') && auto && (totalTarget > perNiche);
+  // Read flexible quantity controls
+  const totalTarget = Math.max(1, Math.min(500, parseInt(document.getElementById('discoverTotal')?.value || '50', 10) || 50));
+  const nichesNeeded = Math.max(1, Math.min(50, parseInt(document.getElementById('discoverNiches')?.value || '10', 10) || 10));
+  const perNiche = Math.max(1, Math.ceil(totalTarget / nichesNeeded));
+  const sortBy = document.getElementById('discoverSort')?.value || 'score';
+  const useManual = !!document.getElementById('discoverUseManual')?.checked;
+  const manualNiches = useManual
+    ? (document.getElementById('discoverManualNiches')?.value || '').split(/\r?\n/).map(s => s.trim()).filter(Boolean)
+    : [];
+  // Multi-niche flow whenever we want more than 1 niche, OR manual list given
+  const multiNiche = (mode === 'auto') && auto && (nichesNeeded > 1 || manualNiches.length > 1);
+  // Abort handle
+  window._discoverAbort = { aborted: false };
+  document.getElementById('discoverCancelBtn').style.display = 'inline-block';
+  // Sort helper applied per niche
+  const sortCands = (arr, gam) => {
+    const a = [...arr];
+    if (sortBy === 'price_asc') a.sort((x,y) => (x.extracted_price||9e9) - (y.extracted_price||9e9));
+    else if (sortBy === 'price_desc') a.sort((x,y) => (y.extracted_price||0) - (x.extracted_price||0));
+    else if (sortBy === 'reviews') a.sort((x,y) => (y.reviews||0) - (x.reviews||0));
+    else if (sortBy === 'rating') a.sort((x,y) => (y.rating||0) - (x.rating||0));
+    else a.sort((x,y) => scoreCandidate(y, gam) - scoreCandidate(x, gam));
+    return a;
+  };
   try {
     if (multiNiche) {
       // ── Multi-niche batch mode ──
       const tried = new Set();
-      const allResults = []; // [{niche, r}]
-      const maxTries = Math.min(60, nichesNeeded * 4);
+      const allResults = []; // [{niche, r, picked}]
+      const maxTries = Math.min(80, nichesNeeded * 4);
       let totalCands = 0;
-      for (let i = 0; i < maxTries; i++) {
+      const queue = manualNiches.length ? [...manualNiches] : [];
+      let i = 0;
+      while (i < maxTries) {
+        if (window._discoverAbort?.aborted) break;
         if (totalCands >= totalTarget) break;
-        const niche = pickRandomNiche(gamme);
-        if (tried.has(niche)) continue;
+        if (tried.size >= nichesNeeded) break;
+        let niche;
+        if (queue.length) niche = queue.shift();
+        else if (manualNiches.length === 0) niche = pickRandomNiche(gamme);
+        else break;
+        if (!niche || tried.has(niche)) { i++; continue; }
         tried.add(niche);
-        markNicheSeen(niche);
-        btn.textContent = `${tried.size} niche${tried.size>1?'s':''} · ${totalCands}/${totalTarget} produits…`;
+        if (!manualNiches.length) markNicheSeen(niche);
+        btn.textContent = `${tried.size}/${nichesNeeded} niches · ${totalCands}/${totalTarget} produits…`;
         try {
           const r = await discoverBatch(niche, gamme, seen);
           if (r.inGamme.length > 0) {
-            const slice = r.inGamme.slice(0, perNiche);
-            // Mark these as seen IMMEDIATELY so subsequent niches can dedup
+            const sorted = sortCands(r.inGamme, gamme);
+            const slice = sorted.slice(0, perNiche);
             slice.forEach(s => seen.add(_shortKey(s.title)));
             allResults.push({ niche, r, picked: slice });
             totalCands += slice.length;
           }
         } catch(e) { console.warn('niche fail', niche, e); }
+        i++;
       }
+      document.getElementById('discoverCancelBtn').style.display = 'none';
       if (allResults.length === 0) {
         res.innerHTML = `<div class="empty" style="padding:30px">
           <div style="color:var(--accent2);margin-bottom:8px;">${ico('target',32)}</div>
@@ -2682,15 +2787,20 @@ async function runDiscover() {
           <div style="font-weight:600;color:var(--text);font-size:15px">${escapeHtml(q)}</div>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">${verdict} ${adsPill} <span class="pill">${candidates.length} candidats</span>${dedupPill}${broadenedPill}${stats.avg_shopping_price?'<span class="pill">~'+stats.avg_shopping_price+'€ moy</span>':''}</div>
-        ${candidates.slice(0,12).map((s,i) => {
+        ${sortCands(candidates, gamme).slice(0,12).map((s,i) => {
           const sc = scoreCandidate(s, gamme);
           const scoreClass = sc >= 60 ? 'success' : sc >= 40 ? '' : 'warning';
+          const thumb = s.thumbnail || '';
+          // Estimate net margin: vente − achat (vente/4) − cpa (12.5%)
+          const v = +s.extracted_price || 0;
+          const margeEst = v ? Math.round((v - v/4 - v*0.125) * 100)/100 : null;
           return `
-          <div style="display:flex;gap:12px;align-items:center;padding:14px;border:1px solid ${i<3?'rgba(139,92,246,0.3)':'var(--border)'};border-radius:12px;margin-bottom:8px;background:${i<3?'linear-gradient(135deg,rgba(139,92,246,0.05),rgba(217,70,239,0.03))':'rgba(255,255,255,0.02)'};">
+          <div style="display:flex;gap:12px;align-items:center;padding:14px;border:1px solid ${i<3?'rgba(139,92,246,0.3)':'var(--border)'};border-radius:12px;margin-bottom:8px;background:${i<3?'linear-gradient(135deg,rgba(139,92,246,0.05),rgba(217,70,239,0.03))':'rgba(255,255,255,0.02)'};transition:transform .15s ease,box-shadow .15s ease" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px -8px rgba(139,92,246,0.35)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+            ${thumb ? `<img src="${escapeHtml(thumb)}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;flex-shrink:0;background:#000" alt="" onerror="this.style.display='none'">` : `<div style="width:48px;height:48px;border-radius:8px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;color:var(--text3);flex-shrink:0">${ico('cart',20)}</div>`}
             <div style="font-size:11px;font-weight:700;color:var(--accent2);min-width:24px;">#${i+1}</div>
             <div style="flex:1;min-width:0;">
               <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml((s.title||'').slice(0,80))}</div>
-              <div style="font-size:11px;color:var(--text2);margin-top:2px;">${escapeHtml(s.source||s.domain||'')} · <strong style="color:var(--accent2)">${escapeHtml(s.price||'—')}</strong>${s.rating?' · '+s.rating+'/5'+(s.reviews?' ('+s.reviews+')':''):''}</div>
+              <div style="font-size:11px;color:var(--text2);margin-top:2px;">${escapeHtml(s.source||s.domain||'')} · <strong style="color:var(--accent2)">${escapeHtml(s.price||'—')}</strong>${s.rating?' · '+s.rating+'/5'+(s.reviews?' ('+s.reviews+')':''):''}${margeEst?` · <span style="color:var(--green)">~${margeEst}€ marge</span>`:''}</div>
             </div>
             <span class="pill ${scoreClass}" style="font-size:10px;">${sc}pts</span>
             <button class="btn btn-sm btn-primary" onclick='discoverAdd(${JSON.stringify(s).replace(/'/g,"&apos;")}, ${JSON.stringify(q).replace(/'/g,"&apos;")})'>+</button>
