@@ -540,7 +540,7 @@ small.muted { color: var(--text3); font-size: 11px; }
   position: relative;
 }
 .takeaway::before {
-  content: '✦'; position: absolute; left: 22px; top: 18px;
+  content: '•'; position: absolute; left: 22px; top: 18px;
   color: var(--accent2); font-size: 12px;
 }
 .takeaway-content { padding-left: 22px; color: var(--text); }
@@ -782,7 +782,7 @@ small.muted { color: var(--text3); font-size: 11px; }
           <option value="price_asc">Prix croissant</option>
           <option value="price_desc">Prix décroissant</option>
           <option value="reviews">Avis (volume)</option>
-          <option value="rating">Note ⭐ (4.5+)</option>
+          <option value="rating">Note (4.5+)</option>
         </select>
       </div>
     </div>
@@ -818,8 +818,8 @@ small.muted { color: var(--text3); font-size: 11px; }
       <div class="hint">Copie ce même ID sur ton téléphone pour retrouver tes données</div>
     </div>
     <div class="row">
-      <button class="btn btn-primary" onclick="syncPush()">⬆️ Envoyer vers cloud</button>
-      <button class="btn" onclick="syncPull()">⬇️ Récupérer depuis cloud</button>
+      <button class="btn btn-primary" onclick="syncPush()" style="display:inline-flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19.36 10.04A7.49 7.49 0 0 0 12 4 7.5 7.5 0 0 0 4.5 11a5.5 5.5 0 0 0 0 11h14.86A4.64 4.64 0 0 0 24 17.36a4.64 4.64 0 0 0-4.64-7.32z"/></svg>Envoyer vers cloud</button>
+      <button class="btn" onclick="syncPull()" style="display:inline-flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6a6 6 0 0 1 6 6h2a8 8 0 0 0-8-8zm-6 8a6 6 0 0 1 6-6V4a8 8 0 0 0-8 8H6zm6 6a6 6 0 0 1-6-6H4a8 8 0 0 0 8 8v3l4-4-4-4v3z"/></svg>Récupérer depuis cloud</button>
     </div>
     <div id="syncMsg" style="margin-top:14px;font-size:12px;color:var(--text2)"></div>
     <div class="modal-actions">
@@ -1073,7 +1073,7 @@ function renderSidebar() {
     html += `
       <div class="session ${isOpen?'open':''}">
         <div class="session-head ${isCurrent?'active':''} ${isActive?'current-active':''}" onclick="toggleSession('${s.id}', event)">
-          <span class="chev" onclick="event.stopPropagation();toggleChev('${s.id}')">▶</span>
+          <span class="chev" onclick="event.stopPropagation();toggleChev('${s.id}')"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor" style="transition:transform .2s ease"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="label" title="${escapeHtml(s.label)}">${isActive?'● ':''}${escapeHtml(s.label)}</span>
           <span class="count">${prods.length}</span>
           <span class="del" onclick="event.stopPropagation();deleteSession('${s.id}')" title="Supprimer">${ico('trash',13)}</span>
@@ -1964,7 +1964,7 @@ function renderHelp() {
     <div class="card">
       <h2>Les 9 méthodes de recherche (par ROI)</h2>
       ${METHODES.map(m => `<div style="padding:10px 0;border-bottom:1px solid var(--border)">
-        <div style="font-weight:500;margin-bottom:4px">${escapeHtml(m.label)} <a href="${escapeHtml(m.url)}" target="_blank" style="font-size:11px;color:var(--accent2)">↗ ouvrir</a></div>
+        <div style="font-weight:500;margin-bottom:4px">${escapeHtml(m.label)} <a href="${escapeHtml(m.url)}" target="_blank" style="font-size:11px;color:var(--accent2)"> ouvrir</a></div>
         <div style="font-size:12px;color:var(--text2);line-height:1.5">${escapeHtml(m.desc)}</div>
       </div>`).join('')}
     </div>
@@ -2374,7 +2374,7 @@ function cancelDiscover() {
   if (window._discoverAbort) {
     window._discoverAbort.aborted = true;
     const btn = document.getElementById('discoverBtn');
-    if (btn) { btn.disabled = false; btn.innerHTML = `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('dice',14)}</span>Surprends-moi`; }
+    if (btn) { btn.disabled = false; btn.innerHTML = `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('bolt',14)}</span>Surprends-moi`; }
     document.getElementById('discoverCancelBtn').style.display = 'none';
     const res = document.getElementById('discoverResults');
     if (res) res.innerHTML = `<div class="empty" style="padding:24px"><h3 style="font-size:14px">Recherche annulée</h3><p style="font-size:12px">Les niches déjà scannées sont gardées comme "vues".</p></div>`;
@@ -2404,8 +2404,8 @@ function openDiscoverModal() {
   });
   updatePerNicheHint();
   const hdr = document.getElementById('discoverHeaderIco'); if (hdr) hdr.innerHTML = ico('search',18);
-  const btnIco = document.getElementById('discoverBtnIco'); if (btnIco) btnIco.innerHTML = ico('dice',14);
-  const btn = document.getElementById('discoverBtn'); if (btn) btn.innerHTML = `<span id="discoverBtnIco" style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('dice',14)}</span>Surprends-moi`;
+  const btnIco = document.getElementById('discoverBtnIco'); if (btnIco) btnIco.innerHTML = ico('bolt',14);
+  const btn = document.getElementById('discoverBtn'); if (btn) btn.innerHTML = `<span id="discoverBtnIco" style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('bolt',14)}</span>Surprends-moi`;
   refreshDiscoverStats();
   refreshDiscoverQuota();
   if (!getSerpKey()) {
@@ -2423,7 +2423,7 @@ function onDiscoverModeChange() {
   const wrap = document.getElementById('discoverManualWrap');
   wrap.style.display = mode === 'manual' ? 'block' : 'none';
   document.getElementById('discoverBtn').innerHTML = mode === 'auto'
-    ? `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('dice',14)}</span>Surprends-moi`
+    ? `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('bolt',14)}</span>Surprends-moi`
     : `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('search',14)}</span>Lancer la recherche`;
 }
 
@@ -2574,12 +2574,12 @@ async function verifyAds(domain, btn) {
         const aurl = a.advertiser_url || a.link || a.format_link || transparencyUrl;
         return `<a href="${escapeHtml(aurl)}" target="_blank" rel="noopener" style="display:inline-block;width:48px;height:48px;border-radius:6px;overflow:hidden;background:#000;flex-shrink:0">${img?`<img src="${escapeHtml(img)}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">`:''}</a>`;
       }).join('');
-      html = `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><strong style="color:var(--green)">✓ ${count||'1+'} ad${count>1?'s':''} actives</strong>${advertiser?.advertiser_name?' · '+escapeHtml(advertiser.advertiser_name):''}<div style="display:flex;gap:4px;margin-left:6px">${sample}</div><a href="${escapeHtml(transparencyUrl)}" target="_blank" rel="noopener" style="color:var(--accent2);font-size:11px">Voir tout sur Ads Transparency ↗</a></div>`;
+      html = `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><strong style="color:var(--green);display:inline-flex;align-items:center;gap:4px">${ico('check',12)} ${count||'1+'} ad${count>1?'s':''} actives</strong>${advertiser?.advertiser_name?' · '+escapeHtml(advertiser.advertiser_name):''}<div style="display:flex;gap:4px;margin-left:6px">${sample}</div><a href="${escapeHtml(transparencyUrl)}" target="_blank" rel="noopener" style="color:var(--accent2);font-size:11px">Voir tout sur Ads Transparency</a></div>`;
     } else if (data.error) {
       html = `<span style="color:var(--red)">Erreur : ${escapeHtml(data.error)}</span>`;
     } else {
       const transparencyUrl = `https://adstransparency.google.com/?domain=${encodeURIComponent(domain)}&region=FR`;
-      html = `<span style="color:var(--text3)">Aucune ad active détectée pour ce domaine.</span> <a href="${escapeHtml(transparencyUrl)}" target="_blank" rel="noopener" style="color:var(--accent2);font-size:11px">Vérifier sur Ads Transparency ↗</a>`;
+      html = `<span style="color:var(--text3)">Aucune ad active détectée pour ce domaine.</span> <a href="${escapeHtml(transparencyUrl)}" target="_blank" rel="noopener" style="color:var(--accent2);font-size:11px">Vérifier sur Ads Transparency</a>`;
     }
     window._verifyCache[domain] = html;
     out.innerHTML = html;
@@ -2593,7 +2593,8 @@ function toggleAdsList(btn) {
   if (!wrap) return;
   const open = wrap.style.display !== 'none';
   wrap.style.display = open ? 'none' : 'block';
-  btn.innerHTML = btn.innerHTML.replace(open ? '▴' : '▾', open ? '▾' : '▴');
+  const chev = btn.querySelector('.adsChev');
+  if (chev) chev.style.transform = open ? '' : 'rotate(180deg)';
 }
 
 function renderCompetitorsSection(competitors, gamme) {
@@ -2608,7 +2609,7 @@ function renderCompetitorsSection(competitors, gamme) {
     if (c.is_shopify) badges.push(`<span class="pill success" style="font-size:10px;">Shopify</span>`);
     if (c.drop_match) {
       const m = c.drop_match;
-      badges.push(`<a href="${escapeHtml(m.link)}" target="_blank" rel="noopener" class="pill" style="font-size:10px;text-decoration:none;background:rgba(217,70,239,0.12);border-color:rgba(217,70,239,0.3);color:var(--accent2);">${escapeHtml(m.platform)} ↗</a>`);
+      badges.push(`<a href="${escapeHtml(m.link)}" target="_blank" rel="noopener" class="pill" style="font-size:10px;text-decoration:none;background:rgba(217,70,239,0.12);border-color:rgba(217,70,239,0.3);color:var(--accent2);">${escapeHtml(m.platform)}</a>`);
     }
     const where = [c.in_search?'search':'', c.in_shopping?'shopping':''].filter(Boolean).join(' + ');
     const priceTxt = c.price ? `<strong style="color:var(--accent2)">${escapeHtml(c.price)}</strong>` : '<span style="color:var(--text3)">prix n/a</span>';
@@ -2739,14 +2740,14 @@ async function runDiscover() {
           <h3 style="font-size:14px">Aucun produit trouvé en gamme ${gamme||'libre'}</h3>
           <p style="font-size:12px">Essayé ${tried.size} niches — rien dans cette tranche.<br>Essaie une autre gamme.</p>
         </div>`;
-        btn.disabled=false; btn.innerHTML = `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('dice',14)}</span>Surprends-moi (autre niche)`;
+        btn.disabled=false; btn.innerHTML = `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('bolt',14)}</span>Surprends-moi (autre niche)`;
         return;
       }
       // Build flat list of products to add (capped at totalTarget)
       const sid = activeSessionId || (state.sessions[0] && state.sessions[0].id);
       if (!sid) {
         alert('Crée une session active avant l\'auto-création.');
-        btn.disabled=false; btn.innerHTML = `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('dice',14)}</span>Surprends-moi (autre niche)`;
+        btn.disabled=false; btn.innerHTML = `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('bolt',14)}</span>Surprends-moi (autre niche)`;
         return;
       }
       const flat = [];
@@ -2804,7 +2805,7 @@ async function runDiscover() {
         ${nicheRows}
       `;
       btn.disabled = false;
-      btn.innerHTML = `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('dice',14)}</span>Surprends-moi (autre lot)`;
+      btn.innerHTML = `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('bolt',14)}</span>Surprends-moi (autre lot)`;
       refreshDiscoverStats();
       return;
     }
@@ -2831,7 +2832,7 @@ async function runDiscover() {
           <h3 style="font-size:14px">Aucun produit trouvé en gamme ${gamme||'libre'}</h3>
           <p style="font-size:12px">Essayé ${tried.size} niches — aucune n'a retourné de produit dans cette tranche de prix.<br>Essaie une autre gamme ou repasse en mode manuel.</p>
         </div>`;
-        btn.disabled=false; btn.innerHTML = `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('dice',14)}</span>Surprends-moi (autre niche)`;
+        btn.disabled=false; btn.innerHTML = `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('bolt',14)}</span>Surprends-moi (autre niche)`;
         return;
       }
       candidates.sort((a,b) => b.r.inGamme.length - a.r.inGamme.length);
@@ -2862,7 +2863,7 @@ async function runDiscover() {
         '<span class="pill danger">Institutionnels top 3</span>' :
         '<span class="pill success">Top 3 propre</span>';
       const adsPill = stats.n_ads
-        ? `<button class="pill success" onclick="toggleAdsList(this)" style="cursor:pointer;border:none;font-family:inherit">${stats.n_ads} Google Ads ▾</button>`
+        ? `<button class="pill success" onclick="toggleAdsList(this)" style="cursor:pointer;border:none;font-family:inherit;display:inline-flex;align-items:center;gap:4px">${stats.n_ads} Google Ads <svg class="adsChev" width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="transition:transform .2s ease"><path d="M7 10l5 5 5-5z"/></svg></button>`
         : '<span class="pill warning">Pas d\'ads search</span>';
       // Pre-rendered expandable ads list
       const adsList = (data.ads || []).slice(0, 12).map((a,i) => `
@@ -2872,7 +2873,7 @@ async function runDiscover() {
             <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml((a.title||'').slice(0,80))}</div>
             <div style="font-size:10px;color:var(--text3);margin-top:2px;">${escapeHtml(a.domain||'')}${a.slot?' · '+escapeHtml(a.slot):''}</div>
           </div>
-          <a href="${escapeHtml(a.link||'')}" target="_blank" rel="noopener" class="btn btn-sm" style="font-size:10px;text-decoration:none">Voir l'annonce ↗</a>
+          <a href="${escapeHtml(a.link||'')}" target="_blank" rel="noopener" class="btn btn-sm" style="font-size:10px;text-decoration:none">Voir l'annonce</a>
         </div>
       `).join('');
       const dedupPill = filteredOut > 0 ? `<span class="pill">−${filteredOut} déjà vus</span>` : '';
@@ -2897,10 +2898,10 @@ async function runDiscover() {
           const srcBg = s._source === 'shopping' ? 'rgba(34,197,94,0.15)' : 'rgba(139,92,246,0.18)';
           const srcLink = s.link || '';
           const srcBadge = srcLink
-            ? `<a href="${escapeHtml(srcLink)}" target="_blank" rel="noopener" class="pill" style="background:${srcBg};border-color:${srcColor}55;color:${srcColor};font-size:10px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:600" title="Voir le produit sur ${escapeHtml(s.domain||'')}">${ico('cart',11)} ${srcLabel} ↗</a>`
+            ? `<a href="${escapeHtml(srcLink)}" target="_blank" rel="noopener" class="pill" style="background:${srcBg};border-color:${srcColor}55;color:${srcColor};font-size:10px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:600" title="Voir le produit sur ${escapeHtml(s.domain||'')}">${ico('cart',11)} ${srcLabel}</a>`
             : `<span class="pill" style="background:${srcBg};color:${srcColor};font-size:10px;">${srcLabel}</span>`;
           const adsBadge = s._alsoInAds && s._adLink
-            ? `<a href="${escapeHtml(s._adLink)}" target="_blank" rel="noopener" class="pill" style="background:rgba(245,158,11,0.18);border-color:rgba(245,158,11,0.45);color:#f59e0b;font-size:10px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:600" title="Annonce Search active sur ${escapeHtml(s.domain||'')}">${ico('zap',11)} Ad Search ↗</a>`
+            ? `<a href="${escapeHtml(s._adLink)}" target="_blank" rel="noopener" class="pill" style="background:rgba(245,158,11,0.18);border-color:rgba(245,158,11,0.45);color:#f59e0b;font-size:10px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:600" title="Annonce Search active sur ${escapeHtml(s.domain||'')}">${ico('zap',11)} Ad Search</a>`
             : '';
           const verifyBtn = s.domain ? `<button class="pill" onclick="verifyAds('${escapeHtml(s.domain)}', this)" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text2);font-size:10px;cursor:pointer;font-family:inherit" title="Vérifier les ads actives via Google Ads Transparency Center">Vérifier ads</button>` : '';
           return `
@@ -2967,7 +2968,7 @@ async function runDiscover() {
   }
   btn.disabled = false;
   btn.innerHTML = mode === 'auto'
-    ? `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('dice',14)}</span>Surprends-moi (autre niche)`
+    ? `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('bolt',14)}</span>Surprends-moi (autre niche)`
     : `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('refresh',14)}</span>Re-lancer`;
   refreshDiscoverStats();
 }
