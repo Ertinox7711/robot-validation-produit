@@ -2531,6 +2531,63 @@ async function discoverBatch(query, gamme, seen) {
   return { data, shopping, fresh, inGamme, query: usedQuery, totalRaw: shopping.length, filteredOut: fresh.length - inGamme.length };
 }
 
+// Verify if a domain is currently running ads via Google Ads Transparency Center
+// (the official Google tool that shows ALL active ads from a given advertiser).
+// Routes through serp_scout if available, else direct via codetabs proxy.
+window._verifyCache = window._verifyCache || {};
+async function verifyAds(domain, btn) {
+  if (!domain) return;
+  const out = document.querySelector(`[data-verify-out="${domain}"]`);
+  if (!out) return;
+  if (out.style.display !== 'none') { out.style.display = 'none'; return; }
+  out.style.display = 'block';
+  if (window._verifyCache[domain]) {
+    out.innerHTML = window._verifyCache[domain];
+    return;
+  }
+  out.innerHTML = '<em style="color:var(--text3)">Recherche dans Google Ads Transparency Center…</em>';
+  try {
+    let data;
+    if (SERP_LOCAL_ENDPOINT) {
+      const r = await fetch(`${SERP_LOCAL_ENDPOINT}/verify_ads?domain=${encodeURIComponent(domain)}`);
+      if (r.ok) data = await r.json();
+    }
+    if (!data) {
+      // Browser fallback via codetabs proxy
+      const keys = getAllSerpKeys().filter(k => !window._deadKeys.has(k));
+      if (!keys.length) { out.innerHTML = '<span style="color:var(--red)">Pas de clé SerpAPI configurée</span>'; return; }
+      const proxy = (u) => 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(u);
+      const url = `https://serpapi.com/search.json?engine=google_ads_transparency_center&text=${encodeURIComponent(domain)}&region=2250&api_key=${encodeURIComponent(keys[0])}`;
+      const r = await fetch(proxy(url));
+      data = await r.json();
+    }
+    const ads = data.ad_creatives || data.advertiser_ads || data.ads || [];
+    const advertiser = data.advertiser || (data.advertisers && data.advertisers[0]) || null;
+    let html;
+    if (ads.length || advertiser) {
+      const count = ads.length || (advertiser?.total_ads || 0);
+      const transparencyUrl = advertiser?.advertiser_id
+        ? `https://adstransparency.google.com/advertiser/${advertiser.advertiser_id}?region=FR`
+        : `https://adstransparency.google.com/?domain=${encodeURIComponent(domain)}&region=FR`;
+      const sample = ads.slice(0, 3).map(a => {
+        const img = a.image || a.preview_url || a.thumbnail || '';
+        const aurl = a.advertiser_url || a.link || a.format_link || transparencyUrl;
+        return `<a href="${escapeHtml(aurl)}" target="_blank" rel="noopener" style="display:inline-block;width:48px;height:48px;border-radius:6px;overflow:hidden;background:#000;flex-shrink:0">${img?`<img src="${escapeHtml(img)}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">`:''}</a>`;
+      }).join('');
+      html = `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><strong style="color:var(--green)">✓ ${count||'1+'} ad${count>1?'s':''} actives</strong>${advertiser?.advertiser_name?' · '+escapeHtml(advertiser.advertiser_name):''}<div style="display:flex;gap:4px;margin-left:6px">${sample}</div><a href="${escapeHtml(transparencyUrl)}" target="_blank" rel="noopener" style="color:var(--accent2);font-size:11px">Voir tout sur Ads Transparency ↗</a></div>`;
+    } else if (data.error) {
+      html = `<span style="color:var(--red)">Erreur : ${escapeHtml(data.error)}</span>`;
+    } else {
+      const transparencyUrl = `https://adstransparency.google.com/?domain=${encodeURIComponent(domain)}&region=FR`;
+      html = `<span style="color:var(--text3)">Aucune ad active détectée pour ce domaine.</span> <a href="${escapeHtml(transparencyUrl)}" target="_blank" rel="noopener" style="color:var(--accent2);font-size:11px">Vérifier sur Ads Transparency ↗</a>`;
+    }
+    window._verifyCache[domain] = html;
+    out.innerHTML = html;
+  } catch(e) {
+    out.innerHTML = `<span style="color:var(--red)">Erreur : ${escapeHtml(e.message)}</span>`;
+  }
+}
+
 function toggleAdsList(btn) {
   const wrap = btn.closest('div').parentElement.querySelector('.ads-list');
   if (!wrap) return;
@@ -2836,30 +2893,34 @@ async function runDiscover() {
           const margeEst = v ? Math.round((v - v/4 - v*0.125) * 100)/100 : null;
           // Source badge: where the product was actually found on Google
           const srcLabel = s._source === 'shopping' ? 'Google Shopping' : s._source === 'inline_shopping' ? 'Shopping (Search)' : 'SERP';
+          const srcColor = s._source === 'shopping' ? '#22c55e' : '#8b5cf6';
+          const srcBg = s._source === 'shopping' ? 'rgba(34,197,94,0.15)' : 'rgba(139,92,246,0.18)';
           const srcLink = s.link || '';
           const srcBadge = srcLink
-            ? `<a href="${escapeHtml(srcLink)}" target="_blank" rel="noopener" class="pill" style="background:rgba(139,92,246,0.15);border-color:rgba(139,92,246,0.35);color:var(--accent2);font-size:10px;text-decoration:none;display:inline-flex;align-items:center;gap:4px" title="Voir l'annonce sur ${escapeHtml(s.domain||'')}">${ico('cart',11)} ${srcLabel} ↗</a>`
-            : `<span class="pill" style="background:rgba(139,92,246,0.15);color:var(--accent2);font-size:10px;">${srcLabel}</span>`;
+            ? `<a href="${escapeHtml(srcLink)}" target="_blank" rel="noopener" class="pill" style="background:${srcBg};border-color:${srcColor}55;color:${srcColor};font-size:10px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:600" title="Voir le produit sur ${escapeHtml(s.domain||'')}">${ico('cart',11)} ${srcLabel} ↗</a>`
+            : `<span class="pill" style="background:${srcBg};color:${srcColor};font-size:10px;">${srcLabel}</span>`;
           const adsBadge = s._alsoInAds && s._adLink
-            ? `<a href="${escapeHtml(s._adLink)}" target="_blank" rel="noopener" class="pill" style="background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.35);color:var(--yellow);font-size:10px;text-decoration:none;display:inline-flex;align-items:center;gap:4px" title="Voir l'annonce Search">${ico('zap',11)} Ads Search ↗</a>`
+            ? `<a href="${escapeHtml(s._adLink)}" target="_blank" rel="noopener" class="pill" style="background:rgba(245,158,11,0.18);border-color:rgba(245,158,11,0.45);color:#f59e0b;font-size:10px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:600" title="Annonce Search active sur ${escapeHtml(s.domain||'')}">${ico('zap',11)} Ad Search ↗</a>`
             : '';
+          const verifyBtn = s.domain ? `<button class="pill" onclick="verifyAds('${escapeHtml(s.domain)}', this)" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text2);font-size:10px;cursor:pointer;font-family:inherit" title="Vérifier les ads actives via Google Ads Transparency Center">Vérifier ads</button>` : '';
           return `
-          <div style="display:flex;gap:12px;align-items:center;padding:14px;border:1px solid ${i<3?'rgba(139,92,246,0.3)':'var(--border)'};border-radius:12px;margin-bottom:8px;background:${i<3?'linear-gradient(135deg,rgba(139,92,246,0.05),rgba(217,70,239,0.03))':'rgba(255,255,255,0.02)'};transition:transform .15s ease,box-shadow .15s ease" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px -8px rgba(139,92,246,0.35)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:14px;border:1px solid ${i<3?'rgba(139,92,246,0.3)':'var(--border)'};border-radius:12px;margin-bottom:8px;background:${i<3?'linear-gradient(135deg,rgba(139,92,246,0.05),rgba(217,70,239,0.03))':'rgba(255,255,255,0.02)'};transition:transform .15s ease,box-shadow .15s ease" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px -8px rgba(139,92,246,0.35)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
             ${thumb ? `<img src="${escapeHtml(thumb)}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;flex-shrink:0;background:#000" alt="" onerror="this.style.display='none'">` : `<div style="width:48px;height:48px;border-radius:8px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;color:var(--text3);flex-shrink:0">${ico('cart',20)}</div>`}
-            <div style="font-size:11px;font-weight:700;color:var(--accent2);min-width:24px;">#${i+1}</div>
+            <div style="font-size:11px;font-weight:700;color:var(--accent2);min-width:24px;padding-top:4px">#${i+1}</div>
             <div style="flex:1;min-width:0;">
               <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${srcLink ? `<a href="${escapeHtml(srcLink)}" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none">${escapeHtml((s.title||'').slice(0,80))}</a>` : escapeHtml((s.title||'').slice(0,80))}</div>
-              <div style="font-size:11px;color:var(--text2);margin-top:2px;display:flex;flex-wrap:wrap;align-items:center;gap:6px">
-                <span>${escapeHtml(s.source||s.domain||'')}</span>
-                <strong style="color:var(--accent2)">${escapeHtml(s.price||'—')}</strong>
-                ${s.rating?`<span>· ${s.rating}/5${s.reviews?' ('+s.reviews+')':''}</span>`:''}
-                ${margeEst?`<span style="color:var(--green)">· ~${margeEst}€ marge</span>`:''}
+              <div style="font-size:11px;color:var(--text2);margin-top:2px;">
+                ${escapeHtml(s.source||s.domain||'')} · <strong style="color:var(--accent2)">${escapeHtml(s.price||'—')}</strong>${s.rating?` · ${s.rating}/5${s.reviews?' ('+s.reviews+')':''}`:''}${margeEst?` · <span style="color:var(--green)">~${margeEst}€ marge</span>`:''}
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;align-items:center">
                 ${srcBadge}
                 ${adsBadge}
+                ${verifyBtn}
+                <div data-verify-out="${escapeHtml(s.domain||'')}" style="display:none;width:100%;margin-top:4px;padding:6px 8px;border-radius:6px;background:rgba(0,0,0,0.3);font-size:11px;"></div>
               </div>
             </div>
-            <span class="pill ${scoreClass}" style="font-size:10px;">${sc}pts</span>
-            <button class="btn btn-sm btn-primary" onclick='discoverAdd(${JSON.stringify(s).replace(/'/g,"&apos;")}, ${JSON.stringify(q).replace(/'/g,"&apos;")})' title="Ajouter ce produit">+</button>
+            <span class="pill ${scoreClass}" style="font-size:10px;flex-shrink:0">${sc}pts</span>
+            <button class="btn btn-sm btn-primary" onclick='discoverAdd(${JSON.stringify(s).replace(/'/g,"&apos;")}, ${JSON.stringify(q).replace(/'/g,"&apos;")})' title="Ajouter ce produit" style="flex-shrink:0">+</button>
           </div>
         `;}).join('')}
         ${renderCompetitorsSection(data.competitors || [], gamme)}
