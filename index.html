@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Robot Validation Produit — Ecom Inner Circle</title>
 <script src="formation_data.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <script type="module">
   // Firebase Firestore + Auth for SaaS-style multi-device app
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js';
@@ -1138,8 +1139,9 @@ function renderDashboard() {
       <div class="row">
         <button class="btn btn-primary" onclick="openSessionModal()">+ Nouvelle session</button>
         <button class="btn" onclick="openProductModal()">+ Nouveau produit</button>
-        <button class="btn" onclick="exportAll()">📥 Export JSON</button>
+        <button class="btn" onclick="exportAll()">Export JSON</button>
         <button class="btn" onclick="exportKeptCSV()">CSV produits retenus</button>
+        <button class="btn btn-primary" onclick="exportTemplateXLSX('all')">Export Excel (template Arthur)</button>
       </div>
     </div>
   `;
@@ -1184,7 +1186,8 @@ function renderKept() {
     <p style="color:var(--text2);margin-bottom:20px">${arr.length} produit${arr.length>1?'s':''} validé${arr.length>1?'s':''} pour lancement</p>
     <div class="card">
       <div style="display:flex;gap:10px;margin-bottom:14px">
-        <button class="btn btn-sm" onclick="exportKeptCSV()">📥 Export CSV</button>
+        <button class="btn btn-sm" onclick="exportKeptCSV()">Export CSV</button>
+        <button class="btn btn-sm btn-primary" onclick="exportTemplateXLSX('kept')">Export Excel (template)</button>
       </div>
       <table class="table">
         <thead><tr>
@@ -1359,11 +1362,23 @@ function renderProductInfos(p) {
         <div class="field" style="grid-column:1/-1"><label>URL fournisseur</label><input value="${escapeHtml(p.fournisseur_url||'')}" oninput="updateProduct('${p.id}','fournisseur_url',this.value)" placeholder="https://…"></div>
         <div class="field"><label>Niche / univers</label><input value="${escapeHtml(p.niche||'')}" oninput="updateProduct('${p.id}','niche',this.value)" placeholder="Maison, Sport, Beauté…"></div>
       </div>
-      <h3>💰 Prix</h3>
+      <h3>Prix</h3>
       <div class="form-grid">
-        <div class="field"><label>Prix achat (€)</label><input type="number" step="0.01" value="${p.prix_achat||''}" oninput="updateProduct('${p.id}','prix_achat',this.value)"><div class="hint">Coût unitaire fournisseur</div></div>
+        <div class="field"><label>Prix achat (€)</label><input type="number" step="0.01" value="${p.prix_achat||''}" oninput="updateProduct('${p.id}','prix_achat',this.value)"><div class="hint">Coût unitaire fournisseur (AliExpress)</div></div>
         <div class="field"><label>Livraison (€)</label><input type="number" step="0.01" value="${p.prix_livraison||''}" oninput="updateProduct('${p.id}','prix_livraison',this.value)"><div class="hint">Par unité</div></div>
         <div class="field"><label>Prix vente (€)</label><input type="number" step="0.01" value="${p.prix_vente||''}" oninput="updateProduct('${p.id}','prix_vente',this.value)"><div class="hint">TTC sur la page</div></div>
+      </div>
+      <h3>Recherche & CPC (export Excel)</h3>
+      <div class="form-grid">
+        <div class="field"><label>Volume mensuel (mot-clé)</label><input value="${escapeHtml(p.volume_mensuel||'')}" oninput="updateProduct('${p.id}','volume_mensuel',this.value)" placeholder="ex: 3,5K"><div class="hint">Volume Google Keyword Planner du mot-clé principal</div></div>
+        <div class="field"><label>Volume total (univers)</label><input value="${escapeHtml(p.volume_total||'')}" oninput="updateProduct('${p.id}','volume_total',this.value)" placeholder="ex: 29,6K"><div class="hint">Somme des mots-clés liés</div></div>
+        <div class="field"><label>CPC moyen (€)</label><input type="number" step="0.01" value="${p.cpc||''}" oninput="updateProduct('${p.id}','cpc',this.value)"><div class="hint">Coût par clic Google Ads</div></div>
+      </div>
+      <h3>Concurrents drop (3 max — export Excel)</h3>
+      <div class="form-grid">
+        <div class="field" style="grid-column:1/-1"><label>Lien concurrent 1</label><input value="${escapeHtml(p.concurrent_1||'')}" oninput="updateProduct('${p.id}','concurrent_1',this.value)" placeholder="https://…"></div>
+        <div class="field" style="grid-column:1/-1"><label>Lien concurrent 2</label><input value="${escapeHtml(p.concurrent_2||'')}" oninput="updateProduct('${p.id}','concurrent_2',this.value)" placeholder="https://…"></div>
+        <div class="field" style="grid-column:1/-1"><label>Lien concurrent 3</label><input value="${escapeHtml(p.concurrent_3||'')}" oninput="updateProduct('${p.id}','concurrent_3',this.value)" placeholder="https://…"></div>
       </div>
     </div>
   `;
@@ -1719,6 +1734,107 @@ function importAll(e) {
   r.readAsText(file);
   e.target.value = '';
 }
+// Export products to the Arthur Excel template (recherche_produit_v2 layout).
+// Preserves the formulas D=C*150, G=E-F, H=G/E so cells recalculate when the
+// user edits in Excel. Pulls competitor links + drop/expert/search booleans
+// from product fields, with fallback to serp_scan and criteres.
+function exportTemplateXLSX(scope) {
+  if (typeof XLSX === 'undefined') { alert('La librairie Excel n\'est pas chargée. Recharge la page.'); return; }
+  const arr = scope === 'kept' ? keptProducts() : (state.products || []);
+  if (!arr.length) { alert('Aucun produit à exporter.'); return; }
+
+  const headers = [
+    'Nom du produit',
+    'Volume de recherche\n(mensuel)',
+    'CPC moyen (€)',
+    'CPA estimé\n(CPC x 150)',
+    'Prix de revente (€)',
+    'Prix achat\nAliExpress + livraison (€)',
+    'Marge brute (€)',
+    'Marge brute (%)',
+    'Concurrents\nen drop ?',
+    'Lien concurrent 1',
+    'Lien concurrent 2',
+    'Lien concurrent 3',
+    'Besoin\nd\'expert ?',
+    'Fonctionne\nen Search ?'
+  ];
+
+  const rows = arr.map(p => {
+    const volMens = (p.volume_mensuel || '').toString().trim();
+    const volTot = (p.volume_total || '').toString().trim();
+    let volCell = '';
+    if (volMens && volTot) volCell = `${volMens}\nVolume total: ${volTot}`;
+    else if (volMens) volCell = volMens;
+    else if (volTot) volCell = `Volume total: ${volTot}`;
+    const cpc = p.cpc !== undefined && p.cpc !== '' ? Number(p.cpc) : '';
+    const prixVente = p.prix_vente !== undefined && p.prix_vente !== '' ? Number(p.prix_vente) : '';
+    const achat = p.prix_achat !== undefined && p.prix_achat !== '' ? Number(p.prix_achat) : 0;
+    const livraison = p.prix_livraison !== undefined && p.prix_livraison !== '' ? Number(p.prix_livraison) : 0;
+    const fCell = (achat || livraison) ? (Number(achat) + Number(livraison)) : '';
+    // Competitor links: explicit fields first, then serp_scan competitors as fallback
+    const compFromScan = (p.serp_scan?.competitors || []).map(c => c.link || ('https://' + (c.domain || '')));
+    const c1 = p.concurrent_1 || compFromScan[0] || '';
+    const c2 = p.concurrent_2 || compFromScan[1] || '';
+    const c3 = p.concurrent_3 || compFromScan[2] || '';
+    // Concurrents en drop ? "oui" if scan found drops or any link is set
+    const hasDrop = (p.serp_scan?.competitors || []).some(c => c.is_drop) || !!(c1 || c2 || c3);
+    const dropCell = hasDrop ? 'oui' : (c1 || c2 || c3 ? 'oui' : '');
+    // Besoin d'expert = critère 8, Fonctionne en search = critère 12
+    const expertCell = p.criteres?.[8] ? 'OUI' : '';
+    const searchCell = p.criteres?.[12] ? 'Oui' : '';
+    return [
+      p.name || '',
+      volCell,
+      cpc,
+      '', // D — formula injected after
+      prixVente,
+      fCell,
+      '', // G — formula
+      '', // H — formula
+      dropCell,
+      c1, c2, c3,
+      expertCell,
+      searchCell
+    ];
+  });
+
+  const aoa = [headers, ...rows];
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+
+  // Inject formulas + format for each data row
+  for (let i = 0; i < rows.length; i++) {
+    const r = i + 2; // 1-based, header is row 1
+    ws[`D${r}`] = { t: 'n', f: `IF(C${r}="","",C${r}*150)` };
+    ws[`G${r}`] = { t: 'n', f: `IF(OR(E${r}="",F${r}=""),"",E${r}-F${r})` };
+    ws[`H${r}`] = { t: 'n', f: `IF(OR(E${r}="",F${r}=""),"",G${r}/E${r})`, z: '0.00%' };
+    // Number formats for currency
+    ['C','E','F'].forEach(col => {
+      const cell = ws[`${col}${r}`];
+      if (cell && cell.t === 'n') cell.z = '0.00';
+    });
+  }
+
+  // Column widths matching the template feel
+  ws['!cols'] = [
+    {wch:28},{wch:18},{wch:10},{wch:14},{wch:14},{wch:18},
+    {wch:14},{wch:14},{wch:12},{wch:32},{wch:32},{wch:32},{wch:12},{wch:14}
+  ];
+  // Row 1 header height
+  ws['!rows'] = [{hpt: 38}];
+
+  // Footer note like the original
+  const footerRow = rows.length + 3;
+  XLSX.utils.sheet_add_aoa(ws, [['Colonnes en bleu = calculées automatiquement (ne pas modifier les colonnes D, G, H)']], { origin: `A${footerRow}` });
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Recherche Produit');
+
+  const date = new Date().toISOString().slice(0, 10);
+  const suffix = scope === 'kept' ? 'retenus' : 'tous';
+  XLSX.writeFile(wb, `recherche_produit_${suffix}_${date}.xlsx`);
+}
+
 function exportKeptCSV() {
   const arr = keptProducts();
   if (arr.length === 0) { alert('Aucun produit retenu à exporter'); return; }
@@ -2201,6 +2317,7 @@ async function runDiscover() {
         const sid = activeSessionId || state.sessions[0].id;
         let added = 0;
         const toAdd = candidates.slice(0, 5);
+        const compLinks = (data.competitors || []).map(c => c.link || ('https://' + (c.domain || '')));
         for (const s of toAdd) {
           const pid = 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
           const priceVente = s.extracted_price || 0;
@@ -2213,6 +2330,10 @@ async function runDiscover() {
             prix_achat: priceVente ? Math.round(priceVente / 4 * 100)/100 : '',
             prix_livraison: '',
             prix_vente: priceVente,
+            volume_mensuel: '', volume_total: '', cpc: '',
+            concurrent_1: compLinks[0] || '',
+            concurrent_2: compLinks[1] || '',
+            concurrent_3: compLinks[2] || '',
             notes: `Découvert via niche "${q}". Source: ${s.source||s.domain||''}.`,
             criteres: {}, page_checklist: {},
             created: Date.now(),
