@@ -660,7 +660,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 </div>
 
 <header>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4)" title="">v0.7.2-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.8.0-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -1008,8 +1008,68 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.7.2-beta';
-const APP_VERSION_NOTES = 'Fix badge version invisible (override .logo span text-fill transparent → blanc opaque)';
+const APP_VERSION = '0.8.0-beta';
+const APP_VERSION_NOTES = 'Page Historique : journal des versions visible dans la sidebar avec source d\'inspiration';
+
+// Changelog inline — bumpé à chaque version par l'agent quotidien.
+// Format: { v, date, summary, source?, items?: [{type, text}] }
+// `source` : "interne" ou nom du SaaS qui a inspiré
+// `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
+const CHANGELOG = [
+  { v: '0.8.0-beta', date: '2026-04-25', source: 'interne', summary: 'Page Historique des versions',
+    items: [{type:'feat', text:'Nouvelle vue Historique dans la sidebar avec timeline des versions, source d\'inspiration et items détaillés'}] },
+  { v: '0.7.2-beta', date: '2026-04-25', source: 'interne', summary: 'Fix badge version invisible',
+    items: [{type:'fix', text:'Override .logo span text-fill transparent → texte blanc opaque'}] },
+  { v: '0.7.1-beta', date: '2026-04-25', source: 'interne', summary: 'Badge version voyant',
+    items: [{type:'ux', text:'Gradient violet/rose + glow + texte blanc, valeur initiale en HTML statique'}] },
+  { v: '0.7.0-beta', date: '2026-04-25', source: 'interne', summary: 'Multi-select candidats + séparateur institutionnels',
+    items: [
+      {type:'feat', text:'Multi-sélection des candidats avec barre d\'action sticky (ajouter / ignorer / tous indé)'},
+      {type:'feat', text:'Séparateur visuel "Institutionnels (à éviter)" en haut + "Indé / drop potentiel" en bas'},
+      {type:'feat', text:'Modale Discover élargie 920px + clic backdrop ne ferme plus'},
+      {type:'feat', text:'Lien direct vendeur (Google "I\'m feeling lucky" si link=google.fr)'},
+      {type:'ux', text:'Badge version dans le header'},
+    ]},
+  { v: '0.6.0-beta', date: '2026-04-25', source: 'interne', summary: 'Discovery flexible',
+    items: [
+      {type:'feat', text:'Bouton Annuler pendant la discovery'},
+      {type:'feat', text:'Params Total + Nb niches inversés (perNiche calculé)'},
+      {type:'feat', text:'Niches manuelles textarea'},
+      {type:'feat', text:'Sort dropdown (score/prix/avis/note)'},
+      {type:'feat', text:'Vignettes candidats + marge nette estimée'},
+      {type:'ux', text:'Préférences persistées en localStorage'},
+    ]},
+  { v: '0.5.0-beta', date: '2026-04-25', source: 'Sell The Trend / Minea', summary: 'Vérifier ads via Google Ads Transparency Center',
+    items: [
+      {type:'feat', text:'Bouton "Vérifier ads" sur chaque candidat → query officielle Google Ads Transparency Center'},
+      {type:'feat', text:'Badges source cliquables (Shopping vert / Search violet)'},
+      {type:'feat', text:'Cross-référence ads par domaine + lien direct annonce Search'},
+    ]},
+  { v: '0.4.0-beta', date: '2026-04-25', source: 'interne', summary: 'Quota SerpAPI multi-clés',
+    items: [
+      {type:'feat', text:'Rotation automatique des clés quand quota épuisé'},
+      {type:'feat', text:'Endpoint /quota dans serp_scout.py'},
+      {type:'feat', text:'Affichage live du quota restant dans la modale Discover et les Paramètres'},
+    ]},
+  { v: '0.3.0-beta', date: '2026-04-25', source: 'interne', summary: 'Export Excel template Arthur',
+    items: [
+      {type:'feat', text:'Export .xlsx 1:1 avec le template Arthur (formules D=CPA, G=marge, H=marge%)'},
+      {type:'feat', text:'Champs Volume mensuel / Volume total / CPC / 3 concurrents dans la fiche produit'},
+      {type:'feat', text:'Auto-fill des concurrents drop depuis le SERP scan'},
+    ]},
+  { v: '0.2.0-beta', date: '2026-04-25', source: 'AutoDS / Spocket', summary: 'Détection drop multi-plateformes',
+    items: [
+      {type:'feat', text:'Détection Shopify (signatures cdn.shopify.com / x-shop*)'},
+      {type:'feat', text:'Match produit sur AliExpress / Europages / Bigbuy / Vevor / Temu / DHgate / Alibaba / Banggood'},
+      {type:'feat', text:'Animations 3D sur cards et stat-cards, multi-select sidebar'},
+    ]},
+  { v: '0.1.0-beta', date: '2026-04-25', source: 'interne', summary: 'Fix gamme prix dur + ads top/bottom',
+    items: [
+      {type:'fix', text:'Gamme prix respectée (filtre dur, plus de fallback hors-gamme)'},
+      {type:'fix', text:'Ads détectés sous top_ads / bottom_ads / shopping_ads'},
+      {type:'ux', text:'Passe complète emojis → SVG'},
+    ]},
+];
 function _applyVersion() {
   const el = document.getElementById('appVersion');
   if (el) { el.textContent = 'v' + APP_VERSION; el.title = APP_VERSION_NOTES; }
@@ -1087,6 +1147,10 @@ function renderSidebar() {
       <div class="nav-item ${currentView.type==='formation'?'active':''}" onclick="go({type:'formation'})">
         <span class="icon">${ico('graduation',16)}</span><span>Formation Skool</span>
         <span class="count">${(window.FORMATION||[]).filter(l=>l.transcript).length}/27</span>
+      </div>
+      <div class="nav-item ${currentView.type==='changelog'?'active':''}" onclick="go({type:'changelog'})">
+        <span class="icon">${ico('notes',16)}</span><span>Historique versions</span>
+        <span class="count">${CHANGELOG.length}</span>
       </div>
     </div>
     <div class="sb-section">
@@ -1277,9 +1341,56 @@ function renderMain() {
   else if (currentView.type === 'kept') m.innerHTML = renderKept();
   else if (currentView.type === 'help') m.innerHTML = renderHelp();
   else if (currentView.type === 'formation') m.innerHTML = renderFormation(currentView.lesson);
+  else if (currentView.type === 'changelog') m.innerHTML = renderChangelog();
   else if (currentView.type === 'session') m.innerHTML = renderSession(currentView.id);
   else if (currentView.type === 'product') m.innerHTML = renderProduct(currentView.id);
   else m.innerHTML = renderDashboard();
+}
+
+function renderChangelog() {
+  const typeColor = { feat: 'var(--green)', fix: '#f59e0b', ux: 'var(--accent2)', perf: '#22d3ee', doc: 'var(--text2)' };
+  const typeLabel = { feat: 'feat', fix: 'fix', ux: 'ux', perf: 'perf', doc: 'doc' };
+  const versions = CHANGELOG.map((c, i) => {
+    const isLatest = i === 0;
+    const itemsHtml = (c.items || []).map(it => {
+      const col = typeColor[it.type] || 'var(--text2)';
+      return `<div style="display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:6px;font-size:13px;line-height:1.5;${isLatest ? 'background:rgba(139,92,246,0.04);' : ''}">
+        <span class="pill" style="background:${col}22;color:${col};border-color:${col}55;font-size:9px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;flex-shrink:0;min-width:38px;text-align:center">${typeLabel[it.type]||it.type}</span>
+        <span style="color:var(--text)">${escapeHtml(it.text)}</span>
+      </div>`;
+    }).join('');
+    const sourceTag = c.source && c.source !== 'interne'
+      ? `<span class="pill" style="background:rgba(217,70,239,0.12);color:var(--accent2);border-color:rgba(217,70,239,0.3);font-size:10px">Inspiré de ${escapeHtml(c.source)}</span>`
+      : `<span class="pill" style="background:rgba(255,255,255,0.04);color:var(--text3);font-size:10px">Interne</span>`;
+    return `
+      <div class="card" style="margin-bottom:14px;${isLatest ? 'border-color:rgba(139,92,246,0.4);box-shadow:0 0 24px -8px rgba(139,92,246,0.3)' : ''}">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+          <h2 style="margin:0;font-size:18px;display:inline-flex;align-items:center;gap:8px">
+            <span style="background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff;padding:3px 10px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:0.04em">v${escapeHtml(c.v)}</span>
+            ${isLatest ? '<span class="pill success" style="font-size:10px">version actuelle</span>' : ''}
+          </h2>
+          <span class="spacer" style="flex:1"></span>
+          <span style="color:var(--text3);font-size:12px">${escapeHtml(c.date)}</span>
+          ${sourceTag}
+        </div>
+        <div style="font-size:14px;color:var(--text2);margin-bottom:10px;font-weight:500">${escapeHtml(c.summary)}</div>
+        ${itemsHtml}
+      </div>`;
+  }).join('');
+  const totalFeats = CHANGELOG.reduce((n, c) => n + (c.items||[]).filter(i => i.type==='feat').length, 0);
+  const totalFixes = CHANGELOG.reduce((n, c) => n + (c.items||[]).filter(i => i.type==='fix').length, 0);
+  return `
+    <h1 style="font-size:22px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:10px;">
+      <span style="color:var(--accent2);display:inline-flex">${ico('notes',22)}</span>Historique des versions
+    </h1>
+    <p style="color:var(--text2);font-size:13px;margin-bottom:20px">Journal de toutes les améliorations apportées à l'app. Une nouvelle version sort chaque jour automatiquement.</p>
+    <div style="display:flex;gap:14px;margin-bottom:24px;flex-wrap:wrap">
+      <div class="stat-card" style="flex:1;min-width:120px"><div class="stat-label">Versions</div><div class="stat-value">${CHANGELOG.length}</div></div>
+      <div class="stat-card" style="flex:1;min-width:120px"><div class="stat-label">Features</div><div class="stat-value" style="color:var(--green)">${totalFeats}</div></div>
+      <div class="stat-card" style="flex:1;min-width:120px"><div class="stat-label">Fixes</div><div class="stat-value" style="color:#f59e0b">${totalFixes}</div></div>
+    </div>
+    ${versions}
+  `;
 }
 
 function renderDashboard() {
