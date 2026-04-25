@@ -660,7 +660,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 </div>
 
 <header>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" style="margin-left:10px;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600;background:rgba(139,92,246,0.18);color:var(--accent2);border:1px solid rgba(139,92,246,0.35);letter-spacing:0.04em" title=""></span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -1006,6 +1006,17 @@ function rejectedProducts() { return state.products.filter(p => p.status === 're
 function pendingProducts() { return state.products.filter(p => !p.status || p.status === 'pending'); }
 
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+
+// App version — bumped at every deploy. Shown as a pill next to the logo.
+const APP_VERSION = '0.7.0-beta';
+const APP_VERSION_NOTES = 'Multi-select candidats, séparateur institutionnels/indé, modale large, lien direct vendeur, version visible';
+(function showVersion() {
+  const el = document.getElementById('appVersion');
+  if (el) {
+    el.textContent = 'v' + APP_VERSION;
+    el.title = APP_VERSION_NOTES;
+  }
+})();
 
 // Inline SVG icon library — minimal, monochrome, currentColor.
 // Used to replace emojis in primary UI surfaces for a cleaner, less "robot" look.
@@ -3016,14 +3027,23 @@ async function runDiscover() {
         const srcBg = s._source === 'shopping' ? 'rgba(34,197,94,0.15)' : 'rgba(139,92,246,0.18)';
         const srcLink = s.link || '';
         const dom = s.domain || '';
+        // SerpAPI Shopping returns link as google.fr/shopping/product/* (intermediate).
+        // For the merchant link, prefer s.source (e.g. "Top Achat") name and route via
+        // Google "I'm feeling lucky"-style search to land on the merchant's actual page.
+        const merchantName = s.source || dom;
+        const isGoogleRedirect = !dom || /^google\.[a-z.]+$/.test(dom);
+        const merchantHref = isGoogleRedirect
+          ? `https://www.google.com/search?q=${encodeURIComponent((s.title||'') + ' ' + merchantName)}&btnI=1`
+          : `https://${dom}`;
         const srcBadge = srcLink
           ? `<a href="${escapeHtml(srcLink)}" target="_blank" rel="noopener" class="pill" style="background:${srcBg};border-color:${srcColor}55;color:${srcColor};font-size:10px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:600">${ico('cart',11)} ${srcLabel}</a>`
           : `<span class="pill" style="background:${srcBg};color:${srcColor};font-size:10px;">${srcLabel}</span>`;
         const adsBadge = s._alsoInAds && s._adLink
           ? `<a href="${escapeHtml(s._adLink)}" target="_blank" rel="noopener" class="pill" style="background:rgba(245,158,11,0.18);border-color:rgba(245,158,11,0.45);color:#f59e0b;font-size:10px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:600">${ico('zap',11)} Ad Search</a>`
           : '';
-        const domLink = dom ? `<a href="https://${escapeHtml(dom)}" target="_blank" rel="noopener" class="pill" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text2);font-size:10px;text-decoration:none">${escapeHtml(dom)}</a>` : '';
-        const verifyBtn = dom ? `<button class="pill" onclick="event.stopPropagation();verifyAds('${escapeHtml(dom)}', this)" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text2);font-size:10px;cursor:pointer;font-family:inherit">Vérifier ads</button>` : '';
+        const domLink = merchantName ? `<a href="${escapeHtml(merchantHref)}" target="_blank" rel="noopener" class="pill" style="background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.3);color:var(--accent2);font-size:10px;text-decoration:none;font-weight:600" title="Aller sur le site du vendeur (${escapeHtml(merchantName)})">${escapeHtml(merchantName)}</a>` : '';
+        const verifyDomain = isGoogleRedirect ? '' : dom;
+        const verifyBtn = verifyDomain ? `<button class="pill" onclick="event.stopPropagation();verifyAds('${escapeHtml(verifyDomain)}', this)" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text2);font-size:10px;cursor:pointer;font-family:inherit">Vérifier ads</button>` : '';
         const instBadge = isInst ? '<span class="pill danger" style="font-size:10px;font-weight:700">Institutionnel</span>' : '';
         return `
         <div class="cand-row" data-idx="${idx}" style="display:flex;gap:12px;align-items:flex-start;padding:14px;border:1px solid ${isInst ? 'rgba(248,113,113,0.25)' : 'var(--border)'};border-radius:12px;margin-bottom:8px;background:${isInst ? 'rgba(248,113,113,0.04)' : 'rgba(255,255,255,0.02)'};transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease" onclick="toggleCandSelect(${idx})" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px -8px rgba(139,92,246,0.35)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
@@ -3031,7 +3051,7 @@ async function runDiscover() {
           ${thumb ? `<img src="${escapeHtml(thumb)}" style="width:56px;height:56px;object-fit:cover;border-radius:8px;flex-shrink:0;background:#000" alt="" onerror="this.style.display='none'">` : `<div style="width:56px;height:56px;border-radius:8px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;color:var(--text3);flex-shrink:0">${ico('cart',22)}</div>`}
           <div style="flex:1;min-width:0;">
             <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><strong style="color:var(--accent2);font-size:11px">#${idx+1}</strong>${instBadge}</div>
-            <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${srcLink ? `<a href="${escapeHtml(srcLink)}" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none" onclick="event.stopPropagation()">${escapeHtml((s.title||'').slice(0,90))}</a>` : escapeHtml((s.title||'').slice(0,90))}</div>
+            <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><a href="${escapeHtml(merchantHref)}" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none" onclick="event.stopPropagation()" title="Aller sur le site du vendeur">${escapeHtml((s.title||'').slice(0,90))}</a></div>
             <div style="font-size:11px;color:var(--text2);margin-top:2px">${escapeHtml(s.source||dom)} · <strong style="color:var(--accent2)">${escapeHtml(s.price||'—')}</strong>${s.rating?` · ${s.rating}/5${s.reviews?' ('+s.reviews+')':''}`:''}${margeEst?` · <span style="color:var(--green)">~${margeEst}€ marge</span>`:''}</div>
             <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;align-items:center" onclick="event.stopPropagation()">${srcBadge}${adsBadge}${domLink}${verifyBtn}<div data-verify-out="${escapeHtml(dom)}" style="display:none;width:100%;margin-top:4px;padding:6px 8px;border-radius:6px;background:rgba(0,0,0,0.3);font-size:11px;"></div></div>
           </div>
