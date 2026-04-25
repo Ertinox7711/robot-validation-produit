@@ -6,9 +6,10 @@
 <title>🤖 Robot Validation Produit — Ecom Inner Circle</title>
 <script src="formation_data.js"></script>
 <script type="module">
-  // Firebase Firestore for cross-device sync (PC + mobile)
+  // Firebase Firestore + Auth for SaaS-style multi-device app
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js';
   import { getFirestore, doc, setDoc, getDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js';
   const firebaseConfig = {
     apiKey: "AIzaSyCuW_zyfd47vDaqXYvRLifJStHcJ9icxuQ",
     authDomain: "robot-validation-produit.firebaseapp.com",
@@ -19,7 +20,8 @@
   };
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
-  window.FB = { db, doc, setDoc, getDoc, onSnapshot };
+  const auth = getAuth(app);
+  window.FB = { db, doc, setDoc, getDoc, onSnapshot, auth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendPasswordResetEmail };
   window.dispatchEvent(new Event('firebaseReady'));
 </script>
 <style>
@@ -212,11 +214,31 @@ small.muted { color: var(--text3); font-size: 11px; }
 </head>
 <body>
 
+<!-- ═════════ LOGIN OVERLAY ═════════ -->
+<div id="loginOverlay" style="position:fixed;inset:0;background:linear-gradient(135deg,#0a0a0a 0%,#141422 100%);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;">
+  <div style="max-width:400px;width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="font-size:36px;margin-bottom:8px;">🤖</div>
+      <h1 style="font-size:22px;font-weight:700;margin-bottom:4px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Robot Validation Produit</h1>
+      <p style="color:var(--text2);font-size:13px;">Connecte-toi pour synchroniser tes recherches</p>
+    </div>
+    <div id="loginErr" style="display:none;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.3);color:var(--red);padding:10px 12px;border-radius:8px;font-size:12px;margin-bottom:14px;"></div>
+    <div class="field" style="margin-bottom:14px"><label>Email</label><input type="email" id="loginEmail" placeholder="toi@example.com" autocomplete="email"></div>
+    <div class="field" style="margin-bottom:18px"><label>Mot de passe</label><input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" minlength="6"></div>
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+      <button class="btn btn-primary" id="loginBtnSignin" style="flex:1" onclick="authSignIn()">Se connecter</button>
+      <button class="btn" id="loginBtnSignup" style="flex:1" onclick="authSignUp()">Créer un compte</button>
+    </div>
+    <div style="text-align:center;font-size:12px;color:var(--text3);">
+      <a onclick="authResetPassword()" style="cursor:pointer;color:var(--accent2)">Mot de passe oublié ?</a>
+    </div>
+  </div>
+</div>
+
 <header>
   <div class="logo">🤖 <span>Robot Validation</span></div>
   <div class="header-right">
-    <button class="sync-btn" onclick="fbConnect()" id="fbBtn">☁️ Firebase</button>
-    <button class="sync-btn" onclick="openSyncModal()">☁️ JSONBlob</button>
+    <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">☁️ Connexion</button>
     <button class="sync-btn" onclick="exportAll()">📥 Export</button>
     <button class="sync-btn" onclick="document.getElementById('importFile').click()">📤 Import</button>
     <input type="file" id="importFile" accept=".json" style="display:none" onchange="importAll(event)">
@@ -1311,61 +1333,115 @@ function renderFormation(lessonSlug) {
   `;
 }
 
-/* ═════════ FIREBASE AUTO-SYNC (cross-device) ═════════ */
-let fbUserId = localStorage.getItem(FB_USER_ID_KEY);
+/* ═════════ FIREBASE AUTH + AUTO-SYNC (SaaS) ═════════ */
+let fbUser = null;
 let fbReady = false;
 let fbApplyingRemote = false;
 let fbPushTimer = null;
+let fbUnsubscribe = null;
 
-function fbGenId() {
-  // Short pairing code: 6 chars base36
-  return Math.random().toString(36).slice(2, 8).toUpperCase();
+function showLogin(show) {
+  const el = document.getElementById('loginOverlay');
+  if (el) el.style.display = show ? 'flex' : 'none';
 }
-async function fbInit(userId) {
-  if (!window.FB) { console.warn('Firebase not ready'); return false; }
-  fbUserId = userId;
-  localStorage.setItem(FB_USER_ID_KEY, userId);
+function loginErr(msg) {
+  const e = document.getElementById('loginErr');
+  if (!e) { alert(msg); return; }
+  e.textContent = msg; e.style.display = msg ? 'block' : 'none';
+}
+function translateAuthErr(code) {
+  const m = {
+    'auth/invalid-email': "Email invalide",
+    'auth/user-not-found': "Aucun compte avec cet email",
+    'auth/wrong-password': "Mot de passe incorrect",
+    'auth/invalid-credential': "Email ou mot de passe incorrect",
+    'auth/email-already-in-use': "Email déjà utilisé — connecte-toi à la place",
+    'auth/weak-password': "Mot de passe trop court (6 min)",
+    'auth/too-many-requests': "Trop d'essais. Réessaie plus tard ou réinitialise.",
+    'auth/network-request-failed': "Connexion internet ?",
+  };
+  return m[code] || code;
+}
+async function authSignIn() {
+  loginErr('');
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  if (!email || !pass) { loginErr("Remplis email + mot de passe"); return; }
+  try {
+    await window.FB.signInWithEmailAndPassword(window.FB.auth, email, pass);
+  } catch (e) { loginErr(translateAuthErr(e.code) || e.message); }
+}
+async function authSignUp() {
+  loginErr('');
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  if (!email || !pass) { loginErr("Remplis email + mot de passe"); return; }
+  if (pass.length < 6) { loginErr("Mot de passe : 6 caractères min"); return; }
+  try {
+    await window.FB.createUserWithEmailAndPassword(window.FB.auth, email, pass);
+  } catch (e) { loginErr(translateAuthErr(e.code) || e.message); }
+}
+async function authResetPassword() {
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!email) { loginErr("Entre ton email d'abord"); return; }
+  try {
+    await window.FB.sendPasswordResetEmail(window.FB.auth, email);
+    loginErr("📬 Email de réinitialisation envoyé à " + email);
+  } catch (e) { loginErr(translateAuthErr(e.code) || e.message); }
+}
+async function authSignOut() {
+  if (!confirm('Se déconnecter ? Tes données restent en local sur cet appareil.')) return;
+  try { await window.FB.signOut(window.FB.auth); } catch (e) { console.error(e); }
+}
+
+function fbDeviceId() {
+  let d = localStorage.getItem('ecom_device_id');
+  if (!d) { d = Math.random().toString(36).slice(2, 12); localStorage.setItem('ecom_device_id', d); }
+  return d;
+}
+
+async function fbInitForUser(user) {
+  if (!user || !window.FB) return false;
+  if (fbUnsubscribe) { try { fbUnsubscribe(); } catch(e){} fbUnsubscribe = null; }
+  fbUser = user;
+  fbReady = false;
   const { db, doc, getDoc, onSnapshot } = window.FB;
-  const ref = doc(db, 'users', userId);
-  // Pull initial then listen
-  const snap = await getDoc(ref);
-  if (snap.exists()) {
-    const data = snap.data();
-    if (data && data.payload) {
-      fbApplyingRemote = true;
-      try {
-        const remote = JSON.parse(data.payload);
-        // Only apply if remote is "newer" (more entries) or local is empty
-        const local = state;
-        const remoteHas = (remote.products?.length||0) + (remote.sessions?.length||0);
-        const localHas = (local.products?.length||0) + (local.sessions?.length||0);
-        if (localHas === 0 || (data.ts && data.ts > (local._ts||0))) {
-          state = remote;
-          activeSessionId = state.sessions?.[0]?.id || activeSessionId;
-          window._openSessions = null;
-          save();
-          renderAll();
-        } else if (remoteHas < localHas) {
-          // Push our richer local state
-          fbPushDebounced();
-        }
-      } catch(e) { console.error('apply remote', e); }
-      fbApplyingRemote = false;
+  const ref = doc(db, 'users', user.uid);
+  // Initial pull
+  try {
+    const snap = await getDoc(ref);
+    if (snap.exists()) {
+      const data = snap.data();
+      if (data?.payload) {
+        fbApplyingRemote = true;
+        try {
+          const remote = JSON.parse(data.payload);
+          const localHas = (state.products?.length||0) + (state.sessions?.length||0);
+          if (localHas === 0 || (data.ts && data.ts > (state._ts||0))) {
+            state = remote;
+            activeSessionId = state.sessions?.[0]?.id || activeSessionId;
+            window._openSessions = null;
+            save();
+          } else {
+            // Local is newer/richer — push it
+            setTimeout(fbPush, 200);
+          }
+        } catch(e) { console.error('apply remote', e); }
+        fbApplyingRemote = false;
+      }
+    } else {
+      // No remote yet — push local
+      setTimeout(fbPush, 200);
     }
-  } else {
-    // No remote yet — push local
-    fbPushDebounced();
-  }
-  // Real-time listener
-  onSnapshot(ref, (snap) => {
+  } catch(e) { console.warn('fb pull', e); }
+  // Realtime
+  fbUnsubscribe = onSnapshot(ref, (snap) => {
     if (!snap.exists() || fbApplyingRemote) return;
     const data = snap.data();
-    if (!data?.payload) return;
+    if (!data?.payload || data.lastWriter === fbDeviceId()) return;
     try {
-      const remote = JSON.parse(data.payload);
-      // Skip if it's our own write
-      if (data.lastWriter === fbDeviceId()) return;
       fbApplyingRemote = true;
+      const remote = JSON.parse(data.payload);
       state = remote;
       activeSessionId = state.sessions?.[0]?.id || activeSessionId;
       window._openSessions = null;
@@ -1377,23 +1453,20 @@ async function fbInit(userId) {
     } catch(e) { console.error('remote snap', e); fbApplyingRemote = false; }
   });
   fbReady = true;
+  renderAll();
   return true;
 }
-function fbDeviceId() {
-  let d = localStorage.getItem('ecom_device_id');
-  if (!d) { d = Math.random().toString(36).slice(2, 12); localStorage.setItem('ecom_device_id', d); }
-  return d;
-}
+
 function fbPushDebounced() {
   clearTimeout(fbPushTimer);
   fbPushTimer = setTimeout(fbPush, 1500);
 }
 async function fbPush() {
-  if (!fbReady || !fbUserId || fbApplyingRemote || !window.FB) return;
+  if (!fbReady || !fbUser || fbApplyingRemote || !window.FB) return;
   try {
     const { db, doc, setDoc } = window.FB;
     state._ts = Date.now();
-    await setDoc(doc(db, 'users', fbUserId), {
+    await setDoc(doc(db, 'users', fbUser.uid), {
       payload: JSON.stringify(state),
       ts: Date.now(),
       lastWriter: fbDeviceId()
@@ -1401,28 +1474,6 @@ async function fbPush() {
     const ind = document.getElementById('saveInd');
     if (ind) ind.textContent = '☁️ synchro envoyée';
   } catch (e) { console.warn('fb push fail', e); }
-}
-async function fbConnect() {
-  // Show modal asking for ID or generate new
-  const existing = fbUserId;
-  const choice = prompt(
-    '☁️ Synchronisation Firebase\n\n' +
-    'Pour synchroniser entre PC et téléphone, utilise le MÊME code sur les deux appareils.\n\n' +
-    '• Laisse vide pour générer un nouveau code\n' +
-    '• Colle un code existant pour rejoindre\n\n' +
-    (existing ? 'Code actuel: ' + existing : 'Aucun code actuellement'),
-    existing || ''
-  );
-  if (choice === null) return;
-  const id = (choice.trim() || fbGenId()).toUpperCase();
-  await fbInit(id);
-  alert('☁️ Synchronisation activée !\n\nTon code : ' + id + '\n\nUtilise ce même code sur ton téléphone (bouton ☁️ Sync) pour synchroniser tes données automatiquement.');
-}
-function fbDisconnect() {
-  fbReady = false;
-  fbUserId = null;
-  localStorage.removeItem(FB_USER_ID_KEY);
-  alert('Synchronisation Firebase désactivée. Les données restent en local.');
 }
 
 // Hook auto-push on save
@@ -1433,7 +1484,23 @@ save = function() {
 };
 
 window.addEventListener('firebaseReady', () => {
-  if (fbUserId) fbInit(fbUserId).catch(e => console.error('fb init', e));
+  const { auth, onAuthStateChanged } = window.FB;
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      showLogin(false);
+      await fbInitForUser(user);
+      // Update header badge
+      const btn = document.getElementById('fbBtn');
+      if (btn) { btn.textContent = '☁️ ' + (user.email||'').split('@')[0]; btn.title = user.email + ' · clique pour déconnecter'; btn.onclick = authSignOut; }
+    } else {
+      fbReady = false;
+      fbUser = null;
+      if (fbUnsubscribe) { try { fbUnsubscribe(); } catch(e){} fbUnsubscribe = null; }
+      showLogin(true);
+      const btn = document.getElementById('fbBtn');
+      if (btn) { btn.textContent = '☁️ Connexion'; btn.onclick = () => showLogin(true); }
+    }
+  });
 });
 
 /* ═════════ BOOT ═════════ */
@@ -1451,6 +1518,12 @@ document.addEventListener('keydown', (e) => {
 // Close modal on backdrop click
 document.querySelectorAll('.modal-bg').forEach(bg => {
   bg.addEventListener('click', (e) => { if (e.target === bg) bg.classList.remove('open'); });
+});
+
+// Enter key in login form triggers sign-in
+['loginEmail', 'loginPass'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('keydown', (e) => { if (e.key === 'Enter') authSignIn(); });
 });
 </script>
 </body>
