@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🤖 Robot Validation Produit — Ecom Inner Circle</title>
+<script src="formation_data.js"></script>
+<script type="module">
+  // Firebase Firestore for cross-device sync (PC + mobile)
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js';
+  import { getFirestore, doc, setDoc, getDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
+  const firebaseConfig = {
+    apiKey: "AIzaSyCuW_zyfd47vDaqXYvRLifJStHcJ9icxuQ",
+    authDomain: "robot-validation-produit.firebaseapp.com",
+    projectId: "robot-validation-produit",
+    storageBucket: "robot-validation-produit.firebasestorage.app",
+    messagingSenderId: "286183181940",
+    appId: "1:286183181940:web:e25912ef67ecfaa75ecb21"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  window.FB = { db, doc, setDoc, getDoc, onSnapshot };
+  window.dispatchEvent(new Event('firebaseReady'));
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --bg: #0a0a0a; --bg2: #0f0f0f; --bg3: #141414; --bg4: #1a1a1a;
+  --border: rgba(255,255,255,0.06); --border2: rgba(255,255,255,0.11);
+  --text: #f0f0f0; --text2: #8a8a8a; --text3: #555;
+  --accent: #5b5fc7; --accent2: #7b80e8;
+  --green: #4ade80; --red: #f87171; --yellow: #fbbf24; --blue: #60a5fa;
+  --radius: 8px; --radius2: 12px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; font-size: 14px; -webkit-font-smoothing: antialiased; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, textarea, select { font-family: inherit; background: var(--bg3); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; outline: none; transition: border-color .15s; font-size: 14px; width: 100%; }
+input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+input[type="checkbox"] { width: auto; }
+textarea { resize: vertical; min-height: 80px; font-family: inherit; }
+a { color: var(--accent2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+
+/* Header */
+header { height: 56px; display: flex; align-items: center; padding: 0 24px; border-bottom: 1px solid var(--border); background: var(--bg2); position: relative; z-index: 10; }
+.logo { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.logo span { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.header-right { margin-left: auto; display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--text2); }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+@keyframes pulse { 50% { opacity: .4; } }
+.sync-btn { padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg3); font-size: 12px; transition: all .15s; }
+.sync-btn:hover { border-color: var(--accent); color: var(--accent2); }
+
+/* Layout */
+.container { display: flex; height: calc(100vh - 56px - 56px); }
+.sidebar { width: 280px; border-right: 1px solid var(--border); background: var(--bg2); overflow-y: auto; padding: 16px 12px; flex-shrink: 0; }
+.main { flex: 1; overflow-y: auto; padding: 28px 32px; }
+
+/* Sidebar */
+.sb-section { margin-bottom: 20px; }
+.sb-title { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; color: var(--text3); text-transform: uppercase; padding: 0 8px 8px; display: flex; align-items: center; justify-content: space-between; }
+.sb-add { padding: 4px 8px; font-size: 11px; border-radius: 4px; color: var(--accent2); transition: background .15s; }
+.sb-add:hover { background: var(--bg3); }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; font-size: 13px; color: var(--text); cursor: pointer; transition: background .12s; margin-bottom: 2px; }
+.nav-item:hover { background: var(--bg3); }
+.nav-item.active { background: var(--bg4); color: var(--text); font-weight: 500; }
+.nav-item .icon { font-size: 14px; opacity: .85; }
+.nav-item .count { margin-left: auto; font-size: 11px; color: var(--text3); }
+
+.session { margin-bottom: 4px; }
+.session-head { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 6px; font-size: 12px; color: var(--text2); cursor: pointer; font-weight: 500; }
+.session-head:hover { background: var(--bg3); color: var(--text); }
+.session-head .chev { transition: transform .15s; font-size: 10px; opacity: .6; }
+.session.open .chev { transform: rotate(90deg); }
+.session-head .label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.session-head .del { opacity: 0; font-size: 11px; color: var(--red); padding: 0 4px; }
+.session-head:hover .del { opacity: 0.5; }
+.session-head .del:hover { opacity: 1; }
+.session-head.active { background: var(--bg4); color: var(--text); }
+.session-head.current-active { color: var(--accent2); }
+.products { display: none; padding-left: 14px; margin-top: 2px; }
+.session.open .products { display: block; }
+.product-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px; font-size: 12px; color: var(--text2); cursor: pointer; transition: background .12s; }
+.product-item:hover { background: var(--bg3); color: var(--text); }
+.product-item.active { background: var(--bg4); color: var(--text); font-weight: 500; }
+.product-item .status { font-size: 11px; width: 14px; text-align: center; }
+.product-item .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.product-item .score { font-size: 10px; color: var(--text3); font-weight: 500; }
+.session-empty { font-size: 11px; color: var(--text3); padding: 6px 8px; font-style: italic; }
+
+/* Tabs */
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 28px; overflow-x: auto; }
+.tab { padding: 10px 16px; font-size: 13px; color: var(--text2); border-bottom: 2px solid transparent; transition: all .15s; white-space: nowrap; font-weight: 500; }
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--text); border-bottom-color: var(--accent); }
+
+/* Cards */
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); padding: 24px; margin-bottom: 20px; }
+.card h2 { font-size: 14px; font-weight: 600; margin-bottom: 18px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+.card h3 { font-size: 13px; font-weight: 600; margin: 16px 0 10px; color: var(--text); }
+
+/* Form grid */
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+.field label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; color: var(--text2); text-transform: uppercase; margin-bottom: 6px; }
+.field .hint { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: var(--radius); font-size: 13px; font-weight: 500; border: 1px solid var(--border); background: var(--bg3); transition: all .15s; }
+.btn:hover { border-color: var(--border2); background: var(--bg4); }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent2); border-color: var(--accent2); }
+.btn-danger { color: var(--red); }
+.btn-danger:hover { background: rgba(248,113,113,0.08); border-color: rgba(248,113,113,0.3); }
+.btn-success { color: var(--green); }
+.btn-sm { padding: 6px 10px; font-size: 12px; }
+
+/* Save bar */
+.save-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 56px; background: var(--bg2); border-top: 1px solid var(--border); display: flex; align-items: center; padding: 0 24px; gap: 12px; z-index: 20; }
+.save-status { font-size: 12px; color: var(--text2); }
+.save-status.saved { color: var(--green); }
+
+/* Criteres */
+.critere { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; transition: all .15s; background: var(--bg3); }
+.critere:hover { border-color: var(--border2); }
+.critere.checked { background: rgba(74,222,128,0.05); border-color: rgba(74,222,128,0.2); }
+.critere input { margin-top: 3px; }
+.critere-text { flex: 1; }
+.critere-title { font-weight: 500; font-size: 13px; margin-bottom: 4px; }
+.critere-title .star { color: var(--yellow); }
+.critere-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+/* Score */
+.score-display { text-align: center; padding: 32px 20px; }
+.score-number { font-size: 72px; font-weight: 800; line-height: 1; letter-spacing: -0.03em; background: linear-gradient(135deg, var(--accent2), var(--accent3, var(--accent2))); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.score-total { font-size: 24px; font-weight: 500; color: var(--text3); margin-left: 4px; }
+.score-verdict { display: inline-block; margin-top: 12px; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+.verdict-go { background: rgba(74,222,128,0.12); color: var(--green); }
+.verdict-wait { background: rgba(251,191,36,0.12); color: var(--yellow); }
+.verdict-kill { background: rgba(248,113,113,0.12); color: var(--red); }
+
+/* Stats row */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; }
+.stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); padding: 18px 20px; }
+.stat-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; color: var(--text2); text-transform: uppercase; margin-bottom: 6px; }
+.stat-value { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+.stat-sub { font-size: 12px; color: var(--text3); margin-top: 4px; }
+
+/* Status block */
+.status-block { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+.status-btn { padding: 14px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg3); text-align: center; transition: all .15s; font-size: 13px; font-weight: 500; }
+.status-btn:hover { border-color: var(--border2); }
+.status-btn .emoji { font-size: 24px; display: block; margin-bottom: 6px; }
+.status-btn.active-keep { border-color: var(--green); background: rgba(74,222,128,0.08); color: var(--green); }
+.status-btn.active-reject { border-color: var(--red); background: rgba(248,113,113,0.08); color: var(--red); }
+.status-btn.active-pending { border-color: var(--blue); background: rgba(96,165,250,0.08); color: var(--blue); }
+
+/* Modal */
+.modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(4px); }
+.modal-bg.open { display: flex; }
+.modal { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); padding: 24px; width: 480px; max-width: 90vw; max-height: 90vh; overflow-y: auto; }
+.modal h3 { font-size: 16px; margin-bottom: 18px; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+/* Table */
+.table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.table th { text-align: left; padding: 10px 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; color: var(--text2); text-transform: uppercase; border-bottom: 1px solid var(--border); cursor: pointer; user-select: none; }
+.table th:hover { color: var(--text); }
+.table td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 13px; }
+.table tr:hover td { background: var(--bg3); }
+.table .clickable { cursor: pointer; color: var(--accent2); }
+
+/* Bar chart */
+.chart { display: flex; align-items: flex-end; gap: 8px; height: 160px; padding: 12px 0; margin-top: 12px; border-bottom: 1px solid var(--border); }
+.bar { flex: 1; background: linear-gradient(180deg, var(--accent2), var(--accent)); border-radius: 4px 4px 0 0; min-height: 4px; position: relative; transition: opacity .15s; }
+.bar:hover { opacity: .8; }
+.bar-label { text-align: center; font-size: 10px; color: var(--text3); margin-top: 6px; }
+.chart-wrap { margin-top: 10px; }
+
+/* Empty state */
+.empty { text-align: center; padding: 60px 20px; color: var(--text2); }
+.empty .emoji { font-size: 48px; margin-bottom: 14px; opacity: .5; }
+.empty h3 { font-size: 16px; margin-bottom: 8px; color: var(--text); }
+
+/* Price gamme badge */
+.gamme-badge { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; background: var(--bg3); border: 1px solid var(--border); }
+
+/* ROAS colors */
+.roas-good { color: var(--green); font-weight: 600; }
+.roas-mid { color: var(--yellow); font-weight: 600; }
+.roas-bad { color: var(--red); font-weight: 600; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 720px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.spacer { flex: 1; }
+.hidden { display: none !important; }
+
+.kept-card { display: flex; gap: 14px; align-items: center; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 8px; background: var(--bg3); cursor: pointer; transition: border-color .15s; }
+.kept-card:hover { border-color: var(--border2); }
+.kept-card .name { flex: 1; font-weight: 500; }
+.kept-card .meta { font-size: 12px; color: var(--text2); }
+
+small.muted { color: var(--text3); font-size: 11px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🤖 <span>Robot Validation</span></div>
+  <div class="header-right">
+    <button class="sync-btn" onclick="fbConnect()" id="fbBtn">☁️ Firebase</button>
+    <button class="sync-btn" onclick="openSyncModal()">☁️ JSONBlob</button>
+    <button class="sync-btn" onclick="exportAll()">📥 Export</button>
+    <button class="sync-btn" onclick="document.getElementById('importFile').click()">📤 Import</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importAll(event)">
+    <span class="dot"></span>
+    <span id="saveInd">Prêt</span>
+  </div>
+</header>
+
+<div class="container">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main" id="main"></main>
+</div>
+
+<div class="save-bar">
+  <span class="save-status" id="saveStatus">Toutes les modifications sont sauvegardées</span>
+  <div class="spacer"></div>
+  <button class="btn btn-sm" onclick="saveAll()">💾 Sauvegarder</button>
+</div>
+
+<!-- Modals -->
+<div class="modal-bg" id="modalSession">
+  <div class="modal">
+    <h3>Nouvelle session de recherche</h3>
+    <div class="field" style="margin-bottom:14px">
+      <label>Date</label>
+      <input type="date" id="sessDate">
+    </div>
+    <div class="field" style="margin-bottom:14px">
+      <label>Libellé (facultatif)</label>
+      <input type="text" id="sessLabel" placeholder="ex: Session Amazon Movers">
+      <div class="hint">Laisse vide pour générer automatiquement depuis la date</div>
+    </div>
+    <div class="field">
+      <label>Notes de session</label>
+      <textarea id="sessNotes" placeholder="Méthodes explorées, thèse…"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modalSession')">Annuler</button>
+      <button class="btn btn-primary" onclick="createSession()">Créer session</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalProduct">
+  <div class="modal">
+    <h3>Nouveau produit</h3>
+    <div class="field" style="margin-bottom:14px">
+      <label>Nom du produit</label>
+      <input type="text" id="prodName" placeholder="ex: Robot aspirateur laveur LiDAR">
+    </div>
+    <div class="field">
+      <label>Session</label>
+      <select id="prodSession"></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modalProduct')">Annuler</button>
+      <button class="btn btn-primary" onclick="createProduct()">Créer produit</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalSync">
+  <div class="modal">
+    <h3>☁️ Synchronisation multi-appareils</h3>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:14px">Partage un même ID entre tes appareils (PC, tel…). Les données sont stockées gratuitement sur jsonblob.com (pas de compte requis).</p>
+    <div class="field" style="margin-bottom:14px">
+      <label>Ton ID de sync</label>
+      <input type="text" id="syncId" placeholder="vide = pas encore initialisé">
+      <div class="hint">Copie ce même ID sur ton téléphone pour retrouver tes données</div>
+    </div>
+    <div class="row">
+      <button class="btn btn-primary" onclick="syncPush()">⬆️ Envoyer vers cloud</button>
+      <button class="btn" onclick="syncPull()">⬇️ Récupérer depuis cloud</button>
+    </div>
+    <div id="syncMsg" style="margin-top:14px;font-size:12px;color:var(--text2)"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modalSync')">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═════════ CONSTANTS ═════════ */
+// Critères calqués sur les 11+1 vidéos "TUNNEL DE VALIDATION PRODUIT" Skool
+const CRITERES = [
+  { id: 1, titre: "Marge forte ++ (gads)", desc: "Prix vente ≥ 3× prix d'achat. Idéal ×4-×5. Tient compte du CPA Google Ads (gamme prix).", star: true },
+  { id: 2, titre: "Concurrence présente", desc: "Google Ads + Shopify indé + reviews YouTube. Sans concurrence = pas de demande prouvée.", star: true },
+  { id: 3, titre: "Vérifier traffic / coût pub", desc: "Volume 1k-40k recherches/mois FR (Keyword Planner). Trop peu = mort. Trop = saturé." },
+  { id: 4, titre: "Précis ou niche", desc: "Pas 'un aspirateur' mais 'aspirateur voiture sans fil 12000Pa'. Variante précise d'un produit existant." },
+  { id: 5, titre: "Éviter les institutionnels", desc: "Top 3 Google = Amazon, Fnac, Darty, Leroy Merlin, Cdiscount → jeter (saturé, tu peux pas te battre).", star: true },
+  { id: 6, titre: "Faire une marque autour", desc: "Storytelling, nom de domaine dispo, positionnement unique. Pas un produit générique (câble USB)." },
+  { id: 7, titre: "Sourcing facile", desc: "AliExpress / Alibaba / Bigbuy en stock. Délai 3-5j Europe, max 10j Chine. MOQ raisonnable." },
+  { id: 8, titre: "Le besoin d'expert", desc: "Le produit nécessite explication pour être compris/acheté → justifie ton site vs Amazon direct.", star: true },
+  { id: 9, titre: "Cycle d'achat rapide", desc: "Client décide <10 min. Prix <300€ idéal (au-delà cycle long, frein de prix)." },
+  { id: 10, titre: "Recherche de marque (intention)", desc: "Volume 'acheter [produit]' / 'avis [produit]' > 0 → des gens en intention d'achat." },
+  { id: 11, titre: "Mot-clé non précis aussi", desc: "Pas QUE recherche marque : aussi positionnable sur générique → SEO diversifiable." },
+  { id: 12, titre: "Fonctionne en search (bonus)", desc: "Google Search Ads présents sur le mot-clé → monétisable aussi en search, pas que Meta." },
+];
+
+// 9 méthodes Skool ordonnées par ROI (Arthur)
+const METHODES = [
+  { id: 'm1', n: 1, label: "Méthode 1 — Flippa", url: "https://flippa.com", desc: "Sites e-commerce à vendre + chiffres CA visibles. Tu vois directement quels produits vendent et combien." },
+  { id: 'm2', n: 2, label: "Méthode 2 — Amazon Movers & Shakers ⭐", url: "https://www.amazon.fr/gp/movers-and-shakers", desc: "LA méthode préférée d'Arthur. Toutes catégories. Cible +100% en 24h. Visite tous les 2-3 jours. Évite les pics saisonniers ponctuels." },
+  { id: 'm3', n: 3, label: "Méthode 3 — Pinterest Trends", url: "https://trends.pinterest.com", desc: "FR. 6 mois d'avance sur le marché. Top pour produits visuels (déco/mode/beauté/jardin)." },
+  { id: 'm4', n: 4, label: "Méthode 4 — Bigbuy", url: "https://bigbuy.eu", desc: "Fournisseur dropship européen. Stock Espagne, livraison 3-5j FR. Section Tendances/Best sellers." },
+  { id: 'm5', n: 5, label: "Méthode 5 — Europages", url: "https://europages.fr", desc: "Annuaire fournisseurs Europe. Trouver des producteurs directs (meilleure marge qu'un grossiste)." },
+  { id: 'm6', n: 6, label: "Méthode 6 — Vevor", url: "https://vevor.fr", desc: "Matériel pro/semi-pro (resto, atelier, jardin pro). Niche avec demande BtoC. Sous-exploité en dropshipping." },
+  { id: 'm7', n: 7, label: "Méthode 7 — Temu", url: "https://temu.com", desc: "Détecter tendances chinoises. Toujours vérifier qualité sur AliExpress / Alibaba avant." },
+  { id: 'm8', n: 8, label: "Méthode 8 — Dotmarket", url: "https://dotmarket.eu", desc: "Marketplace sites e-commerce à vendre (équivalent FR/EU de Flippa). Même logique." },
+  { id: 'm9', n: 9, label: "Méthode 9 — Cdiscount", url: "https://cdiscount.com", desc: "Section Ventes flash + Top ventes. Produits récurrents en vente flash = demande constante." },
+];
+const PAGE_CHECKLIST = [
+  "Hero avec photo produit + proposition de valeur claire",
+  "Prix + prix barré (réduction visible)",
+  "Bouton CTA 'Ajouter au panier' visible sans scroll",
+  "3-5 bénéfices clés (icônes + texte court)",
+  "Photos produit haute qualité (5-8 angles)",
+  "Vidéo produit (démo ou testimonial)",
+  "Section 'Comment ça marche' (3-4 étapes)",
+  "100-200 avis importés (Trust Willo)",
+  "5-7 avis manuels cassant les peurs",
+  "Section FAQ (5-10 questions)",
+  "Garantie / politique retour 30j",
+  "Livraison gratuite affichée",
+  "Paiement en 3x/4x (Alma/Klarna)",
+  "Badges de confiance (paiement sécurisé, SAV)",
+  "Upsell / cross-sell post-achat"
+];
+const GAMMES = [
+  { id: "g1", label: "< 50€", roasMin: 3, cpaMax: 0.3 },
+  { id: "g2", label: "50-150€", roasMin: 2.8, cpaMax: 0.3 },
+  { id: "g3", label: "150-400€", roasMin: 2.5, cpaMax: 0.35 },
+  { id: "g4", label: "> 400€", roasMin: 2.3, cpaMax: 0.35 },
+];
+const STORAGE_KEY = 'ecom_products_arthur_v2';
+const FB_USER_ID_KEY = 'ecom_fb_user_id';
+const OLD_KEY = 'ecom_products';
+const SYNC_ID_KEY = 'ecom_sync_id';
+
+/* ═════════ STATE ═════════ */
+let state = { sessions: [], products: [] };
+let currentView = { type: 'dashboard', id: null }; // dashboard|kept|session|product|help
+let activeSessionId = null; // selected session for new products
+let saveTimer = null;
+
+/* ═════════ MIGRATION ═════════ */
+function load() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) {
+    try { state = JSON.parse(raw); } catch(e) { state = { sessions: [], products: [] }; }
+    if (!state.sessions) state.sessions = [];
+    if (!state.products) state.products = [];
+    return;
+  }
+  // Migration from old schema
+  const old = localStorage.getItem(OLD_KEY);
+  if (old) {
+    try {
+      const arr = JSON.parse(old);
+      localStorage.setItem(STORAGE_KEY + '_backup_' + Date.now(), old);
+      const sid = 's_' + Date.now();
+      state.sessions = [{ id: sid, date: new Date().toISOString().slice(0,10), label: 'Session initiale', notes: 'Produits migrés automatiquement depuis l\'ancien format', created: Date.now() }];
+      state.products = arr.map(p => ({ ...p, sessionId: sid, status: 'pending', keptAt: null, rejectedReason: '' }));
+      activeSessionId = sid;
+    } catch(e) { state = { sessions: [], products: [] }; }
+  }
+  // Create default session if empty
+  if (state.sessions.length === 0) {
+    const sid = 's_' + Date.now();
+    state.sessions.push({ id: sid, date: new Date().toISOString().slice(0,10), label: frDate(new Date()), notes: '', created: Date.now() });
+    activeSessionId = sid;
+  }
+  activeSessionId = activeSessionId || state.sessions[0].id;
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  const ind = document.getElementById('saveInd');
+  const st = document.getElementById('saveStatus');
+  if (ind) ind.textContent = 'Sauvé';
+  if (st) { st.textContent = '✓ Sauvegardé'; st.classList.add('saved'); }
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    if (ind) ind.textContent = 'Prêt';
+    if (st) { st.textContent = 'Toutes les modifications sont sauvegardées'; st.classList.remove('saved'); }
+  }, 1500);
+}
+function saveAll() { save(); }
+
+/* ═════════ HELPERS ═════════ */
+function frDate(d) {
+  return new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(d);
+}
+function gammeOf(prix) {
+  if (!prix) return null;
+  if (prix < 50) return GAMMES[0];
+  if (prix < 150) return GAMMES[1];
+  if (prix < 400) return GAMMES[2];
+  return GAMMES[3];
+}
+function calcScore(p) {
+  if (!p.criteres) return 0;
+  return CRITERES.filter(c => p.criteres[c.id]).length;
+}
+function calcMarge(p) {
+  const vente = +p.prix_vente || 0;
+  const achat = +p.prix_achat || 0;
+  const liv = +p.prix_livraison || 0;
+  if (!vente || !achat) return null;
+  const coutTotal = achat + liv;
+  const margeBrute = vente - coutTotal;
+  const ratio = vente / coutTotal;
+  const g = gammeOf(vente);
+  const cpaMax = g ? vente * g.cpaMax : vente * 0.3;
+  const margeApresAds = margeBrute - cpaMax;
+  const fraisShopify = vente * 0.035;
+  const tva = vente * 0.2 / 1.2;
+  const margeNette = margeApresAds - fraisShopify - tva;
+  const margeNettePct = (margeNette / vente) * 100;
+  const roas = vente / cpaMax;
+  return { margeBrute, ratio, cpaMax, margeNette, margeNettePct, roas, gamme: g };
+}
+function roasClass(r) { if (!r) return ''; if (r >= 4) return 'roas-good'; if (r >= 2.5) return 'roas-mid'; return 'roas-bad'; }
+function statusEmoji(s) { return s === 'keep' ? '✅' : s === 'reject' ? '❌' : '⚪'; }
+function findProduct(id) { return state.products.find(p => p.id === id); }
+function findSession(id) { return state.sessions.find(s => s.id === id); }
+function productsInSession(sid) { return state.products.filter(p => p.sessionId === sid); }
+function keptProducts() { return state.products.filter(p => p.status === 'keep'); }
+function rejectedProducts() { return state.products.filter(p => p.status === 'reject'); }
+function pendingProducts() { return state.products.filter(p => !p.status || p.status === 'pending'); }
+
+function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+
+/* ═════════ RENDER SIDEBAR ═════════ */
+function renderSidebar() {
+  const sb = document.getElementById('sidebar');
+  let openSessions = window._openSessions || new Set();
+  if (!window._openSessions) {
+    window._openSessions = openSessions;
+    state.sessions.forEach(s => openSessions.add(s.id));
+  }
+
+  let html = `
+    <div class="sb-section">
+      <div class="sb-title">Vue globale</div>
+      <div class="nav-item ${currentView.type==='dashboard'?'active':''}" onclick="go({type:'dashboard'})">
+        <span class="icon">🏠</span><span>Dashboard</span>
+      </div>
+      <div class="nav-item ${currentView.type==='kept'?'active':''}" onclick="go({type:'kept'})">
+        <span class="icon">🏆</span><span>Mes produits retenus</span>
+        <span class="count">${keptProducts().length}</span>
+      </div>
+      <div class="nav-item ${currentView.type==='help'?'active':''}" onclick="go({type:'help'})">
+        <span class="icon">📚</span><span>Méthode & aide</span>
+      </div>
+      <div class="nav-item ${currentView.type==='formation'?'active':''}" onclick="go({type:'formation'})">
+        <span class="icon">🎓</span><span>Formation Skool</span>
+        <span class="count">${(window.FORMATION||[]).filter(l=>l.transcript).length}/27</span>
+      </div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-title">
+        Sessions (${state.sessions.length})
+        <button class="sb-add" onclick="openSessionModal()">+ Nouvelle</button>
+      </div>
+  `;
+
+  const sorted = [...state.sessions].sort((a,b) => (b.created||0) - (a.created||0));
+  sorted.forEach(s => {
+    const prods = productsInSession(s.id);
+    const isOpen = openSessions.has(s.id);
+    const isCurrent = currentView.type === 'session' && currentView.id === s.id;
+    const isActive = s.id === activeSessionId;
+    html += `
+      <div class="session ${isOpen?'open':''}">
+        <div class="session-head ${isCurrent?'active':''} ${isActive?'current-active':''}" onclick="toggleSession('${s.id}', event)">
+          <span class="chev" onclick="event.stopPropagation();toggleChev('${s.id}')">▶</span>
+          <span class="label" title="${escapeHtml(s.label)}">${isActive?'● ':''}${escapeHtml(s.label)}</span>
+          <span class="count">${prods.length}</span>
+          <span class="del" onclick="event.stopPropagation();deleteSession('${s.id}')">🗑</span>
+        </div>
+        <div class="products">
+    `;
+    if (prods.length === 0) {
+      html += `<div class="session-empty">Aucun produit</div>`;
+    }
+    prods.forEach(p => {
+      const score = calcScore(p);
+      const isProductActive = currentView.type==='product' && currentView.id===p.id;
+      html += `
+        <div class="product-item ${isProductActive?'active':''}" onclick="go({type:'product',id:'${p.id}'})">
+          <span class="status">${statusEmoji(p.status)}</span>
+          <span class="name">${escapeHtml(p.name||'Sans nom')}</span>
+          <span class="score">${score}/12</span>
+        </div>
+      `;
+    });
+    html += `</div></div>`;
+  });
+
+  html += `
+      <button class="btn btn-sm" style="width:100%;margin-top:10px" onclick="openProductModal()">+ Nouveau produit</button>
+    </div>
+  `;
+  sb.innerHTML = html;
+}
+
+function toggleSession(id, e) {
+  // Click on session head: set as active AND toggle expand AND view it
+  activeSessionId = id;
+  window._openSessions.add(id);
+  go({ type: 'session', id });
+}
+function toggleChev(id) {
+  if (window._openSessions.has(id)) window._openSessions.delete(id);
+  else window._openSessions.add(id);
+  renderSidebar();
+}
+function deleteSession(id) {
+  const prods = productsInSession(id);
+  if (!confirm(`Supprimer cette session et ses ${prods.length} produit(s) ?`)) return;
+  state.sessions = state.sessions.filter(s => s.id !== id);
+  state.products = state.products.filter(p => p.sessionId !== id);
+  if (activeSessionId === id) activeSessionId = state.sessions[0]?.id || null;
+  if (currentView.id === id) currentView = { type: 'dashboard' };
+  save(); renderAll();
+}
+
+/* ═════════ MODALS ═════════ */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openSessionModal() {
+  document.getElementById('sessDate').value = new Date().toISOString().slice(0,10);
+  document.getElementById('sessLabel').value = '';
+  document.getElementById('sessNotes').value = '';
+  openModal('modalSession');
+}
+function createSession() {
+  const date = document.getElementById('sessDate').value || new Date().toISOString().slice(0,10);
+  let label = document.getElementById('sessLabel').value.trim();
+  if (!label) label = frDate(new Date(date + 'T12:00'));
+  const notes = document.getElementById('sessNotes').value;
+  const sid = 's_' + Date.now();
+  state.sessions.push({ id: sid, date, label, notes, created: Date.now() });
+  activeSessionId = sid;
+  window._openSessions?.add(sid);
+  save();
+  closeModal('modalSession');
+  go({ type: 'session', id: sid });
+}
+function openProductModal() {
+  document.getElementById('prodName').value = '';
+  const sel = document.getElementById('prodSession');
+  sel.innerHTML = state.sessions.map(s => `<option value="${s.id}" ${s.id===activeSessionId?'selected':''}>${escapeHtml(s.label)}</option>`).join('');
+  openModal('modalProduct');
+}
+function createProduct() {
+  const name = document.getElementById('prodName').value.trim();
+  if (!name) { alert('Donne un nom au produit'); return; }
+  const sid = document.getElementById('prodSession').value || activeSessionId;
+  const pid = 'p_' + Date.now();
+  state.products.push({
+    id: pid, sessionId: sid, name, source: '', fournisseur_url: '',
+    prix_achat: '', prix_livraison: '', prix_vente: '', niche: '', notes: '',
+    criteres: {}, page_checklist: {}, created: Date.now(),
+    status: 'pending', keptAt: null, rejectedReason: ''
+  });
+  save();
+  closeModal('modalProduct');
+  go({ type: 'product', id: pid });
+}
+
+/* ═════════ NAVIGATION ═════════ */
+function go(view) {
+  currentView = view;
+  if (view.type === 'session') activeSessionId = view.id;
+  renderAll();
+}
+
+/* ═════════ RENDER MAIN ═════════ */
+function renderMain() {
+  const m = document.getElementById('main');
+  if (currentView.type === 'dashboard') m.innerHTML = renderDashboard();
+  else if (currentView.type === 'kept') m.innerHTML = renderKept();
+  else if (currentView.type === 'help') m.innerHTML = renderHelp();
+  else if (currentView.type === 'formation') m.innerHTML = renderFormation(currentView.lesson);
+  else if (currentView.type === 'session') m.innerHTML = renderSession(currentView.id);
+  else if (currentView.type === 'product') m.innerHTML = renderProduct(currentView.id);
+  else m.innerHTML = renderDashboard();
+}
+
+function renderDashboard() {
+  const total = state.products.length;
+  const kept = keptProducts().length;
+  const rej = rejectedProducts().length;
+  const pend = pendingProducts().length;
+  const sessions = state.sessions.length;
+  const keepRate = total ? Math.round(kept / total * 100) : 0;
+
+  // Chart: products per session (last 10)
+  const sorted = [...state.sessions].sort((a,b) => (a.created||0) - (b.created||0)).slice(-10);
+  const max = Math.max(1, ...sorted.map(s => productsInSession(s.id).length));
+  const chart = sorted.map(s => {
+    const n = productsInSession(s.id).length;
+    const h = (n / max * 100);
+    return `<div style="flex:1;display:flex;flex-direction:column">
+      <div class="bar" style="height:${h}%" title="${escapeHtml(s.label)}: ${n} produits"></div>
+      <div class="bar-label">${n}</div>
+    </div>`;
+  }).join('');
+
+  const recent = [...keptProducts()].sort((a,b) => (b.keptAt||0) - (a.keptAt||0)).slice(0, 5);
+  const recentHtml = recent.length === 0
+    ? `<div class="empty" style="padding:30px"><div class="emoji">🏆</div>Aucun produit retenu encore.</div>`
+    : recent.map(p => {
+        const s = findSession(p.sessionId);
+        const score = calcScore(p);
+        return `<div class="kept-card" onclick="go({type:'product',id:'${p.id}'})">
+          <div style="font-size:22px">✅</div>
+          <div style="flex:1">
+            <div class="name">${escapeHtml(p.name)}</div>
+            <div class="meta">${score}/12 · ${p.prix_vente?p.prix_vente+'€':'—'} · ${escapeHtml(s?.label||'')}</div>
+          </div>
+        </div>`;
+      }).join('');
+
+  return `
+    <h1 style="font-size:22px;font-weight:700;margin-bottom:6px">Dashboard</h1>
+    <p style="color:var(--text2);margin-bottom:24px">Vue d'ensemble de ta recherche produit</p>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-label">Sessions</div><div class="stat-value">${sessions}</div></div>
+      <div class="stat-card"><div class="stat-label">Produits analysés</div><div class="stat-value">${total}</div></div>
+      <div class="stat-card"><div class="stat-label">Retenus</div><div class="stat-value" style="color:var(--green)">${kept}</div><div class="stat-sub">${keepRate}% de sélection</div></div>
+      <div class="stat-card"><div class="stat-label">En attente</div><div class="stat-value" style="color:var(--blue)">${pend}</div></div>
+      <div class="stat-card"><div class="stat-label">Rejetés</div><div class="stat-value" style="color:var(--red)">${rej}</div></div>
+    </div>
+
+    <div class="card">
+      <h2>📊 Produits par session (10 dernières)</h2>
+      <div class="chart-wrap"><div class="chart">${chart || '<div class="empty" style="width:100%">Pas encore de données</div>'}</div></div>
+    </div>
+
+    <div class="card">
+      <h2>🏆 Derniers produits retenus</h2>
+      ${recentHtml}
+      ${recent.length ? `<div style="margin-top:12px"><a onclick="go({type:'kept'})" style="cursor:pointer">Voir tous →</a></div>` : ''}
+    </div>
+
+    <div class="card">
+      <h2>⚡ Actions rapides</h2>
+      <div class="row">
+        <button class="btn btn-primary" onclick="openSessionModal()">+ Nouvelle session</button>
+        <button class="btn" onclick="openProductModal()">+ Nouveau produit</button>
+        <button class="btn" onclick="exportAll()">📥 Export JSON</button>
+        <button class="btn" onclick="exportKeptCSV()">📊 CSV produits retenus</button>
+      </div>
+    </div>
+  `;
+}
+
+let keptSortKey = 'keptAt', keptSortDir = -1;
+function renderKept() {
+  const arr = [...keptProducts()];
+  arr.sort((a,b) => {
+    let av, bv;
+    if (keptSortKey === 'score') { av = calcScore(a); bv = calcScore(b); }
+    else if (keptSortKey === 'prix_vente') { av = +a.prix_vente||0; bv = +b.prix_vente||0; }
+    else if (keptSortKey === 'roas') { av = calcMarge(a)?.roas||0; bv = calcMarge(b)?.roas||0; }
+    else if (keptSortKey === 'name') { av = a.name||''; bv = b.name||''; return (av>bv?1:-1)*keptSortDir; }
+    else { av = a.keptAt||0; bv = b.keptAt||0; }
+    return (av-bv) * keptSortDir;
+  });
+
+  if (arr.length === 0) {
+    return `<div class="empty"><div class="emoji">🏆</div><h3>Pas encore de produits retenus</h3><p>Valide des produits avec le statut "Retenir" pour les voir ici.</p></div>`;
+  }
+
+  const rows = arr.map(p => {
+    const s = findSession(p.sessionId);
+    const score = calcScore(p);
+    const m = calcMarge(p);
+    const g = gammeOf(+p.prix_vente);
+    return `<tr>
+      <td class="clickable" onclick="go({type:'product',id:'${p.id}'})">${escapeHtml(p.name)}</td>
+      <td>${score}/12</td>
+      <td>${p.prix_vente||'—'}€</td>
+      <td>${g?'<span class="gamme-badge">'+g.label+'</span>':'—'}</td>
+      <td class="${roasClass(m?.roas)}">${m?m.roas.toFixed(1)+'x':'—'}</td>
+      <td>${m?Math.round(m.margeNettePct)+'%':'—'}</td>
+      <td>${escapeHtml(s?.label||'')}</td>
+      <td>${p.keptAt?new Date(p.keptAt).toLocaleDateString('fr-FR'):'—'}</td>
+    </tr>`;
+  }).join('');
+
+  return `
+    <h1 style="font-size:22px;font-weight:700;margin-bottom:6px">🏆 Mes produits retenus</h1>
+    <p style="color:var(--text2);margin-bottom:20px">${arr.length} produit${arr.length>1?'s':''} validé${arr.length>1?'s':''} pour lancement</p>
+    <div class="card">
+      <div style="display:flex;gap:10px;margin-bottom:14px">
+        <button class="btn btn-sm" onclick="exportKeptCSV()">📥 Export CSV</button>
+      </div>
+      <table class="table">
+        <thead><tr>
+          <th onclick="sortKept('name')">Produit</th>
+          <th onclick="sortKept('score')">Score</th>
+          <th onclick="sortKept('prix_vente')">Prix</th>
+          <th>Gamme</th>
+          <th onclick="sortKept('roas')">ROAS</th>
+          <th>Marge nette</th>
+          <th>Session</th>
+          <th onclick="sortKept('keptAt')">Retenu le</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+}
+function sortKept(k) {
+  if (keptSortKey === k) keptSortDir *= -1;
+  else { keptSortKey = k; keptSortDir = -1; }
+  renderMain();
+}
+
+function renderSession(sid) {
+  const s = findSession(sid);
+  if (!s) return `<div class="empty"><h3>Session introuvable</h3></div>`;
+  const prods = productsInSession(sid);
+  const kept = prods.filter(p => p.status === 'keep').length;
+  const rej = prods.filter(p => p.status === 'reject').length;
+
+  const rows = prods.length === 0
+    ? `<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">Aucun produit dans cette session</td></tr>`
+    : prods.map(p => {
+        const score = calcScore(p);
+        const m = calcMarge(p);
+        return `<tr>
+          <td style="font-size:18px">${statusEmoji(p.status)}</td>
+          <td class="clickable" onclick="go({type:'product',id:'${p.id}'})">${escapeHtml(p.name)}</td>
+          <td>${score}/12</td>
+          <td>${p.prix_vente?p.prix_vente+'€':'—'}</td>
+          <td class="${roasClass(m?.roas)}">${m?m.roas.toFixed(1)+'x':'—'}</td>
+          <td>${m?Math.round(m.margeNettePct)+'%':'—'}</td>
+          <td><button class="btn btn-sm btn-danger" onclick="deleteProduct('${p.id}')">Suppr</button></td>
+        </tr>`;
+      }).join('');
+
+  return `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <h1 style="font-size:22px;font-weight:700">📁 ${escapeHtml(s.label)}</h1>
+      <div>
+        ${activeSessionId===sid?'<span class="gamme-badge" style="background:rgba(91,95,199,0.15);border-color:var(--accent);color:var(--accent2)">● Session active</span>':`<button class="btn btn-sm" onclick="setActiveSession('${sid}')">Définir comme active</button>`}
+      </div>
+    </div>
+    <p style="color:var(--text2);margin-bottom:20px">${s.date} · ${prods.length} produits · ${kept} retenus · ${rej} rejetés</p>
+
+    <div class="card">
+      <h2>📝 Notes de session</h2>
+      <textarea id="sessNotesEdit" oninput="updateSession('${sid}','notes',this.value)">${escapeHtml(s.notes||'')}</textarea>
+      <h3 style="margin-top:14px">Libellé</h3>
+      <input type="text" value="${escapeHtml(s.label)}" oninput="updateSession('${sid}','label',this.value)">
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <h2 style="margin:0">Produits de la session</h2>
+        <button class="btn btn-primary btn-sm" onclick="activeSessionId='${sid}';openProductModal()">+ Ajouter produit</button>
+      </div>
+      <table class="table">
+        <thead><tr><th></th><th>Produit</th><th>Score</th><th>Prix</th><th>ROAS</th><th>Marge</th><th></th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+}
+function setActiveSession(id) { activeSessionId = id; renderAll(); }
+function updateSession(id, field, value) {
+  const s = findSession(id);
+  if (s) { s[field] = value; save(); renderSidebar(); }
+}
+function deleteProduct(id) {
+  if (!confirm('Supprimer ce produit ?')) return;
+  state.products = state.products.filter(p => p.id !== id);
+  if (currentView.type==='product' && currentView.id===id) currentView = { type:'dashboard' };
+  save(); renderAll();
+}
+
+/* ═════════ PRODUCT VIEW ═════════ */
+let productTab = 'infos';
+function renderProduct(pid) {
+  const p = findProduct(pid);
+  if (!p) return `<div class="empty"><h3>Produit introuvable</h3></div>`;
+  const s = findSession(p.sessionId);
+  const score = calcScore(p);
+  const m = calcMarge(p);
+
+  const tabs = ['infos', 'criteres', 'scoring', 'serp', 'page_produit', 'notes'];
+  const tabLabels = { infos: '📋 Infos', criteres: '✅ Critères', scoring: '🎯 Scoring & Finances', serp: '🔎 SERP auto', page_produit: '🎨 Page Shopify', notes: '📝 Notes' };
+
+  let body = '';
+  if (productTab === 'infos') body = renderProductInfos(p);
+  else if (productTab === 'criteres') body = renderProductCriteres(p);
+  else if (productTab === 'scoring') body = renderProductScoring(p, m, score);
+  else if (productTab === 'serp') body = renderProductSerp(p);
+  else if (productTab === 'page_produit') body = renderProductPage(p);
+  else if (productTab === 'notes') body = renderProductNotes(p);
+
+  const scanLabel = window._scanning && window._scanning[p.id] ? '⏳ Scan…' : (p.serp_scan ? '🔄 Re-scanner' : '🔎 Scan SERP auto');
+  return `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap">
+      <h1 style="font-size:22px;font-weight:700;flex:1;min-width:200px">${statusEmoji(p.status)} ${escapeHtml(p.name)}</h1>
+      <button class="btn btn-sm btn-primary" onclick="scanSerp('${p.id}')" ${window._scanning&&window._scanning[p.id]?'disabled':''}>${scanLabel}</button>
+      <button class="btn btn-sm btn-danger" onclick="deleteProduct('${p.id}')">🗑 Supprimer</button>
+    </div>
+    <p style="color:var(--text2);margin-bottom:20px">Session : <a onclick="go({type:'session',id:'${s?.id}'})">${escapeHtml(s?.label||'?')}</a> · Créé le ${new Date(p.created).toLocaleDateString('fr-FR')}</p>
+
+    ${renderStatusBlock(p)}
+
+    <div class="tabs">
+      ${tabs.map(t => `<button class="tab ${productTab===t?'active':''}" onclick="setProductTab('${t}')">${tabLabels[t]}</button>`).join('')}
+    </div>
+    ${body}
+  `;
+}
+function setProductTab(t) { productTab = t; renderMain(); }
+
+function renderStatusBlock(p) {
+  const st = p.status || 'pending';
+  return `
+    <div class="card">
+      <h2>🎯 Statut du produit</h2>
+      <div class="status-block">
+        <button class="status-btn ${st==='pending'?'active-pending':''}" onclick="setStatus('${p.id}','pending')">
+          <span class="emoji">⚪</span>En attente
+        </button>
+        <button class="status-btn ${st==='keep'?'active-keep':''}" onclick="setStatus('${p.id}','keep')">
+          <span class="emoji">✅</span>Retenir
+        </button>
+        <button class="status-btn ${st==='reject'?'active-reject':''}" onclick="setStatus('${p.id}','reject')">
+          <span class="emoji">❌</span>Rejeter
+        </button>
+      </div>
+      ${st==='reject'?`<div class="field">
+        <label>Raison du rejet</label>
+        <input type="text" value="${escapeHtml(p.rejectedReason||'')}" oninput="updateProduct('${p.id}','rejectedReason',this.value)" placeholder="ex: Institutionnels top 3, marge insuffisante…">
+      </div>`:''}
+      ${st==='keep'&&p.keptAt?`<div style="font-size:12px;color:var(--text2)">Retenu le ${new Date(p.keptAt).toLocaleDateString('fr-FR')}</div>`:''}
+    </div>
+  `;
+}
+function setStatus(pid, status) {
+  const p = findProduct(pid);
+  if (!p) return;
+  p.status = status;
+  if (status === 'keep') p.keptAt = Date.now();
+  else if (status === 'pending') { p.keptAt = null; p.rejectedReason = ''; }
+  save(); renderAll();
+}
+
+function renderProductInfos(p) {
+  return `
+    <div class="card">
+      <h2>📋 Informations de base</h2>
+      <div class="form-grid">
+        <div class="field"><label>Nom</label><input value="${escapeHtml(p.name||'')}" oninput="updateProduct('${p.id}','name',this.value)"></div>
+        <div class="field"><label>Source (méthode Skool)</label>
+          <select onchange="updateProduct('${p.id}','source',this.value)">
+            <option value="">— choisir —</option>
+            ${METHODES.map(m => `<option value="${escapeHtml(m.label)}" ${p.source===m.label?'selected':''}>${escapeHtml(m.label)}</option>`).join('')}
+            <option value="Autre" ${p.source==='Autre'?'selected':''}>Autre / direct</option>
+          </select>
+        </div>
+        <div class="field" style="grid-column:1/-1"><label>URL fournisseur</label><input value="${escapeHtml(p.fournisseur_url||'')}" oninput="updateProduct('${p.id}','fournisseur_url',this.value)" placeholder="https://…"></div>
+        <div class="field"><label>Niche / univers</label><input value="${escapeHtml(p.niche||'')}" oninput="updateProduct('${p.id}','niche',this.value)" placeholder="Maison, Sport, Beauté…"></div>
+      </div>
+      <h3>💰 Prix</h3>
+      <div class="form-grid">
+        <div class="field"><label>Prix achat (€)</label><input type="number" step="0.01" value="${p.prix_achat||''}" oninput="updateProduct('${p.id}','prix_achat',this.value)"><div class="hint">Coût unitaire fournisseur</div></div>
+        <div class="field"><label>Livraison (€)</label><input type="number" step="0.01" value="${p.prix_livraison||''}" oninput="updateProduct('${p.id}','prix_livraison',this.value)"><div class="hint">Par unité</div></div>
+        <div class="field"><label>Prix vente (€)</label><input type="number" step="0.01" value="${p.prix_vente||''}" oninput="updateProduct('${p.id}','prix_vente',this.value)"><div class="hint">TTC sur la page</div></div>
+      </div>
+    </div>
+  `;
+}
+function renderProductCriteres(p) {
+  const items = CRITERES.map(c => {
+    const checked = !!p.criteres?.[c.id];
+    return `<div class="critere ${checked?'checked':''}" onclick="toggleCritere('${p.id}',${c.id})">
+      <input type="checkbox" ${checked?'checked':''} onclick="event.stopPropagation()" onchange="toggleCritere('${p.id}',${c.id})">
+      <div class="critere-text">
+        <div class="critere-title">${c.star?'<span class="star">⭐</span> ':''}${c.titre}</div>
+        <div class="critere-desc">${c.desc}</div>
+      </div>
+    </div>`;
+  }).join('');
+  const score = calcScore(p);
+  return `
+    <div class="card">
+      <h2>✅ Critères de validation Arthur</h2>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px">Coche les critères validés. Score minimum : 8/12. Les ⭐ sont non-négociables.</p>
+      ${items}
+      <div style="margin-top:14px;padding:14px;background:var(--bg3);border-radius:var(--radius);text-align:center">
+        Score : <strong style="font-size:18px">${score}/12</strong> — ${score>=10?'<span style="color:var(--green)">✅ Excellent</span>':score>=8?'<span style="color:var(--yellow)">⚠️ Acceptable</span>':'<span style="color:var(--red)">❌ Insuffisant</span>'}
+      </div>
+    </div>
+  `;
+}
+function toggleCritere(pid, cid) {
+  const p = findProduct(pid);
+  if (!p.criteres) p.criteres = {};
+  p.criteres[cid] = !p.criteres[cid];
+  save(); renderMain(); renderSidebar();
+}
+
+function renderProductScoring(p, m, score) {
+  const verdict = score >= 10 ? { cls:'verdict-go', text:'🚀 LANCER' } : score >= 8 ? { cls:'verdict-wait', text:'⏳ ATTENDRE' } : { cls:'verdict-kill', text:'❌ JETER' };
+  let finHtml = `<div class="empty" style="padding:30px">Renseigne prix achat + prix vente dans l'onglet Infos pour calculer.</div>`;
+  if (m) {
+    finHtml = `
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Ratio marge</div><div class="stat-value">×${m.ratio.toFixed(2)}</div><div class="stat-sub">${m.ratio>=3?'✅ Arthur ≥ ×3':'❌ Sous ×3'}</div></div>
+        <div class="stat-card"><div class="stat-label">Marge brute</div><div class="stat-value">${m.margeBrute.toFixed(0)}€</div></div>
+        <div class="stat-card"><div class="stat-label">CPA max</div><div class="stat-value">${m.cpaMax.toFixed(0)}€</div><div class="stat-sub">${m.gamme?.label||''}</div></div>
+        <div class="stat-card"><div class="stat-label">ROAS min</div><div class="stat-value ${roasClass(m.roas)}">${m.roas.toFixed(2)}x</div><div class="stat-sub">${m.roas>=4?'🚀 Scale':m.roas>=2.5?'✅ Viable':'❌ Mort'}</div></div>
+        <div class="stat-card"><div class="stat-label">Marge nette</div><div class="stat-value" style="color:${m.margeNettePct>=25?'var(--green)':m.margeNettePct>=15?'var(--yellow)':'var(--red)'}">${m.margeNettePct.toFixed(0)}%</div><div class="stat-sub">${m.margeNette.toFixed(0)}€/vente</div></div>
+      </div>
+      <div style="background:var(--bg3);padding:14px;border-radius:var(--radius);margin-top:10px;font-size:12px;font-family:monospace;color:var(--text2)">
+        ${p.prix_vente}€ − ${p.prix_achat}€ achat − ${p.prix_livraison||0}€ liv − ${m.cpaMax.toFixed(0)}€ CPA − ${(p.prix_vente*0.035).toFixed(0)}€ Shopify − ${(p.prix_vente*0.2/1.2).toFixed(0)}€ TVA = <strong style="color:var(--text)">${m.margeNette.toFixed(0)}€ net</strong>
+      </div>
+    `;
+  }
+  return `
+    <div class="card">
+      <div class="score-display">
+        <div><span class="score-number">${score}</span><span class="score-total">/12</span></div>
+        <div class="score-verdict ${verdict.cls}">${verdict.text}</div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>💸 Analyse financière (formules Arthur)</h2>
+      ${finHtml}
+    </div>
+  `;
+}
+
+function renderProductPage(p) {
+  const items = PAGE_CHECKLIST.map((txt, i) => {
+    const checked = !!p.page_checklist?.[i];
+    return `<div class="critere ${checked?'checked':''}" onclick="togglePage('${p.id}',${i})">
+      <input type="checkbox" ${checked?'checked':''} onclick="event.stopPropagation()" onchange="togglePage('${p.id}',${i})">
+      <div class="critere-text"><div class="critere-title">${escapeHtml(txt)}</div></div>
+    </div>`;
+  }).join('');
+  const done = Object.values(p.page_checklist||{}).filter(v=>v).length;
+  return `
+    <div class="card">
+      <h2>🎨 Checklist page produit Shopify</h2>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px">${done}/${PAGE_CHECKLIST.length} éléments validés</p>
+      ${items}
+    </div>
+  `;
+}
+function togglePage(pid, i) {
+  const p = findProduct(pid);
+  if (!p.page_checklist) p.page_checklist = {};
+  p.page_checklist[i] = !p.page_checklist[i];
+  save(); renderMain();
+}
+
+function renderProductNotes(p) {
+  return `
+    <div class="card">
+      <h2>📝 Notes libres</h2>
+      <textarea style="min-height:280px" oninput="updateProduct('${p.id}','notes',this.value)">${escapeHtml(p.notes||'')}</textarea>
+    </div>
+  `;
+}
+
+/* ═════════ SERP AUTO-SCAN ═════════ */
+const SERP_ENDPOINT = 'http://localhost:7789';
+window._scanning = window._scanning || {};
+
+async function scanSerp(pid) {
+  const p = findProduct(pid);
+  if (!p) return;
+  const q = (p.name || '').trim();
+  if (!q) { alert('Donne un nom au produit avant de scanner'); return; }
+  window._scanning[pid] = true;
+  renderMain();
+  try {
+    const force = p.serp_scan ? '&force=1' : '';
+    const resp = await fetch(`${SERP_ENDPOINT}/scan?q=${encodeURIComponent(q)}${force}`);
+    if (!resp.ok) throw new Error('HTTP '+resp.status);
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error);
+    p.serp_scan = data;
+    // Auto-cocher critères 2, 5, 12
+    if (!p.criteres) p.criteres = {};
+    const ac = data.autoChecks || {};
+    if (ac.c2_concurrence) p.criteres[2] = true;
+    if (ac.c5_pas_institutionnels_top3) p.criteres[5] = true;
+    if (ac.c12_search_ads) p.criteres[12] = true;
+    save();
+    productTab = 'serp';
+    renderAll();
+  } catch (e) {
+    alert('Erreur scan SERP : ' + e.message + '\n\nVérifie que serp_scout.py tourne sur le port 7789.');
+  } finally {
+    window._scanning[pid] = false;
+    renderMain();
+  }
+}
+
+function renderProductSerp(p) {
+  if (!p.serp_scan) {
+    return `<div class="card"><div class="empty">
+      <div class="emoji">🔎</div>
+      <h3>Aucun scan SERP encore</h3>
+      <p style="margin:10px 0 18px">Clique le bouton "🔎 Scan SERP auto" en haut pour scraper automatiquement les annonces Google Search + Google Shopping + le top 10 organique.</p>
+      <p style="font-size:12px;color:var(--text3)">Le scan utilise SerpAPI · ~2s · cache 24h · auto-coche les critères 2, 5 et 12 selon les résultats.</p>
+    </div></div>`;
+  }
+  const d = p.serp_scan;
+  const ac = d.autoChecks || {};
+  const stats = ac.stats || {};
+  const date = new Date((d.ts||0)*1000).toLocaleString('fr-FR');
+  const cached = d._cached ? `<span style="color:var(--text3);font-size:11px"> · cache (${Math.round((d._age_s||0)/60)} min)</span>` : '';
+
+  const checkBadge = (b, label) => `<span class="gamme-badge" style="${b?'background:rgba(74,222,128,0.12);border-color:rgba(74,222,128,0.3);color:var(--green)':'background:rgba(248,113,113,0.12);border-color:rgba(248,113,113,0.3);color:var(--red)'}">${b?'✅':'❌'} ${label}</span>`;
+
+  const adsHtml = (d.ads||[]).length === 0
+    ? `<div style="color:var(--text3);font-size:12px;padding:10px">Aucune annonce Google Ads détectée</div>`
+    : (d.ads||[]).map(a => `<div style="padding:8px 0;border-bottom:1px solid var(--border)">
+        <div style="font-weight:500;font-size:13px">${escapeHtml(a.title||'(sans titre)')}</div>
+        <div style="font-size:11px;color:var(--text2)">${escapeHtml(a.domain||'')} ${a.position?'· pos '+a.position:''}</div>
+      </div>`).join('');
+
+  const shopHtml = (d.shopping||[]).length === 0
+    ? `<div style="color:var(--text3);font-size:12px;padding:10px">Aucun résultat Google Shopping</div>`
+    : `<table class="table">
+        <thead><tr><th>Produit</th><th>Prix</th><th>Marchand</th><th>⚠️</th></tr></thead>
+        <tbody>${(d.shopping||[]).slice(0,15).map(s => `<tr>
+          <td><a href="${escapeHtml(s.link||'#')}" target="_blank" style="color:var(--text)">${escapeHtml((s.title||'').slice(0,80))}</a></td>
+          <td><strong>${escapeHtml(s.price||'—')}</strong></td>
+          <td>${escapeHtml(s.source||s.domain||'')}</td>
+          <td>${s.institutionnel?'<span style="color:var(--red)">institutionnel</span>':''}</td>
+        </tr>`).join('')}</tbody>
+      </table>`;
+
+  const orgHtml = (d.organic||[]).length === 0
+    ? `<div style="color:var(--text3);font-size:12px;padding:10px">Aucun résultat organique</div>`
+    : `<table class="table">
+        <thead><tr><th>#</th><th>Domaine</th><th>Titre</th><th>⚠️</th></tr></thead>
+        <tbody>${(d.organic||[]).map((o,i) => `<tr>
+          <td>${i+1}</td>
+          <td><strong>${escapeHtml(o.domain||'')}</strong></td>
+          <td><a href="${escapeHtml(o.link||'#')}" target="_blank" style="color:var(--text)">${escapeHtml((o.title||'').slice(0,90))}</a></td>
+          <td>${o.institutionnel?'<span style="color:var(--red)">⚠ institutionnel</span>':'<span style="color:var(--green)">indé</span>'}</td>
+        </tr>`).join('')}</tbody>
+      </table>`;
+
+  return `
+    <div class="card">
+      <h2>🔎 Résultats SERP — auto-checks</h2>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px">Scanné le ${date}${cached}. Requête : <code>${escapeHtml(d.query||'')}</code></p>
+      <div class="row" style="margin-bottom:14px">
+        ${checkBadge(ac.c2_concurrence, 'C2 Concurrence')}
+        ${checkBadge(ac.c5_pas_institutionnels_top3, "C5 Pas d'institutionnels top 3")}
+        ${checkBadge(ac.c12_search_ads, 'C12 Présence Google Ads')}
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Annonces Google</div><div class="stat-value">${stats.n_ads||0}</div></div>
+        <div class="stat-card"><div class="stat-label">Shopping</div><div class="stat-value">${stats.n_shopping||0}</div></div>
+        <div class="stat-card"><div class="stat-label">Organique top 10</div><div class="stat-value">${stats.n_organic||0}</div></div>
+        <div class="stat-card"><div class="stat-label">Institutionnels</div><div class="stat-value" style="color:${stats.n_institutionnels_total>=3?'var(--red)':'var(--text)'}">${stats.n_institutionnels_total||0}</div><div class="stat-sub">${stats.has_institutionnels_top3?'⚠️ dans le top 3':'top 3 propre'}</div></div>
+        <div class="stat-card"><div class="stat-label">Prix moyen Shopping</div><div class="stat-value">${stats.avg_shopping_price?stats.avg_shopping_price+'€':'—'}</div></div>
+      </div>
+    </div>
+    <div class="card"><h2>💰 Google Shopping</h2>${shopHtml}</div>
+    <div class="card"><h2>📢 Google Search Ads</h2>${adsHtml}</div>
+    <div class="card"><h2>🌐 Organique top 10</h2>${orgHtml}</div>
+  `;
+}
+
+function updateProduct(pid, field, value) {
+  const p = findProduct(pid);
+  if (!p) return;
+  p[field] = value;
+  save();
+  renderSidebar();
+}
+
+function renderHelp() {
+  return `
+    <h1 style="font-size:22px;font-weight:700;margin-bottom:20px">📚 Méthode Arthur — Aide rapide</h1>
+    <div class="card">
+      <h2>🎯 Philosophie en 1 phrase</h2>
+      <p style="font-size:14px;line-height:1.7">Trouver un produit de <strong>niche précise</strong>, avec <strong>concurrence présente mais pas institutionnelle</strong>, <strong>marge forte</strong> (×3 min), <strong>sourcing facile</strong>, <strong>besoin d'expert</strong>, <strong>cycle d'achat rapide</strong>, achetable sur <strong>Meta Ads</strong>.</p>
+    </div>
+    <div class="card">
+      <h2>📐 Formules clés</h2>
+      <ul style="line-height:1.8;padding-left:20px">
+        <li>Marge : <code>Prix vente ≥ 3× Prix achat</code></li>
+        <li>CPA cible : <code>15-25% du prix de vente</code> (max 35%)</li>
+        <li>ROAS min viable : <code>2.5x</code> · scale <code>4-6x</code></li>
+        <li>Marge nette cible : <code>25-35%</code> après tout</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>💰 Gammes de prix (selon Arthur)</h2>
+      <table class="table">
+        <tr><th>Gamme</th><th>Profile</th><th>CPA cible</th></tr>
+        <tr><td>< 50€</td><td>Volume, impulsif</td><td>&lt; 10€</td></tr>
+        <tr><td>50-150€</td><td>Sweet spot</td><td>10-25€</td></tr>
+        <tr><td>150-400€</td><td>⭐ Recommandé débutant</td><td>25-50€</td></tr>
+        <tr><td>&gt; 400€</td><td>Expert</td><td>50-100€</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2>⚠️ Pièges</h2>
+      <ul style="line-height:1.8;padding-left:20px">
+        <li>❌ Produit generic (Amazon gagne)</li>
+        <li>❌ Institutionnels top 3 Google</li>
+        <li>❌ Marge ×2 seulement</li>
+        <li>❌ Produit saisonnier ponctuel</li>
+        <li>❌ Délai livraison &gt; 15j</li>
+        <li>❌ Produit fragile</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>🛠️ Les 9 méthodes de recherche (par ROI)</h2>
+      ${METHODES.map(m => `<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+        <div style="font-weight:500;margin-bottom:4px">${escapeHtml(m.label)} <a href="${escapeHtml(m.url)}" target="_blank" style="font-size:11px;color:var(--accent2)">↗ ouvrir</a></div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.5">${escapeHtml(m.desc)}</div>
+      </div>`).join('')}
+    </div>
+    <div class="card">
+      <h2>🔎 Auto-scan SERP</h2>
+      <p style="line-height:1.7">Sur chaque fiche produit, le bouton <strong>"🔎 Scan SERP auto"</strong> scrape automatiquement Google Search + Google Shopping (via SerpAPI) et coche les critères <strong>2</strong>, <strong>5</strong>, <strong>12</strong>. L'onglet <strong>🔎 SERP auto</strong> montre toutes les annonces, le top shopping (avec prix moyen) et le top 10 organique avec badges institutionnels.</p>
+      <p style="font-size:12px;color:var(--text3);margin-top:8px">Backend : <code>serp_scout.py</code> sur localhost:7789. Cache 24h.</p>
+    </div>
+  `;
+}
+
+/* ═════════ EXPORT / IMPORT ═════════ */
+function exportAll() {
+  const data = JSON.stringify(state, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `robot-validation-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+}
+function importAll(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = (ev) => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!data.sessions || !data.products) throw new Error('Format invalide');
+      if (!confirm(`Remplacer les données actuelles par ${data.sessions.length} sessions / ${data.products.length} produits ?`)) return;
+      localStorage.setItem(STORAGE_KEY + '_backup_' + Date.now(), JSON.stringify(state));
+      state = data;
+      activeSessionId = state.sessions[0]?.id || null;
+      window._openSessions = null;
+      save(); renderAll();
+      alert('Import réussi ✅');
+    } catch (err) { alert('Erreur import : ' + err.message); }
+  };
+  r.readAsText(file);
+  e.target.value = '';
+}
+function exportKeptCSV() {
+  const arr = keptProducts();
+  if (arr.length === 0) { alert('Aucun produit retenu à exporter'); return; }
+  const headers = ['Produit','Score','Prix achat','Prix vente','Gamme','ROAS','Marge nette %','Session','Source','Fournisseur','Retenu le','Notes'];
+  const rows = arr.map(p => {
+    const s = findSession(p.sessionId);
+    const m = calcMarge(p);
+    const g = gammeOf(+p.prix_vente);
+    return [p.name, calcScore(p)+'/12', p.prix_achat||'', p.prix_vente||'', g?.label||'', m?m.roas.toFixed(2)+'x':'', m?m.margeNettePct.toFixed(0)+'%':'', s?.label||'', p.source||'', p.fournisseur_url||'', p.keptAt?new Date(p.keptAt).toLocaleDateString('fr-FR'):'', (p.notes||'').replace(/\n/g,' ')];
+  });
+  const csv = [headers, ...rows].map(r => r.map(c => `"${(c||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\ufeff'+csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `produits-retenus-${new Date().toISOString().slice(0,10)}.csv`; a.click();
+}
+
+/* ═════════ CLOUD SYNC (jsonblob.com) ═════════ */
+function openSyncModal() {
+  document.getElementById('syncId').value = localStorage.getItem(SYNC_ID_KEY) || '';
+  document.getElementById('syncMsg').textContent = '';
+  openModal('modalSync');
+}
+async function syncPush() {
+  const msg = document.getElementById('syncMsg');
+  msg.textContent = '⏳ Envoi en cours...';
+  try {
+    let id = document.getElementById('syncId').value.trim();
+    const body = JSON.stringify(state);
+    let resp;
+    if (!id) {
+      resp = await fetch('https://jsonblob.com/api/jsonBlob', { method: 'POST', headers: {'Content-Type':'application/json','Accept':'application/json'}, body });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const loc = resp.headers.get('Location') || '';
+      id = loc.split('/').pop();
+      document.getElementById('syncId').value = id;
+    } else {
+      resp = await fetch('https://jsonblob.com/api/jsonBlob/' + id, { method: 'PUT', headers: {'Content-Type':'application/json','Accept':'application/json'}, body });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    }
+    localStorage.setItem(SYNC_ID_KEY, id);
+    msg.innerHTML = `✅ Envoyé ! Ton ID : <strong>${id}</strong><br>Copie-le sur tes autres appareils.`;
+  } catch (e) { msg.textContent = '❌ Erreur : ' + e.message; }
+}
+async function syncPull() {
+  const msg = document.getElementById('syncMsg');
+  const id = document.getElementById('syncId').value.trim();
+  if (!id) { msg.textContent = '❌ Entre un ID'; return; }
+  msg.textContent = '⏳ Récupération...';
+  try {
+    const resp = await fetch('https://jsonblob.com/api/jsonBlob/' + id, { headers: { 'Accept':'application/json' } });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    if (!data.sessions || !data.products) throw new Error('Format invalide');
+    if (!confirm(`Remplacer tes données locales par ${data.sessions.length} sessions / ${data.products.length} produits depuis le cloud ?`)) { msg.textContent = 'Annulé'; return; }
+    localStorage.setItem(STORAGE_KEY + '_backup_' + Date.now(), JSON.stringify(state));
+    state = data;
+    activeSessionId = state.sessions[0]?.id || null;
+    window._openSessions = null;
+    localStorage.setItem(SYNC_ID_KEY, id);
+    save(); renderAll();
+    msg.textContent = '✅ Données récupérées !';
+  } catch (e) { msg.textContent = '❌ Erreur : ' + e.message; }
+}
+
+/* ═════════ FORMATION (transcripts Skool) ═════════ */
+function renderFormation(lessonSlug) {
+  const F = window.FORMATION || [];
+  if (F.length === 0) {
+    return `<div class="empty"><div class="emoji">🎓</div><h3>Formation pas encore importée</h3><p>Lance <code>python bundle_formation.py</code> dans le dossier du projet pour bundler les transcripts.</p></div>`;
+  }
+  const sections = {};
+  F.forEach(l => { (sections[l.section]=sections[l.section]||[]).push(l); });
+
+  const indexHtml = Object.entries(sections).map(([sec, lessons]) => {
+    return `<div class="card" style="margin-bottom:14px"><h2>${escapeHtml(sec)}</h2>
+      ${lessons.map(l => `<div onclick="go({type:'formation',lesson:'${l.slug}'})" style="padding:10px 12px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:10px;${lessonSlug===l.slug?'background:var(--bg4);':''}" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='${lessonSlug===l.slug?'var(--bg4)':''}'">
+        <span style="color:var(--text3);font-size:11px;width:24px">#${l.n}</span>
+        <span style="flex:1;font-size:13px">${escapeHtml(l.title)}</span>
+        <span style="font-size:10px;color:${l.transcript?'var(--green)':'var(--text3)'}">${l.transcript?'✓ '+Math.round(l.transcript.length/1000)+'k':'—'}</span>
+      </div>`).join('')}
+    </div>`;
+  }).join('');
+
+  if (!lessonSlug) {
+    const totalChars = F.reduce((s,l)=>s+(l.transcript?.length||0),0);
+    return `<h1 style="font-size:22px;font-weight:700;margin-bottom:6px">🎓 Formation Skool — ${F.filter(l=>l.transcript).length}/27 leçons</h1>
+      <p style="color:var(--text2);margin-bottom:20px">Transcriptions complètes des vidéos Arthur Bouchard (${Math.round(totalChars/1000)}k caractères). Cherche un mot avec Ctrl+F dans une leçon.</p>
+      ${indexHtml}`;
+  }
+
+  const lesson = F.find(l => l.slug === lessonSlug);
+  if (!lesson) return `<div class="empty"><h3>Leçon introuvable</h3></div>`;
+
+  // Extract text without timecodes for clean reading
+  const cleanText = (lesson.transcript||'').split('\n').map(line => {
+    const m = line.match(/^\[\d+:\d+:[\d.]+\]\s*(.*)$/);
+    return m ? m[1] : line;
+  }).filter(Boolean).join(' ');
+
+  return `<div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <button class="btn btn-sm" onclick="go({type:'formation'})">← Retour index</button>
+      <span class="gamme-badge">${escapeHtml(lesson.section)}</span>
+    </div>
+    <h1 style="font-size:22px;font-weight:700;margin:14px 0 6px">${escapeHtml(lesson.title)}</h1>
+    <p style="color:var(--text2);margin-bottom:20px">Leçon ${lesson.n}/27 · ${Math.round((lesson.transcript||'').length/1000)}k caractères</p>
+    ${!lesson.transcript ? `<div class="empty"><div class="emoji">⏳</div><h3>Transcript pas encore généré</h3></div>` : `
+    <div class="card">
+      <h2>📝 Transcription complète (lecture)</h2>
+      <p style="line-height:1.8;font-size:14px;white-space:pre-wrap">${escapeHtml(cleanText)}</p>
+    </div>
+    <details class="card" style="margin-top:14px">
+      <summary style="cursor:pointer;font-weight:500">📍 Avec timecodes</summary>
+      <pre style="white-space:pre-wrap;font-family:'SF Mono',monospace;font-size:12px;line-height:1.6;margin-top:14px;color:var(--text2)">${escapeHtml(lesson.transcript)}</pre>
+    </details>`}
+  `;
+}
+
+/* ═════════ FIREBASE AUTO-SYNC (cross-device) ═════════ */
+let fbUserId = localStorage.getItem(FB_USER_ID_KEY);
+let fbReady = false;
+let fbApplyingRemote = false;
+let fbPushTimer = null;
+
+function fbGenId() {
+  // Short pairing code: 6 chars base36
+  return Math.random().toString(36).slice(2, 8).toUpperCase();
+}
+async function fbInit(userId) {
+  if (!window.FB) { console.warn('Firebase not ready'); return false; }
+  fbUserId = userId;
+  localStorage.setItem(FB_USER_ID_KEY, userId);
+  const { db, doc, getDoc, onSnapshot } = window.FB;
+  const ref = doc(db, 'users', userId);
+  // Pull initial then listen
+  const snap = await getDoc(ref);
+  if (snap.exists()) {
+    const data = snap.data();
+    if (data && data.payload) {
+      fbApplyingRemote = true;
+      try {
+        const remote = JSON.parse(data.payload);
+        // Only apply if remote is "newer" (more entries) or local is empty
+        const local = state;
+        const remoteHas = (remote.products?.length||0) + (remote.sessions?.length||0);
+        const localHas = (local.products?.length||0) + (local.sessions?.length||0);
+        if (localHas === 0 || (data.ts && data.ts > (local._ts||0))) {
+          state = remote;
+          activeSessionId = state.sessions?.[0]?.id || activeSessionId;
+          window._openSessions = null;
+          save();
+          renderAll();
+        } else if (remoteHas < localHas) {
+          // Push our richer local state
+          fbPushDebounced();
+        }
+      } catch(e) { console.error('apply remote', e); }
+      fbApplyingRemote = false;
+    }
+  } else {
+    // No remote yet — push local
+    fbPushDebounced();
+  }
+  // Real-time listener
+  onSnapshot(ref, (snap) => {
+    if (!snap.exists() || fbApplyingRemote) return;
+    const data = snap.data();
+    if (!data?.payload) return;
+    try {
+      const remote = JSON.parse(data.payload);
+      // Skip if it's our own write
+      if (data.lastWriter === fbDeviceId()) return;
+      fbApplyingRemote = true;
+      state = remote;
+      activeSessionId = state.sessions?.[0]?.id || activeSessionId;
+      window._openSessions = null;
+      save();
+      renderAll();
+      const ind = document.getElementById('saveInd');
+      if (ind) { ind.textContent = '☁️ synchro reçue'; setTimeout(()=>{ind.textContent='Prêt';}, 2000); }
+      fbApplyingRemote = false;
+    } catch(e) { console.error('remote snap', e); fbApplyingRemote = false; }
+  });
+  fbReady = true;
+  return true;
+}
+function fbDeviceId() {
+  let d = localStorage.getItem('ecom_device_id');
+  if (!d) { d = Math.random().toString(36).slice(2, 12); localStorage.setItem('ecom_device_id', d); }
+  return d;
+}
+function fbPushDebounced() {
+  clearTimeout(fbPushTimer);
+  fbPushTimer = setTimeout(fbPush, 1500);
+}
+async function fbPush() {
+  if (!fbReady || !fbUserId || fbApplyingRemote || !window.FB) return;
+  try {
+    const { db, doc, setDoc } = window.FB;
+    state._ts = Date.now();
+    await setDoc(doc(db, 'users', fbUserId), {
+      payload: JSON.stringify(state),
+      ts: Date.now(),
+      lastWriter: fbDeviceId()
+    });
+    const ind = document.getElementById('saveInd');
+    if (ind) ind.textContent = '☁️ synchro envoyée';
+  } catch (e) { console.warn('fb push fail', e); }
+}
+async function fbConnect() {
+  // Show modal asking for ID or generate new
+  const existing = fbUserId;
+  const choice = prompt(
+    '☁️ Synchronisation Firebase\n\n' +
+    'Pour synchroniser entre PC et téléphone, utilise le MÊME code sur les deux appareils.\n\n' +
+    '• Laisse vide pour générer un nouveau code\n' +
+    '• Colle un code existant pour rejoindre\n\n' +
+    (existing ? 'Code actuel: ' + existing : 'Aucun code actuellement'),
+    existing || ''
+  );
+  if (choice === null) return;
+  const id = (choice.trim() || fbGenId()).toUpperCase();
+  await fbInit(id);
+  alert('☁️ Synchronisation activée !\n\nTon code : ' + id + '\n\nUtilise ce même code sur ton téléphone (bouton ☁️ Sync) pour synchroniser tes données automatiquement.');
+}
+function fbDisconnect() {
+  fbReady = false;
+  fbUserId = null;
+  localStorage.removeItem(FB_USER_ID_KEY);
+  alert('Synchronisation Firebase désactivée. Les données restent en local.');
+}
+
+// Hook auto-push on save
+const _origSave = save;
+save = function() {
+  _origSave.apply(this, arguments);
+  if (fbReady) fbPushDebounced();
+};
+
+window.addEventListener('firebaseReady', () => {
+  if (fbUserId) fbInit(fbUserId).catch(e => console.error('fb init', e));
+});
+
+/* ═════════ BOOT ═════════ */
+function renderAll() { renderSidebar(); renderMain(); }
+load();
+renderAll();
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.target.matches('input, textarea, select')) return;
+  if (e.key === 'n' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); openProductModal(); }
+  if (e.key === 'Escape') { document.querySelectorAll('.modal-bg.open').forEach(m => m.classList.remove('open')); }
+});
+
+// Close modal on backdrop click
+document.querySelectorAll('.modal-bg').forEach(bg => {
+  bg.addEventListener('click', (e) => { if (e.target === bg) bg.classList.remove('open'); });
+});
+</script>
+</body>
+</html>
