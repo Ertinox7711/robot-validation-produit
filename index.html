@@ -660,7 +660,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 </div>
 
 <header>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.8.0-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.8.1-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -1008,14 +1008,20 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.8.0-beta';
-const APP_VERSION_NOTES = 'Page Historique : journal des versions visible dans la sidebar avec source d\'inspiration';
+const APP_VERSION = '0.8.1-beta';
+const APP_VERSION_NOTES = 'Filtre live sur la page Produits retenus (recherche par nom, niche ou session)';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.8.1-beta', date: '2026-04-25', source: 'Sell The Trend', summary: 'Filtre live sur Produits retenus',
+    items: [
+      {type:'feat', text:'Barre de recherche dans la page Produits retenus : filtre par nom, niche ou session, en live, sans rerender complet'},
+      {type:'ux', text:'Compteur dynamique "X / total" et empty-state quand aucun match'},
+      {type:'perf', text:'Le tri des colonnes ne re-render plus la page entière, juste les lignes du tableau'},
+    ]},
   { v: '0.8.0-beta', date: '2026-04-25', source: 'interne', summary: 'Page Historique des versions',
     items: [{type:'feat', text:'Nouvelle vue Historique dans la sidebar avec timeline des versions, source d\'inspiration et items détaillés'}] },
   { v: '0.7.2-beta', date: '2026-04-25', source: 'interne', summary: 'Fix badge version invisible',
@@ -1465,8 +1471,16 @@ function renderDashboard() {
 }
 
 let keptSortKey = 'keptAt', keptSortDir = -1;
-function renderKept() {
-  const arr = [...keptProducts()];
+let keptFilter = '';
+function _keptFilteredSorted() {
+  const q = keptFilter.trim().toLowerCase();
+  const arr = keptProducts().filter(p => {
+    if (!q) return true;
+    const sess = findSession(p.sessionId);
+    return ((p.name||'').toLowerCase().includes(q))
+        || ((sess?.label||'').toLowerCase().includes(q))
+        || ((p.niche||'').toLowerCase().includes(q));
+  });
   arr.sort((a,b) => {
     let av, bv;
     if (keptSortKey === 'score') { av = calcScore(a); bv = calcScore(b); }
@@ -1476,12 +1490,11 @@ function renderKept() {
     else { av = a.keptAt||0; bv = b.keptAt||0; }
     return (av-bv) * keptSortDir;
   });
-
-  if (arr.length === 0) {
-    return `<div class="empty"><div style="color:var(--accent2);margin-bottom:14px;display:inline-flex">${ico('trophy',56)}</div><h3>Pas encore de produits retenus</h3><p>Valide des produits avec le statut "Retenir" pour les voir ici.</p></div>`;
-  }
-
-  const rows = arr.map(p => {
+  return arr;
+}
+function _keptRowsHtml(arr) {
+  if (arr.length === 0) return `<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:28px">Aucun produit ne correspond au filtre</td></tr>`;
+  return arr.map(p => {
     const s = findSession(p.sessionId);
     const score = calcScore(p);
     const m = calcMarge(p);
@@ -1497,12 +1510,22 @@ function renderKept() {
       <td>${p.keptAt?new Date(p.keptAt).toLocaleDateString('fr-FR'):'—'}</td>
     </tr>`;
   }).join('');
-
+}
+function renderKept() {
+  const total = keptProducts().length;
+  if (total === 0) {
+    return `<div class="empty"><div style="color:var(--accent2);margin-bottom:14px;display:inline-flex">${ico('trophy',56)}</div><h3>Pas encore de produits retenus</h3><p>Valide des produits avec le statut "Retenir" pour les voir ici.</p></div>`;
+  }
+  const arr = _keptFilteredSorted();
   return `
     <h1 style="font-size:22px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:10px;"><span style="color:var(--accent2);display:inline-flex">${ico('trophy',22)}</span>Mes produits retenus</h1>
-    <p style="color:var(--text2);margin-bottom:20px">${arr.length} produit${arr.length>1?'s':''} validé${arr.length>1?'s':''} pour lancement</p>
+    <p style="color:var(--text2);margin-bottom:20px"><span id="keptCount">${arr.length}</span> / ${total} produit${total>1?'s':''} validé${total>1?'s':''} pour lancement</p>
     <div class="card">
-      <div style="display:flex;gap:10px;margin-bottom:14px">
+      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+        <div style="position:relative;flex:1;min-width:220px;max-width:380px">
+          <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);display:inline-flex;pointer-events:none">${ico('search',16)}</span>
+          <input type="text" id="keptFilterInput" placeholder="Filtrer par nom, niche ou session…" value="${escapeHtml(keptFilter)}" oninput="filterKept(this.value)" style="padding-left:36px">
+        </div>
         <button class="btn btn-sm" onclick="exportKeptCSV()">Export CSV</button>
         <button class="btn btn-sm btn-primary" onclick="exportTemplateXLSX('kept')">Export Excel (template)</button>
       </div>
@@ -1517,15 +1540,25 @@ function renderKept() {
           <th>Session</th>
           <th onclick="sortKept('keptAt')">Retenu le</th>
         </tr></thead>
-        <tbody>${rows}</tbody>
+        <tbody id="keptTbody">${_keptRowsHtml(arr)}</tbody>
       </table>
     </div>
   `;
 }
+function filterKept(v) {
+  keptFilter = v || '';
+  const arr = _keptFilteredSorted();
+  const tb = document.getElementById('keptTbody');
+  if (tb) tb.innerHTML = _keptRowsHtml(arr);
+  const cnt = document.getElementById('keptCount');
+  if (cnt) cnt.textContent = arr.length;
+}
 function sortKept(k) {
   if (keptSortKey === k) keptSortDir *= -1;
   else { keptSortKey = k; keptSortDir = -1; }
-  renderMain();
+  const arr = _keptFilteredSorted();
+  const tb = document.getElementById('keptTbody');
+  if (tb) tb.innerHTML = _keptRowsHtml(arr);
 }
 
 function renderSession(sid) {
