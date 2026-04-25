@@ -653,13 +653,25 @@ small.muted { color: var(--text3); font-size: 11px; }
 
 <div class="modal-bg" id="modalSettings">
   <div class="modal">
-    <h3>⚙️ Paramètres</h3>
+    <h3>Paramètres</h3>
     <div class="field" style="margin-bottom:14px">
-      <label>Ta clé SerpAPI</label>
+      <label>Ta clé SerpAPI principale</label>
       <input type="password" id="settingsSerpKey" placeholder="Colle ta clé SerpAPI…">
-      <div class="hint">Va sur <a href="https://serpapi.com/manage-api-key" target="_blank">serpapi.com/manage-api-key</a> pour récupérer ta clé. Plan gratuit : 100 recherches/mois.</div>
+      <div class="hint">Va sur <a href="https://serpapi.com/manage-api-key" target="_blank">serpapi.com/manage-api-key</a> · Plan gratuit : 100 recherches/mois.</div>
     </div>
-    <p style="font-size:12px;color:var(--text3);line-height:1.5;">🔒 Ta clé reste dans <strong>ton</strong> appareil + ton compte Firebase. Elle n'est jamais envoyée à un serveur tiers autre que SerpAPI.</p>
+    <div class="field" style="margin-bottom:14px">
+      <label>Clés supplémentaires (rotation auto)</label>
+      <textarea id="settingsSerpKeyExtra" rows="4" placeholder="Une clé par ligne. Quand la principale est épuisée, le scout bascule automatiquement sur la suivante."></textarea>
+      <div class="hint">Crée plusieurs comptes SerpAPI gratuits (1 mail = 100 recherches/mois). Le serp_scout les rotate quand l'une atteint sa limite.</div>
+    </div>
+    <div class="field" style="margin-bottom:14px">
+      <label>Quota restant</label>
+      <div id="settingsQuotaBox" style="padding:12px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid var(--border);font-size:12px;line-height:1.6;color:var(--text2);">
+        <em style="color:var(--text3)">Clique "Vérifier quota" pour interroger SerpAPI…</em>
+      </div>
+      <button class="btn btn-sm" style="margin-top:8px" onclick="checkSerpQuota()">Vérifier quota</button>
+    </div>
+    <p style="font-size:12px;color:var(--text3);line-height:1.5;">Ta clé reste dans <strong>ton</strong> appareil + ton compte Firebase. Elle n'est jamais envoyée à un serveur tiers autre que SerpAPI.</p>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('modalSettings')">Annuler</button>
       <button class="btn btn-primary" onclick="saveSettings()">Enregistrer</button>
@@ -715,6 +727,7 @@ small.muted { color: var(--text3); font-size: 11px; }
       </div>
     </div>
     <div id="discoverStats" style="margin-top:14px;font-size:12px;color:var(--text3);"></div>
+    <div id="discoverQuota" style="margin-top:6px;font-size:11px;color:var(--text3);display:flex;align-items:center;gap:6px;"></div>
     <div id="discoverResults" style="margin-top:18px;max-height:380px;overflow-y:auto;"></div>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('modalDiscover')">Fermer</button>
@@ -946,7 +959,7 @@ function renderSidebar() {
       <div class="nav-item" onclick="openDiscoverModal()" style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(217,70,239,0.06));border:1px solid rgba(139,92,246,0.25);">
         <span class="icon">${ico('search',16)}</span><span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:600">Recherche auto</span>
       </div>
-      <div class="nav-item" onclick="openModal('modalSettings');document.getElementById('settingsSerpKey').value=getSerpKey();">
+      <div class="nav-item" onclick="openSettingsPrefilled()">
         <span class="icon">${ico('gear',16)}</span><span>Paramètres</span>
       </div>
       <div class="nav-item ${currentView.type==='help'?'active':''}" onclick="go({type:'help'})">
@@ -1498,18 +1511,73 @@ window._scanning = window._scanning || {};
 const INSTITUTIONNELS_DOMAINS = ['amazon.fr','amazon.com','cdiscount.com','fnac.com','darty.com','leroymerlin.fr','boulanger.com','manomano.fr','conforama.fr','but.fr','temu.com','shein.com','aliexpress.com','ebay.fr','rakuten.com','rueducommerce.fr','auchan.fr','carrefour.fr'];
 
 function getSerpKey() { return state._serpapi_key || localStorage.getItem(SERPAPI_KEY_STORAGE) || ''; }
+function getSerpKeysExtra() { return state._serpapi_keys_extra || []; }
+function getAllSerpKeys() {
+  const arr = [];
+  const main = getSerpKey();
+  if (main) arr.push(main);
+  for (const k of getSerpKeysExtra()) if (k && !arr.includes(k)) arr.push(k);
+  return arr;
+}
 function setSerpKey(k) {
   state._serpapi_key = k;
   localStorage.setItem(SERPAPI_KEY_STORAGE, k);
   save();
 }
+function setSerpKeysExtra(arr) {
+  state._serpapi_keys_extra = arr.filter(k => k && k.trim()).map(k => k.trim());
+  save();
+}
+
+async function fetchAccountQuota(key) {
+  // Direct call to SerpAPI account endpoint (works without serp_scout)
+  try {
+    const r = await fetch('https://serpapi.com/account.json?api_key=' + encodeURIComponent(key));
+    if (!r.ok) return { error: 'HTTP '+r.status, key_tail: key.slice(-6) };
+    const d = await r.json();
+    return {
+      key_tail: key.slice(-6),
+      searches_left: d.plan_searches_left ?? d.searches_left ?? d.total_searches_left ?? 0,
+      monthly_limit: d.searches_per_month ?? d.plan_monthly_searches ?? d.plan_searches ?? null,
+      this_month_usage: d.this_month_usage ?? null,
+      account_email: d.account_email,
+      plan: d.plan_id || d.plan_name
+    };
+  } catch(e) { return { error: e.message, key_tail: key.slice(-6) }; }
+}
+
+async function checkSerpQuota() {
+  const box = document.getElementById('settingsQuotaBox');
+  const keys = getAllSerpKeys();
+  if (!keys.length) { box.innerHTML = '<span style="color:var(--red)">Aucune clé configurée.</span>'; return; }
+  box.innerHTML = '<em style="color:var(--text3)">Interrogation SerpAPI…</em>';
+  const results = await Promise.all(keys.map(k => fetchAccountQuota(k)));
+  let totalLeft = 0, totalLimit = 0;
+  const rows = results.map((r, i) => {
+    if (r.error) {
+      return `<div style="padding:6px 0;border-bottom:1px solid var(--border);"><strong>Clé #${i+1} (…${r.key_tail})</strong> · <span style="color:var(--red)">erreur: ${escapeHtml(r.error)}</span></div>`;
+    }
+    totalLeft += +r.searches_left || 0;
+    if (r.monthly_limit) totalLimit += +r.monthly_limit;
+    const pct = r.monthly_limit ? Math.round((r.searches_left / r.monthly_limit) * 100) : null;
+    const color = r.searches_left > 20 ? 'var(--green)' : r.searches_left > 0 ? 'var(--yellow)' : 'var(--red)';
+    return `<div style="padding:6px 0;border-bottom:1px solid var(--border);">
+      <strong>Clé #${i+1} (…${r.key_tail})</strong>${r.account_email?' · '+escapeHtml(r.account_email):''}${r.plan?' · <span class="pill" style="font-size:9px">'+escapeHtml(r.plan)+'</span>':''}
+      <div style="font-size:11px;color:var(--text2);margin-top:2px">Restant : <strong style="color:${color}">${r.searches_left}</strong>${r.monthly_limit?' / '+r.monthly_limit+(pct!==null?' ('+pct+'%)':''):''}${r.this_month_usage!==null&&r.this_month_usage!==undefined?' · usage mois : '+r.this_month_usage:''}</div>
+    </div>`;
+  }).join('');
+  const totalLine = `<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);font-weight:600;">Total cumulé : <span style="color:${totalLeft>50?'var(--green)':totalLeft>0?'var(--yellow)':'var(--red)'}">${totalLeft}</span>${totalLimit?' / '+totalLimit:''} recherches restantes</div>`;
+  box.innerHTML = rows + totalLine;
+}
 function domainOf(url) { try { return (new URL(url)).hostname.replace(/^www\./, '').toLowerCase(); } catch(e) { return ''; } }
 function isInstitutionnel(d) { return INSTITUTIONNELS_DOMAINS.some(x => d.endsWith(x)); }
 
-async function serpDirectFetch(query) {
-  const key = getSerpKey();
-  if (!key) throw new Error('Aucune clé SerpAPI. Va dans ⚙️ Paramètres pour ajouter ta clé.');
-  // SerpAPI doesn't allow CORS from browsers → route via public proxy (codetabs)
+window._deadKeys = window._deadKeys || new Set();
+function _isQuotaErr(msg) {
+  const m = (msg||'').toLowerCase();
+  return m.includes('run out') || m.includes('credits') || m.includes('exceeded') || m.includes('rate limit') || m.includes('searches left');
+}
+async function _serpFetchPair(query, key) {
   const proxy = (u) => 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(u);
   const base = 'https://serpapi.com/search.json';
   const common = `&api_key=${encodeURIComponent(key)}&gl=fr&hl=fr&google_domain=google.fr`;
@@ -1517,8 +1585,23 @@ async function serpDirectFetch(query) {
     fetch(proxy(`${base}?engine=google&q=${encodeURIComponent(query)}&num=20${common}`)).then(r=>r.json()),
     fetch(proxy(`${base}?engine=google_shopping&q=${encodeURIComponent(query)}&num=20${common}`)).then(r=>r.json())
   ]);
-  if (r1.error) throw new Error(r1.error);
-  if (r2.error) throw new Error(r2.error);
+  return [r1, r2];
+}
+async function serpDirectFetch(query) {
+  const allKeys = getAllSerpKeys().filter(k => !window._deadKeys.has(k));
+  if (!allKeys.length) throw new Error('Aucune clé SerpAPI active. Ajoute / vérifie tes clés dans Paramètres.');
+  let r1, r2, lastErr;
+  for (const key of allKeys) {
+    try {
+      [r1, r2] = await _serpFetchPair(query, key);
+      const e = (r1?.error || r2?.error);
+      if (e && _isQuotaErr(e)) { window._deadKeys.add(key); lastErr = e; continue; }
+      if (r1?.error) throw new Error(r1.error);
+      if (r2?.error) throw new Error(r2.error);
+      break;
+    } catch(e) { lastErr = e.message; if (_isQuotaErr(e.message)) { window._deadKeys.add(key); continue; } throw e; }
+  }
+  if (!r1 || !r2) throw new Error('Toutes les clés SerpAPI sont épuisées. ' + (lastErr||''));
   // Build result similar to serp_scout.py format
   const ads = (r1.ads || []).map(a => ({ title: a.title||'', link: a.link||a.displayed_link||'', domain: domainOf(a.link||a.displayed_link||''), description: a.description||a.snippet||'', position: a.position }));
   const organic = (r1.organic_results||[]).slice(0,10).map(o => { const d = domainOf(o.link||''); return { title: o.title||'', link: o.link||'', domain: d, snippet: o.snippet||'', position: o.position, institutionnel: isInstitutionnel(d) }; });
@@ -1916,8 +1999,16 @@ async function syncPull() {
 function saveSettings() {
   const k = document.getElementById('settingsSerpKey').value.trim();
   setSerpKey(k);
+  const extra = (document.getElementById('settingsSerpKeyExtra').value || '').split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  setSerpKeysExtra(extra);
   closeModal('modalSettings');
-  if (k) alert('✅ Clé SerpAPI enregistrée. La recherche auto est maintenant disponible.');
+  if (k || extra.length) alert(`Clé(s) enregistrée(s) (${(k?1:0)+extra.length} total). La recherche auto est disponible.`);
+}
+function openSettingsPrefilled() {
+  document.getElementById('settingsSerpKey').value = getSerpKey();
+  document.getElementById('settingsSerpKeyExtra').value = getSerpKeysExtra().join('\n');
+  document.getElementById('settingsQuotaBox').innerHTML = '<em style="color:var(--text3)">Clique "Vérifier quota" pour interroger SerpAPI…</em>';
+  openModal('modalSettings');
 }
 
 /* ═════════ DISCOVERY — niches porteuses + dédup ═════════ */
@@ -2040,6 +2131,28 @@ function markNicheSeen(n) {
 }
 
 
+async function refreshDiscoverQuota() {
+  const el = document.getElementById('discoverQuota');
+  if (!el) return;
+  const keys = getAllSerpKeys();
+  if (!keys.length) { el.innerHTML = ''; return; }
+  el.innerHTML = `<span style="color:var(--text3)">${ico('chart',12)} Quota SerpAPI : interrogation…</span>`;
+  try {
+    const results = await Promise.all(keys.map(k => fetchAccountQuota(k)));
+    let totalLeft = 0, totalLimit = 0, errors = 0;
+    for (const r of results) {
+      if (r.error) { errors++; continue; }
+      totalLeft += +r.searches_left || 0;
+      if (r.monthly_limit) totalLimit += +r.monthly_limit;
+    }
+    const color = totalLeft > 50 ? 'var(--green)' : totalLeft > 0 ? 'var(--yellow)' : 'var(--red)';
+    const pct = totalLimit ? Math.round((totalLeft/totalLimit)*100) : null;
+    el.innerHTML = `<span style="color:var(--accent2);display:inline-flex">${ico('chart',12)}</span><span>SerpAPI : <strong style="color:${color}">${totalLeft}</strong>${totalLimit?' / '+totalLimit:''}${pct!==null?' ('+pct+'%)':''} recherches restantes · ${keys.length} clé${keys.length>1?'s':''}${errors?' · <span style="color:var(--red)">'+errors+' erreur(s)</span>':''}</span>`;
+  } catch(e) {
+    el.innerHTML = `<span style="color:var(--text3)">Quota indisponible : ${escapeHtml(e.message)}</span>`;
+  }
+}
+
 function refreshDiscoverStats() {
   const el = document.getElementById('discoverStats');
   if (!el) return;
@@ -2061,6 +2174,7 @@ function openDiscoverModal() {
   const btnIco = document.getElementById('discoverBtnIco'); if (btnIco) btnIco.innerHTML = ico('dice',14);
   const btn = document.getElementById('discoverBtn'); if (btn) btn.innerHTML = `<span id="discoverBtnIco" style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('dice',14)}</span>Surprends-moi`;
   refreshDiscoverStats();
+  refreshDiscoverQuota();
   if (!getSerpKey()) {
     if (confirm('Tu dois d\'abord ajouter ta clé SerpAPI dans les paramètres.\n\nOuvrir les paramètres ?')) {
       openModal('modalSettings');
