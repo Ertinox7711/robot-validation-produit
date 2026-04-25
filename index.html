@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🤖 Robot Validation Produit — Ecom Inner Circle</title>
+<title>Robot Validation Produit — Ecom Inner Circle</title>
 <script src="formation_data.js"></script>
 <script type="module">
   // Firebase Firestore + Auth for SaaS-style multi-device app
@@ -194,8 +194,7 @@ header {
 .session-head.active { background: rgba(255,255,255,0.06); color: var(--text); }
 .session-head.current-active { color: var(--accent2); }
 .products { display: none; padding-left: 16px; margin-top: 2px; }
-.session.open .products { display: block; animation: slideDown .25s ease; }
-@keyframes slideDown { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+.session.open .products { display: block; }
 .product-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; font-size: 12px; color: var(--text2); cursor: pointer; transition: all .15s; }
 .product-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
 .product-item.active { background: rgba(139,92,246,0.1); color: var(--text); font-weight: 500; }
@@ -566,7 +565,7 @@ small.muted { color: var(--text3); font-size: 11px; }
   </div>
   <div style="position:relative;z-index:1;max-width:440px;width:100%;background:rgba(15,12,28,0.7);backdrop-filter:blur(40px) saturate(180%);border:1px solid var(--border2);border-radius:24px;padding:40px;box-shadow:0 32px 80px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.05);">
     <div style="text-align:center;margin-bottom:32px;">
-      <div style="font-size:56px;margin-bottom:14px;display:inline-block;animation:float 4s ease-in-out infinite;filter:drop-shadow(0 0 24px rgba(139,92,246,0.6));">🤖</div>
+      <div style="margin-bottom:14px;display:inline-flex;color:var(--accent2);filter:drop-shadow(0 0 24px rgba(139,92,246,0.6));"><svg width="56" height="56" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></div>
       <h1 style="font-size:32px;font-weight:700;margin-bottom:8px;letter-spacing:-0.025em;line-height:1.1;">
         <span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Robot</span>
         <span style="font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;">validation</span>
@@ -587,11 +586,11 @@ small.muted { color: var(--text3); font-size: 11px; }
 </div>
 
 <header>
-  <div class="logo"><span class="logo-emoji">🤖</span> <span>Robot Validation</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span></div>
   <div class="header-right">
-    <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">☁️ Connexion</button>
-    <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON">📥</button>
-    <button class="sync-btn" onclick="document.getElementById('importFile').click()" title="Importer JSON">📤</button>
+    <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
+    <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
+    <button class="sync-btn" onclick="document.getElementById('importFile').click()" title="Importer JSON" aria-label="Import"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/></svg></button>
     <input type="file" id="importFile" accept=".json" style="display:none" onchange="importAll(event)">
     <span class="dot"></span>
     <span id="saveInd" style="font-size:11px;min-width:60px;display:inline-block;">Prêt</span>
@@ -669,20 +668,21 @@ small.muted { color: var(--text3); font-size: 11px; }
 
 <div class="modal-bg" id="modalDiscover">
   <div class="modal" style="width:600px;">
-    <h3>🔎 Recherche produit automatique</h3>
+    <h3 style="display:flex;align-items:center;gap:8px;"><span id="discoverHeaderIco" style="color:var(--accent2);display:inline-flex;"></span>Recherche produit automatique</h3>
     <p style="font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.5;">
       Le bot pioche dans une liste de niches porteuses, scrape Google Shopping + Search, et te ramène des candidats <strong>jamais vus avant</strong> (déduplication automatique entre sessions).
     </p>
     <div class="grid-2">
       <div class="field"><label>Mode</label>
         <select id="discoverMode" onchange="onDiscoverModeChange()">
-          <option value="auto" selected>🎲 Auto — niche aléatoire</option>
-          <option value="manual">✍️ Manuel — je donne un mot-clé</option>
+          <option value="auto" selected>Auto — niche aléatoire</option>
+          <option value="manual">Manuel — je donne un mot-clé</option>
         </select>
       </div>
       <div class="field"><label>Gamme prix cible</label>
-        <select id="discoverGamme">
+        <select id="discoverGamme" onchange="refreshDiscoverStats()">
           <option value="">Toutes</option>
+          <option value="<50">&lt; 50€</option>
           <option value="50-150">50 - 150€</option>
           <option value="150-400" selected>150 - 400€ ⭐</option>
           <option value="400-800">400 - 800€</option>
@@ -705,7 +705,7 @@ small.muted { color: var(--text3); font-size: 11px; }
     <div id="discoverResults" style="margin-top:18px;max-height:380px;overflow-y:auto;"></div>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('modalDiscover')">Fermer</button>
-      <button class="btn btn-primary" id="discoverBtn" onclick="runDiscover()">🎲 Lancer la recherche</button>
+      <button class="btn btn-primary" id="discoverBtn" onclick="runDiscover()"><span id="discoverBtnIco" style="display:inline-flex;margin-right:6px;vertical-align:-2px;"></span>Lancer la recherche</button>
     </div>
   </div>
 </div>
@@ -882,6 +882,35 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
+// Inline SVG icon library — minimal, monochrome, currentColor.
+// Used to replace emojis in primary UI surfaces for a cleaner, less "robot" look.
+const ICONS = {
+  home: '<path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V11z"/>',
+  trophy: '<path d="M7 4h10v2h3a1 1 0 0 1 1 1v2a4 4 0 0 1-4 4h-.55A6 6 0 0 1 13 16.92V19h3v2H8v-2h3v-2.08A6 6 0 0 1 6.55 13H6a4 4 0 0 1-4-4V7a1 1 0 0 1 1-1h3V4zm10 4v3a2 2 0 0 0 2-2V8h-2zM7 11V8H5v1a2 2 0 0 0 2 2z"/>',
+  search: '<path d="M10 2a8 8 0 0 1 6.32 12.91l4.39 4.38-1.42 1.42-4.38-4.39A8 8 0 1 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z"/>',
+  gear: '<path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm9.4 4a7.94 7.94 0 0 1-.13 1.4l2.11 1.65-2 3.46-2.49-1a7.94 7.94 0 0 1-2.42 1.4L16 21h-4l-.47-2.09a7.94 7.94 0 0 1-2.42-1.4l-2.49 1-2-3.46L6.73 13.4A7.94 7.94 0 0 1 6.6 12c0-.48.05-.94.13-1.4L4.62 8.95l2-3.46 2.49 1A7.94 7.94 0 0 1 11.53 5.1L12 3h4l.47 2.09a7.94 7.94 0 0 1 2.42 1.4l2.49-1 2 3.46-2.11 1.65c.08.46.13.92.13 1.4z"/>',
+  book: '<path d="M4 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4V4zm9 0h7v14h-5a2 2 0 0 0-2 2V7a3 3 0 0 0 0-3z"/>',
+  graduation: '<path d="M12 3 1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>',
+  dice: '<path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm3 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm8 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm-4 4.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm-4 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm8 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>',
+  chart: '<path d="M3 3h2v18H3V3zm4 10h3v8H7v-8zm5-6h3v14h-3V7zm5 3h3v11h-3V10z"/>',
+  target: '<path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 4a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm0 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>',
+  warning: '<path d="M12 2 1 21h22L12 2zm0 6 7.5 13h-15L12 8zm-1 4v4h2v-4h-2zm0 5v2h2v-2h-2z"/>',
+  check: '<path d="m9 16.2-3.5-3.5L4 14.2 9 19.2 20 8.2l-1.5-1.5z"/>',
+  cross: '<path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L10.59 13.4l-6.3 6.31L2.88 18.3 9.18 12l-6.3-6.29L4.29 4.29l6.3 6.3 6.3-6.3z"/>',
+  cart: '<path d="M7 4h-2v2h2l3.6 7.59-1.35 2.45A2 2 0 0 0 11 19h9v-2H11.42a.25.25 0 0 1-.22-.36L12 15h7.55a2 2 0 0 0 1.79-1.11l3.24-7.04A1 1 0 0 0 23.7 6H6.21l-.94-2zM9 21a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm10 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>',
+  refresh: '<path d="M12 4V1L8 5l4 4V6a6 6 0 0 1 6 6h2a8 8 0 0 0-8-8zm-6 8a6 6 0 0 1 6-6V4a8 8 0 0 0-8 8H6zm6 6a6 6 0 0 1-6-6H4a8 8 0 0 0 8 8v3l4-4-4-4v3z"/>',
+  star: '<path d="m12 17.27 5.18 3.13-1.37-5.88L20.5 9.6l-6-.51L12 3.5 9.5 9.09l-6 .51 4.69 4.92-1.37 5.88z"/>',
+  edit: '<path d="m20.71 7.04-3.75-3.75a1 1 0 0 0-1.41 0L3 15.84V20.5h4.66L20.71 8.45a1 1 0 0 0 0-1.41zM6.92 18.5H5v-1.92L15.06 6.52l1.92 1.92L6.92 18.5z"/>',
+  notes: '<path d="M3 3h18v4H3V3zm0 6h18v4H3V9zm0 6h12v4H3v-4z"/>',
+  paint: '<path d="M19 11h2V9h-2V7l-3.5-3.5L13 6l-1-1-9 9 7 7 9-9-1-1zM5 14l8-8 6 6-8 8L5 14z"/>'
+};
+function ico(name, size) {
+  const sz = size || 16;
+  const path = ICONS[name];
+  if (!path) return '';
+  return `<svg class="ico" width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-2px;flex-shrink:0;" aria-hidden="true">${path}</svg>`;
+}
+
 /* ═════════ RENDER SIDEBAR ═════════ */
 function renderSidebar() {
   const sb = document.getElementById('sidebar');
@@ -895,23 +924,23 @@ function renderSidebar() {
     <div class="sb-section">
       <div class="sb-title">Vue globale</div>
       <div class="nav-item ${currentView.type==='dashboard'?'active':''}" onclick="go({type:'dashboard'})">
-        <span class="icon">🏠</span><span>Dashboard</span>
+        <span class="icon">${ico('home',16)}</span><span>Dashboard</span>
       </div>
       <div class="nav-item ${currentView.type==='kept'?'active':''}" onclick="go({type:'kept'})">
-        <span class="icon">🏆</span><span>Mes produits retenus</span>
+        <span class="icon">${ico('trophy',16)}</span><span>Mes produits retenus</span>
         <span class="count">${keptProducts().length}</span>
       </div>
       <div class="nav-item" onclick="openDiscoverModal()" style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(217,70,239,0.06));border:1px solid rgba(139,92,246,0.25);">
-        <span class="icon">🔎</span><span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:600">Recherche auto</span>
+        <span class="icon">${ico('search',16)}</span><span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:600">Recherche auto</span>
       </div>
       <div class="nav-item" onclick="openModal('modalSettings');document.getElementById('settingsSerpKey').value=getSerpKey();">
-        <span class="icon">⚙️</span><span>Paramètres</span>
+        <span class="icon">${ico('gear',16)}</span><span>Paramètres</span>
       </div>
       <div class="nav-item ${currentView.type==='help'?'active':''}" onclick="go({type:'help'})">
-        <span class="icon">📚</span><span>Méthode & aide</span>
+        <span class="icon">${ico('book',16)}</span><span>Méthode & aide</span>
       </div>
       <div class="nav-item ${currentView.type==='formation'?'active':''}" onclick="go({type:'formation'})">
-        <span class="icon">🎓</span><span>Formation Skool</span>
+        <span class="icon">${ico('graduation',16)}</span><span>Formation Skool</span>
         <span class="count">${(window.FORMATION||[]).filter(l=>l.transcript).length}/27</span>
       </div>
     </div>
@@ -1094,7 +1123,7 @@ function renderDashboard() {
     </div>
 
     <div class="card">
-      <h2>📊 Produits par session (10 dernières)</h2>
+      <h2>Produits par session (10 dernières)</h2>
       <div class="chart-wrap"><div class="chart">${chart || '<div class="empty" style="width:100%">Pas encore de données</div>'}</div></div>
     </div>
 
@@ -1110,7 +1139,7 @@ function renderDashboard() {
         <button class="btn btn-primary" onclick="openSessionModal()">+ Nouvelle session</button>
         <button class="btn" onclick="openProductModal()">+ Nouveau produit</button>
         <button class="btn" onclick="exportAll()">📥 Export JSON</button>
-        <button class="btn" onclick="exportKeptCSV()">📊 CSV produits retenus</button>
+        <button class="btn" onclick="exportKeptCSV()">CSV produits retenus</button>
       </div>
     </div>
   `;
@@ -1252,7 +1281,7 @@ function renderProduct(pid) {
   const m = calcMarge(p);
 
   const tabs = ['infos', 'criteres', 'scoring', 'serp', 'page_produit', 'notes'];
-  const tabLabels = { infos: '📋 Infos', criteres: '✅ Critères', scoring: '🎯 Scoring & Finances', serp: '🔎 SERP auto', page_produit: '🎨 Page Shopify', notes: '📝 Notes' };
+  const tabLabels = { infos: 'Infos', criteres: 'Critères', scoring: 'Scoring & Finances', serp: 'SERP auto', page_produit: 'Page Shopify', notes: 'Notes' };
 
   let body = '';
   if (productTab === 'infos') body = renderProductInfos(p);
@@ -1262,7 +1291,7 @@ function renderProduct(pid) {
   else if (productTab === 'page_produit') body = renderProductPage(p);
   else if (productTab === 'notes') body = renderProductNotes(p);
 
-  const scanLabel = window._scanning && window._scanning[p.id] ? '⏳ Scan…' : (p.serp_scan ? '🔄 Re-scanner' : '🔎 Scan SERP auto');
+  const scanLabel = window._scanning && window._scanning[p.id] ? 'Scan en cours…' : (p.serp_scan ? 'Re-scanner' : 'Scan SERP auto');
   return `
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap">
       <h1 style="font-size:22px;font-weight:700;flex:1;min-width:200px">${statusEmoji(p.status)} ${escapeHtml(p.name)}</h1>
@@ -1285,7 +1314,7 @@ function renderStatusBlock(p) {
   const st = p.status || 'pending';
   return `
     <div class="card">
-      <h2>🎯 Statut du produit</h2>
+      <h2>Statut du produit</h2>
       <div class="status-block">
         <button class="status-btn ${st==='pending'?'active-pending':''}" onclick="setStatus('${p.id}','pending')">
           <span class="emoji">⚪</span>En attente
@@ -1579,7 +1608,7 @@ function renderProductSerp(p) {
 
   return `
     <div class="card">
-      <h2>🔎 Résultats SERP — auto-checks</h2>
+      <h2>Résultats SERP — auto-checks</h2>
       <p style="font-size:12px;color:var(--text2);margin-bottom:14px">Scanné le ${date}${cached}. Requête : <code>${escapeHtml(d.query||'')}</code></p>
       <div class="row" style="margin-bottom:14px">
         ${checkBadge(ac.c2_concurrence, 'C2 Concurrence')}
@@ -1612,7 +1641,7 @@ function renderHelp() {
   return `
     <h1 style="font-size:22px;font-weight:700;margin-bottom:20px">📚 Méthode Arthur — Aide rapide</h1>
     <div class="card">
-      <h2>🎯 Philosophie en 1 phrase</h2>
+      <h2>Philosophie en 1 phrase</h2>
       <p style="font-size:14px;line-height:1.7">Trouver un produit de <strong>niche précise</strong>, avec <strong>concurrence présente mais pas institutionnelle</strong>, <strong>marge forte</strong> (×3 min), <strong>sourcing facile</strong>, <strong>besoin d'expert</strong>, <strong>cycle d'achat rapide</strong>, achetable sur <strong>Meta Ads</strong>.</p>
     </div>
     <div class="card">
@@ -1653,7 +1682,7 @@ function renderHelp() {
       </div>`).join('')}
     </div>
     <div class="card">
-      <h2>🔎 Auto-scan SERP</h2>
+      <h2>Auto-scan SERP</h2>
       <p style="line-height:1.7">Sur chaque fiche produit, le bouton <strong>"🔎 Scan SERP auto"</strong> scrape automatiquement Google Search + Google Shopping (via SerpAPI) et coche les critères <strong>2</strong>, <strong>5</strong>, <strong>12</strong>. L'onglet <strong>🔎 SERP auto</strong> montre toutes les annonces, le top shopping (avec prix moyen) et le top 10 organique avec badges institutionnels.</p>
       <p style="font-size:12px;color:var(--text3);margin-top:8px">Backend : <code>serp_scout.py</code> sur localhost:7789. Cache 24h.</p>
     </div>
@@ -1766,36 +1795,74 @@ function saveSettings() {
 /* ═════════ DISCOVERY — niches porteuses + dédup ═════════ */
 // Curated list of high-potential niches (sweet spot 150-400€, dropship-friendly).
 // Inspired by Arthur's method: niche, expert needed, marge ×3+, fast cycle.
+// Each niche tagged with plausible price ranges in € (FR market avg).
+// Gammes: '<50', '50-150', '150-400', '400-800', '800+'
 const DISCOVERY_NICHES = [
   // Maison / smart home
-  "robot aspirateur laveur lidar", "robot aspirateur sans fil", "purificateur air HEPA",
-  "déshumidificateur silencieux", "humidificateur ultrasonique", "diffuseur huile essentielle pro",
-  "machine à café espresso semi-pro", "machine sous vide alimentaire", "chaise gaming ergonomique",
-  "fauteuil massage shiatsu", "lampe luminothérapie", "miroir LED maquillage hollywood",
+  { q: "robot aspirateur laveur lidar", gammes: ["150-400","400-800"] },
+  { q: "robot aspirateur sans fil", gammes: ["150-400","400-800"] },
+  { q: "purificateur air HEPA", gammes: ["50-150","150-400"] },
+  { q: "déshumidificateur silencieux", gammes: ["150-400"] },
+  { q: "humidificateur ultrasonique", gammes: ["50-150"] },
+  { q: "diffuseur huile essentielle pro", gammes: ["50-150"] },
+  { q: "machine à café espresso semi-pro", gammes: ["400-800","800+"] },
+  { q: "machine sous vide alimentaire", gammes: ["50-150","150-400"] },
+  { q: "chaise gaming ergonomique", gammes: ["150-400","400-800"] },
+  { q: "fauteuil massage shiatsu", gammes: ["400-800","800+"] },
+  { q: "lampe luminothérapie", gammes: ["50-150"] },
+  { q: "miroir LED maquillage hollywood", gammes: ["50-150","150-400"] },
   // Cuisine
-  "extracteur de jus pressage à froid", "robot pâtissier multifonction", "friteuse air fryer xxl",
-  "machine à pâtes fraîches", "blender chauffant soupe", "déshydrateur fruits 6 plateaux",
+  { q: "extracteur de jus pressage à froid", gammes: ["150-400","400-800"] },
+  { q: "robot pâtissier multifonction", gammes: ["150-400","400-800"] },
+  { q: "friteuse air fryer xxl", gammes: ["50-150"] },
+  { q: "machine à pâtes fraîches", gammes: ["50-150","150-400"] },
+  { q: "blender chauffant soupe", gammes: ["50-150","150-400"] },
+  { q: "déshydrateur fruits 6 plateaux", gammes: ["50-150","150-400"] },
   // Sport / fitness
-  "vélo elliptique magnétique", "tapis de course pliable électrique", "rameur magnétique",
-  "presse abdo banc multifonction", "vélo appartement spinning", "appareil musculation maison",
-  "trampoline fitness avec barre", "step aerobic réglable",
+  { q: "vélo elliptique magnétique", gammes: ["400-800","800+"] },
+  { q: "tapis de course pliable électrique", gammes: ["400-800","800+"] },
+  { q: "rameur magnétique", gammes: ["400-800","800+"] },
+  { q: "presse abdo banc multifonction", gammes: ["150-400","400-800"] },
+  { q: "vélo appartement spinning", gammes: ["400-800","800+"] },
+  { q: "appareil musculation maison", gammes: ["400-800","800+"] },
+  { q: "trampoline fitness avec barre", gammes: ["50-150","150-400"] },
+  { q: "step aerobic réglable", gammes: ["50-150"] },
   // Bien-être / beauté
-  "sauna infrarouge portable", "appareil pressothérapie jambes", "panneau thérapie infrarouge",
-  "appareil radiofréquence visage", "épilateur lumière pulsée IPL", "cryothérapie minceur maison",
-  "tapis acupression", "appareil micro-courant lifting visage",
+  { q: "sauna infrarouge portable", gammes: ["400-800","800+"] },
+  { q: "appareil pressothérapie jambes", gammes: ["150-400","400-800"] },
+  { q: "panneau thérapie infrarouge", gammes: ["400-800","800+"] },
+  { q: "appareil radiofréquence visage", gammes: ["50-150","150-400"] },
+  { q: "épilateur lumière pulsée IPL", gammes: ["150-400","400-800"] },
+  { q: "cryothérapie minceur maison", gammes: ["150-400","400-800"] },
+  { q: "tapis acupression", gammes: ["<50","50-150"] },
+  { q: "appareil micro-courant lifting visage", gammes: ["50-150","150-400"] },
   // Jardin / extérieur
-  "tondeuse robot connectée", "serre de jardin tunnel", "plancha gaz inox",
-  "barbecue fumoir charbon", "salon de jardin résine tressée", "spa gonflable 6 places",
-  "abri voiture aluminium", "récupérateur eau de pluie 1000L",
+  { q: "tondeuse robot connectée", gammes: ["400-800","800+"] },
+  { q: "serre de jardin tunnel", gammes: ["150-400","400-800"] },
+  { q: "plancha gaz inox", gammes: ["150-400","400-800"] },
+  { q: "barbecue fumoir charbon", gammes: ["150-400","400-800"] },
+  { q: "salon de jardin résine tressée", gammes: ["400-800","800+"] },
+  { q: "spa gonflable 6 places", gammes: ["400-800","800+"] },
+  { q: "abri voiture aluminium", gammes: ["400-800","800+"] },
+  { q: "récupérateur eau de pluie 1000L", gammes: ["150-400","400-800"] },
   // Animaux
-  "fontaine à eau chat filtrée", "litière auto-nettoyante", "collier GPS chien sans abonnement",
-  "distributeur croquettes connecté", "arbre à chat XXL design",
+  { q: "fontaine à eau chat filtrée", gammes: ["<50","50-150"] },
+  { q: "litière auto-nettoyante", gammes: ["400-800"] },
+  { q: "collier GPS chien sans abonnement", gammes: ["50-150"] },
+  { q: "distributeur croquettes connecté", gammes: ["50-150","150-400"] },
+  { q: "arbre à chat XXL design", gammes: ["50-150","150-400"] },
   // Auto / moto
-  "aspirateur voiture sans fil 12000pa", "starter batterie portable", "compresseur portable voiture",
-  "caméra de recul wifi", "support téléphone voiture induction",
+  { q: "aspirateur voiture sans fil 12000pa", gammes: ["<50","50-150"] },
+  { q: "starter batterie portable", gammes: ["50-150"] },
+  { q: "compresseur portable voiture", gammes: ["<50","50-150"] },
+  { q: "caméra de recul wifi", gammes: ["<50","50-150"] },
+  { q: "support téléphone voiture induction", gammes: ["<50"] },
   // Bureau
-  "bureau assis-debout électrique", "chaise ergonomique lombaire", "moniteur ultrawide 34 pouces",
-  "lampe bureau architecte LED", "support écran double bras",
+  { q: "bureau assis-debout électrique", gammes: ["400-800","800+"] },
+  { q: "chaise ergonomique lombaire", gammes: ["150-400","400-800"] },
+  { q: "moniteur ultrawide 34 pouces", gammes: ["400-800","800+"] },
+  { q: "lampe bureau architecte LED", gammes: ["50-150","150-400"] },
+  { q: "support écran double bras", gammes: ["50-150"] },
 ];
 
 function _norm(s) { return (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]/g,' ').replace(/\s+/g,' ').trim(); }
@@ -1816,18 +1883,28 @@ function markSeenKeys(names) {
     if (k && !cur.has(k)) { state._discovered_keys.push(k); cur.add(k); }
   }
 }
-function getRemainingNiches() {
-  const seen = new Set((state._discovered_niches || []));
-  return DISCOVERY_NICHES.filter(n => !seen.has(n));
+function _nicheMatchesGamme(n, gamme) {
+  if (!gamme) return true;
+  return Array.isArray(n.gammes) && n.gammes.includes(gamme);
 }
-function pickRandomNiche() {
-  const remaining = getRemainingNiches();
+function getRemainingNiches(gamme) {
+  const seen = new Set((state._discovered_niches || []));
+  return DISCOVERY_NICHES.filter(n => !seen.has(n.q) && _nicheMatchesGamme(n, gamme));
+}
+function getNichePoolForGamme(gamme) {
+  return DISCOVERY_NICHES.filter(n => _nicheMatchesGamme(n, gamme));
+}
+function pickRandomNiche(gamme) {
+  const remaining = getRemainingNiches(gamme);
   if (remaining.length === 0) {
-    // All exhausted — reset and start over
-    state._discovered_niches = [];
-    return DISCOVERY_NICHES[Math.floor(Math.random()*DISCOVERY_NICHES.length)];
+    // Pool for this gamme exhausted — reset only entries belonging to that pool
+    const poolQs = new Set(getNichePoolForGamme(gamme).map(n => n.q));
+    state._discovered_niches = (state._discovered_niches || []).filter(q => !poolQs.has(q));
+    const pool = getNichePoolForGamme(gamme);
+    if (pool.length === 0) return DISCOVERY_NICHES[Math.floor(Math.random()*DISCOVERY_NICHES.length)].q;
+    return pool[Math.floor(Math.random()*pool.length)].q;
   }
-  return remaining[Math.floor(Math.random()*remaining.length)];
+  return remaining[Math.floor(Math.random()*remaining.length)].q;
 }
 function markNicheSeen(n) {
   if (!state._discovered_niches) state._discovered_niches = [];
@@ -1835,15 +1912,27 @@ function markNicheSeen(n) {
 }
 
 
+function refreshDiscoverStats() {
+  const el = document.getElementById('discoverStats');
+  if (!el) return;
+  const gamme = document.getElementById('discoverGamme')?.value || '';
+  const pool = getNichePoolForGamme(gamme);
+  const seen = new Set(state._discovered_niches || []);
+  const remaining = pool.filter(n => !seen.has(n.q)).length;
+  const seenProds = getSeenKeys().size;
+  const gammeLbl = gamme ? `gamme <strong>${gamme}€</strong>` : 'toutes gammes';
+  el.innerHTML = `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;color:var(--accent2)">${ico('chart',13)}</span><strong>${remaining}</strong>/${pool.length} niches inexplorées (${gammeLbl}) · <strong>${seenProds}</strong> produits déjà vus`;
+}
+
 function openDiscoverModal() {
   document.getElementById('discoverQuery').value = '';
   document.getElementById('discoverResults').innerHTML = '';
   document.getElementById('discoverMode').value = 'auto';
   document.getElementById('discoverManualWrap').style.display = 'none';
-  const totalNiches = DISCOVERY_NICHES.length;
-  const seenNiches = (state._discovered_niches||[]).length;
-  const seenProds = getSeenKeys().size;
-  document.getElementById('discoverStats').innerHTML = `📊 <strong>${totalNiches - seenNiches}</strong>/${totalNiches} niches encore inexplorées · <strong>${seenProds}</strong> produits déjà vus (dédupliqués)`;
+  const hdr = document.getElementById('discoverHeaderIco'); if (hdr) hdr.innerHTML = ico('search',18);
+  const btnIco = document.getElementById('discoverBtnIco'); if (btnIco) btnIco.innerHTML = ico('dice',14);
+  const btn = document.getElementById('discoverBtn'); if (btn) btn.innerHTML = `<span id="discoverBtnIco" style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('dice',14)}</span>Surprends-moi`;
+  refreshDiscoverStats();
   if (!getSerpKey()) {
     if (confirm('Tu dois d\'abord ajouter ta clé SerpAPI dans les paramètres.\n\nOuvrir les paramètres ?')) {
       openModal('modalSettings');
@@ -1858,11 +1947,14 @@ function onDiscoverModeChange() {
   const mode = document.getElementById('discoverMode').value;
   const wrap = document.getElementById('discoverManualWrap');
   wrap.style.display = mode === 'manual' ? 'block' : 'none';
-  document.getElementById('discoverBtn').textContent = mode === 'auto' ? '🎲 Surprends-moi' : '🔎 Lancer la recherche';
+  document.getElementById('discoverBtn').innerHTML = mode === 'auto'
+    ? `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('dice',14)}</span>Surprends-moi`
+    : `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('search',14)}</span>Lancer la recherche`;
 }
 
 function gammeFilter(price, gamme) {
   if (!gamme || !price) return true;
+  if (gamme === '<50') return price > 0 && price < 50;
   if (gamme === '50-150') return price >= 50 && price <= 150;
   if (gamme === '150-400') return price >= 150 && price <= 400;
   if (gamme === '400-800') return price >= 400 && price <= 800;
@@ -1892,32 +1984,123 @@ function scoreCandidate(s, gamme) {
   return score;
 }
 
-// Try a SerpAPI search; if shopping returns < 3 fresh candidates, retry with broader query
+// Merge shopping + inline_shopping (search) and dedup by title shortkey
+function _mergeShopping(data) {
+  const out = [];
+  const seen = new Set();
+  for (const s of (data.shopping || [])) {
+    const k = _shortKey(s.title || '');
+    if (!k || seen.has(k)) continue;
+    seen.add(k); out.push(s);
+  }
+  for (const s of (data.inline_shopping || [])) {
+    const k = _shortKey(s.title || '');
+    if (!k || seen.has(k)) continue;
+    // inline_shopping doesn't always include institutionnel/extracted_price flags
+    if (!('institutionnel' in s)) {
+      const d = (s.domain || '').toLowerCase();
+      s.institutionnel = /amazon|cdiscount|fnac|darty|leroy|boulanger|manomano|temu|aliexpress|rakuten|ebay|carrefour|auchan|conforama|but/i.test(d);
+    }
+    if (s.extracted_price == null && typeof s.price === 'string') {
+      const m = s.price.replace(/\s/g,'').match(/([\d]+[,.]?[\d]*)/);
+      if (m) s.extracted_price = parseFloat(m[1].replace(',', '.'));
+    }
+    seen.add(k); out.push(s);
+  }
+  return out;
+}
+
+// Try a SerpAPI search with HARD gamme filter (no out-of-range fallback).
 async function discoverBatch(query, gamme, seen) {
-  let data = await serpFetch(query, true);
-  let shopping = (data.shopping || []).filter(s => !s.institutionnel);
+  // Add buyer-intent suffix to surface Shopping/Ads more reliably
+  const serpQ = query + ' acheter';
+  let data = await serpFetch(serpQ, true);
+  let merged = _mergeShopping(data);
+  let shopping = merged.filter(s => !s.institutionnel);
   let fresh = shopping.filter(s => !seen.has(_shortKey(s.title)));
-  // Try gamme-filter
   let inGamme = fresh.filter(s => !gamme || gammeFilter(s.extracted_price, gamme));
   let usedQuery = query;
-  // Fallback 1: if 0 inGamme, drop gamme filter
-  if (inGamme.length === 0 && fresh.length >= 3) inGamme = fresh.slice(0, 12);
-  // Fallback 2: if still 0, broaden the query (drop last word, retry once)
+  // Only fallback: broaden the query (drop last word) — gamme filter STAYS HARD.
   if (inGamme.length === 0 && query.includes(' ')) {
     const broader = query.split(' ').slice(0, -1).join(' ');
     if (broader.length > 3) {
       try {
-        const data2 = await serpFetch(broader, true);
-        const shopping2 = (data2.shopping || []).filter(s => !s.institutionnel);
+        const data2 = await serpFetch(broader + ' acheter', true);
+        const merged2 = _mergeShopping(data2);
+        const shopping2 = merged2.filter(s => !s.institutionnel);
         const fresh2 = shopping2.filter(s => !seen.has(_shortKey(s.title)));
         const inGamme2 = fresh2.filter(s => !gamme || gammeFilter(s.extracted_price, gamme));
         if (inGamme2.length > 0) { inGamme = inGamme2; data = data2; usedQuery = broader; shopping = shopping2; fresh = fresh2; }
       } catch(e) {}
     }
   }
-  // Sort by score
   inGamme.sort((a,b) => scoreCandidate(b, gamme) - scoreCandidate(a, gamme));
   return { data, shopping, fresh, inGamme, query: usedQuery, totalRaw: shopping.length, filteredOut: fresh.length - inGamme.length };
+}
+
+function renderCompetitorsSection(competitors, gamme) {
+  if (!competitors || competitors.length === 0) {
+    return `<div style="margin-top:18px;padding:12px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px dashed var(--border);color:var(--text3);font-size:12px;text-align:center;">Aucun concurrent drop confirmé sur cette niche (ni Shopify, ni match plateforme drop).</div>`;
+  }
+  // Filter by gamme if competitor has an extracted price
+  const inG = competitors.filter(c => !c.extracted_price || gammeFilter(c.extracted_price, gamme));
+  const list = (inG.length ? inG : competitors).slice(0, 8);
+  const rows = list.map(c => {
+    const badges = [];
+    if (c.is_shopify) badges.push(`<span class="pill success" style="font-size:10px;">Shopify</span>`);
+    if (c.drop_match) {
+      const m = c.drop_match;
+      badges.push(`<a href="${escapeHtml(m.link)}" target="_blank" rel="noopener" class="pill" style="font-size:10px;text-decoration:none;background:rgba(217,70,239,0.12);border-color:rgba(217,70,239,0.3);color:var(--accent2);">${escapeHtml(m.platform)} ↗</a>`);
+    }
+    const where = [c.in_search?'search':'', c.in_shopping?'shopping':''].filter(Boolean).join(' + ');
+    const priceTxt = c.price ? `<strong style="color:var(--accent2)">${escapeHtml(c.price)}</strong>` : '<span style="color:var(--text3)">prix n/a</span>';
+    return `
+      <div style="display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:6px;background:rgba(255,255,255,0.02);">
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+            <a href="${escapeHtml(c.link||'https://'+c.domain)}" target="_blank" rel="noopener" style="color:var(--text);">${escapeHtml(c.domain)}</a>
+          </div>
+          <div style="font-size:11px;color:var(--text2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+            ${escapeHtml((c.title||'').slice(0,60))} · ${priceTxt} · <span style="color:var(--text3)">${where}</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;">${badges.join('')}</div>
+        <button class="btn btn-sm" onclick='competitorAdd(${JSON.stringify(c).replace(/'/g,"&apos;")})' title="Ajouter ce concurrent comme produit">+</button>
+      </div>`;
+  }).join('');
+  return `
+    <div style="margin-top:18px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:8px;font-weight:600;">
+        Concurrents drop détectés (${list.length})
+      </div>
+      ${rows}
+    </div>`;
+}
+
+function competitorAdd(c) {
+  if (!state.sessions.length) { alert('Crée une session d\'abord.'); return; }
+  const sid = activeSessionId || state.sessions[0].id;
+  const priceVente = c.extracted_price || 0;
+  const aliPrice = c.drop_match && c.drop_match.snippet ? (c.drop_match.snippet.match(/([\d]+[,.]?[\d]*)\s*(?:€|EUR|US\$|\$)/) || [])[1] : null;
+  const prix_achat = aliPrice ? parseFloat(aliPrice.replace(',','.')) : (priceVente ? Math.round(priceVente / 4 * 100)/100 : '');
+  state.products.push({
+    id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+    sessionId: sid,
+    name: (c.title||c.domain||'').slice(0,80),
+    source: 'Concurrent drop',
+    fournisseur_url: c.drop_match?.link || c.link || '',
+    niche: '',
+    prix_achat,
+    prix_livraison: '',
+    prix_vente: priceVente,
+    notes: `Concurrent drop: ${c.domain}${c.is_shopify?' (Shopify)':''}${c.drop_match?' · sourcing '+c.drop_match.platform:''}`,
+    criteres: {}, page_checklist: {},
+    created: Date.now(),
+    status: 'pending', keptAt: null, rejectedReason: ''
+  });
+  save();
+  renderSidebar();
+  alert('✓ Concurrent ajouté à la session.');
 }
 
 async function runDiscover() {
@@ -1936,26 +2119,30 @@ async function runDiscover() {
   const seen = getSeenKeys();
   try {
     if (mode === 'auto') {
-      // Try up to 3 niches; pick the best result
+      // Try up to 6 niches in the chosen gamme; pick the best result
       const candidates = [];
       const tried = new Set();
-      for (let i = 0; i < 3; i++) {
-        const niche = pickRandomNiche();
+      const MAX_TRIES = 6;
+      for (let i = 0; i < MAX_TRIES; i++) {
+        const niche = pickRandomNiche(gamme);
         if (tried.has(niche)) continue;
         tried.add(niche);
         markNicheSeen(niche);
-        btn.textContent = `⏳ Niche ${i+1}/3…`;
+        btn.textContent = `⏳ Niche ${i+1}/${MAX_TRIES}…`;
         try {
           const r = await discoverBatch(niche, gamme, seen);
-          if (r.inGamme.length >= 3) { candidates.push({ niche, r }); break; }  // good enough — stop early
+          if (r.inGamme.length >= 3) { candidates.push({ niche, r }); break; }
           if (r.inGamme.length > 0) candidates.push({ niche, r });
         } catch(e) { console.warn('niche fail', niche, e); }
       }
       if (candidates.length === 0) {
-        // Final fallback: just take the last attempted regardless
-        const last = pickRandomNiche();
-        const r = await discoverBatch(last, gamme, seen);
-        candidates.push({ niche: last, r });
+        res.innerHTML = `<div class="empty" style="padding:30px">
+          <div style="color:var(--accent2);margin-bottom:8px;">${ico('target',32)}</div>
+          <h3 style="font-size:14px">Aucun produit trouvé en gamme ${gamme||'libre'}</h3>
+          <p style="font-size:12px">Essayé ${tried.size} niches — aucune n'a retourné de produit dans cette tranche de prix.<br>Essaie une autre gamme ou repasse en mode manuel.</p>
+        </div>`;
+        btn.disabled=false; btn.innerHTML = `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('dice',14)}</span>Surprends-moi (autre niche)`;
+        return;
       }
       // Pick the best (most fresh in gamme)
       candidates.sort((a,b) => b.r.inGamme.length - a.r.inGamme.length);
@@ -1976,7 +2163,7 @@ async function runDiscover() {
     const queryUsed = result.query;
     if (candidates.length === 0) {
       res.innerHTML = `<div class="empty" style="padding:30px">
-        <div class="emoji" style="font-size:32px">🤷</div>
+        <div style="color:var(--text3);margin-bottom:8px;">${ico('target',32)}</div>
         <h3 style="font-size:14px">Aucun candidat frais sur "${escapeHtml(queryUsed)}"</h3>
         <p style="font-size:12px">${filteredOut > 0 ? filteredOut+' produits trouvés mais déjà vus avant.' : 'Cette niche est vide ou trop précise.'}<br>Re-clique pour piocher une autre niche.</p>
       </div>`;
@@ -2008,6 +2195,7 @@ async function runDiscover() {
             <button class="btn btn-sm btn-primary" onclick='discoverAdd(${JSON.stringify(s).replace(/'/g,"&apos;")}, ${JSON.stringify(q).replace(/'/g,"&apos;")})'>+</button>
           </div>
         `;}).join('')}
+        ${renderCompetitorsSection(data.competitors || [], gamme)}
       `;
       if (auto && state.sessions.length) {
         const sid = activeSessionId || state.sessions[0].id;
@@ -2045,12 +2233,10 @@ async function runDiscover() {
     res.innerHTML = '<div class="empty" style="padding:30px"><h3 style="color:var(--red)">❌ Erreur</h3><p>'+escapeHtml(e.message)+'</p></div>';
   }
   btn.disabled = false;
-  btn.textContent = mode === 'auto' ? '🎲 Surprends-moi (autre niche)' : '🔄 Re-lancer';
-  // Update stats
-  const totalNiches = DISCOVERY_NICHES.length;
-  const seenNiches = (state._discovered_niches||[]).length;
-  const seenProds = getSeenKeys().size;
-  document.getElementById('discoverStats').innerHTML = `📊 <strong>${totalNiches - seenNiches}</strong>/${totalNiches} niches encore inexplorées · <strong>${seenProds}</strong> produits déjà vus`;
+  btn.innerHTML = mode === 'auto'
+    ? `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('dice',14)}</span>Surprends-moi (autre niche)`
+    : `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('refresh',14)}</span>Re-lancer`;
+  refreshDiscoverStats();
 }
 
 function discoverAdd(s, niche) {
@@ -2158,7 +2344,7 @@ function renderFormation(lessonSlug) {
 
     ${(lesson.numbers||[]).length ? `
       <div class="card">
-        <h2>📊 Chiffres clés à retenir</h2>
+        <h2>Chiffres clés à retenir</h2>
         <div>${lesson.numbers.map(n => `<span class="num-pill">${escapeHtml(n)}</span>`).join('')}</div>
       </div>
     ` : ''}
