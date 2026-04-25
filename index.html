@@ -695,12 +695,24 @@ small.muted { color: var(--text3); font-size: 11px; }
       <label>Mot-clé / niche</label>
       <input type="text" id="discoverQuery" placeholder="ex: robot aspirateur laveur, sauna infrarouge…">
     </div>
-    <div class="field" style="margin-top:14px;">
-      <label>Auto-créer dans la session active</label>
-      <select id="discoverAutoCreate">
-        <option value="0">Non, juste m'afficher</option>
-        <option value="1" selected>Oui, ajouter les 5 meilleurs</option>
-      </select>
+    <div class="form-grid" style="margin-top:14px;">
+      <div class="field">
+        <label>Auto-créer dans la session active</label>
+        <select id="discoverAutoCreate">
+          <option value="0">Non, juste m'afficher</option>
+          <option value="1" selected>Oui, ajouter les meilleurs</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Total produits</label>
+        <input type="number" id="discoverTotal" min="1" max="500" value="5" step="1">
+        <div class="hint">ex: 50 = couvre plusieurs niches</div>
+      </div>
+      <div class="field">
+        <label>Produits par niche (max)</label>
+        <input type="number" id="discoverPerNiche" min="1" max="20" value="5" step="1">
+        <div class="hint">5 produits × 10 niches = 50</div>
+      </div>
     </div>
     <div id="discoverStats" style="margin-top:14px;font-size:12px;color:var(--text3);"></div>
     <div id="discoverResults" style="margin-top:18px;max-height:380px;overflow-y:auto;"></div>
@@ -2233,9 +2245,114 @@ async function runDiscover() {
   let result;
   let q;
   const seen = getSeenKeys();
+  // Read flexible quantity controls (default 5 each)
+  const totalTarget = Math.max(1, Math.min(500, parseInt(document.getElementById('discoverTotal')?.value || '5', 10) || 5));
+  const perNiche = Math.max(1, Math.min(20, parseInt(document.getElementById('discoverPerNiche')?.value || '5', 10) || 5));
+  const nichesNeeded = Math.max(1, Math.ceil(totalTarget / perNiche));
+  // Use multi-niche batch flow when auto + auto-create is on AND user wants > perNiche products
+  const multiNiche = (mode === 'auto') && auto && (totalTarget > perNiche);
   try {
+    if (multiNiche) {
+      // ── Multi-niche batch mode ──
+      const tried = new Set();
+      const allResults = []; // [{niche, r}]
+      const maxTries = Math.min(60, nichesNeeded * 4);
+      let totalCands = 0;
+      for (let i = 0; i < maxTries; i++) {
+        if (totalCands >= totalTarget) break;
+        const niche = pickRandomNiche(gamme);
+        if (tried.has(niche)) continue;
+        tried.add(niche);
+        markNicheSeen(niche);
+        btn.textContent = `⏳ ${tried.size} niche${tried.size>1?'s':''} · ${totalCands}/${totalTarget} produits…`;
+        try {
+          const r = await discoverBatch(niche, gamme, seen);
+          if (r.inGamme.length > 0) {
+            const slice = r.inGamme.slice(0, perNiche);
+            // Mark these as seen IMMEDIATELY so subsequent niches can dedup
+            slice.forEach(s => seen.add(_shortKey(s.title)));
+            allResults.push({ niche, r, picked: slice });
+            totalCands += slice.length;
+          }
+        } catch(e) { console.warn('niche fail', niche, e); }
+      }
+      if (allResults.length === 0) {
+        res.innerHTML = `<div class="empty" style="padding:30px">
+          <div style="color:var(--accent2);margin-bottom:8px;">${ico('target',32)}</div>
+          <h3 style="font-size:14px">Aucun produit trouvé en gamme ${gamme||'libre'}</h3>
+          <p style="font-size:12px">Essayé ${tried.size} niches — rien dans cette tranche.<br>Essaie une autre gamme.</p>
+        </div>`;
+        btn.disabled=false; btn.innerHTML = `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('dice',14)}</span>Surprends-moi (autre niche)`;
+        return;
+      }
+      // Build flat list of products to add (capped at totalTarget)
+      const sid = activeSessionId || (state.sessions[0] && state.sessions[0].id);
+      if (!sid) {
+        alert('Crée une session active avant l\'auto-création.');
+        btn.disabled=false; btn.innerHTML = `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('dice',14)}</span>Surprends-moi (autre niche)`;
+        return;
+      }
+      const flat = [];
+      for (const ar of allResults) {
+        for (const s of ar.picked) {
+          if (flat.length >= totalTarget) break;
+          flat.push({ s, niche: ar.niche, comps: ar.r.data.competitors || [] });
+        }
+        if (flat.length >= totalTarget) break;
+      }
+      let added = 0;
+      const baseTs = Date.now();
+      for (const item of flat) {
+        const compLinks = item.comps.map(c => c.link || ('https://' + (c.domain || '')));
+        const priceVente = item.s.extracted_price || 0;
+        state.products.push({
+          id: 'p_' + (baseTs + added) + '_' + Math.random().toString(36).slice(2,6),
+          sessionId: sid,
+          name: (item.s.title||'').slice(0, 80),
+          source: 'Recherche auto',
+          fournisseur_url: item.s.link || '',
+          niche: item.niche,
+          prix_achat: priceVente ? Math.round(priceVente / 4 * 100)/100 : '',
+          prix_livraison: '',
+          prix_vente: priceVente,
+          volume_mensuel: '', volume_total: '', cpc: '',
+          concurrent_1: compLinks[0] || '',
+          concurrent_2: compLinks[1] || '',
+          concurrent_3: compLinks[2] || '',
+          notes: `Découvert via niche "${item.niche}". Source: ${item.s.source||item.s.domain||''}.`,
+          criteres: {}, page_checklist: {},
+          created: Date.now(),
+          status: 'pending', keptAt: null, rejectedReason: ''
+        });
+        added++;
+      }
+      markSeenKeys(flat.map(f => f.s.title));
+      save();
+      renderSidebar();
+      // Render summary
+      const nicheRows = allResults.map(ar => {
+        const stats = ar.r.data.autoChecks?.stats || {};
+        const adsTag = stats.n_ads ? `<span class="pill success" style="font-size:10px;">${stats.n_ads} ads</span>` : `<span class="pill warning" style="font-size:10px;">no ads</span>`;
+        const instTag = stats.has_institutionnels_top3 ? `<span class="pill danger" style="font-size:10px;">Inst. top3</span>` : `<span class="pill success" style="font-size:10px;">top3 propre</span>`;
+        return `<div style="display:flex;gap:8px;align-items:center;padding:8px 10px;border:1px solid var(--border);border-radius:8px;margin-bottom:4px;font-size:12px;">
+          <strong style="flex:1;">${escapeHtml(ar.niche)}</strong>
+          <span class="pill" style="font-size:10px;">${ar.picked.length} produits</span>${adsTag}${instTag}
+        </div>`;
+      }).join('');
+      res.innerHTML = `
+        <div style="padding:14px;border-radius:12px;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);color:var(--green);font-size:14px;margin-bottom:14px;text-align:center;font-weight:600;">
+          ${added} produits ajoutés à la session · ${allResults.length} niches couvertes
+        </div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:8px;font-weight:600;">Niches explorées</div>
+        ${nicheRows}
+      `;
+      btn.disabled = false;
+      btn.innerHTML = `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('dice',14)}</span>Surprends-moi (autre lot)`;
+      refreshDiscoverStats();
+      return;
+    }
     if (mode === 'auto') {
-      // Try up to 6 niches in the chosen gamme; pick the best result
+      // Single-niche auto mode (used when total ≤ perNiche, or auto-create off)
       const candidates = [];
       const tried = new Set();
       const MAX_TRIES = 6;
@@ -2260,7 +2377,6 @@ async function runDiscover() {
         btn.disabled=false; btn.innerHTML = `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('dice',14)}</span>Surprends-moi (autre niche)`;
         return;
       }
-      // Pick the best (most fresh in gamme)
       candidates.sort((a,b) => b.r.inGamme.length - a.r.inGamme.length);
       const best = candidates[0];
       q = best.niche; result = best.r;
@@ -2316,7 +2432,7 @@ async function runDiscover() {
       if (auto && state.sessions.length) {
         const sid = activeSessionId || state.sessions[0].id;
         let added = 0;
-        const toAdd = candidates.slice(0, 5);
+        const toAdd = candidates.slice(0, Math.min(perNiche, totalTarget));
         const compLinks = (data.competitors || []).map(c => c.link || ('https://' + (c.domain || '')));
         for (const s of toAdd) {
           const pid = 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
