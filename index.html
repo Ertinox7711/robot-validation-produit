@@ -431,6 +431,29 @@ header {
   box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
   animation: modalIn .3s cubic-bezier(.2,.8,.2,1);
 }
+.modal.wide { width: 920px; max-width: 95vw; padding: 28px 32px; }
+.modal.wide #discoverResults { max-height: 60vh; }
+
+/* Candidate selection on discover */
+.cand-row { position: relative; }
+.cand-row .cand-check { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--border); background: rgba(0,0,0,0.4); display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; cursor: pointer; transition: all .15s ease; }
+.cand-row .cand-check svg { opacity: 0; transition: opacity .15s; }
+.cand-row.cand-selected .cand-check { background: var(--grad); border-color: transparent; box-shadow: 0 0 0 3px rgba(217,70,239,0.18); }
+.cand-row.cand-selected .cand-check svg { opacity: 1; }
+.cand-row.cand-selected { box-shadow: 0 0 0 1px var(--accent2) inset, 0 6px 18px -10px rgba(217,70,239,0.4); }
+
+/* Sticky bulk-action bar inside discover panel */
+.cand-bulk-bar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 10px; padding: 10px 14px; margin-bottom: 10px; border-radius: 10px; background: linear-gradient(135deg, rgba(217,70,239,0.18), rgba(139,92,246,0.14)); border: 1px solid rgba(217,70,239,0.4); font-size: 13px; backdrop-filter: blur(10px); animation: selBarIn .22s cubic-bezier(.2,.8,.2,1); }
+.cand-bulk-bar strong { font-weight: 600; }
+.cand-bulk-bar .spacer { flex: 1; }
+.cand-bulk-bar button { font-size: 12px; padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: all .15s ease; }
+
+/* Section divider for institutionnels vs indé */
+.cand-divider { display: flex; align-items: center; gap: 10px; margin: 18px 0 10px; padding: 8px 0; }
+.cand-divider .line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); }
+.cand-divider .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; padding: 4px 12px; border-radius: 999px; }
+.cand-divider .label.warn { color: var(--red); background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.3); }
+.cand-divider .label.good { color: var(--green); background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.3); }
 @keyframes modalIn { from { opacity: 0; transform: scale(.95) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 .modal h3 { font-size: 18px; margin-bottom: 20px; letter-spacing: -0.01em; }
 .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
@@ -729,8 +752,8 @@ small.muted { color: var(--text3); font-size: 11px; }
   </div>
 </div>
 
-<div class="modal-bg" id="modalDiscover">
-  <div class="modal" style="width:600px;">
+<div class="modal-bg" id="modalDiscover" onclick="event.stopPropagation()">
+  <div class="modal wide" onclick="event.stopPropagation()">
     <h3 style="display:flex;align-items:center;gap:8px;"><span id="discoverHeaderIco" style="color:var(--accent2);display:inline-flex;"></span>Recherche produit automatique</h3>
     <p style="font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.5;">
       Le bot pioche dans une liste de niches porteuses, scrape Google Shopping + Search, et te ramène des candidats <strong>jamais vus avant</strong> (déduplication automatique entre sessions).
@@ -2504,31 +2527,32 @@ function _mergeShopping(data) {
 }
 
 // Try a SerpAPI search with HARD gamme filter (no out-of-range fallback).
+// Returns BOTH institutionnels (Amazon/Cdiscount/etc) and indé so the UI can show
+// them separately — institutionnels at top with warning, indé below as drop targets.
 async function discoverBatch(query, gamme, seen) {
-  // Add buyer-intent suffix to surface Shopping/Ads more reliably
   const serpQ = query + ' acheter';
   let data = await serpFetch(serpQ, true);
   let merged = _mergeShopping(data);
-  let shopping = merged.filter(s => !s.institutionnel);
-  let fresh = shopping.filter(s => !seen.has(_shortKey(s.title)));
+  let fresh = merged.filter(s => !seen.has(_shortKey(s.title)));
   let inGamme = fresh.filter(s => !gamme || gammeFilter(s.extracted_price, gamme));
   let usedQuery = query;
-  // Only fallback: broaden the query (drop last word) — gamme filter STAYS HARD.
   if (inGamme.length === 0 && query.includes(' ')) {
     const broader = query.split(' ').slice(0, -1).join(' ');
     if (broader.length > 3) {
       try {
         const data2 = await serpFetch(broader + ' acheter', true);
         const merged2 = _mergeShopping(data2);
-        const shopping2 = merged2.filter(s => !s.institutionnel);
-        const fresh2 = shopping2.filter(s => !seen.has(_shortKey(s.title)));
+        const fresh2 = merged2.filter(s => !seen.has(_shortKey(s.title)));
         const inGamme2 = fresh2.filter(s => !gamme || gammeFilter(s.extracted_price, gamme));
-        if (inGamme2.length > 0) { inGamme = inGamme2; data = data2; usedQuery = broader; shopping = shopping2; fresh = fresh2; }
+        if (inGamme2.length > 0) { inGamme = inGamme2; data = data2; usedQuery = broader; merged = merged2; fresh = fresh2; }
       } catch(e) {}
     }
   }
   inGamme.sort((a,b) => scoreCandidate(b, gamme) - scoreCandidate(a, gamme));
-  return { data, shopping, fresh, inGamme, query: usedQuery, totalRaw: shopping.length, filteredOut: fresh.length - inGamme.length };
+  // Backwards-compat: `shopping` was previously indé-only. Keep that contract for the auto-batch picker
+  // (so it doesn't auto-add institutionnels), but expose `inGammeAll` for rendering.
+  const indeOnly = inGamme.filter(s => !s.institutionnel);
+  return { data, shopping: indeOnly, fresh, inGamme: indeOnly, inGammeAll: inGamme, query: usedQuery, totalRaw: merged.length, filteredOut: fresh.length - inGamme.length };
 }
 
 // Verify if a domain is currently running ads via Google Ads Transparency Center
@@ -2586,6 +2610,101 @@ async function verifyAds(domain, btn) {
   } catch(e) {
     out.innerHTML = `<span style="color:var(--red)">Erreur : ${escapeHtml(e.message)}</span>`;
   }
+}
+
+// Candidate multi-select inside discover modal
+window._candSelected = window._candSelected || new Set();
+function toggleCandSelect(idx) {
+  if (!window._discoverCands) return;
+  if (window._candSelected.has(idx)) window._candSelected.delete(idx);
+  else window._candSelected.add(idx);
+  const row = document.querySelector(`.cand-row[data-idx="${idx}"]`);
+  if (row) row.classList.toggle('cand-selected', window._candSelected.has(idx));
+  updateCandBulkBar();
+}
+function clearCandSelection() {
+  window._candSelected.clear();
+  document.querySelectorAll('.cand-row.cand-selected').forEach(r => r.classList.remove('cand-selected'));
+  updateCandBulkBar();
+}
+function selectAllCands(scope) {
+  if (!window._discoverCands) return;
+  window._candSelected.clear();
+  window._discoverCands.list.forEach((s, i) => {
+    if (scope === 'inde' && s.institutionnel) return;
+    if (scope === 'inst' && !s.institutionnel) return;
+    window._candSelected.add(i);
+  });
+  document.querySelectorAll('.cand-row').forEach(r => {
+    const i = +r.dataset.idx;
+    r.classList.toggle('cand-selected', window._candSelected.has(i));
+  });
+  updateCandBulkBar();
+}
+function addSelectedCands() {
+  if (!window._discoverCands || !window._candSelected.size) return;
+  if (!state.sessions.length) { alert('Crée une session d\'abord.'); return; }
+  const sid = activeSessionId || state.sessions[0].id;
+  const list = window._discoverCands.list;
+  const compLinks = (window._discoverData?.competitors || []).map(c => c.link || ('https://' + (c.domain || '')));
+  let added = 0;
+  const ts = Date.now();
+  for (const idx of window._candSelected) {
+    const s = list[idx]; if (!s) continue;
+    const priceVente = s.extracted_price || 0;
+    state.products.push({
+      id: 'p_' + (ts + added) + '_' + Math.random().toString(36).slice(2,6),
+      sessionId: sid,
+      name: (s.title || '').slice(0, 80),
+      source: 'Recherche auto',
+      fournisseur_url: s.link || '',
+      niche: window._discoverNiche || '',
+      prix_achat: priceVente ? Math.round(priceVente / 4 * 100)/100 : '',
+      prix_livraison: '',
+      prix_vente: priceVente,
+      volume_mensuel: '', volume_total: '', cpc: '',
+      concurrent_1: compLinks[0] || '',
+      concurrent_2: compLinks[1] || '',
+      concurrent_3: compLinks[2] || '',
+      notes: `Sélection multi · ${s.domain || ''} · ${s._source || 'SERP'}.`,
+      criteres: {}, page_checklist: {},
+      created: Date.now(), status: 'pending', keptAt: null, rejectedReason: ''
+    });
+    added++;
+  }
+  markSeenKeys(Array.from(window._candSelected).map(i => list[i]?.title).filter(Boolean));
+  save();
+  renderSidebar();
+  alert(`${added} produits ajoutés à la session active.`);
+  clearCandSelection();
+}
+function removeSelectedCands() {
+  // Just removes them visually from the candidates panel without deleting any state
+  if (!window._candSelected.size) return;
+  document.querySelectorAll('.cand-row.cand-selected').forEach(r => r.remove());
+  // Mark as seen so they don't reappear
+  if (window._discoverCands) {
+    const titles = Array.from(window._candSelected).map(i => window._discoverCands.list[i]?.title).filter(Boolean);
+    markSeenKeys(titles);
+    save();
+  }
+  clearCandSelection();
+}
+function updateCandBulkBar() {
+  const bar = document.getElementById('candBulkBar');
+  if (!bar) return;
+  const n = window._candSelected.size;
+  if (!n) { bar.style.display = 'none'; bar.innerHTML = ''; return; }
+  bar.style.display = 'block';
+  bar.innerHTML = `
+    <div class="cand-bulk-bar">
+      <strong>${n} sélectionné${n>1?'s':''}</strong>
+      <span class="spacer"></span>
+      <button onclick="addSelectedCands()" style="background:rgba(74,222,128,0.18);color:var(--green);border:1px solid rgba(74,222,128,0.4)">Ajouter à la session (${n})</button>
+      <button onclick="removeSelectedCands()" style="background:rgba(248,113,113,0.18);color:var(--red);border:1px solid rgba(248,113,113,0.4)">Ignorer (${n})</button>
+      <button onclick="selectAllCands('inde')" style="background:rgba(255,255,255,0.05);color:var(--text);border:1px solid var(--border)">Tous indé</button>
+      <button onclick="clearCandSelection()" style="background:rgba(255,255,255,0.05);color:var(--text2);border:1px solid var(--border)">×</button>
+    </div>`;
 }
 
 function toggleAdsList(btn) {
@@ -2878,54 +2997,71 @@ async function runDiscover() {
       `).join('');
       const dedupPill = filteredOut > 0 ? `<span class="pill">−${filteredOut} déjà vus</span>` : '';
       const broadenedPill = (queryUsed !== q) ? `<span class="pill warning">élargi en "${escapeHtml(queryUsed)}"</span>` : '';
+      // Split into institutionnels (top, warning) and indé (bottom, drop targets)
+      const allCands = result.inGammeAll || candidates;
+      const institutionnels = allCands.filter(s => s.institutionnel);
+      const inde = allCands.filter(s => !s.institutionnel);
+      window._discoverCands = { all: allCands, list: [...institutionnels, ...inde] };
+      window._discoverData = data;
+      window._discoverNiche = q;
+      window._candSelected = new Set();
+      const renderRow = (s, idx, isInst) => {
+        const sc = scoreCandidate(s, gamme);
+        const scoreClass = sc >= 60 ? 'success' : sc >= 40 ? '' : 'warning';
+        const thumb = s.thumbnail || '';
+        const v = +s.extracted_price || 0;
+        const margeEst = v ? Math.round((v - v/4 - v*0.125) * 100)/100 : null;
+        const srcLabel = s._source === 'shopping' ? 'Google Shopping' : s._source === 'inline_shopping' ? 'Shopping (Search)' : 'SERP';
+        const srcColor = s._source === 'shopping' ? '#22c55e' : '#8b5cf6';
+        const srcBg = s._source === 'shopping' ? 'rgba(34,197,94,0.15)' : 'rgba(139,92,246,0.18)';
+        const srcLink = s.link || '';
+        const dom = s.domain || '';
+        const srcBadge = srcLink
+          ? `<a href="${escapeHtml(srcLink)}" target="_blank" rel="noopener" class="pill" style="background:${srcBg};border-color:${srcColor}55;color:${srcColor};font-size:10px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:600">${ico('cart',11)} ${srcLabel}</a>`
+          : `<span class="pill" style="background:${srcBg};color:${srcColor};font-size:10px;">${srcLabel}</span>`;
+        const adsBadge = s._alsoInAds && s._adLink
+          ? `<a href="${escapeHtml(s._adLink)}" target="_blank" rel="noopener" class="pill" style="background:rgba(245,158,11,0.18);border-color:rgba(245,158,11,0.45);color:#f59e0b;font-size:10px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:600">${ico('zap',11)} Ad Search</a>`
+          : '';
+        const domLink = dom ? `<a href="https://${escapeHtml(dom)}" target="_blank" rel="noopener" class="pill" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text2);font-size:10px;text-decoration:none">${escapeHtml(dom)}</a>` : '';
+        const verifyBtn = dom ? `<button class="pill" onclick="event.stopPropagation();verifyAds('${escapeHtml(dom)}', this)" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text2);font-size:10px;cursor:pointer;font-family:inherit">Vérifier ads</button>` : '';
+        const instBadge = isInst ? '<span class="pill danger" style="font-size:10px;font-weight:700">Institutionnel</span>' : '';
+        return `
+        <div class="cand-row" data-idx="${idx}" style="display:flex;gap:12px;align-items:flex-start;padding:14px;border:1px solid ${isInst ? 'rgba(248,113,113,0.25)' : 'var(--border)'};border-radius:12px;margin-bottom:8px;background:${isInst ? 'rgba(248,113,113,0.04)' : 'rgba(255,255,255,0.02)'};transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease" onclick="toggleCandSelect(${idx})" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px -8px rgba(139,92,246,0.35)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+          <span class="cand-check">${ico('check',12)}</span>
+          ${thumb ? `<img src="${escapeHtml(thumb)}" style="width:56px;height:56px;object-fit:cover;border-radius:8px;flex-shrink:0;background:#000" alt="" onerror="this.style.display='none'">` : `<div style="width:56px;height:56px;border-radius:8px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;color:var(--text3);flex-shrink:0">${ico('cart',22)}</div>`}
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><strong style="color:var(--accent2);font-size:11px">#${idx+1}</strong>${instBadge}</div>
+            <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${srcLink ? `<a href="${escapeHtml(srcLink)}" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none" onclick="event.stopPropagation()">${escapeHtml((s.title||'').slice(0,90))}</a>` : escapeHtml((s.title||'').slice(0,90))}</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:2px">${escapeHtml(s.source||dom)} · <strong style="color:var(--accent2)">${escapeHtml(s.price||'—')}</strong>${s.rating?` · ${s.rating}/5${s.reviews?' ('+s.reviews+')':''}`:''}${margeEst?` · <span style="color:var(--green)">~${margeEst}€ marge</span>`:''}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;align-items:center" onclick="event.stopPropagation()">${srcBadge}${adsBadge}${domLink}${verifyBtn}<div data-verify-out="${escapeHtml(dom)}" style="display:none;width:100%;margin-top:4px;padding:6px 8px;border-radius:6px;background:rgba(0,0,0,0.3);font-size:11px;"></div></div>
+          </div>
+          <span class="pill ${scoreClass}" style="font-size:10px;flex-shrink:0">${sc}pts</span>
+          <button class="btn btn-sm btn-primary" onclick='event.stopPropagation();discoverAdd(${JSON.stringify(s).replace(/'/g,"&apos;")}, ${JSON.stringify(q).replace(/'/g,"&apos;")})' title="Ajouter ce produit" style="flex-shrink:0">+</button>
+        </div>`;
+      };
+      const indexById = new Map();
+      window._discoverCands.list.forEach((s, i) => indexById.set(s, i));
+      const renderInst = institutionnels.length
+        ? `<div class="cand-divider"><div class="line"></div><span class="label warn">${institutionnels.length} institutionnels (à éviter)</span><div class="line"></div></div>` +
+          institutionnels.map(s => renderRow(s, indexById.get(s), true)).join('')
+        : '';
+      const renderInde = inde.length
+        ? `<div class="cand-divider"><div class="line"></div><span class="label good">${inde.length} indé / drop potentiel</span><div class="line"></div></div>` +
+          inde.map(s => renderRow(s, indexById.get(s), false)).join('')
+        : '';
       res.innerHTML = `
+        <div id="candBulkBar" style="display:none"></div>
         <div style="margin-bottom:12px;padding:12px 16px;border-radius:12px;background:var(--grad-soft);border:1px solid rgba(139,92,246,0.25);">
           <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px">Niche analysée</div>
           <div style="font-weight:600;color:var(--text);font-size:15px">${escapeHtml(q)}</div>
         </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">${verdict} ${adsPill} <span class="pill">${candidates.length} candidats</span>${dedupPill}${broadenedPill}${stats.avg_shopping_price?'<span class="pill">~'+stats.avg_shopping_price+'€ moy</span>':''}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">${verdict} ${adsPill} <span class="pill">${allCands.length} candidats</span>${dedupPill}${broadenedPill}${stats.avg_shopping_price?'<span class="pill">~'+stats.avg_shopping_price+'€ moy</span>':''}</div>
         ${adsList ? `<div class="ads-list" style="display:none;margin-bottom:14px;padding:10px;border-radius:10px;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);"><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:6px;font-weight:600">Annonces Search détectées (clic = ouvrir)</div>${adsList}</div>` : ''}
-        ${sortCands(candidates, gamme).slice(0,12).map((s,i) => {
-          const sc = scoreCandidate(s, gamme);
-          const scoreClass = sc >= 60 ? 'success' : sc >= 40 ? '' : 'warning';
-          const thumb = s.thumbnail || '';
-          // Estimate net margin: vente − achat (vente/4) − cpa (12.5%)
-          const v = +s.extracted_price || 0;
-          const margeEst = v ? Math.round((v - v/4 - v*0.125) * 100)/100 : null;
-          // Source badge: where the product was actually found on Google
-          const srcLabel = s._source === 'shopping' ? 'Google Shopping' : s._source === 'inline_shopping' ? 'Shopping (Search)' : 'SERP';
-          const srcColor = s._source === 'shopping' ? '#22c55e' : '#8b5cf6';
-          const srcBg = s._source === 'shopping' ? 'rgba(34,197,94,0.15)' : 'rgba(139,92,246,0.18)';
-          const srcLink = s.link || '';
-          const srcBadge = srcLink
-            ? `<a href="${escapeHtml(srcLink)}" target="_blank" rel="noopener" class="pill" style="background:${srcBg};border-color:${srcColor}55;color:${srcColor};font-size:10px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:600" title="Voir le produit sur ${escapeHtml(s.domain||'')}">${ico('cart',11)} ${srcLabel}</a>`
-            : `<span class="pill" style="background:${srcBg};color:${srcColor};font-size:10px;">${srcLabel}</span>`;
-          const adsBadge = s._alsoInAds && s._adLink
-            ? `<a href="${escapeHtml(s._adLink)}" target="_blank" rel="noopener" class="pill" style="background:rgba(245,158,11,0.18);border-color:rgba(245,158,11,0.45);color:#f59e0b;font-size:10px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:600" title="Annonce Search active sur ${escapeHtml(s.domain||'')}">${ico('zap',11)} Ad Search</a>`
-            : '';
-          const verifyBtn = s.domain ? `<button class="pill" onclick="verifyAds('${escapeHtml(s.domain)}', this)" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text2);font-size:10px;cursor:pointer;font-family:inherit" title="Vérifier les ads actives via Google Ads Transparency Center">Vérifier ads</button>` : '';
-          return `
-          <div style="display:flex;gap:12px;align-items:flex-start;padding:14px;border:1px solid ${i<3?'rgba(139,92,246,0.3)':'var(--border)'};border-radius:12px;margin-bottom:8px;background:${i<3?'linear-gradient(135deg,rgba(139,92,246,0.05),rgba(217,70,239,0.03))':'rgba(255,255,255,0.02)'};transition:transform .15s ease,box-shadow .15s ease" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px -8px rgba(139,92,246,0.35)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-            ${thumb ? `<img src="${escapeHtml(thumb)}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;flex-shrink:0;background:#000" alt="" onerror="this.style.display='none'">` : `<div style="width:48px;height:48px;border-radius:8px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;color:var(--text3);flex-shrink:0">${ico('cart',20)}</div>`}
-            <div style="font-size:11px;font-weight:700;color:var(--accent2);min-width:24px;padding-top:4px">#${i+1}</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${srcLink ? `<a href="${escapeHtml(srcLink)}" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none">${escapeHtml((s.title||'').slice(0,80))}</a>` : escapeHtml((s.title||'').slice(0,80))}</div>
-              <div style="font-size:11px;color:var(--text2);margin-top:2px;">
-                ${escapeHtml(s.source||s.domain||'')} · <strong style="color:var(--accent2)">${escapeHtml(s.price||'—')}</strong>${s.rating?` · ${s.rating}/5${s.reviews?' ('+s.reviews+')':''}`:''}${margeEst?` · <span style="color:var(--green)">~${margeEst}€ marge</span>`:''}
-              </div>
-              <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;align-items:center">
-                ${srcBadge}
-                ${adsBadge}
-                ${verifyBtn}
-                <div data-verify-out="${escapeHtml(s.domain||'')}" style="display:none;width:100%;margin-top:4px;padding:6px 8px;border-radius:6px;background:rgba(0,0,0,0.3);font-size:11px;"></div>
-              </div>
-            </div>
-            <span class="pill ${scoreClass}" style="font-size:10px;flex-shrink:0">${sc}pts</span>
-            <button class="btn btn-sm btn-primary" onclick='discoverAdd(${JSON.stringify(s).replace(/'/g,"&apos;")}, ${JSON.stringify(q).replace(/'/g,"&apos;")})' title="Ajouter ce produit" style="flex-shrink:0">+</button>
-          </div>
-        `;}).join('')}
+        ${renderInst}
+        ${renderInde}
         ${renderCompetitorsSection(data.competitors || [], gamme)}
       `;
+      updateCandBulkBar();
       if (auto && state.sessions.length) {
         const sid = activeSessionId || state.sessions[0].id;
         let added = 0;
