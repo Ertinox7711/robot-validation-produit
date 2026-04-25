@@ -197,12 +197,58 @@ header {
 .session-head.current-active { color: var(--accent2); }
 .products { display: none; padding-left: 16px; margin-top: 2px; }
 .session.open .products { display: block; }
-.product-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; font-size: 12px; color: var(--text2); cursor: pointer; transition: all .15s; }
-.product-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
-.product-item.active { background: rgba(139,92,246,0.1); color: var(--text); font-weight: 500; }
-.product-item .status { font-size: 12px; width: 14px; text-align: center; }
+.product-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; font-size: 12px; color: var(--text2); cursor: pointer; transition: background .18s ease, transform .18s ease, color .18s ease; position: relative; }
+.product-item:hover { background: rgba(255,255,255,0.05); color: var(--text); transform: translateX(2px); }
+.product-item.active { background: rgba(139,92,246,0.12); color: var(--text); font-weight: 500; box-shadow: inset 2px 0 0 var(--accent2); }
+.product-item.selected { background: rgba(217,70,239,0.15); border: 1px solid rgba(217,70,239,0.35); }
+.product-item .status { font-size: 12px; width: 14px; text-align: center; display:inline-flex; align-items:center; justify-content:center; }
 .product-item .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .product-item .score { font-size: 10px; color: var(--text3); font-weight: 600; padding: 1px 6px; background: rgba(255,255,255,0.04); border-radius: 999px; }
+.product-item .pi-check { width: 16px; height: 16px; border-radius: 5px; border: 1.5px solid var(--border); background: rgba(0,0,0,0.3); display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; transition: all .15s ease; opacity: 0; }
+.product-item:hover .pi-check, .selectMode .product-item .pi-check { opacity: 1; }
+.product-item .pi-check svg { opacity: 0; transition: opacity .15s ease; }
+.product-item.selected .pi-check { background: var(--grad); border-color: transparent; opacity:1; box-shadow: 0 0 0 3px rgba(217,70,239,0.15); }
+.product-item.selected .pi-check svg { opacity: 1; }
+
+/* Selection bar slides in from top of products list */
+.selection-bar { display: flex; align-items: center; gap: 8px; padding: 8px 10px; margin-bottom: 6px; border-radius: 10px; background: linear-gradient(135deg, rgba(217,70,239,0.18), rgba(139,92,246,0.12)); border: 1px solid rgba(217,70,239,0.4); font-size: 12px; color: var(--text); animation: selBarIn .22s cubic-bezier(.2,.8,.2,1); }
+@keyframes selBarIn { from { opacity:0; transform: translateY(-6px) scale(.98); } to { opacity:1; transform: translateY(0) scale(1); } }
+.selection-bar .sel-count { flex: 1; font-weight: 600; }
+.selection-bar button { padding: 4px 10px; font-size: 11px; border-radius: 6px; cursor: pointer; transition: all .15s ease; }
+.selection-bar .sel-del { background: rgba(248,113,113,0.18); color: var(--red); border: 1px solid rgba(248,113,113,0.35); }
+.selection-bar .sel-del:hover { background: rgba(248,113,113,0.3); transform: translateY(-1px); }
+.selection-bar .sel-clear { background: rgba(255,255,255,0.06); color: var(--text2); border: 1px solid var(--border); }
+.selection-bar .sel-clear:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+
+/* 3D-ish card hover (subtle perspective) */
+.card { transform: perspective(1000px) translateZ(0); will-change: transform, box-shadow; }
+.card:hover { transform: perspective(1000px) translateY(-2px); box-shadow: 0 12px 40px -8px rgba(139,92,246,0.18), 0 4px 16px -4px rgba(0,0,0,0.4); }
+
+/* Stat-cards subtle 3D lift */
+.stat-card { transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease; will-change: transform; }
+.stat-card:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 30px -8px rgba(139,92,246,0.35); }
+
+/* Buttons gain a soft press feel */
+.btn { transition: transform .12s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease, color .18s ease; }
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn-primary { box-shadow: 0 4px 14px -4px rgba(139,92,246,0.4); }
+.btn-primary:hover { box-shadow: 0 8px 24px -6px rgba(139,92,246,0.55); }
+
+/* Pills soft entrance when content swaps */
+.pill { transition: transform .15s ease, background .15s ease; }
+.pill:hover { transform: translateY(-1px); }
+
+/* Smoother modal entrance — replace existing scale with 3D rotateX */
+@keyframes modalIn3D {
+  from { opacity: 0; transform: perspective(1200px) rotateX(8deg) translateY(20px) scale(.96); }
+  to   { opacity: 1; transform: perspective(1200px) rotateX(0) translateY(0) scale(1); }
+}
+.modal { animation: modalIn3D .35s cubic-bezier(.2,.8,.2,1) !important; }
+
+/* Sidebar nav items lift on hover */
+.nav-item { transition: background .18s ease, transform .18s ease, box-shadow .2s ease; }
+.nav-item:hover { transform: translateX(3px); box-shadow: -3px 0 0 var(--accent2) inset; }
 .session-empty { font-size: 11px; color: var(--text3); padding: 8px 10px; font-style: italic; }
 
 /* Tabs */
@@ -993,6 +1039,7 @@ function renderSidebar() {
         Sessions (${state.sessions.length})
         <button class="sb-add" onclick="openSessionModal()">+ Nouvelle</button>
       </div>
+      ${renderSelectionBar()}
   `;
 
   const sorted = [...state.sessions].sort((a,b) => (b.created||0) - (a.created||0));
@@ -1017,8 +1064,10 @@ function renderSidebar() {
     prods.forEach(p => {
       const score = calcScore(p);
       const isProductActive = currentView.type==='product' && currentView.id===p.id;
+      const isSelected = window._selected && window._selected.has(p.id);
       html += `
-        <div class="product-item ${isProductActive?'active':''}" onclick="go({type:'product',id:'${p.id}'})">
+        <div class="product-item ${isProductActive?'active':''} ${isSelected?'selected':''}" data-pid="${p.id}" onclick="onProductClick(event,'${p.id}')">
+          <span class="pi-check" onclick="event.stopPropagation();toggleSelect('${p.id}')">${ico('check',12)}</span>
           <span class="status">${statusEmoji(p.status)}</span>
           <span class="name">${escapeHtml(p.name||'Sans nom')}</span>
           <span class="score">${score}/12</span>
@@ -1034,6 +1083,65 @@ function renderSidebar() {
   `;
   sb.innerHTML = html;
 }
+
+/* ═════════ MULTI-SELECT (sidebar) ═════════ */
+window._selected = window._selected || new Set();
+function toggleSelect(pid) {
+  if (window._selected.has(pid)) window._selected.delete(pid);
+  else window._selected.add(pid);
+  renderSidebar();
+}
+function clearSelection() { window._selected.clear(); renderSidebar(); }
+function selectAllInActiveSession() {
+  if (!activeSessionId) return;
+  productsInSession(activeSessionId).forEach(p => window._selected.add(p.id));
+  renderSidebar();
+}
+function onProductClick(e, pid) {
+  if (e.shiftKey || e.ctrlKey || e.metaKey) {
+    e.preventDefault(); e.stopPropagation();
+    toggleSelect(pid);
+    return;
+  }
+  if (window._selected.size > 0) {
+    toggleSelect(pid);
+    return;
+  }
+  go({ type:'product', id: pid });
+}
+function deleteSelected() {
+  const ids = Array.from(window._selected);
+  if (!ids.length) return;
+  if (!confirm(`Supprimer ${ids.length} produit${ids.length>1?'s':''} ?`)) return;
+  state.products = state.products.filter(p => !window._selected.has(p.id));
+  window._selected.clear();
+  if (currentView.type === 'product' && !state.products.find(p=>p.id===currentView.id)) {
+    currentView = { type:'dashboard' };
+  }
+  save(); renderAll();
+}
+function renderSelectionBar() {
+  const n = window._selected ? window._selected.size : 0;
+  if (n === 0) return '';
+  return `
+    <div class="selection-bar">
+      <span class="sel-count">${n} sélectionné${n>1?'s':''}</span>
+      <button class="sel-del" onclick="deleteSelected()" title="Supprimer la sélection">${ico('trash',12)} Supprimer</button>
+      <button class="sel-clear" onclick="clearSelection()" title="Désélectionner tout">${ico('cross',12)}</button>
+    </div>`;
+}
+// Keyboard shortcut: Delete/Backspace deletes selection, Esc clears
+document.addEventListener('keydown', (e) => {
+  if (window._selected && window._selected.size > 0) {
+    const tag = (e.target.tagName||'').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || e.target.isContentEditable) return;
+    if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); deleteSelected(); }
+    else if (e.key === 'Escape') { clearSelection(); }
+    else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a' && activeSessionId) {
+      e.preventDefault(); selectAllInActiveSession();
+    }
+  }
+});
 
 function toggleSession(id, e) {
   // Click on session head: set as active AND toggle expand AND view it
