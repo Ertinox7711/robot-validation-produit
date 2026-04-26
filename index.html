@@ -660,7 +660,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 </div>
 
 <header>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.8.2-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.8.3-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -1008,14 +1008,21 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.8.2-beta';
-const APP_VERSION_NOTES = 'Export Excel stylisé : palette Arthur (bleu marine + bandeau bleu + colonnes calculées surlignées + format euro)';
+const APP_VERSION = '0.8.3-beta';
+const APP_VERSION_NOTES = 'Filtre live sur la vue Session : barre de recherche par nom de produit, partial DOM update';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.8.3-beta', date: '2026-04-26', time: '02:12', source: 'Niche Scraper', summary: 'Filtre live sur la vue Session',
+    items: [
+      {type:'feat', text:'Barre de recherche dans la vue Session : filtre les produits de la session par nom, en live'},
+      {type:'ux', text:'Compteur dynamique "X/total" dans le titre + empty-state quand aucun match'},
+      {type:'perf', text:'Partial DOM update (innerHTML sur #sessTbody seul) — l\'input garde le focus pendant la frappe'},
+      {type:'ux', text:'Le filtre se réinitialise quand on change de session (chaque session a son propre contexte)'},
+    ]},
   { v: '0.8.2-beta', date: '2026-04-25', time: '16:05', source: 'Arthur (Ecom Inner Circle)', summary: 'Export Excel vraiment stylisé comme le template Arthur',
     items: [
       {type:'feat', text:'Switch xlsx-js-style : la lib Excel supporte maintenant fills, fonts, borders et number formats'},
@@ -1568,28 +1575,51 @@ function sortKept(k) {
   if (tb) tb.innerHTML = _keptRowsHtml(arr);
 }
 
+let sessionFilter = '';
+let _sessionFilterSid = null;
+function _sessionFilteredProds(sid) {
+  const all = productsInSession(sid);
+  const q = sessionFilter.trim().toLowerCase();
+  if (!q) return all;
+  return all.filter(p => (p.name||'').toLowerCase().includes(q));
+}
+function _sessionRowsHtml(arr, totalCount) {
+  if (totalCount === 0) return `<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">Aucun produit dans cette session</td></tr>`;
+  if (arr.length === 0) return `<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:28px">Aucun produit ne correspond au filtre</td></tr>`;
+  return arr.map(p => {
+    const score = calcScore(p);
+    const m = calcMarge(p);
+    return `<tr>
+      <td style="font-size:18px">${statusEmoji(p.status)}</td>
+      <td class="clickable" onclick="go({type:'product',id:'${p.id}'})">${escapeHtml(p.name)}</td>
+      <td>${score}/12</td>
+      <td>${p.prix_vente?p.prix_vente+'€':'—'}</td>
+      <td class="${roasClass(m?.roas)}">${m?m.roas.toFixed(1)+'x':'—'}</td>
+      <td>${m?Math.round(m.margeNettePct)+'%':'—'}</td>
+      <td><button class="btn btn-sm btn-danger" onclick="deleteProduct('${p.id}')">Suppr</button></td>
+    </tr>`;
+  }).join('');
+}
+function filterSession(v) {
+  sessionFilter = v || '';
+  if (!_sessionFilterSid) return;
+  const arr = _sessionFilteredProds(_sessionFilterSid);
+  const total = productsInSession(_sessionFilterSid).length;
+  const tb = document.getElementById('sessTbody');
+  if (tb) tb.innerHTML = _sessionRowsHtml(arr, total);
+  const cnt = document.getElementById('sessCount');
+  if (cnt) cnt.textContent = arr.length;
+}
 function renderSession(sid) {
   const s = findSession(sid);
   if (!s) return `<div class="empty"><h3>Session introuvable</h3></div>`;
-  const prods = productsInSession(sid);
-  const kept = prods.filter(p => p.status === 'keep').length;
-  const rej = prods.filter(p => p.status === 'reject').length;
+  if (_sessionFilterSid !== sid) { sessionFilter = ''; _sessionFilterSid = sid; }
+  const allProds = productsInSession(sid);
+  const prods = _sessionFilteredProds(sid);
+  const kept = allProds.filter(p => p.status === 'keep').length;
+  const rej = allProds.filter(p => p.status === 'reject').length;
 
-  const rows = prods.length === 0
-    ? `<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">Aucun produit dans cette session</td></tr>`
-    : prods.map(p => {
-        const score = calcScore(p);
-        const m = calcMarge(p);
-        return `<tr>
-          <td style="font-size:18px">${statusEmoji(p.status)}</td>
-          <td class="clickable" onclick="go({type:'product',id:'${p.id}'})">${escapeHtml(p.name)}</td>
-          <td>${score}/12</td>
-          <td>${p.prix_vente?p.prix_vente+'€':'—'}</td>
-          <td class="${roasClass(m?.roas)}">${m?m.roas.toFixed(1)+'x':'—'}</td>
-          <td>${m?Math.round(m.margeNettePct)+'%':'—'}</td>
-          <td><button class="btn btn-sm btn-danger" onclick="deleteProduct('${p.id}')">Suppr</button></td>
-        </tr>`;
-      }).join('');
+  const rows = _sessionRowsHtml(prods, allProds.length);
 
   return `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
@@ -1598,7 +1628,7 @@ function renderSession(sid) {
         ${activeSessionId===sid?'<span class="gamme-badge" style="background:rgba(91,95,199,0.15);border-color:var(--accent);color:var(--accent2)">● Session active</span>':`<button class="btn btn-sm" onclick="setActiveSession('${sid}')">Définir comme active</button>`}
       </div>
     </div>
-    <p style="color:var(--text2);margin-bottom:20px">${s.date} · ${prods.length} produits · ${kept} retenus · ${rej} rejetés</p>
+    <p style="color:var(--text2);margin-bottom:20px">${s.date} · ${allProds.length} produits · ${kept} retenus · ${rej} rejetés</p>
 
     <div class="card">
       <h2>Notes de session</h2>
@@ -1608,13 +1638,19 @@ function renderSession(sid) {
     </div>
 
     <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-        <h2 style="margin:0">Produits de la session</h2>
-        <button class="btn btn-primary btn-sm" onclick="activeSessionId='${sid}';openProductModal()">+ Ajouter produit</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px;flex-wrap:wrap">
+        <h2 style="margin:0">Produits de la session <span style="color:var(--text3);font-weight:500;font-size:14px">(<span id="sessCount">${prods.length}</span>/${allProds.length})</span></h2>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          ${allProds.length > 0 ? `<div style="position:relative;min-width:220px">
+            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);display:inline-flex;pointer-events:none">${ico('search',16)}</span>
+            <input type="text" id="sessFilterInput" placeholder="Filtrer par nom…" value="${escapeHtml(sessionFilter)}" oninput="filterSession(this.value)" style="padding-left:36px;height:32px;font-size:13px">
+          </div>` : ''}
+          <button class="btn btn-primary btn-sm" onclick="activeSessionId='${sid}';openProductModal()">+ Ajouter produit</button>
+        </div>
       </div>
       <table class="table">
         <thead><tr><th></th><th>Produit</th><th>Score</th><th>Prix</th><th>ROAS</th><th>Marge</th><th></th></tr></thead>
-        <tbody>${rows}</tbody>
+        <tbody id="sessTbody">${rows}</tbody>
       </table>
     </div>
   `;
