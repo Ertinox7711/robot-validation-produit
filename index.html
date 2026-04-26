@@ -660,7 +660,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 </div>
 
 <header>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.8.3-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.8.4-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -1008,14 +1008,20 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.8.3-beta';
-const APP_VERSION_NOTES = 'Filtre live sur la vue Session : barre de recherche par nom de produit, partial DOM update';
+const APP_VERSION = '0.8.4-beta';
+const APP_VERSION_NOTES = 'Raccourcis clavier "/" et Ctrl+K pour focus la barre de recherche active (Kept ou Session)';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.8.4-beta', date: '2026-04-26', time: '18:43', source: 'Helium 10', summary: 'Raccourcis clavier pour la recherche',
+    items: [
+      {type:'feat', text:'Touche "/" focus la barre de recherche active (Produits retenus ou Session)'},
+      {type:'feat', text:'Ctrl+K (ou Cmd+K) fait pareil et fonctionne même depuis un autre champ texte'},
+      {type:'ux', text:'Hint visuel "(/ ou Ctrl+K)" ajouté dans le placeholder + tooltip au hover'},
+    ]},
   { v: '0.8.3-beta', date: '2026-04-26', time: '02:12', source: 'Niche Scraper', summary: 'Filtre live sur la vue Session',
     items: [
       {type:'feat', text:'Barre de recherche dans la vue Session : filtre les produits de la session par nom, en live'},
@@ -1538,7 +1544,7 @@ function renderKept() {
       <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
         <div style="position:relative;flex:1;min-width:220px;max-width:380px">
           <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);display:inline-flex;pointer-events:none">${ico('search',16)}</span>
-          <input type="text" id="keptFilterInput" placeholder="Filtrer par nom, niche ou session…" value="${escapeHtml(keptFilter)}" oninput="filterKept(this.value)" style="padding-left:36px">
+          <input type="text" id="keptFilterInput" placeholder="Filtrer par nom, niche ou session…  (/ ou Ctrl+K)" value="${escapeHtml(keptFilter)}" oninput="filterKept(this.value)" style="padding-left:36px" title="Raccourci : / ou Ctrl+K pour focus la recherche">
         </div>
         <button class="btn btn-sm" onclick="exportKeptCSV()">Export CSV</button>
         <button class="btn btn-sm btn-primary" onclick="exportTemplateXLSX('kept')">Export Excel (template)</button>
@@ -1643,7 +1649,7 @@ function renderSession(sid) {
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           ${allProds.length > 0 ? `<div style="position:relative;min-width:220px">
             <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);display:inline-flex;pointer-events:none">${ico('search',16)}</span>
-            <input type="text" id="sessFilterInput" placeholder="Filtrer par nom…" value="${escapeHtml(sessionFilter)}" oninput="filterSession(this.value)" style="padding-left:36px;height:32px;font-size:13px">
+            <input type="text" id="sessFilterInput" placeholder="Filtrer par nom…  (/ ou Ctrl+K)" value="${escapeHtml(sessionFilter)}" oninput="filterSession(this.value)" style="padding-left:36px;height:32px;font-size:13px" title="Raccourci : / ou Ctrl+K pour focus la recherche">
           </div>` : ''}
           <button class="btn btn-primary btn-sm" onclick="activeSessionId='${sid}';openProductModal()">+ Ajouter produit</button>
         </div>
@@ -3678,9 +3684,20 @@ load();
 renderAll();
 
 // Keyboard shortcuts
+function _focusActiveSearch() {
+  const s = document.getElementById('keptFilterInput') || document.getElementById('sessFilterInput');
+  if (s) { s.focus(); s.select(); return true; }
+  return false;
+}
 document.addEventListener('keydown', (e) => {
+  // Ctrl+K / Cmd+K → focus active search bar (works from anywhere, even from inputs)
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+    if (_focusActiveSearch()) { e.preventDefault(); return; }
+  }
   if (e.target.matches('input, textarea, select')) return;
   if (e.key === 'n' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); openProductModal(); }
+  // "/" → focus active search bar (when not already typing in an input)
+  if (e.key === '/') { if (_focusActiveSearch()) { e.preventDefault(); } }
   if (e.key === 'Escape') { document.querySelectorAll('.modal-bg.open').forEach(m => m.classList.remove('open')); }
 });
 
