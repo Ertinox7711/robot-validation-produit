@@ -165,10 +165,14 @@ header {
 .menu-toggle:active { transform: scale(.95); }
 .menu-toggle svg { width: 20px; height: 20px; color: var(--text); }
 
-/* Sidebar backdrop overlay (mobile drawer mode) */
+/* Sidebar backdrop overlay (mobile drawer mode).
+   IMPORTANT : ne PAS mettre `backdrop-filter` ici. Sur iOS Safari, un
+   backdrop-filter sur un sibling de .sidebar (position fixed) peut blurrer
+   la sidebar elle-même via un bug d'ordre de paint. Overlay solide à la
+   place, bg encore plus sombre pour préserver le contraste. */
 .sidebar-backdrop {
-  display: none; position: fixed; inset: 64px 0 64px 0; z-index: 40;
-  background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
+  display: none; position: fixed; inset: 0; z-index: 40;
+  background: rgba(0,0,0,0.7);
   opacity: 0; transition: opacity .22s ease;
 }
 body.sidebar-open .sidebar-backdrop { display: block; opacity: 1; }
@@ -199,11 +203,15 @@ body.sidebar-open .sidebar-backdrop { display: block; opacity: 1; }
   .sidebar {
     position: fixed; top: 56px; left: -300px; bottom: 64px;
     width: 280px; max-width: 85vw; height: auto; max-height: none;
-    z-index: 50; transform: none;
+    z-index: 9999;  /* large gap pour passer devant tout backdrop-filter sibling */
+    transform: none;
     transition: left .25s cubic-bezier(.2,.8,.2,1);
-    background: #0d0a1a;
+    /* bg encore plus opaque, color-scheme pour iOS, isolation pour stacking
+       context propre indépendant des backdrop-filter siblings */
+    background: #0a0815;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+    isolation: isolate;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: geometricPrecision;
@@ -212,6 +220,11 @@ body.sidebar-open .sidebar-backdrop { display: block; opacity: 1; }
     padding: 16px 12px;
   }
   body.sidebar-open .sidebar { left: 0; }
+  /* Sur mobile, désactiver les overlays body::before (orbDrift radial) et
+     body::after (grid pattern) — ils créent un fond brumeux qui se reflète
+     à travers tous les éléments translucides et amplifie l'impression de flou
+     sur iOS Safari. */
+  body::before, body::after { display: none !important; }
   /* Désactiver `background-clip: text` sur mobile : le rendu sub-pixel sur
      un texte transparent par-dessus un gradient produit du flou visible sur
      les écrans haute densité. Forcer la couleur d'accent pleine. */
@@ -885,7 +898,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 
 <header>
   <button class="menu-toggle" aria-label="Ouvrir le menu" onclick="toggleSidebar()" title="Menu (sessions)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg></button>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.8.7-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.8.8-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -1255,14 +1268,22 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.8.7-beta';
-const APP_VERSION_NOTES = 'Fix flou sidebar mobile (round 2) : abandon du transform GPU pour animer left à la place (zéro composite layer = texte cristallin), neutralisation du background-clip:text dans la sidebar mobile, text-rendering geometricPrecision';
+const APP_VERSION = '0.8.8-beta';
+const APP_VERSION_NOTES = 'Fix flou sidebar mobile (round 3 — iOS Safari) : suppression du backdrop-filter sur .sidebar-backdrop (bug iOS de paint-order qui blurrait la sidebar elle-même), isolation:isolate sur sidebar, désactivation des body::before/::after (orbDrift + grid) sur mobile';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.8.8-beta', date: '2026-04-27', time: '00:48', source: 'fix iOS Safari',
+    summary: 'Fix flou sidebar mobile round 3 — bug iOS Safari paint-order',
+    items: [
+      {type:'fix', text:'Suppression du `backdrop-filter: blur(4px)` sur `.sidebar-backdrop` : bug iOS Safari où un sibling avec backdrop-filter blurrait la sidebar elle-même via un défaut d\'ordre de paint. Remplacé par overlay solide rgba(0,0,0,0.7).'},
+      {type:'fix', text:'`isolation: isolate` + `z-index: 9999` sur la sidebar : crée un stacking context isolé impossible à percer par les backdrop-filter siblings.'},
+      {type:'fix', text:'Désactivation des `body::before` (orbDrift radial) et `body::after` (grid pattern) sur mobile : leur fond brumeux se reflétait à travers tous les éléments translucides et amplifiait l\'impression de flou sur iOS Safari.'},
+      {type:'ux', text:'Background sidebar plus profond `#0a0815` (vs `#0d0a1a`) : contraste maximum avec le texte blanc.'},
+    ]},
   { v: '0.8.7-beta', date: '2026-04-27', time: '00:42', source: 'fix mobile (round 2)',
     summary: 'Fix flou mobile (round 2) : suppression du composite layer GPU',
     items: [
