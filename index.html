@@ -220,11 +220,32 @@ body.sidebar-open .sidebar-backdrop { display: block; opacity: 1; }
     padding: 16px 12px;
   }
   body.sidebar-open .sidebar { left: 0; }
-  /* Sur mobile, désactiver les overlays body::before (orbDrift radial) et
-     body::after (grid pattern) — ils créent un fond brumeux qui se reflète
-     à travers tous les éléments translucides et amplifie l'impression de flou
-     sur iOS Safari. */
-  body::before, body::after { display: none !important; }
+  /* Sur mobile, on garde les radial orbes (body::before) MAIS en sortant le
+     grid pattern (body::after) qui était le principal contributeur visuel au
+     flou. Et on rajoute des accents de couleur DANS la sidebar elle-même via
+     un linear-gradient pour donner de la vie sans backdrop-filter. */
+  body::after { display: none !important; }
+  body::before { opacity: 0.55; }
+  /* Sidebar gradient warm — donne de la chaleur sans transparence */
+  .sidebar {
+    background: linear-gradient(180deg, #15102a 0%, #0a0815 70%) !important;
+    box-shadow: 8px 0 32px rgba(0,0,0,0.5),
+                inset 0 80px 80px -40px rgba(139,92,246,0.18),
+                inset 0 -60px 60px -40px rgba(217,70,239,0.10) !important;
+  }
+  /* Halo radial de la sidebar : pseudo-element interne posé en absolute */
+  .sidebar::before {
+    content: ''; position: absolute; top: -100px; left: -100px;
+    width: 300px; height: 300px; pointer-events: none;
+    background: radial-gradient(circle, rgba(139,92,246,0.22), transparent 60%);
+    filter: blur(40px); z-index: -1;
+  }
+  .sidebar::after {
+    content: ''; position: absolute; bottom: -80px; right: -80px;
+    width: 260px; height: 260px; pointer-events: none;
+    background: radial-gradient(circle, rgba(217,70,239,0.18), transparent 60%);
+    filter: blur(40px); z-index: -1;
+  }
   /* Désactiver `background-clip: text` sur mobile : le rendu sub-pixel sur
      un texte transparent par-dessus un gradient produit du flou visible sur
      les écrans haute densité. Forcer la couleur d'accent pleine. */
@@ -898,7 +919,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 
 <header>
   <button class="menu-toggle" aria-label="Ouvrir le menu" onclick="toggleSidebar()" title="Menu (sessions)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg></button>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.8.8-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.8.9-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -1268,14 +1289,22 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.8.8-beta';
-const APP_VERSION_NOTES = 'Fix flou sidebar mobile (round 3 — iOS Safari) : suppression du backdrop-filter sur .sidebar-backdrop (bug iOS de paint-order qui blurrait la sidebar elle-même), isolation:isolate sur sidebar, désactivation des body::before/::after (orbDrift + grid) sur mobile';
+const APP_VERSION = '0.8.9-beta';
+const APP_VERSION_NOTES = 'Sidebar mobile : remettre la chaleur visuelle sans réintroduire le flou. Linear-gradient #15102a→#0a0815, halo radial violet/fuchsia interne via ::before/::after, body::before réactivé à 55% opacity';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.8.9-beta', date: '2026-04-27', time: '00:50', source: 'polish UX',
+    summary: 'Sidebar mobile : remettre la chaleur visuelle sans réintroduire le flou',
+    items: [
+      {type:'ux', text:'Background sidebar passé en linear-gradient #15102a → #0a0815 (warmer top, deep dark bottom) au lieu d\'un noir uniforme — donne de la dimension à la sidebar.'},
+      {type:'ux', text:'Halo radial violet (top-left) et fuchsia (bottom-right) en pseudo-elements internes ::before/::after avec filter:blur(40px) — l\'ambiance "aurora" de la marque, sans backdrop-filter.'},
+      {type:'ux', text:'Inner box-shadow violet/fuchsia subtil sur la sidebar : éclairage interne qui mime un halo doux.'},
+      {type:'ux', text:'Réactivation des radial orbes du body sur mobile (body::before) à 55% d\'opacity : fond vivant sans le grid pattern (body::after reste off, c\'était le principal contributeur au flou).'},
+    ]},
   { v: '0.8.8-beta', date: '2026-04-27', time: '00:48', source: 'fix iOS Safari',
     summary: 'Fix flou sidebar mobile round 3 — bug iOS Safari paint-order',
     items: [
