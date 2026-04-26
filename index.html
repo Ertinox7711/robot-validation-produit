@@ -892,6 +892,240 @@ small.muted { color: var(--text3); font-size: 11px; }
   .cmd-item { padding: 11px 12px; }
   .cmd-palette-foot { display: none; }
 }
+
+/* ═════════ KANBAN BOARD (vue Session) ═════════ */
+.kanban {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 6px;
+}
+@media (max-width: 768px) {
+  .kanban { grid-template-columns: 1fr; gap: 12px; }
+}
+.kanban-col {
+  background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 12px 11px 14px;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+.kanban-col::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 14px; right: 14px;
+  height: 2px;
+  border-radius: 2px;
+  opacity: 0.55;
+}
+.kanban-col.kc-pending::after { background: linear-gradient(90deg, transparent, var(--text3), transparent); }
+.kanban-col.kc-keep::after    { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+.kanban-col.kc-reject::after  { background: linear-gradient(90deg, transparent, var(--red), transparent); }
+.kanban-col.drag-over {
+  background: linear-gradient(180deg, rgba(139,92,246,0.10), rgba(217,70,239,0.05));
+  border-color: rgba(139,92,246,0.55);
+  box-shadow: 0 0 0 4px rgba(139,92,246,0.10), inset 0 0 24px rgba(139,92,246,0.10);
+  transform: translateY(-1px);
+}
+.kanban-col-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding: 4px 4px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  pointer-events: none; /* let drop events bubble to col */
+}
+.kanban-col-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--text2);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.kc-pending .kanban-col-title { color: var(--text2); }
+.kc-keep    .kanban-col-title { color: var(--green); }
+.kc-reject  .kanban-col-title { color: var(--red); }
+.kanban-col-count {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 999px;
+  padding: 2px 9px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text2);
+  font-variant-numeric: tabular-nums;
+  min-width: 24px;
+  text-align: center;
+}
+.kc-keep   .kanban-col-count { background: rgba(52,211,153,0.10); color: var(--green); border-color: rgba(52,211,153,0.25); }
+.kc-reject .kanban-col-count { background: rgba(251,113,133,0.10); color: var(--red);   border-color: rgba(251,113,133,0.25); }
+.kanban-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  flex: 1;
+  min-height: 60px;
+}
+.kanban-empty {
+  padding: 22px 12px;
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--text3);
+  border: 1px dashed rgba(255,255,255,0.07);
+  border-radius: 10px;
+  margin-top: 4px;
+  line-height: 1.55;
+  pointer-events: none;
+}
+.kanban-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 11px;
+  padding: 10px 12px 11px;
+  cursor: grab;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  transition: transform .15s ease, box-shadow .18s ease, border-color .18s ease, opacity .2s ease;
+  overflow: hidden;
+  user-select: none;
+}
+.kanban-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--score-color, transparent);
+  opacity: 0.7;
+}
+.kanban-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(139,92,246,0.35);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.32), 0 0 0 1px rgba(139,92,246,0.15);
+}
+.kanban-card:active { cursor: grabbing; }
+.kanban-card.dragging {
+  opacity: 0.4;
+  transform: scale(0.97) rotate(-1.2deg);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+}
+.kc-name {
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--text);
+  cursor: pointer;
+  line-height: 1.32;
+  overflow-wrap: anywhere;
+}
+.kc-name:hover { color: var(--accent2); }
+.kc-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--text2);
+}
+.kc-score {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid transparent;
+}
+.kc-score.kc-perfect {
+  background: linear-gradient(135deg, rgba(139,92,246,0.30), rgba(217,70,239,0.30)) !important;
+  border-color: rgba(217,70,239,0.55) !important;
+  color: #fff !important;
+  box-shadow: 0 0 12px rgba(217,70,239,0.45);
+  animation: perfectPulse 2.4s ease-in-out infinite;
+}
+@keyframes perfectPulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(217,70,239,0.45); }
+  50%      { box-shadow: 0 0 20px rgba(217,70,239,0.85), 0 0 6px rgba(139,92,246,0.6); }
+}
+.kc-roas-good { color: var(--green); font-weight: 600; }
+.kc-roas-mid  { color: var(--yellow); font-weight: 600; }
+.kc-roas-bad  { color: var(--red); }
+.kc-niche {
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text3);
+  font-weight: 600;
+  margin-left: auto;
+  padding: 2px 7px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 6px;
+}
+.kanban-toggle {
+  display: inline-flex;
+  align-items: stretch;
+  background: var(--bg3);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+  height: 32px;
+}
+.kanban-toggle button {
+  background: transparent;
+  border: 0;
+  color: var(--text3);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 0 11px;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: background .15s ease, color .15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 6px;
+}
+.kanban-toggle button:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+.kanban-toggle button.active {
+  background: linear-gradient(135deg, rgba(139,92,246,0.30), rgba(217,70,239,0.22));
+  color: #fff;
+  box-shadow: 0 0 0 1px rgba(217,70,239,0.25);
+}
+@keyframes confettiPop {
+  0%   { transform: translate(0,0) rotate(0); opacity: 1; }
+  100% { transform: translate(var(--cx), var(--cy)) rotate(var(--cr)); opacity: 0; }
+}
+.confetti-burst {
+  position: fixed;
+  pointer-events: none;
+  z-index: 99999;
+  width: 0; height: 0;
+}
+.confetti-piece {
+  position: absolute;
+  left: 0; top: 0;
+  width: 8px; height: 8px;
+  background: var(--cc, var(--accent));
+  border-radius: 2px;
+  animation: confettiPop .95s cubic-bezier(.2,.7,.3,1) forwards;
+  will-change: transform, opacity;
+}
+@keyframes cardLand {
+  0%   { transform: scale(1.06); box-shadow: 0 0 0 4px rgba(139,92,246,0.30); }
+  100% { transform: scale(1); box-shadow: none; }
+}
+.kanban-card.just-landed { animation: cardLand .45s ease-out; }
 </style>
 </head>
 <body>
@@ -928,7 +1162,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 
 <header>
   <button class="menu-toggle" aria-label="Ouvrir le menu" onclick="toggleSidebar()" title="Menu (sessions)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg></button>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.9.0-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.10.0-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -1298,14 +1532,24 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.9.0-beta';
-const APP_VERSION_NOTES = 'ROOT CAUSE : .container avait z-index:1 → stacking context qui plafonnait la sidebar à z=1 au niveau body, donc le .sidebar-backdrop (z=40) passait AU-DESSUS et son overlay 0.7 noir assombrissait la sidebar. Fix: container z-index auto sur mobile, sidebar atteint enfin le root du body au-dessus du backdrop.';
+const APP_VERSION = '0.10.0-beta';
+const APP_VERSION_NOTES = 'KANBAN BOARD pour la vue Session : drag-drop natif entre Pending / Retenus / Rejetés, cartes design avec score badge colorisé (rouge/ambre/vert/perfect-pulse violet), confetti gradient quand un score ≥9 passe Keep, explosion plus large pour un 12/12 parfait, toggle Kanban ↔ Table persistant en localStorage, animation cardLand sur la nouvelle position, drag-over highlight violet sur la colonne cible. La vue Session devient un terrain de jeu visuel — première feature signature qui différencie radicalement de Sell The Trend / Niche Scraper.';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.10.0-beta', date: '2026-04-27', time: '01:19', source: 'kanban session board',
+    summary: 'KANBAN BOARD : la vue Session devient un terrain de jeu visuel drag-drop',
+    items: [
+      {type:'feat', text:'Vue Kanban sur chaque session : 3 colonnes (À évaluer / Retenus / Rejetés) avec drag-drop natif HTML5 — glisse une carte produit d\'une colonne à l\'autre pour changer son statut, persistance immédiate via setStatus + Firestore.'},
+      {type:'feat', text:'Cartes produit redesignées : score badge colorisé (rouge <6, ambre 6-8, vert ≥9, gradient violet/fuchsia animé pour le perfect 12/12), prix + ROAS coloré, niche pill, hover lift, drop-shadow accentué. Score color stripe en haut de chaque carte.'},
+      {type:'feat', text:'Mini-confetti déclenché quand un produit passe Keep avec un score ≥9 — burst standard cyan/violet à partir du point de drop ; pour un 12/12 parfait, explosion à 36 pièces gradient violet/fuchsia/cyan/jaune. Aucune dépendance, anim CSS pure.'},
+      {type:'ux', text:'Toggle Kanban ↔ Table dans le header de la session, persisté en localStorage. La table classique reste accessible pour les utilisateurs power-user (export, tri colonnes).'},
+      {type:'ux', text:'Highlight violet animé sur la colonne survolée pendant le drag (background gradient + ring + lift). Animation "cardLand" subtile sur la carte qui vient d\'atterrir. Filtre live continue de fonctionner en mode kanban.'},
+      {type:'perf', text:'Reflow partiel via _kanbanReflow(sid) — pas de full re-render au drop, juste les 3 colonnes et le compteur sub-titre. Renderer 60fps pendant le drag même avec 70+ cartes.'},
+    ]},
   { v: '0.9.0-beta', date: '2026-04-27', time: '00:55', source: 'root cause fix',
     summary: 'ROOT CAUSE du flou + sombre mobile : stacking context du .container',
     items: [
@@ -1959,6 +2203,10 @@ function _sessionRowsHtml(arr, totalCount) {
 function filterSession(v) {
   sessionFilter = v || '';
   if (!_sessionFilterSid) return;
+  if (sessionView === 'kanban') {
+    _kanbanReflow(_sessionFilterSid);
+    return;
+  }
   const arr = _sessionFilteredProds(_sessionFilterSid);
   const total = productsInSession(_sessionFilterSid).length;
   const tb = document.getElementById('sessTbody');
@@ -1966,6 +2214,170 @@ function filterSession(v) {
   const cnt = document.getElementById('sessCount');
   if (cnt) cnt.textContent = arr.length;
 }
+
+/* ═════════ KANBAN BOARD (vue Session) ═════════ */
+let sessionView = (() => {
+  try { return localStorage.getItem('sessionView') || 'kanban'; } catch(_) { return 'kanban'; }
+})();
+function setSessionView(v) {
+  if (v !== 'kanban' && v !== 'table') return;
+  sessionView = v;
+  try { localStorage.setItem('sessionView', v); } catch(_){}
+  renderMain();
+}
+function _scoreBadgeStyle(score) {
+  if (score >= 12) return { bg:'linear-gradient(135deg,rgba(139,92,246,0.30),rgba(217,70,239,0.30))', text:'#fff', border:'rgba(217,70,239,0.55)', perfect:true, color:'#d946ef' };
+  if (score >= 9)  return { bg:'rgba(52,211,153,0.13)',  text:'#34d399', border:'rgba(52,211,153,0.35)',  color:'#34d399' };
+  if (score >= 6)  return { bg:'rgba(251,191,36,0.13)',  text:'#fbbf24', border:'rgba(251,191,36,0.35)',  color:'#fbbf24' };
+  return            { bg:'rgba(251,113,133,0.10)', text:'#fb7185', border:'rgba(251,113,133,0.30)', color:'#fb7185' };
+}
+function _kanbanCardHtml(p) {
+  const score = calcScore(p);
+  const m = calcMarge(p);
+  const sty = _scoreBadgeStyle(score);
+  const roasCls = m ? (m.roas >= 4 ? 'kc-roas-good' : m.roas >= 2.5 ? 'kc-roas-mid' : 'kc-roas-bad') : '';
+  const roasTxt = m ? m.roas.toFixed(1) + 'x' : '—';
+  const niche = p.niche ? `<span class="kc-niche">${escapeHtml(p.niche)}</span>` : '';
+  return `<article class="kanban-card" draggable="true" data-pid="${p.id}" data-score="${score}"
+    style="--score-color:${sty.color}"
+    ondragstart="kbDragStart(event,'${p.id}')" ondragend="kbDragEnd(event)">
+    <div class="kc-name" onclick="go({type:'product',id:'${p.id}'})" title="Ouvrir la fiche">${escapeHtml(p.name||'(sans nom)')}</div>
+    <div class="kc-meta">
+      <span class="kc-score ${sty.perfect?'kc-perfect':''}" style="background:${sty.bg};color:${sty.text};border-color:${sty.border}">${score}/12</span>
+      <span>${p.prix_vente?p.prix_vente+'€':'—'}</span>
+      <span class="${roasCls}">ROAS ${roasTxt}</span>
+      ${niche}
+    </div>
+  </article>`;
+}
+function _kanbanEmptyHint(status) {
+  if (status === 'pending') return 'Glisse une carte ici pour la remettre en attente.';
+  if (status === 'keep')    return 'Glisse une carte ici quand le produit passe la grille Arthur.';
+  return 'Glisse ici les produits qui ne passent pas — ils restent archivés.';
+}
+function _kanbanColHtml(label, status, prods, iconKey, iconColor) {
+  const cards = prods.length
+    ? prods.map(_kanbanCardHtml).join('')
+    : `<div class="kanban-empty">${_kanbanEmptyHint(status)}</div>`;
+  return `<section class="kanban-col kc-${status}" data-status="${status}"
+    ondragover="kbDragOver(event)" ondragleave="kbDragLeave(event)" ondrop="kbDrop(event,'${status}')">
+    <header class="kanban-col-head">
+      <div class="kanban-col-title">
+        <span style="display:inline-flex;color:${iconColor}">${ico(iconKey,14)}</span>${label}
+      </div>
+      <span class="kanban-col-count" id="kbCount-${status}">${prods.length}</span>
+    </header>
+    <div class="kanban-cards" id="kbCards-${status}">${cards}</div>
+  </section>`;
+}
+function _renderKanbanBody(prods) {
+  const pending = prods.filter(p => !p.status || p.status === 'pending');
+  const keep    = prods.filter(p => p.status === 'keep');
+  const reject  = prods.filter(p => p.status === 'reject');
+  return `<div class="kanban">
+    ${_kanbanColHtml('À évaluer', 'pending', pending, 'hourglass', 'var(--text2)')}
+    ${_kanbanColHtml('Retenus',   'keep',    keep,    'check',     'var(--green)')}
+    ${_kanbanColHtml('Rejetés',   'reject',  reject,  'cross',     'var(--red)')}
+  </div>`;
+}
+function _kanbanReflow(sid) {
+  const arr = _sessionFilteredProds(sid);
+  const groups = {
+    pending: arr.filter(p => !p.status || p.status === 'pending'),
+    keep:    arr.filter(p => p.status === 'keep'),
+    reject:  arr.filter(p => p.status === 'reject'),
+  };
+  ['pending','keep','reject'].forEach(st => {
+    const cards = document.getElementById('kbCards-' + st);
+    const count = document.getElementById('kbCount-' + st);
+    if (cards) cards.innerHTML = (groups[st].length
+      ? groups[st].map(_kanbanCardHtml).join('')
+      : `<div class="kanban-empty">${_kanbanEmptyHint(st)}</div>`);
+    if (count) count.textContent = groups[st].length;
+  });
+  const all = productsInSession(sid);
+  const sub = document.getElementById('sessSubtitle');
+  if (sub) {
+    const k = all.filter(p => p.status === 'keep').length;
+    const r = all.filter(p => p.status === 'reject').length;
+    sub.textContent = `${findSession(sid)?.date} · ${all.length} produits · ${k} retenus · ${r} rejetés`;
+  }
+  const cnt = document.getElementById('sessCount');
+  if (cnt) cnt.textContent = arr.length;
+  if (typeof renderSidebar === 'function') { try { renderSidebar(); } catch(_){} }
+}
+let _kbDragId = null;
+function kbDragStart(e, pid) {
+  _kbDragId = pid;
+  try { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', pid); } catch(_){}
+  e.currentTarget.classList.add('dragging');
+}
+function kbDragEnd(e) {
+  e.currentTarget.classList.remove('dragging');
+  document.querySelectorAll('.kanban-col.drag-over').forEach(c => c.classList.remove('drag-over'));
+  _kbDragId = null;
+}
+function kbDragOver(e) {
+  e.preventDefault();
+  try { e.dataTransfer.dropEffect = 'move'; } catch(_){}
+  e.currentTarget.classList.add('drag-over');
+}
+function kbDragLeave(e) {
+  if (!e.currentTarget.contains(e.relatedTarget)) {
+    e.currentTarget.classList.remove('drag-over');
+  }
+}
+function kbDrop(e, status) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  let pid = _kbDragId;
+  if (!pid && e.dataTransfer) { try { pid = e.dataTransfer.getData('text/plain'); } catch(_){} }
+  if (!pid) return;
+  const p = findProduct(pid);
+  if (!p) return;
+  const prevStatus = p.status || 'pending';
+  if (prevStatus === status) return;
+  const x = e.clientX || (e.currentTarget.getBoundingClientRect().left + 80);
+  const y = e.clientY || (e.currentTarget.getBoundingClientRect().top + 80);
+  const score = calcScore(p);
+  p.status = status;
+  if (status === 'keep') p.keptAt = Date.now();
+  else if (status === 'pending') { p.keptAt = null; p.rejectedReason = ''; }
+  save();
+  if (status === 'keep' && score >= 12)      confettiBurst(x, y, 'perfect');
+  else if (status === 'keep' && score >= 9)  confettiBurst(x, y, 'good');
+  _kanbanReflow(p.sessionId);
+  // mark new card with land animation
+  requestAnimationFrame(() => {
+    const card = document.querySelector(`.kanban-card[data-pid="${pid}"]`);
+    if (card) { card.classList.add('just-landed'); setTimeout(() => card.classList.remove('just-landed'), 500); }
+  });
+}
+function confettiBurst(x, y, kind) {
+  const burst = document.createElement('div');
+  burst.className = 'confetti-burst';
+  burst.style.left = x + 'px';
+  burst.style.top  = y + 'px';
+  const colors = (kind === 'perfect')
+    ? ['#8b5cf6','#d946ef','#06b6d4','#fbbf24','#f9a8d4','#34d399']
+    : ['#34d399','#8b5cf6','#d946ef'];
+  const n = (kind === 'perfect') ? 36 : 18;
+  for (let i = 0; i < n; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const angle = (Math.PI * 2 * i) / n + (Math.random() - 0.5) * 0.6;
+    const dist = 90 + Math.random() * 110;
+    piece.style.setProperty('--cx', Math.cos(angle) * dist + 'px');
+    piece.style.setProperty('--cy', (Math.sin(angle) * dist - 30) + 'px');
+    piece.style.setProperty('--cr', (Math.random() * 720 - 360) + 'deg');
+    piece.style.setProperty('--cc', colors[i % colors.length]);
+    piece.style.animationDelay = (Math.random() * 0.08) + 's';
+    burst.appendChild(piece);
+  }
+  document.body.appendChild(burst);
+  setTimeout(() => burst.remove(), 1100);
+}
+
 function renderSession(sid) {
   const s = findSession(sid);
   if (!s) return `<div class="empty"><h3>Session introuvable</h3></div>`;
@@ -1975,16 +2387,21 @@ function renderSession(sid) {
   const kept = allProds.filter(p => p.status === 'keep').length;
   const rej = allProds.filter(p => p.status === 'reject').length;
 
-  const rows = _sessionRowsHtml(prods, allProds.length);
+  const body = (sessionView === 'kanban')
+    ? _renderKanbanBody(prods)
+    : `<table class="table">
+        <thead><tr><th></th><th>Produit</th><th>Score</th><th>Prix</th><th>ROAS</th><th>Marge</th><th></th></tr></thead>
+        <tbody id="sessTbody">${_sessionRowsHtml(prods, allProds.length)}</tbody>
+      </table>`;
 
   return `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:10px;flex-wrap:wrap">
       <h1 style="font-size:22px;font-weight:700;display:flex;align-items:center;gap:10px;"><span style="color:var(--accent2);display:inline-flex">${ico('folder',22)}</span>${escapeHtml(s.label)}</h1>
       <div>
         ${activeSessionId===sid?'<span class="gamme-badge" style="background:rgba(91,95,199,0.15);border-color:var(--accent);color:var(--accent2)">● Session active</span>':`<button class="btn btn-sm" onclick="setActiveSession('${sid}')">Définir comme active</button>`}
       </div>
     </div>
-    <p style="color:var(--text2);margin-bottom:20px">${s.date} · ${allProds.length} produits · ${kept} retenus · ${rej} rejetés</p>
+    <p id="sessSubtitle" style="color:var(--text2);margin-bottom:20px">${s.date} · ${allProds.length} produits · ${kept} retenus · ${rej} rejetés</p>
 
     <div class="card">
       <h2>Notes de session</h2>
@@ -1997,6 +2414,10 @@ function renderSession(sid) {
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px;flex-wrap:wrap">
         <h2 style="margin:0">Produits de la session <span style="color:var(--text3);font-weight:500;font-size:14px">(<span id="sessCount">${prods.length}</span>/${allProds.length})</span></h2>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <div class="kanban-toggle" role="tablist" aria-label="Vue session">
+            <button type="button" role="tab" aria-selected="${sessionView==='kanban'}" class="${sessionView==='kanban'?'active':''}" onclick="setSessionView('kanban')" title="Vue Kanban — drag-drop">${ico('inbox',13)} Kanban</button>
+            <button type="button" role="tab" aria-selected="${sessionView==='table'}" class="${sessionView==='table'?'active':''}" onclick="setSessionView('table')" title="Vue tableau classique">${ico('notes',13)} Table</button>
+          </div>
           ${allProds.length > 0 ? `<div style="position:relative;min-width:220px">
             <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);display:inline-flex;pointer-events:none">${ico('search',16)}</span>
             <input type="text" id="sessFilterInput" placeholder="Filtrer par nom…  ( / )" value="${escapeHtml(sessionFilter)}" oninput="filterSession(this.value)" style="padding-left:36px;height:32px;font-size:13px" title="Raccourci : / pour focus la recherche · Ctrl+K pour la palette de commandes">
@@ -2004,10 +2425,7 @@ function renderSession(sid) {
           <button class="btn btn-primary btn-sm" onclick="activeSessionId='${sid}';openProductModal()">+ Ajouter produit</button>
         </div>
       </div>
-      <table class="table">
-        <thead><tr><th></th><th>Produit</th><th>Score</th><th>Prix</th><th>ROAS</th><th>Marge</th><th></th></tr></thead>
-        <tbody id="sessTbody">${rows}</tbody>
-      </table>
+      ${body}
     </div>
   `;
 }
