@@ -192,6 +192,15 @@ body.sidebar-open .sidebar-backdrop { display: block; opacity: 1; }
   .save-bar .save-status { min-width: 0 !important; font-size: 11px !important; flex: 1; }
   .save-bar .btn { padding: 8px 12px; font-size: 12px; }
 
+  /* CRITIQUE : .container a `z-index: 1` en desktop, ce qui crée un stacking
+     context. La sidebar (enfant de .container) est alors PLAFONNÉE à z=1 au
+     niveau du body, donc le .sidebar-backdrop (z=40, enfant direct du body)
+     passe AU-DESSUS de la sidebar et l'assombrit avec son overlay 0.7 noir.
+     Solution : retirer le stacking context du .container sur mobile via
+     z-index: auto. La sidebar (z=9999) atteint alors le root du body et
+     se place enfin AU-DESSUS du backdrop. */
+  .container { z-index: auto !important; }
+
   /* Layout — sidebar becomes a left-slide drawer.
      IMPORTANT mobile : on anime `left` (et NON `transform`) pour éviter de
      créer un composite layer GPU permanent. Le transform laisse les browsers
@@ -919,7 +928,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 
 <header>
   <button class="menu-toggle" aria-label="Ouvrir le menu" onclick="toggleSidebar()" title="Menu (sessions)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg></button>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.8.9-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.9.0-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -1289,14 +1298,21 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.8.9-beta';
-const APP_VERSION_NOTES = 'Sidebar mobile : remettre la chaleur visuelle sans réintroduire le flou. Linear-gradient #15102a→#0a0815, halo radial violet/fuchsia interne via ::before/::after, body::before réactivé à 55% opacity';
+const APP_VERSION = '0.9.0-beta';
+const APP_VERSION_NOTES = 'ROOT CAUSE : .container avait z-index:1 → stacking context qui plafonnait la sidebar à z=1 au niveau body, donc le .sidebar-backdrop (z=40) passait AU-DESSUS et son overlay 0.7 noir assombrissait la sidebar. Fix: container z-index auto sur mobile, sidebar atteint enfin le root du body au-dessus du backdrop.';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.9.0-beta', date: '2026-04-27', time: '00:55', source: 'root cause fix',
+    summary: 'ROOT CAUSE du flou + sombre mobile : stacking context du .container',
+    items: [
+      {type:'fix', text:'Le `.container` avait `z-index: 1` qui créait un stacking context et PLAFONNAIT la sidebar (z=9999 dedans) à z=1 au niveau du body. Le `.sidebar-backdrop` (z=40, enfant direct du body) passait donc AU-DESSUS de la sidebar et son overlay rgba(0,0,0,0.7) assombrissait tout le contenu de la sidebar.'},
+      {type:'fix', text:'Fix : `.container { z-index: auto !important }` sur mobile. La sidebar atteint enfin le root du body et se place AU-DESSUS du backdrop comme prévu. Vérifié via document.elementsFromPoint : la sidebar est désormais le top layer visuel à l\'intérieur de sa zone.'},
+      {type:'doc', text:'Tous les "fix flou" depuis v0.8.6 traitaient des symptômes (backdrop-filter, transform GPU, font-smoothing, isolation). La cause racine était un bug de stacking context vieux comme la mobile responsiveness v0.8.5 — invisible en desktop car le drawer n\'existe qu\'en mobile.'},
+    ]},
   { v: '0.8.9-beta', date: '2026-04-27', time: '00:50', source: 'polish UX',
     summary: 'Sidebar mobile : remettre la chaleur visuelle sans réintroduire le flou',
     items: [
