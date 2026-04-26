@@ -193,14 +193,21 @@ body.sidebar-open .sidebar-backdrop { display: block; opacity: 1; }
   .sidebar {
     position: fixed; top: 56px; left: 0; bottom: 64px;
     width: 280px; max-width: 85vw; height: auto; max-height: none;
-    z-index: 50; transform: translateX(-100%);
+    z-index: 50; transform: translate3d(-100%, 0, 0);
     transition: transform .25s cubic-bezier(.2,.8,.2,1);
-    background: rgba(7,6,13,0.97);
+    /* Solid opaque bg + no backdrop-filter on mobile : sinon le composite layer
+       du transform combiné au blur(24px) hérité du desktop produit un texte flou
+       sur Chrome Android / iOS Safari */
+    background: #0d0a1a;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     border-right: 1px solid var(--border); border-bottom: none;
     box-shadow: 8px 0 32px rgba(0,0,0,0.5);
     padding: 16px 12px;
   }
-  body.sidebar-open .sidebar { transform: translateX(0); }
+  body.sidebar-open .sidebar { transform: translate3d(0, 0, 0); }
   .main { padding: 18px 14px; width: 100%; }
 
   /* Cards & content density */
@@ -714,6 +721,121 @@ small.muted { color: var(--text3); font-size: 11px; }
   -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M10 2a8 8 0 0 1 6.32 12.91l4.39 4.38-1.42 1.42-4.38-4.39A8 8 0 1 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z'/></svg>") no-repeat center / contain;
           mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M10 2a8 8 0 0 1 6.32 12.91l4.39 4.38-1.42 1.42-4.38-4.39A8 8 0 1 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z'/></svg>") no-repeat center / contain;
 }
+
+/* ═════════ COMMAND PALETTE (Robot Command) ═════════ */
+.cmd-palette-bg {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(7,6,13,0.55);
+  backdrop-filter: blur(16px) saturate(140%);
+  display: none; align-items: flex-start; justify-content: center;
+  padding-top: 12vh; animation: fadeIn .15s ease;
+}
+.cmd-palette-bg.open { display: flex; }
+.cmd-palette {
+  width: 640px; max-width: 92vw;
+  background: rgba(15,12,28,0.96);
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 16px;
+  box-shadow:
+    0 32px 80px rgba(0,0,0,0.7),
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 0 64px -8px rgba(139,92,246,0.4);
+  overflow: hidden;
+  animation: cmdPaletteIn .22s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes cmdPaletteIn {
+  from { opacity: 0; transform: translateY(-12px) scale(.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.cmd-palette-input-wrap {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 18px; border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(139,92,246,0.06), transparent);
+}
+.cmd-palette-input-wrap .cmd-icon { color: var(--accent2); flex-shrink: 0; opacity: .9; display:inline-flex; }
+.cmd-palette-input {
+  flex: 1; background: transparent; border: none; outline: none;
+  font-size: 16px; color: var(--text); font-weight: 500; padding: 4px 0;
+  font-family: inherit; backdrop-filter: none; width: auto;
+}
+.cmd-palette-input::placeholder { color: var(--text3); font-weight: 400; }
+.cmd-palette-results { max-height: 56vh; overflow-y: auto; padding: 8px 0 12px; }
+.cmd-palette-results::-webkit-scrollbar { width: 8px; }
+.cmd-palette-results::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
+.cmd-section-title {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--text3); padding: 12px 18px 6px;
+}
+.cmd-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 9px 12px; margin: 0 8px; border-radius: 8px;
+  cursor: pointer; transition: background .12s ease; position: relative;
+}
+.cmd-item-icon {
+  width: 28px; height: 28px; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 7px;
+  background: rgba(255,255,255,0.04);
+  color: var(--text2);
+  border: 1px solid var(--border);
+}
+.cmd-item-body { flex: 1; min-width: 0; }
+.cmd-item-label { font-size: 13.5px; color: var(--text); font-weight: 500; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cmd-item-hint { font-size: 11.5px; color: var(--text3); margin-top: 2px; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cmd-item-shortcut { display: inline-flex; gap: 4px; align-items: center; flex-shrink: 0; }
+.cmd-kbd {
+  font-size: 10px; color: var(--text3);
+  padding: 2px 6px; border: 1px solid var(--border); border-radius: 4px;
+  background: rgba(255,255,255,0.03); font-family: inherit;
+  letter-spacing: 0.02em; font-weight: 500;
+}
+.cmd-item.selected {
+  background: linear-gradient(90deg, rgba(139,92,246,0.20), rgba(217,70,239,0.10));
+  box-shadow: inset 2px 0 0 var(--accent2);
+}
+.cmd-item.selected .cmd-item-icon {
+  background: rgba(139,92,246,0.18); border-color: rgba(139,92,246,0.4); color: var(--accent2);
+}
+.cmd-item.selected .cmd-kbd { color: var(--text2); border-color: var(--border2); background: rgba(255,255,255,0.06); }
+.cmd-empty {
+  text-align: center; padding: 36px 20px; color: var(--text3);
+  font-size: 13px; line-height: 1.5;
+}
+.cmd-empty .cmd-empty-hint { font-size: 11px; margin-top: 8px; opacity: .7; }
+.cmd-palette-foot {
+  display: flex; align-items: center; gap: 14px; padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  background: rgba(0,0,0,0.2);
+  font-size: 11px; color: var(--text3);
+}
+.cmd-palette-foot .spacer { flex: 1; }
+.cmd-palette-foot .foot-grp { display: inline-flex; align-items: center; gap: 5px; }
+.cmd-trigger-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; margin: 4px 0 14px;
+  border-radius: 10px; cursor: pointer;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  color: var(--text3); font-size: 12px;
+  width: 100%; transition: all .15s ease; text-align: left;
+}
+.cmd-trigger-btn:hover {
+  background: rgba(139,92,246,0.08);
+  border-color: rgba(139,92,246,0.3);
+  color: var(--text2);
+}
+.cmd-trigger-btn .cmd-trigger-icon { color: var(--accent2); display: inline-flex; flex-shrink: 0; }
+.cmd-trigger-btn .cmd-trigger-spacer { flex: 1; }
+.cmd-trigger-btn .cmd-kbd { background: rgba(255,255,255,0.05); }
+
+@media (max-width: 768px) {
+  .cmd-palette-bg { padding-top: 8vh; }
+  .cmd-palette { width: 96vw; }
+  .cmd-palette-input-wrap { padding: 12px 14px; }
+  .cmd-palette-results { max-height: 64vh; }
+  .cmd-item { padding: 11px 12px; }
+  .cmd-palette-foot { display: none; }
+}
 </style>
 </head>
 <body>
@@ -750,7 +872,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 
 <header>
   <button class="menu-toggle" aria-label="Ouvrir le menu" onclick="toggleSidebar()" title="Menu (sessions)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg></button>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.8.5-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.8.6-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -942,6 +1064,27 @@ small.muted { color: var(--text3); font-size: 11px; }
   </div>
 </div>
 
+<!-- ═════════ COMMAND PALETTE (Robot Command — ⌘K / Ctrl+K) ═════════ -->
+<div class="cmd-palette-bg" id="cmdPaletteBg">
+  <div class="cmd-palette" role="dialog" aria-label="Command palette">
+    <div class="cmd-palette-input-wrap">
+      <span class="cmd-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 2a8 8 0 0 1 6.32 12.91l4.39 4.38-1.42 1.42-4.38-4.39A8 8 0 1 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z"/></svg></span>
+      <input type="text" class="cmd-palette-input" id="cmdPaletteInput"
+             placeholder="Tape une commande, un produit, une session…"
+             autocomplete="off" spellcheck="false">
+      <span class="cmd-kbd" title="Ferme la palette">esc</span>
+    </div>
+    <div class="cmd-palette-results" id="cmdPaletteResults"></div>
+    <div class="cmd-palette-foot">
+      <span class="foot-grp"><span class="cmd-kbd">↑</span><span class="cmd-kbd">↓</span> naviguer</span>
+      <span class="foot-grp"><span class="cmd-kbd">↵</span> exécuter</span>
+      <span class="foot-grp"><span class="cmd-kbd">esc</span> fermer</span>
+      <span class="spacer"></span>
+      <span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:600;letter-spacing:0.04em">Robot Command</span>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ═════════ CONSTANTS ═════════ */
 // Critères calqués sur les 11+1 vidéos "TUNNEL DE VALIDATION PRODUIT" Skool
@@ -1099,14 +1242,21 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.8.5-beta';
-const APP_VERSION_NOTES = 'Page entièrement responsive : sidebar drawer mobile + hamburger menu, tables scrollables, layout adaptatif <768px et <480px';
+const APP_VERSION = '0.8.6-beta';
+const APP_VERSION_NOTES = 'Fix flou texte sidebar mobile : override du backdrop-filter desktop hérité + bg solide opaque + font-smoothing antialiased (composite layer + blur(24px) sur Chrome Android / iOS Safari rendait le texte flou)';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.8.6-beta', date: '2026-04-27', time: '00:33', source: 'fix mobile',
+    summary: 'Fix : texte flou dans la sidebar drawer sur mobile',
+    items: [
+      {type:'fix', text:'Sidebar mobile : override `backdrop-filter: none` (le blur(24px) hérité du desktop combiné au composite layer du transform produisait un texte flou sur Chrome Android et iOS Safari)'},
+      {type:'fix', text:'Background solide opaque #0d0a1a (avant : rgba(7,6,13,0.97) → 3% de transparence laissait passer le grid + orbes radiaux du body et alimentait le rendu flou)'},
+      {type:'ux', text:'Ajout de -webkit-font-smoothing: antialiased + transform translate3d(0,0,0) : rasterisation propre du texte sur les composite layers GPU'},
+    ]},
   { v: '0.8.5-beta', date: '2026-04-26', time: '18:44', source: 'interne', summary: 'Page entièrement responsive (mobile + tablette)',
     items: [
       {type:'feat', text:'Hamburger menu en haut à gauche sur mobile : la sidebar devient un drawer qui glisse depuis la gauche'},
@@ -1250,8 +1400,17 @@ function renderSidebar() {
     state.sessions.forEach(s => openSessions.add(s.id));
   }
 
+  const isMac = /Mac|iPhone|iPad/i.test(navigator.platform || '');
+  const cmdLabel = isMac ? '⌘' : 'Ctrl';
+
   let html = `
     <div class="sb-section">
+      <button class="cmd-trigger-btn" onclick="openCmdPalette()" title="Ouvre la palette de commandes (Ctrl+K)">
+        <span class="cmd-trigger-icon">${ico('search',14)}</span>
+        <span>Tape une commande…</span>
+        <span class="cmd-trigger-spacer"></span>
+        <span class="cmd-kbd">${cmdLabel} K</span>
+      </button>
       <div class="sb-title">Vue globale</div>
       <div class="nav-item ${currentView.type==='dashboard'?'active':''}" onclick="go({type:'dashboard'})">
         <span class="icon">${ico('home',16)}</span><span>Dashboard</span>
@@ -1649,7 +1808,7 @@ function renderKept() {
       <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
         <div style="position:relative;flex:1;min-width:220px;max-width:380px">
           <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);display:inline-flex;pointer-events:none">${ico('search',16)}</span>
-          <input type="text" id="keptFilterInput" placeholder="Filtrer par nom, niche ou session…  (/ ou Ctrl+K)" value="${escapeHtml(keptFilter)}" oninput="filterKept(this.value)" style="padding-left:36px" title="Raccourci : / ou Ctrl+K pour focus la recherche">
+          <input type="text" id="keptFilterInput" placeholder="Filtrer par nom, niche ou session…  ( / )" value="${escapeHtml(keptFilter)}" oninput="filterKept(this.value)" style="padding-left:36px" title="Raccourci : / pour focus la recherche · Ctrl+K pour la palette de commandes">
         </div>
         <button class="btn btn-sm" onclick="exportKeptCSV()">Export CSV</button>
         <button class="btn btn-sm btn-primary" onclick="exportTemplateXLSX('kept')">Export Excel (template)</button>
@@ -1754,7 +1913,7 @@ function renderSession(sid) {
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           ${allProds.length > 0 ? `<div style="position:relative;min-width:220px">
             <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);display:inline-flex;pointer-events:none">${ico('search',16)}</span>
-            <input type="text" id="sessFilterInput" placeholder="Filtrer par nom…  (/ ou Ctrl+K)" value="${escapeHtml(sessionFilter)}" oninput="filterSession(this.value)" style="padding-left:36px;height:32px;font-size:13px" title="Raccourci : / ou Ctrl+K pour focus la recherche">
+            <input type="text" id="sessFilterInput" placeholder="Filtrer par nom…  ( / )" value="${escapeHtml(sessionFilter)}" oninput="filterSession(this.value)" style="padding-left:36px;height:32px;font-size:13px" title="Raccourci : / pour focus la recherche · Ctrl+K pour la palette de commandes">
           </div>` : ''}
           <button class="btn btn-primary btn-sm" onclick="activeSessionId='${sid}';openProductModal()">+ Ajouter produit</button>
         </div>
@@ -3788,6 +3947,245 @@ function renderAll() { renderSidebar(); renderMain(); }
 load();
 renderAll();
 
+/* ═════════ COMMAND PALETTE — "Robot Command" ═════════ */
+// State
+let _cmdOpen = false;
+let _cmdQuery = '';
+let _cmdSelected = 0;
+let _cmdFlat = [];   // flat ordered list of result items (with section headers as null entries)
+const CMD_RECENTS_KEY = 'rvp_cmd_recents_v1';
+
+function _cmdRecentsGet() {
+  try { return JSON.parse(localStorage.getItem(CMD_RECENTS_KEY) || '[]'); } catch(e) { return []; }
+}
+function _cmdRecentsPush(id) {
+  if (!id) return;
+  let r = _cmdRecentsGet().filter(x => x !== id);
+  r.unshift(id);
+  r = r.slice(0, 6);
+  try { localStorage.setItem(CMD_RECENTS_KEY, JSON.stringify(r)); } catch(e) {}
+}
+
+// Build the command registry (rebuilt every open + every keystroke so it reflects fresh state)
+function _cmdBuildRegistry() {
+  const cmds = [];
+  // Navigation
+  cmds.push({ id:'nav.dashboard', cat:'Navigation', icon:'home', label:'Aller au Dashboard', hint:'Vue d\'ensemble', kw:'dashboard accueil home stats vue', action:() => go({type:'dashboard'}) });
+  cmds.push({ id:'nav.kept', cat:'Navigation', icon:'trophy', label:'Mes produits retenus', hint:`${keptProducts().length} validés au total`, kw:'kept retenus validés trophées', action:() => go({type:'kept'}) });
+  cmds.push({ id:'nav.help', cat:'Navigation', icon:'book', label:'Méthode & aide', hint:'Tunnel de validation Arthur', kw:'aide méthode help', action:() => go({type:'help'}) });
+  cmds.push({ id:'nav.formation', cat:'Navigation', icon:'graduation', label:'Formation Skool', hint:'27 leçons transcrites', kw:'formation skool cours leçons arthur', action:() => go({type:'formation'}) });
+  cmds.push({ id:'nav.changelog', cat:'Navigation', icon:'notes', label:'Historique des versions', hint:`${CHANGELOG.length} versions shippées`, kw:'historique versions changelog mises à jour', action:() => go({type:'changelog'}) });
+
+  // Actions
+  cmds.push({ id:'act.newSession', cat:'Actions', icon:'rocket', label:'Nouvelle session de recherche', hint:'Démarre une session datée', kw:'nouvelle session create new', action:() => openSessionModal() });
+  cmds.push({ id:'act.newProduct', cat:'Actions', icon:'edit', label:'Nouveau produit', hint:'Ajoute un produit dans la session active', kw:'nouveau produit ajouter add new', shortcut:['Ctrl','N'], action:() => openProductModal() });
+  cmds.push({ id:'act.discover', cat:'Actions', icon:'search', label:'Recherche auto (Discover)', hint:'Scrape SerpAPI sur des niches', kw:'discover recherche auto serpapi auto', action:() => openDiscoverModal() });
+  cmds.push({ id:'act.settings', cat:'Actions', icon:'gear', label:'Paramètres', hint:'Clé SerpAPI, sync, formules', kw:'paramètres settings préférences config', action:() => openSettingsPrefilled() });
+  cmds.push({ id:'act.sync', cat:'Actions', icon:'cloud', label:'Synchronisation cloud', hint:'jsonblob.com (ID partagé)', kw:'sync synchronisation cloud backup', action:() => openSyncModal() });
+
+  // Sessions
+  const sessions = [...state.sessions].sort((a,b) => (b.created||0) - (a.created||0));
+  sessions.forEach(s => {
+    const isActive = s.id === activeSessionId;
+    const n = productsInSession(s.id).length;
+    cmds.push({
+      id:'sess.'+s.id, cat:'Sessions', icon:'folder',
+      label:'Aller à la session : ' + (s.label || 'Sans nom'),
+      hint:`${n} produit${n>1?'s':''}${isActive ? ' · session active' : ''}`,
+      kw:(s.label||'')+' session ouvrir',
+      action:() => go({type:'session', id:s.id})
+    });
+    if (!isActive) {
+      cmds.push({
+        id:'sess.activate.'+s.id, cat:'Sessions', icon:'target',
+        label:'Définir comme session active : ' + (s.label || 'Sans nom'),
+        hint:'Le prochain produit créé ira ici',
+        kw:(s.label||'')+' active set définir',
+        action:() => { setActiveSession(s.id); }
+      });
+    }
+  });
+
+  // Kept products — quick open
+  keptProducts().slice(0, 50).forEach(p => {
+    const sess = findSession(p.sessionId);
+    const score = calcScore(p);
+    cmds.push({
+      id:'prod.'+p.id, cat:'Produits retenus', icon:'star',
+      label:p.name || 'Sans nom',
+      hint:`${score}/12 · ${sess ? sess.label : 'session inconnue'}${p.niche ? ' · '+p.niche : ''}`,
+      kw:(p.name||'')+' '+(p.niche||'')+' '+(sess?sess.label:'')+' produit ouvrir',
+      action:() => go({type:'product', id:p.id})
+    });
+  });
+
+  // Export
+  cmds.push({ id:'exp.xlsx', cat:'Export', icon:'save', label:'Exporter en Excel — template Arthur', hint:'Tous les produits retenus, stylé', kw:'export excel xlsx arthur', action:() => { try { exportTemplateXLSX('all'); } catch(e){ alert('Export Excel: '+e.message);} } });
+  cmds.push({ id:'exp.csv', cat:'Export', icon:'save', label:'Exporter en CSV', hint:'Format simple, compatible tableur', kw:'export csv', action:() => { try { exportKeptCSV(); } catch(e){ alert('Export CSV: '+e.message);} } });
+  cmds.push({ id:'exp.json', cat:'Export', icon:'save', label:'Backup JSON complet', hint:'Sauvegarde toutes tes données', kw:'export json backup sauvegarde', action:() => exportAll() });
+
+  // Aide
+  cmds.push({ id:'aide.shortcuts', cat:'Aide', icon:'bolt', label:'Voir tous les raccourcis clavier', hint:'⌘K, /, Ctrl+N, …', kw:'raccourcis shortcuts clavier keyboard help', action:() => _cmdShowShortcuts() });
+
+  return cmds;
+}
+
+function _cmdFuzzyMatch(q, item) {
+  if (!q) return { ok:true, score:0 };
+  const target = (item.label + ' ' + (item.hint||'') + ' ' + (item.kw||'') + ' ' + item.cat).toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'');
+  const query = q.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').trim();
+  if (!query) return { ok:true, score:0 };
+  // Try whole substring first (best score)
+  const idx = target.indexOf(query);
+  if (idx !== -1) return { ok:true, score: 1000 - idx + (item.label.toLowerCase().includes(query) ? 100 : 0) };
+  // Token match: every token must appear somewhere in target
+  const tokens = query.split(/\s+/).filter(Boolean);
+  for (const t of tokens) if (target.indexOf(t) === -1) return { ok:false, score:0 };
+  return { ok:true, score: 200 - tokens.length };
+}
+
+function _cmdRender() {
+  const root = document.getElementById('cmdPaletteResults');
+  const all = _cmdBuildRegistry();
+  const q = _cmdQuery.trim();
+
+  let filtered;
+  let recentsBlock = null;
+  if (!q) {
+    // No query → show recents at top + all commands grouped
+    const recents = _cmdRecentsGet();
+    const recentItems = recents.map(id => all.find(c => c.id === id)).filter(Boolean);
+    if (recentItems.length) recentsBlock = recentItems;
+    filtered = all;
+  } else {
+    filtered = all
+      .map(c => ({ c, m: _cmdFuzzyMatch(q, c) }))
+      .filter(x => x.m.ok)
+      .sort((a,b) => b.m.score - a.m.score)
+      .map(x => x.c);
+  }
+
+  // Group by category, preserve order from filtered
+  const groups = {};
+  const groupOrder = [];
+  filtered.forEach(c => {
+    if (!groups[c.cat]) { groups[c.cat] = []; groupOrder.push(c.cat); }
+    groups[c.cat].push(c);
+  });
+
+  // Build flat list (sections + items) and HTML
+  _cmdFlat = [];
+  let html = '';
+
+  if (recentsBlock) {
+    html += `<div class="cmd-section-title">Récents</div>`;
+    recentsBlock.forEach(c => { _cmdFlat.push(c); html += _cmdItemHtml(c, _cmdFlat.length - 1); });
+  }
+
+  groupOrder.forEach(cat => {
+    html += `<div class="cmd-section-title">${escapeHtml(cat)}</div>`;
+    groups[cat].forEach(c => { _cmdFlat.push(c); html += _cmdItemHtml(c, _cmdFlat.length - 1); });
+  });
+
+  if (_cmdFlat.length === 0) {
+    html = `<div class="cmd-empty">
+      <div>Aucun résultat pour "<strong>${escapeHtml(q)}</strong>"</div>
+      <div class="cmd-empty-hint">Essaie un autre mot-clé : produit, session, export, formation…</div>
+    </div>`;
+  }
+
+  root.innerHTML = html;
+
+  // Clamp selection
+  if (_cmdSelected >= _cmdFlat.length) _cmdSelected = Math.max(0, _cmdFlat.length - 1);
+  if (_cmdSelected < 0) _cmdSelected = 0;
+  _cmdHighlight();
+}
+
+function _cmdItemHtml(c, idx) {
+  const shortcutHtml = c.shortcut
+    ? `<span class="cmd-item-shortcut">${c.shortcut.map(k => `<span class="cmd-kbd">${escapeHtml(k)}</span>`).join('')}</span>`
+    : '';
+  return `<div class="cmd-item" data-cmd-idx="${idx}" onclick="_cmdExecuteAt(${idx})" onmouseenter="_cmdSelectAt(${idx},false)">
+    <span class="cmd-item-icon">${ico(c.icon, 14)}</span>
+    <div class="cmd-item-body">
+      <div class="cmd-item-label">${escapeHtml(c.label)}</div>
+      ${c.hint ? `<div class="cmd-item-hint">${escapeHtml(c.hint)}</div>` : ''}
+    </div>
+    ${shortcutHtml}
+  </div>`;
+}
+
+function _cmdHighlight() {
+  const items = document.querySelectorAll('#cmdPaletteResults .cmd-item');
+  items.forEach((el, i) => el.classList.toggle('selected', i === _cmdSelected));
+  // Scroll selected into view
+  const sel = items[_cmdSelected];
+  if (sel) sel.scrollIntoView({ block: 'nearest' });
+}
+
+function _cmdSelectAt(idx, scroll) {
+  _cmdSelected = idx;
+  _cmdHighlight();
+}
+
+function _cmdExecuteAt(idx) {
+  const c = _cmdFlat[idx];
+  if (!c || !c.action) return;
+  _cmdRecentsPush(c.id);
+  closeCmdPalette();
+  // Defer action to allow palette to close cleanly first
+  setTimeout(() => { try { c.action(); } catch(e) { console.error('Cmd error', e); alert('Erreur: ' + e.message); } }, 30);
+}
+
+function openCmdPalette() {
+  if (_cmdOpen) return;
+  _cmdOpen = true;
+  _cmdQuery = '';
+  _cmdSelected = 0;
+  document.getElementById('cmdPaletteBg').classList.add('open');
+  const inp = document.getElementById('cmdPaletteInput');
+  inp.value = '';
+  _cmdRender();
+  // focus on next tick (fights iOS Safari)
+  setTimeout(() => { inp.focus(); inp.select(); }, 30);
+}
+
+function closeCmdPalette() {
+  _cmdOpen = false;
+  document.getElementById('cmdPaletteBg').classList.remove('open');
+}
+
+function _cmdShowShortcuts() {
+  alert(
+    'Raccourcis clavier — Robot Validation Produit\n\n' +
+    '⌘K / Ctrl+K   Ouvrir la palette de commandes\n' +
+    '/             Focus la barre de recherche active (Kept ou Session)\n' +
+    'Ctrl+N        Nouveau produit\n' +
+    '↑ ↓           Naviguer dans la palette\n' +
+    '↵ Entrée      Exécuter la commande sélectionnée\n' +
+    'Esc           Fermer la palette / une modale'
+  );
+}
+
+// Wire palette input
+(function _cmdWire(){
+  const inp = document.getElementById('cmdPaletteInput');
+  const bg = document.getElementById('cmdPaletteBg');
+  if (!inp || !bg) return;
+  inp.addEventListener('input', () => { _cmdQuery = inp.value; _cmdSelected = 0; _cmdRender(); });
+  inp.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); if (_cmdFlat.length) { _cmdSelected = (_cmdSelected + 1) % _cmdFlat.length; _cmdHighlight(); } }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); if (_cmdFlat.length) { _cmdSelected = (_cmdSelected - 1 + _cmdFlat.length) % _cmdFlat.length; _cmdHighlight(); } }
+    else if (e.key === 'Enter') { e.preventDefault(); if (_cmdFlat.length) _cmdExecuteAt(_cmdSelected); }
+    else if (e.key === 'Escape') { e.preventDefault(); closeCmdPalette(); }
+    else if (e.key === 'Home') { e.preventDefault(); _cmdSelected = 0; _cmdHighlight(); }
+    else if (e.key === 'End') { e.preventDefault(); _cmdSelected = Math.max(0, _cmdFlat.length - 1); _cmdHighlight(); }
+  });
+  bg.addEventListener('click', (e) => { if (e.target === bg) closeCmdPalette(); });
+})();
+
 // Keyboard shortcuts
 function _focusActiveSearch() {
   const s = document.getElementById('keptFilterInput') || document.getElementById('sessFilterInput');
@@ -3795,15 +4193,20 @@ function _focusActiveSearch() {
   return false;
 }
 document.addEventListener('keydown', (e) => {
-  // Ctrl+K / Cmd+K → focus active search bar (works from anywhere, even from inputs)
+  // Ctrl+K / Cmd+K → open Robot Command palette (works from anywhere, even from inputs)
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-    if (_focusActiveSearch()) { e.preventDefault(); return; }
+    e.preventDefault();
+    if (_cmdOpen) closeCmdPalette(); else openCmdPalette();
+    return;
   }
   if (e.target.matches('input, textarea, select')) return;
   if (e.key === 'n' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); openProductModal(); }
   // "/" → focus active search bar (when not already typing in an input)
   if (e.key === '/') { if (_focusActiveSearch()) { e.preventDefault(); } }
-  if (e.key === 'Escape') { document.querySelectorAll('.modal-bg.open').forEach(m => m.classList.remove('open')); }
+  if (e.key === 'Escape') {
+    if (_cmdOpen) { closeCmdPalette(); return; }
+    document.querySelectorAll('.modal-bg.open').forEach(m => m.classList.remove('open'));
+  }
 });
 
 // Close modal on backdrop click
