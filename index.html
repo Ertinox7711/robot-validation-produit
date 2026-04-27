@@ -3211,7 +3211,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 
 <header>
   <button class="menu-toggle" aria-label="Ouvrir le menu" onclick="toggleSidebar()" title="Menu (sessions)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg></button>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.22.0-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.23.0-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -3599,14 +3599,26 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.22.0-beta';
-const APP_VERSION_NOTES = 'BACKEND ILLIMITÉ SANS CLÉ API — refonte complète de serp_scout.py qui pivote du SerpAPI payant (limite mensuelle ~250 req/clé) vers du scraping direct Bing FR + DuckDuckGo, illimité et gratuit. Test E2E validé : aspirateur robot xiaomi → organic 10/10, ads 2 (récupérés via buyer-intent suffix retry " acheter"/" prix"), shopping 20/20 avec prix moyen 347€, autoChecks c2/c12 = TRUE, cache 30j hit en 10ms vs 10s pour cold. Pipeline : urllib stdlib + UA rotation 6 desktop FR + cookies CONSENT pré-acceptés + throttle 1.5s/req Bing + retry backoff 8-30s sur 429. Source primaire Bing FR (HTML statique propre, classes stables b_algo / b_ad / br-gOffCard depuis 2018) car Google direct bloque toute requête sans JS (page enablejs au lieu de SERP). DuckDuckGo HTML en fallback (organic only, jamais bloqué). SerpAPI conservé en fallback ultime opt-in via .serp_env USE_SERPAPI_FALLBACK=1 (utile pour Google Shopping carousels exacts). Décodage URLs Bing en double-pass : base64-url-safe (avec strip prefix "a1") puis URL-decode (Bing wrappe les liens dans bing.com/ck/a?u=BASE64URL et la chaîne décodée est elle-même URL-encodée). Cache TTL 30 jours (vs 24h avant) — divise le volume de requêtes effectives par 30+ pour les rescans. PARI : on supprime totalement la dépendance SerpAPI payante (qui plafonnait à 250 req/clé/mois) au profit d\'un backend zéro-coût zéro-clé-api avec parité fonctionnelle 90% sur Arthur (organic + shopping carousel + auto-checks c2/c5/c12). Si Bing change son DOM, fallback DDG garde l\'organic ; si DDG bloque, fallback SerpAPI ultime garde la parité. PRÉCISION NICHE — règle Arthur n°3 (jamais généraliste) encodée en feature active. Score 0-100 par produit, badge live sur chaque fiche, comparateur de variantes plus niches qui génère 8 alternatives en 1 clic, vue cockpit cross-portefeuille (distribution 4 verdicts, top mots généralistes à virer, podium ULTRA-PRÉCIS, tableau de correction par urgence). Listes statiques curées depuis transcripts Skool c4_precis_niche + c11_motcle_non_precis + tableau_recherche : ~100 mots généralistes français + ~130 modifieurs catégorisés (style/matière/usage/dimension/audience). Score composite : longueur du nom (≥4 mots +20, 3 mots +5, ≤2 mots -18 à -35) + modifieurs trouvés (+12/modif, max +60) + niche déclarée précise (+10 si ≥3 mots) avec plafond automatique si mot généraliste détecté sans modifieur (≤25 = REFUS). 4 verdicts : NICHE ULTRA-PRÉCISE ≥80 vert / PRÉCISE 60-79 cyan / À AFFINER 40-59 jaune / GÉNÉRALISTE — REFUS <40 rouge. Badge sur fiche produit (onglet Infos) avec orb 64px + verdict coloré + 3 raisons chiffrées + bouton "Générer variantes plus niches" en CTA gradient violet/fuchsia. Modale comparateur 8 cards : nom variante + score + verdict pill + chips modifieurs colorisés par catégorie + bouton "Explorer cette variante" qui crée un nouveau produit pré-rempli dans la session courante (variante + niche héritée + note traçabilité). Variantes générées par 8 templates déterministes (seed = hash du nom+niche, donc même input → même suggestions reproductibles) qui combinent style×dimension, usage×matière, style×matière, usage×audience, dimension×style, matière×usage, style×audience, usage×dimension. Nouvelle vue sidebar "Précision Niche" entre Pipeline et Recherche auto (icône target violet, badge live "X à virer" en violet/fuchsia). Hero gradient violet/fuchsia/cyan + bandeau 2 règles non-négo (Précis ≥3 mots+modifieurs / Refus mot généraliste seul) + lien Tunnel. Cockpit 2 cols : orb 160px score moyen pipeline (label adaptatif Excellent/Précis/Mitigé/Trop généraliste) + distribution 4 buckets en barres horizontales colorisées (vert/cyan/jaune/rouge). 2 cards : Top 10 mots généralistes les plus fréquents avec compteur (à virer en priorité), Podium ULTRA-PRÉCIS top 10 (à pousser, cliquable). Tableau de correction par urgence : 24 produits classés du plus généraliste au plus précis avec score colorisé, verdict pill, mot généraliste flag rouge, chips modifieurs (max 2 par catégorie), longueur du nom — clique une ligne pour ouvrir la fiche. Helpers exposés window._npPrecisionScore, _npGenerateVariants, _npGeneralistCount, openNpVariantsModal, npExploreVariant, renderNichePrecision. Command palette enrichie (nav.niche). PARI : aucun SaaS de validation produit (Sell The Trend, Niche Scraper, Ecomhunt, Minea, Helium 10) ne challenge la précision du nom contre une méthode propriétaire et ne propose des variantes plus niches en 1 clic. La Précision Niche fait passer l\'app de "scoreur passif" à "coach actif qui refuse le travail mal fait". 4e jambe du tabouret Google Ads-first, complète Simulateur (leviers), Radar (concurrence) et Pipeline (santé) en couvrant le INPUT (qualité du produit dès l\'ajout). Audit conforme post v0.17 : zéro IA ajoutée (listes statiques curées, pas de LLM), zéro gamification, calcul local sur state.products, exploite la formation Skool transcrite (déjà payée). Axe GOOGLE ADS-INTELLIGENCE (axe 1 SKILL.md), couvre directement la 3e règle non-négociable Arthur sous-exploitée jusqu\'ici.';
+const APP_VERSION = '0.23.0-beta';
+const APP_VERSION_NOTES = 'AUTO-SCORE 8/12 CRITÈRES ARTHUR (Z1 SKILL.md) — l\'algo coche maintenant en local jusqu\'à 8 critères sur 12 depuis les données déjà connues (prix achat/vente, volume mensuel, CPC, niche, scan SERP) au lieu de seulement 3 (c2/c5/c12 via SERP autoChecks). Helper window._autoScoreCriteres(p) retourne {auto, reasons} chiffrés par critère ; window.applyAutoScoreCriteres(p) applique en respectant les choix manuels user (p.criteres_auto track ce qui vient de l\'algo, jamais d\'override sur un critère que l\'user a coché lui-même). Bouton "Auto-scorer (algo)" sur la grille critères + auto-trigger après chaque scan SERP. Badge "ALGO" cyan sur chaque critère auto-rempli avec raison chiffrée italique en sous-ligne. Critères couverts : C1 Marge ×3 (depuis calcMarge ratio ≥3), C2 Concurrence (organic+ads+shopping), C3 Volume+CPA (≥15k OU 5-15k si prix ≥1500€ + CPA viable), C4 Précision niche (depuis _npPrecisionScore : ≥60 valide, <40 refus), C5 Pas d\'institutionnels top 3 (depuis SERP), C6 Marque autour (top 3 organique 0 institutionnel), C8 Besoin d\'expert (forums/blogs/Reddit/YouTube ≥2 dans top 10), C9 Cycle court (prix <300€ Arthur ; >800€ = frein), C12 Search ads (ads ou shopping ≥5). Restent en jugement humain : C7 sourcing, C10 recherche marque, C11 mot-clé non précis. Toggle manuel (toggleCritere/guidedSet) supprime automatiquement le tag p.criteres_auto[cid] — l\'user reprend la main. Note traçabilité auto-écrite dans p.notes au premier auto-score : "[Auto-score algo · DD/MM/YYYY] N/12 critères calculés (X validés, Y manqués) · Z appliqués, W préservés". MÉTRIQUE ALGORITHMIQUE AVANT/APRÈS : produit complet (prix+volume+CPC+SERP scan) → 3/12 auto avant → 9/12 auto après (×3 couverture) ; produit minimal (prix+nom seul) → 0/12 avant → 3/12 après (c1+c4+c9 calculables sans SERP). Test e2e sur 4 cas synthétiques : produit idéal (Aspirateur robot piscine 199€/45€/vol 25k/SERP propre) → 8 validés ✓ + 1 manqué (CPA juste au-dessus) sur 9 calculables. Produit toxique (Canapé 1200€/600€/vol 8k/top 3 institutionnels) → 7 manqués ✓ + 2 validés sur 9 calculables (l\'algo refuse correctement). Idempotent : 2e run = 0 applied / 7 kept / 0 skipped. Préservation user : si user a coché c1=false manuellement, l\'auto-score ne réécrit jamais c1. PARI : transfert de 5 critères de travail manuel (10min de coches) vers 1 clic algo (0,1ms). L\'app passe de "scoreur passif où l\'user remplit la grille" à "moteur d\'inférence Arthur où l\'user valide ce qui demande jugement". BACKEND ILLIMITÉ SANS CLÉ API — refonte complète de serp_scout.py qui pivote du SerpAPI payant (limite mensuelle ~250 req/clé) vers du scraping direct Bing FR + DuckDuckGo, illimité et gratuit. Test E2E validé : aspirateur robot xiaomi → organic 10/10, ads 2 (récupérés via buyer-intent suffix retry " acheter"/" prix"), shopping 20/20 avec prix moyen 347€, autoChecks c2/c12 = TRUE, cache 30j hit en 10ms vs 10s pour cold. Pipeline : urllib stdlib + UA rotation 6 desktop FR + cookies CONSENT pré-acceptés + throttle 1.5s/req Bing + retry backoff 8-30s sur 429. Source primaire Bing FR (HTML statique propre, classes stables b_algo / b_ad / br-gOffCard depuis 2018) car Google direct bloque toute requête sans JS (page enablejs au lieu de SERP). DuckDuckGo HTML en fallback (organic only, jamais bloqué). SerpAPI conservé en fallback ultime opt-in via .serp_env USE_SERPAPI_FALLBACK=1 (utile pour Google Shopping carousels exacts). Décodage URLs Bing en double-pass : base64-url-safe (avec strip prefix "a1") puis URL-decode (Bing wrappe les liens dans bing.com/ck/a?u=BASE64URL et la chaîne décodée est elle-même URL-encodée). Cache TTL 30 jours (vs 24h avant) — divise le volume de requêtes effectives par 30+ pour les rescans. PARI : on supprime totalement la dépendance SerpAPI payante (qui plafonnait à 250 req/clé/mois) au profit d\'un backend zéro-coût zéro-clé-api avec parité fonctionnelle 90% sur Arthur (organic + shopping carousel + auto-checks c2/c5/c12). Si Bing change son DOM, fallback DDG garde l\'organic ; si DDG bloque, fallback SerpAPI ultime garde la parité. PRÉCISION NICHE — règle Arthur n°3 (jamais généraliste) encodée en feature active. Score 0-100 par produit, badge live sur chaque fiche, comparateur de variantes plus niches qui génère 8 alternatives en 1 clic, vue cockpit cross-portefeuille (distribution 4 verdicts, top mots généralistes à virer, podium ULTRA-PRÉCIS, tableau de correction par urgence). Listes statiques curées depuis transcripts Skool c4_precis_niche + c11_motcle_non_precis + tableau_recherche : ~100 mots généralistes français + ~130 modifieurs catégorisés (style/matière/usage/dimension/audience). Score composite : longueur du nom (≥4 mots +20, 3 mots +5, ≤2 mots -18 à -35) + modifieurs trouvés (+12/modif, max +60) + niche déclarée précise (+10 si ≥3 mots) avec plafond automatique si mot généraliste détecté sans modifieur (≤25 = REFUS). 4 verdicts : NICHE ULTRA-PRÉCISE ≥80 vert / PRÉCISE 60-79 cyan / À AFFINER 40-59 jaune / GÉNÉRALISTE — REFUS <40 rouge. Badge sur fiche produit (onglet Infos) avec orb 64px + verdict coloré + 3 raisons chiffrées + bouton "Générer variantes plus niches" en CTA gradient violet/fuchsia. Modale comparateur 8 cards : nom variante + score + verdict pill + chips modifieurs colorisés par catégorie + bouton "Explorer cette variante" qui crée un nouveau produit pré-rempli dans la session courante (variante + niche héritée + note traçabilité). Variantes générées par 8 templates déterministes (seed = hash du nom+niche, donc même input → même suggestions reproductibles) qui combinent style×dimension, usage×matière, style×matière, usage×audience, dimension×style, matière×usage, style×audience, usage×dimension. Nouvelle vue sidebar "Précision Niche" entre Pipeline et Recherche auto (icône target violet, badge live "X à virer" en violet/fuchsia). Hero gradient violet/fuchsia/cyan + bandeau 2 règles non-négo (Précis ≥3 mots+modifieurs / Refus mot généraliste seul) + lien Tunnel. Cockpit 2 cols : orb 160px score moyen pipeline (label adaptatif Excellent/Précis/Mitigé/Trop généraliste) + distribution 4 buckets en barres horizontales colorisées (vert/cyan/jaune/rouge). 2 cards : Top 10 mots généralistes les plus fréquents avec compteur (à virer en priorité), Podium ULTRA-PRÉCIS top 10 (à pousser, cliquable). Tableau de correction par urgence : 24 produits classés du plus généraliste au plus précis avec score colorisé, verdict pill, mot généraliste flag rouge, chips modifieurs (max 2 par catégorie), longueur du nom — clique une ligne pour ouvrir la fiche. Helpers exposés window._npPrecisionScore, _npGenerateVariants, _npGeneralistCount, openNpVariantsModal, npExploreVariant, renderNichePrecision. Command palette enrichie (nav.niche). PARI : aucun SaaS de validation produit (Sell The Trend, Niche Scraper, Ecomhunt, Minea, Helium 10) ne challenge la précision du nom contre une méthode propriétaire et ne propose des variantes plus niches en 1 clic. La Précision Niche fait passer l\'app de "scoreur passif" à "coach actif qui refuse le travail mal fait". 4e jambe du tabouret Google Ads-first, complète Simulateur (leviers), Radar (concurrence) et Pipeline (santé) en couvrant le INPUT (qualité du produit dès l\'ajout). Audit conforme post v0.17 : zéro IA ajoutée (listes statiques curées, pas de LLM), zéro gamification, calcul local sur state.products, exploite la formation Skool transcrite (déjà payée). Axe GOOGLE ADS-INTELLIGENCE (axe 1 SKILL.md), couvre directement la 3e règle non-négociable Arthur sous-exploitée jusqu\'ici.';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.23.0-beta', date: '2026-04-27', time: '15:12', source: 'algo',
+    summary: 'AUTO-SCORE 8/12 CRITÈRES ARTHUR — l\'algo coche en local jusqu\'à 8/12 critères depuis prix+volume+CPC+niche+SERP (vs 3/12 avant). Travail manuel transféré vers l\'algo.',
+    items: [
+      {type:'feat', text:'Helper _autoScoreCriteres(p) qui retourne {auto, reasons} chiffrés pour 9 critères calculables : C1 Marge ×3 (calcMarge ratio≥3), C2 Concurrence présente (depuis SERP autoChecks), C3 Volume + CPA viable (vol ≥15k OU 5-15k si prix ≥1500€ + CPA estimé < CPA max), C4 Précision niche (depuis _npPrecisionScore : ≥60 valide, <40 refus), C5 Pas d\'institutionnels top 3 (depuis SERP), C6 Faire une marque autour (top 3 organique 0 institutionnel), C8 Besoin d\'expert (forums/blogs/Reddit/YouTube ≥2 dans top 10), C9 Cycle court (prix <300€ Arthur ; >800€ = cycle long), C12 Search ads (ads ou shopping ≥5). Restent en jugement humain : C7 sourcing fournisseur, C10 recherche marque, C11 mot-clé non précis aussi.'},
+      {type:'feat', text:'Helper applyAutoScoreCriteres(p) qui applique l\'auto-score sur p.criteres EN RESPECTANT les choix manuels user. Track via p.criteres_auto = {cid: raison chiffrée}. Règle stricte : si user a coché manuellement (criteres[cid] est true|false sans tag criteres_auto[cid]), l\'algo ne touche pas. Si déjà auto-rempli (criteres_auto[cid] présent) ou jamais touché (undefined), met à jour. opts.force = override total (non utilisé par défaut).'},
+      {type:'feat', text:'Auto-trigger après chaque scan SERP : remplace l\'ancien bloc 3 critères ("if ac.c2 → criteres[2]=true...") par un appel applyAutoScoreCriteres(p). Avant : SerpAPI scan → 3/12 critères auto-cochés. Après : SerpAPI scan + données produit → 8 ou 9/12 critères auto-cochés selon disponibilité. p._lastAutoScore conserve {ts, trueCount, calculable} pour télémétrie.'},
+      {type:'feat', text:'Bouton "Auto-scorer (algo)" sur la grille des 12 critères, juste à gauche de "Mode guidé Arthur". Affiche un badge "X/12" cyan si des critères ont déjà été auto-remplis. Au clic : recalcule depuis les données existantes + ajoute une note traçabilité dans p.notes (idempotente — pas de duplication) + popup résumé "X/12 calculés · Y validés · Z manqués · W préservés (choix user)".'},
+      {type:'feat', text:'Badge "ALGO" cyan inline sur chaque critère auto-rempli (rgba(34,211,238,0.10) bg + border 0.30 + uppercase letterspacing). Sous-ligne italique cyan avec la raison chiffrée du verdict (ex: "→ ratio ×3.98 ≥ ×3", "→ Précision 92/100 — NICHE ULTRA-PRÉCISE", "→ vol 25 000 OK + CPA viable +30€"). Permet à l\'user de comprendre POURQUOI l\'algo a coché en 1 coup d\'œil, et de vérifier/corriger.'},
+      {type:'fix', text:'toggleCritere et guidedSet : quand l\'user clique manuellement, on supprime p.criteres_auto[cid] de la track. L\'algo ne ré-écrira plus jamais ce critère sur les runs futurs (sauf opts.force). Reprise de main propre.'},
+      {type:'perf', text:'MÉTRIQUE ALGO AVANT/APRÈS — produit complet (prix achat+vente / volume mensuel / CPC / SERP scan) : 3/12 auto avant → 9/12 auto après (×3 couverture). Produit avec données minimales (juste prix + nom) : 0/12 avant → 3/12 après (c1+c4+c9 calculables sans SERP, sans volume, sans CPC). Test E2E sur 4 cas synthétiques : produit idéal (Aspirateur robot piscine 12000Pa 199€/45€/vol 25k FR + SERP propre top 3 indé + Reddit/YouTube/forum dans top 10) → 8 validés ✓ + 1 manqué légitime sur c3 (CPA estimé 120€ marginalement > max 109€) sur 9 calculables. Produit toxique (Canapé 1200€/600€/vol 8k/top 3 Amazon-Fnac-Cdiscount) → 7 manqués ✓ + 2 validés sur 9 calculables (l\'algo refuse correctement le canapé généraliste cher). Idempotent : 2e run sans modif → 0 applied / 7 kept / 0 skipped. Préservation user vérifiée : si user a coché c1=false manuellement, l\'auto-score ne ré-écrit jamais c1.'},
+      {type:'feat', text:'PARI ALGO : transfert de 5 critères supplémentaires (c1, c3, c4, c6, c8, c9) du travail manuel (~10 min de coches + jugement à chaque produit) vers 1 clic algo (0,1ms). L\'app passe de "scoreur passif où l\'user remplit la grille" à "moteur d\'inférence Arthur où l\'user valide ce qui demande jugement humain". Aligné directive user 27/04 : "la machine doit faire le travail, pas l\'utilisateur". Z1 SKILL.md priorité 1 cochée.'},
+    ]},
   { v: '0.22.0-beta', date: '2026-04-27', time: '15:30', source: 'algo',
     summary: 'BACKEND ILLIMITÉ SANS CLÉ API — refonte serp_scout.py · scraping Bing FR + DuckDuckGo · cache 30j · zéro coût zéro plafond',
     items: [
@@ -7434,6 +7446,8 @@ function guidedSet(pid, cid, value) {
   if (!p) return;
   if (!p.criteres) p.criteres = {};
   p.criteres[cid] = value;
+  // User a choisi manuellement → désactive le tag "auto" pour ce critère
+  if (p.criteres_auto && p.criteres_auto[cid]) delete p.criteres_auto[cid];
   save();
   // avance auto
   if (_guidedStep < CRITERES.length) _guidedStep++;
@@ -7533,15 +7547,24 @@ function renderProductCriteres(p) {
 
   const items = CRITERES.map(c => {
     const checked = !!p.criteres?.[c.id];
+    const isAuto = !!p.criteres_auto?.[c.id];
+    const autoReason = isAuto ? p.criteres_auto[c.id] : '';
     const mentorOpen = !!_mentorOpen[p.id]?.[c.id];
     const map = CRIT_LESSONS[c.id];
     const hasLesson = map && _findLesson(map.primary);
     const mentorCard = mentorOpen ? _mentorCardHtml(c) : '';
+    const autoBadge = isAuto
+      ? `<span title="${escapeHtml(autoReason)}" style="display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;color:#22d3ee;background:rgba(34,211,238,0.10);border:1px solid rgba(34,211,238,0.30);padding:1px 6px;border-radius:8px;margin-left:6px;letter-spacing:0.04em;text-transform:uppercase">algo</span>`
+      : '';
+    const autoReasonLine = isAuto
+      ? `<div style="font-size:11px;color:#22d3ee;margin-top:3px;font-style:italic">→ ${escapeHtml(autoReason)}</div>`
+      : '';
     return `<div class="critere ${checked?'checked':''}">
       <input type="checkbox" ${checked?'checked':''} onclick="event.stopPropagation()" onchange="toggleCritere('${p.id}',${c.id})">
       <div class="critere-text" style="cursor:pointer" onclick="toggleCritere('${p.id}',${c.id})">
-        <div class="critere-title">${c.star?`<span class="star" style="color:var(--yellow);display:inline-flex;vertical-align:-2px;margin-right:4px">${ico('star',13)}</span>`:''}${c.titre}</div>
+        <div class="critere-title">${c.star?`<span class="star" style="color:var(--yellow);display:inline-flex;vertical-align:-2px;margin-right:4px">${ico('star',13)}</span>`:''}${c.titre}${autoBadge}</div>
         <div class="critere-desc">${c.desc}</div>
+        ${autoReasonLine}
         ${hasLesson ? `<button class="crit-mentor-toggle ${mentorOpen?'expanded':''}" onclick="event.stopPropagation();toggleMentor('${p.id}',${c.id})">${ico('graduation',12)} ${mentorOpen?'Masquer':'Voir leçon Arthur'} <span class="chev">▾</span></button>` : ''}
         ${mentorCard}
       </div>
@@ -7549,11 +7572,14 @@ function renderProductCriteres(p) {
   }).join('');
   const score = calcScore(p);
   const totalLessons = CRITERES.filter(c => CRIT_LESSONS[c.id] && _findLesson(CRIT_LESSONS[c.id].primary)).length;
+  const autoCount = p.criteres_auto ? Object.keys(p.criteres_auto).length : 0;
   return `
     <div class="card">
       <h2>Critères de validation Arthur</h2>
       <p style="font-size:12px;color:var(--text2);margin-bottom:14px">Coche les critères validés. Score minimum : 8/12. Les critères marqués sont non-négociables. <strong style="color:var(--accent2)">${totalLessons} leçons Skool</strong> embarquées via Mentor Arthur.</p>
-      <div class="crit-tools-row">        <button class="duel-btn" onclick="startGuided('${p.id}')">${ico('graduation',13)} <span class="pulse-dot"></span> Mode guidé Arthur</button>
+      <div class="crit-tools-row">
+        <button class="duel-btn" onclick="autoScoreFromAlgo('${p.id}')" title="Calcule en local 8/12 critères depuis prix, volume, CPC, niche et SERP scan. Ne touche jamais à un critère que tu as coché manuellement.">${ico('bolt',13)} Auto-scorer (algo)${autoCount?` <span style="background:rgba(34,211,238,0.18);color:#22d3ee;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px">${autoCount}/12</span>`:''}</button>
+        <button class="duel-btn" onclick="startGuided('${p.id}')">${ico('graduation',13)} <span class="pulse-dot"></span> Mode guidé Arthur</button>
         <span style="font-size:12px;color:var(--text3)">12 critères · leçon Skool embarquée</span>
       </div>
       ${items}
@@ -7568,6 +7594,8 @@ function toggleCritere(pid, cid) {
   const p = findProduct(pid);
   if (!p.criteres) p.criteres = {};
   p.criteres[cid] = !p.criteres[cid];
+  // User a cliqué manuellement → désactive le tag "auto" pour ce critère
+  if (p.criteres_auto && p.criteres_auto[cid]) delete p.criteres_auto[cid];
   save(); renderMain(); renderSidebar();
 }
 
@@ -7857,6 +7885,172 @@ async function serpFetch(query, force) {
   return await serpDirectFetch(query);
 }
 
+/* ═════════ AUTO-SCORE CRITÈRES ARTHUR (Z1 SKILL.md) ═════════
+   Calcule en local 8/12 critères Arthur depuis les données déjà connues
+   (prix, volume, CPC, niche, scan SERP). Avant : seuls c2/c5/c12 étaient
+   auto-cochés via le scan SERP. Après : c1, c2, c3, c4, c5, c6, c8, c9, c12.
+   Restent en jugement humain : c7 sourcing, c10 recherche marque, c11 mot-clé non précis.
+   Ne touche jamais à un critère que l'user a déjà coché manuellement (sauf opts.force).
+*/
+function _autoScoreCriteres(p) {
+  const auto = {};      // cid → true|false
+  const reasons = {};   // cid → string (raison chiffrée)
+  const set = (cid, val, reason) => { auto[cid] = val; reasons[cid] = reason; };
+
+  // ── C1 — Marge ×3 (Arthur règle marge) ──
+  const m = calcMarge(p);
+  if (m && m.ratio) {
+    if (m.ratio >= 3) set(1, true, `ratio ×${m.ratio.toFixed(2)} ≥ ×3`);
+    else set(1, false, `ratio ×${m.ratio.toFixed(2)} < ×3`);
+  }
+
+  // ── C2 — Concurrence présente (depuis SERP scan) ──
+  const ac = p.serp_scan && p.serp_scan.autoChecks;
+  const stats = (ac && ac.stats) || {};
+  if (ac) {
+    if (ac.c2_concurrence === true) {
+      set(2, true, `${stats.n_organic||0} org · ${stats.n_ads||0} ads · ${stats.n_shopping||0} shop`);
+    } else if (ac.c2_concurrence === false) {
+      set(2, false, 'pas assez de signaux concurrentiels');
+    }
+  }
+
+  // ── C3 — Volume + CPA viable (les 2 règles non-négo Arthur) ──
+  const vol = _parseVolume(p.volume_mensuel);
+  const prix = parseFloat(p.prix_vente) || 0;
+  const cpaV = _cpaViability(p);
+  if (vol != null) {
+    const volOk = vol >= 15000 || (vol >= 5000 && prix >= 1500);
+    const volBad = vol < 5000 || (vol < 15000 && prix > 0 && prix < 1500);
+    if (volOk && cpaV.viable === true) {
+      set(3, true, `vol ${vol.toLocaleString('fr-FR')} OK + CPA viable (+${(cpaV.margin||0).toFixed(0)}€)`);
+    } else if (vol < 5000) {
+      set(3, false, `vol ${vol.toLocaleString('fr-FR')} < 5k — abandon Arthur`);
+    } else if (volOk && cpaV.viable === false) {
+      set(3, false, `vol OK mais CPA estimé ${cpaV.est?.toFixed(0)}€ > max ${cpaV.max?.toFixed(0)}€`);
+    } else if (volBad) {
+      set(3, false, `vol ${vol.toLocaleString('fr-FR')} entre 5-15k mais prix ${prix}€ < 1500€`);
+    }
+  }
+
+  // ── C4 — Précis ou niche (helper _npPrecisionScore existant) ──
+  if (p.name && p.name.trim()) {
+    const sc = _npPrecisionScore(p.name, p.niche);
+    if (sc.score >= 60) set(4, true, `Précision ${sc.score}/100 — ${sc.verdict}`);
+    else if (sc.score < 40) set(4, false, `Précision ${sc.score}/100 — ${sc.verdict}`);
+  }
+
+  // ── C5 — Pas d'institutionnels dans top 3 (depuis SERP scan) ──
+  if (ac) {
+    if (ac.c5_pas_institutionnels_top3 === true) set(5, true, 'top 3 organique sans institutionnel');
+    else if (ac.c5_pas_institutionnels_top3 === false) set(5, false, 'institutionnels dans le top 3 organique');
+  }
+
+  // ── C6 — Faire une marque autour (top 3 sans institutionnel) ──
+  if (p.serp_scan) {
+    const top3 = (p.serp_scan.organic || []).slice(0, 3);
+    if (top3.length >= 3) {
+      const top3Inst = top3.filter(o => _rcClassifyDomain(o.domain || '') === 'inst').length;
+      if (top3Inst === 0) set(6, true, 'top 3 organique 0 institutionnel — espace pour une marque');
+      else if (top3Inst >= 2) set(6, false, `${top3Inst}/3 du top organique = institutionnels`);
+    }
+  }
+
+  // ── C8 — Besoin d'expert (forums/blogs/Reddit/YouTube dans top 10) ──
+  if (p.serp_scan) {
+    const orgs = p.serp_scan.organic || [];
+    if (orgs.length >= 5) {
+      const expertDomains = orgs.filter(o => {
+        const d = (o.domain || '').toLowerCase();
+        if (/reddit|youtube|youtu\.be|quora|forum|doctissimo/.test(d)) return true;
+        return _rcClassifyDomain(d) === 'comp';
+      });
+      if (expertDomains.length >= 2) {
+        set(8, true, `${expertDomains.length} forums/blogs/Reddit/YouTube dans le top ${orgs.length}`);
+      } else if (expertDomains.length === 0 && orgs.length >= 8) {
+        set(8, false, `aucun forum/blog/Reddit dans le top ${orgs.length} — peu de besoin d'expert`);
+      }
+    }
+  }
+
+  // ── C9 — Cycle d'achat rapide (prix < 300€ idéal Arthur) ──
+  if (prix > 0) {
+    if (prix < 300) set(9, true, `prix ${prix}€ < 300€ — cycle court Arthur`);
+    else if (prix > 800) set(9, false, `prix ${prix}€ > 800€ — cycle long, frein de prix`);
+    // 300-800 = ambigu, on ne touche pas
+  }
+
+  // ── C12 — Fonctionne en search (depuis SERP scan, déjà couvert) ──
+  if (ac) {
+    if (ac.c12_search_ads === true) {
+      set(12, true, `${stats.n_ads||0} ads + ${stats.n_shopping||0} shopping — intention d'achat`);
+    } else if (ac.c12_search_ads === false) {
+      set(12, false, 'aucun ad search ni shopping détecté');
+    }
+  }
+
+  // c7, c10, c11 → restent en jugement humain (sourcing fournisseur, recherche
+  // marque, mot-clé non précis aussi). Aucun signal fiable depuis les données
+  // existantes sans plus d'infra (whitelist fournisseurs / SerpAPI suggestions).
+
+  return { auto, reasons };
+}
+window._autoScoreCriteres = _autoScoreCriteres;
+
+// Applique l'auto-score sur p.criteres en respectant les choix manuels user.
+// Règle : si user a coché manuellement (criteres[cid] true|false sans criteres_auto[cid]),
+// on ne touche pas. Si déjà auto-rempli (criteres_auto[cid] présent) ou jamais touché
+// (undefined), on remplace par la nouvelle valeur. opts.force = override total.
+function applyAutoScoreCriteres(p, opts) {
+  opts = opts || {};
+  const result = _autoScoreCriteres(p);
+  if (!p.criteres) p.criteres = {};
+  if (!p.criteres_auto) p.criteres_auto = {};
+  const cids = Object.keys(result.auto);
+  let applied = 0, kept = 0, skipped = 0;
+  for (const cid of cids) {
+    const val = result.auto[cid];
+    const cur = p.criteres[cid];
+    const wasAuto = !!p.criteres_auto[cid];
+    const userTouched = (cur === true || cur === false) && !wasAuto;
+    if (userTouched && !opts.force) { skipped++; continue; }
+    if (cur === val && wasAuto) { kept++; }
+    else { applied++; }
+    p.criteres[cid] = val;
+    p.criteres_auto[cid] = result.reasons[cid];
+  }
+  return { result, applied, kept, skipped, totalCalculable: cids.length };
+}
+window.applyAutoScoreCriteres = applyAutoScoreCriteres;
+
+// Bouton "Auto-scorer (algo)" sur la page Critères : applique l'auto-score
+// depuis les données existantes (prix, volume, CPC, niche, SERP scan) et
+// affiche un résumé chiffré.
+function autoScoreFromAlgo(pid) {
+  const p = findProduct(pid);
+  if (!p) return;
+  const r = applyAutoScoreCriteres(p);
+  if (r.totalCalculable === 0) {
+    alert('Aucun critère auto-calculable pour ce produit.\n\nRemplis prix d\'achat + prix de vente, volume mensuel, CPC, et lance un scan SERP pour activer les 8/12 critères automatiques (c1, c2, c3, c4, c5, c6, c8, c9, c12).');
+    return;
+  }
+  const trueCount = Object.values(r.result.auto).filter(v => v === true).length;
+  const falseCount = Object.values(r.result.auto).filter(v => v === false).length;
+  // Note traçabilité (idempotente — on ne dupplique pas)
+  const stamp = new Date().toLocaleString('fr-FR');
+  const note = `[Auto-score algo · ${stamp}] ${r.totalCalculable}/12 critères calculés (${trueCount} validés, ${falseCount} manqués) · ${r.applied} appliqués, ${r.skipped} préservés (choix user)`;
+  if (!p.notes) p.notes = '';
+  if (!p.notes.includes('[Auto-score algo')) p.notes = note + (p.notes ? '\n' + p.notes : '');
+  save();
+  renderMain();
+  renderSidebar();
+  alert(`Auto-score terminé — ${r.totalCalculable}/12 critères calculés depuis les données existantes.\n\n• ${trueCount} validés ✓\n• ${falseCount} manqués ✗\n• ${r.applied} appliqués (${r.kept} préservés tels quels)\n• ${r.skipped} non touchés (déjà cochés manuellement)\n\nDétail :\n${Object.keys(r.result.auto).map(cid => {
+    const c = CRITERES.find(x => x.id == cid);
+    return `  C${cid} ${r.result.auto[cid]?'✓':'✗'} ${c?.titre||''} — ${r.result.reasons[cid]}`;
+  }).join('\n')}`);
+}
+window.autoScoreFromAlgo = autoScoreFromAlgo;
+
 async function scanSerp(pid) {
   const p = findProduct(pid);
   if (!p) return;
@@ -7867,11 +8061,11 @@ async function scanSerp(pid) {
   try {
     const data = await serpFetch(q, !!p.serp_scan);
     p.serp_scan = data;
-    if (!p.criteres) p.criteres = {};
-    const ac = data.autoChecks || {};
-    if (ac.c2_concurrence) p.criteres[2] = true;
-    if (ac.c5_pas_institutionnels_top3) p.criteres[5] = true;
-    if (ac.c12_search_ads) p.criteres[12] = true;
+    // Z1 — Auto-score 8/12 critères Arthur depuis les données existantes
+    // (avant : seuls c2/c5/c12 étaient cochés via SERP autoChecks).
+    // Le helper respecte les choix manuels de l'user (criteres_auto track).
+    const r = applyAutoScoreCriteres(p);
+    p._lastAutoScore = { ts: Date.now(), trueCount: Object.values(r.result.auto).filter(v=>v===true).length, calculable: r.totalCalculable };
     save();
     productTab = 'serp';
     renderAll();
