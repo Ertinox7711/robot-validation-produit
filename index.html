@@ -1310,6 +1310,411 @@ small.muted { color: var(--text3); font-size: 11px; }
 .kept-card.kept-compact .name { font-size: 13px; }
 .kept-card.kept-compact .meta { font-size: 11px; }
 
+/* ═════════ MENTOR ARTHUR — coach inline + mode guidé ═════════ */
+.crit-tools-row {
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  margin: -6px 0 14px;
+}
+.btn-mentor {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, rgba(139,92,246,0.18), rgba(217,70,239,0.18));
+  border: 1px solid rgba(139,92,246,0.4);
+  color: #f4f0ff;
+  padding: 9px 14px;
+  border-radius: 999px;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  transition: all .2s ease;
+  letter-spacing: -0.005em;
+  position: relative;
+}
+.btn-mentor:hover {
+  background: linear-gradient(135deg, rgba(139,92,246,0.32), rgba(217,70,239,0.32));
+  border-color: rgba(217,70,239,0.7);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(139,92,246,0.25);
+}
+.btn-mentor.active {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-color: var(--accent2);
+  color: #fff;
+  box-shadow: 0 0 18px rgba(217,70,239,0.5), inset 0 1px 0 rgba(255,255,255,0.18);
+}
+.btn-mentor .pulse-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent2);
+  box-shadow: 0 0 8px rgba(217,70,239,0.8);
+  animation: mentorPulse 1.6s ease-in-out infinite;
+}
+@keyframes mentorPulse {
+  0%, 100% { opacity: 0.9; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.5); }
+}
+
+/* Mentor inline expander button on each critère */
+.critere { position: relative; }
+.crit-mentor-toggle {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: 9px;
+  padding: 5px 11px;
+  background: rgba(139,92,246,0.08);
+  border: 1px solid rgba(139,92,246,0.22);
+  color: rgba(196,181,253,0.95);
+  border-radius: 999px;
+  font-size: 11px; font-weight: 600;
+  cursor: pointer;
+  transition: all .18s ease;
+  letter-spacing: 0.01em;
+}
+.crit-mentor-toggle:hover {
+  background: rgba(139,92,246,0.18);
+  border-color: rgba(139,92,246,0.5);
+  color: #f4f0ff;
+}
+.crit-mentor-toggle.expanded {
+  background: linear-gradient(135deg, rgba(139,92,246,0.3), rgba(217,70,239,0.25));
+  border-color: rgba(217,70,239,0.55);
+  color: #fff;
+}
+.crit-mentor-toggle svg { width: 12px; height: 12px; }
+.crit-mentor-toggle .chev { transition: transform .25s ease; }
+.crit-mentor-toggle.expanded .chev { transform: rotate(180deg); }
+
+/* Mentor card — inline knowledge card */
+.mentor-card {
+  margin-top: 12px;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, rgba(139,92,246,0.09), rgba(217,70,239,0.06));
+  border: 1px solid rgba(139,92,246,0.32);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  animation: mentorSlide .35s cubic-bezier(.2,.8,.2,1);
+}
+.mentor-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--accent), var(--accent2));
+}
+@keyframes mentorSlide {
+  from { opacity: 0; transform: translateY(-6px); max-height: 0; }
+  to   { opacity: 1; transform: translateY(0); max-height: 800px; }
+}
+.mentor-head {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed rgba(139,92,246,0.25);
+}
+.mentor-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 9px;
+  background: rgba(139,92,246,0.2);
+  border: 1px solid rgba(139,92,246,0.4);
+  color: #c4b5fd;
+  border-radius: 999px;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.mentor-lesson-title {
+  font-size: 14px; font-weight: 700; color: #f4f0ff;
+  flex: 1; min-width: 0;
+  letter-spacing: -0.005em;
+}
+.mentor-meta {
+  font-size: 11px; color: rgba(196,181,253,0.8);
+  font-weight: 500;
+}
+.mentor-takeaway {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 9px 0;
+  font-size: 13px; line-height: 1.55;
+  color: #e9e2ff;
+}
+.mentor-takeaway::before {
+  content: '';
+  flex-shrink: 0;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  margin-top: 7px;
+  box-shadow: 0 0 6px rgba(139,92,246,0.6);
+}
+.mentor-takeaway strong { color: #fff; font-weight: 700; }
+.mentor-numbers {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-top: 12px;
+}
+.mentor-num {
+  display: inline-flex; align-items: center;
+  padding: 4px 10px;
+  background: rgba(251,191,36,0.12);
+  border: 1px solid rgba(251,191,36,0.3);
+  color: #fde68a;
+  border-radius: 999px;
+  font-size: 11px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.02em;
+}
+.mentor-cta {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(139,92,246,0.2);
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.btn-mentor-deep {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 13px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(139,92,246,0.35);
+  color: #e9e2ff;
+  border-radius: 8px;
+  font-size: 12px; font-weight: 600;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.btn-mentor-deep:hover {
+  background: linear-gradient(135deg, rgba(139,92,246,0.3), rgba(217,70,239,0.25));
+  border-color: var(--accent2);
+  color: #fff;
+}
+
+/* Mode guidé Arthur — full coach mode */
+.guided-shell { animation: guidedFade .4s ease; }
+@keyframes guidedFade { from { opacity: 0; } to { opacity: 1; } }
+.guided-progress-bar {
+  position: relative;
+  width: 100%; height: 6px;
+  background: rgba(139,92,246,0.12);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.guided-progress-fill {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 999px;
+  transition: width .35s cubic-bezier(.2,.8,.2,1);
+  box-shadow: 0 0 12px rgba(217,70,239,0.5);
+}
+.guided-step-label {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; color: var(--text2);
+  margin-bottom: 12px;
+}
+.guided-step-num {
+  font-weight: 700;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+.guided-stage {
+  background: linear-gradient(135deg, rgba(15,12,29,0.95), rgba(20,15,38,0.92));
+  border: 1px solid rgba(139,92,246,0.4);
+  border-radius: 18px;
+  padding: 22px 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 14px 36px rgba(139,92,246,0.18);
+  animation: guidedStageSlide .35s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes guidedStageSlide {
+  from { opacity: 0; transform: translateX(8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.guided-stage::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+}
+.guided-crit-head {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 14px;
+}
+.guided-crit-num {
+  width: 38px; height: 38px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 17px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(139,92,246,0.4);
+  flex-shrink: 0;
+}
+.guided-crit-title {
+  font-size: 22px; font-weight: 700;
+  letter-spacing: -0.015em;
+  flex: 1; min-width: 0;
+  color: #fff;
+}
+.guided-crit-title .star {
+  color: var(--yellow);
+  filter: drop-shadow(0 0 4px rgba(251,191,36,0.4));
+  margin-right: 4px;
+}
+.guided-crit-desc {
+  font-size: 14px; line-height: 1.6;
+  color: var(--text2);
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.03);
+  border-left: 3px solid rgba(139,92,246,0.4);
+  border-radius: 0 10px 10px 0;
+}
+.guided-actions {
+  display: flex; gap: 10px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  flex-wrap: wrap;
+}
+.btn-guided {
+  flex: 1; min-width: 140px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer;
+  transition: all .2s ease;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  letter-spacing: -0.005em;
+  border: 1px solid transparent;
+}
+.btn-guided.btn-validate {
+  background: linear-gradient(135deg, rgba(52,211,153,0.2), rgba(52,211,153,0.1));
+  border-color: rgba(52,211,153,0.5);
+  color: #d1fae5;
+}
+.btn-guided.btn-validate:hover {
+  background: linear-gradient(135deg, rgba(52,211,153,0.4), rgba(52,211,153,0.25));
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(52,211,153,0.3);
+}
+.btn-guided.btn-validate.is-checked {
+  background: linear-gradient(135deg, var(--green), #10b981);
+  border-color: #10b981;
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(16,185,129,0.4);
+}
+.btn-guided.btn-reject {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.1);
+  color: var(--text2);
+}
+.btn-guided.btn-reject:hover {
+  background: rgba(251,113,133,0.15);
+  border-color: rgba(251,113,133,0.4);
+  color: #fecaca;
+}
+.btn-guided.btn-reject.is-checked {
+  background: rgba(251,113,133,0.25);
+  border-color: rgba(251,113,133,0.6);
+  color: #fff;
+}
+.btn-guided.btn-nav {
+  flex: 0 0 auto;
+  background: rgba(139,92,246,0.12);
+  border-color: rgba(139,92,246,0.35);
+  color: #e9e2ff;
+}
+.btn-guided.btn-nav:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff;
+  border-color: var(--accent2);
+  transform: translateY(-1px);
+}
+.btn-guided.btn-nav:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* Guided summary screen */
+.guided-summary {
+  text-align: center;
+  padding: 32px 28px;
+  background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(217,70,239,0.08));
+  border: 1px solid rgba(217,70,239,0.4);
+  border-radius: 20px;
+  animation: guidedFade .5s ease;
+}
+.guided-summary-score {
+  font-size: 64px; font-weight: 800;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin: 8px 0 4px;
+}
+.guided-summary-score .out-of {
+  font-size: 32px;
+  color: var(--text3);
+  -webkit-text-fill-color: var(--text3);
+  font-weight: 600;
+}
+.guided-summary-verdict {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 14px; font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: 8px 0 18px;
+}
+.guided-summary-verdict.go { background: rgba(52,211,153,0.2); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.5); }
+.guided-summary-verdict.wait { background: rgba(251,191,36,0.2); color: #fde68a; border: 1px solid rgba(251,191,36,0.5); }
+.guided-summary-verdict.kill { background: rgba(251,113,133,0.2); color: #fecaca; border: 1px solid rgba(251,113,133,0.5); }
+
+/* First-time mentor toast */
+.mentor-toast {
+  position: fixed;
+  bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  z-index: 9000;
+  max-width: 460px;
+  width: calc(100% - 32px);
+  padding: 14px 18px;
+  background: linear-gradient(135deg, rgba(20,15,38,0.96), rgba(15,12,29,0.96));
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(217,70,239,0.5);
+  border-radius: 14px;
+  box-shadow: 0 18px 46px rgba(0,0,0,0.6), 0 0 22px rgba(139,92,246,0.3);
+  display: flex; gap: 14px; align-items: flex-start;
+  opacity: 0;
+  transition: all .45s cubic-bezier(.2,.8,.2,1);
+}
+.mentor-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.mentor-toast-ico {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 6px 14px rgba(139,92,246,0.4);
+}
+.mentor-toast-body { flex: 1; min-width: 0; font-size: 13px; line-height: 1.5; }
+.mentor-toast-body strong { color: #fff; display: block; margin-bottom: 3px; font-size: 14px; }
+.mentor-toast-body span { color: var(--text2); }
+.mentor-toast-close {
+  background: none; border: none; color: var(--text3);
+  cursor: pointer; padding: 0; font-size: 18px;
+  align-self: flex-start;
+  transition: color .15s ease;
+}
+.mentor-toast-close:hover { color: var(--text); }
+
+@media (max-width: 720px) {
+  .guided-stage { padding: 18px; }
+  .guided-crit-title { font-size: 18px; }
+  .guided-summary-score { font-size: 52px; }
+  .btn-guided { min-width: 100%; }
+}
+
 </style>
 </head>
 <body>
@@ -1346,7 +1751,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 
 <header>
   <button class="menu-toggle" aria-label="Ouvrir le menu" onclick="toggleSidebar()" title="Menu (sessions)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg></button>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.11.0-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.12.0-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -1716,14 +2121,24 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.11.0-beta';
-const APP_VERSION_NOTES = 'ATELIER ANALYTICS — refonte du dashboard en cockpit vivant : heatmap des 12 critères Arthur (vert ≥70% · rouge ≤30%) qui révèle EXACTEMENT quel critère bloque tes produits, sparkline vélocité 14 jours avec moyenne et pic, top 6 niches gagnantes classées par retenus, funnel pending → keep / reject avec taux de conversion, distribution des scores 0-12 en histogramme dégradé (perfect 12/12 en gradient violet/jaune avec glow), health-orb conique 0-100% qui résume la santé du pipeline, sparklines miniatures intégrées dans les stat-cards, badge tendance vs 7j-1. Le dashboard passe de "5 stats + 1 bar chart" à un vrai cockpit Helium-10-style.';
+const APP_VERSION = '0.12.0-beta';
+const APP_VERSION_NOTES = 'MENTOR ARTHUR — la formation Skool tissée DANS la grille de validation. Sur chaque critère, un bouton "Voir leçon Arthur" déploie inline les 3-4 takeaways condensés de la leçon Skool correspondante (mapping critère 1→c1_marge, 2→c2_concurrence, ... 12→c_bonus_search), avec chiffres-clés en pills jaunes et bouton "Voir la leçon complète" qui pointe vers la fiche formation. Mode guidé Arthur : un nouveau mode plein écran qui te fait passer les 12 critères pas à pas, un par un, avec la leçon Skool intégrée à chaque étape, barre de progression, boutons Validé / Pas validé / ← Précédent / Suivant →, écran final avec score, verdict (LANCER/ATTENDRE/JETER) et liste des critères marqués manqués. Toast "Mentor Arthur est là" au premier accès à l\'onglet Critères. Les 27 leçons Skool (231 KB) ne dorment plus dans un onglet séparé — elles enseignent EN MÊME TEMPS que tu décides. Aucun concurrent SaaS de validation produit n\'a une formation propriétaire embarquée dans le workflow.';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.12.0-beta', date: '2026-04-27', time: '03:25', source: 'mentor arthur',
+    summary: 'MENTOR ARTHUR : la formation Skool s\'invite DANS la grille des 12 critères',
+    items: [
+      {type:'feat', text:'Mentor inline sur chaque critère : bouton "Voir leçon Arthur" déploie une carte avec les 3-4 takeaways condensés de la leçon Skool correspondante (mapping critère 1→c1_marge, 2→c2_concurrence, … 12→c_bonus_search), chiffres-clés en pills jaunes type Keyword Planner, et bouton "Voir la leçon complète →" pour aller à la fiche formation.'},
+      {type:'feat', text:'Mode guidé Arthur : un parcours plein écran qui t\'accompagne sur les 12 critères pas à pas. Étape n/12, barre de progression dégradée, fiche du critère + leçon Skool embarquée, boutons "Validé / Pas validé / ← Précédent / Suivant →", auto-advance après validation. Démarre automatiquement sur le premier critère non-validé.'},
+      {type:'feat', text:'Écran final du mode guidé : score 64px en gradient, badge verdict LANCER/ATTENDRE/JETER, liste des critères marqués manqués (étoile jaune) en rouge, détail dépliable des critères validés. Bouton "Refaire la passe" pour repartir au critère #1.'},
+      {type:'ux', text:'Toast "Mentor Arthur est là" au premier accès à l\'onglet Critères, avec auto-dismiss à 12s ou bouton de fermeture, puis localStorage pour ne plus le ré-afficher. Animation slide-up depuis le bas de l\'écran avec backdrop-filter blur 20px.'},
+      {type:'feat', text:'Si un critère a une leçon Skool "deeper" (cas du critère 1 — c1_marge_suite après c1_marge), un second bouton "Approfondir →" apparaît en bas de la carte mentor pour aller directement à la deuxième partie.'},
+      {type:'feat', text:'Différenciation produit majeure : aucun concurrent SaaS (Sell The Trend, Niche Scraper, Ecomhunt, Minea, Pipiads) ne peut embarquer une formation propriétaire dans la grille de validation — ils ne l\'ont pas. Les 27 leçons Skool transcrites (231 KB) qui dormaient dans un onglet séparé enseignent maintenant EN MÊME TEMPS que tu décides.'},
+    ]},
   { v: '0.11.0-beta', date: '2026-04-27', time: '02:17', source: 'atelier analytics',
     summary: 'ATELIER ANALYTICS : le dashboard devient un cockpit vivant qui révèle où ça bloque',
     items: [
@@ -2150,6 +2565,9 @@ function go(view) {
   // Auto-close mobile sidebar drawer on navigation
   document.body.classList.remove('sidebar-open');
   renderAll();
+  if (view.type === 'product' && productTab === 'criteres') {
+    if (typeof _maybeShowMentorToast === 'function') _maybeShowMentorToast();
+  }
 }
 function toggleSidebar(force) {
   const open = (typeof force === 'boolean') ? force : !document.body.classList.contains('sidebar-open');
@@ -2980,7 +3398,11 @@ function renderProduct(pid) {
     ${body}
   `;
 }
-function setProductTab(t) { productTab = t; renderMain(); }
+function setProductTab(t) {
+  productTab = t;
+  renderMain();
+  if (t === 'criteres') _maybeShowMentorToast();
+}
 
 function renderStatusBlock(p) {
   const st = p.status || 'pending';
@@ -3052,27 +3474,261 @@ function renderProductInfos(p) {
     </div>
   `;
 }
+/* ═════════ MENTOR ARTHUR — coach Skool inline + mode guidé ═════════ */
+// Mapping de chaque critère (1-12) vers la/les leçon(s) Skool correspondante(s).
+// Source : 27 leçons transcrites dans formation_data.js (window.FORMATION).
+const CRIT_LESSONS = {
+  1:  { primary: 'c1_marge', deeper: 'c1_marge_suite' },
+  2:  { primary: 'c2_concurrence' },
+  3:  { primary: 'c3_traffic_cout' },
+  4:  { primary: 'c4_precis_niche' },
+  5:  { primary: 'c5_eviter_inst' },
+  6:  { primary: 'c6_marque' },
+  7:  { primary: 'c7_sourcing' },
+  8:  { primary: 'c8_expert' },
+  9:  { primary: 'c9_cycle_rapide' },
+  10: { primary: 'c10_recherche_marque' },
+  11: { primary: 'c11_motcle_non_precis' },
+  12: { primary: 'c_bonus_search' },
+};
+
+function _findLesson(slug) {
+  const F = window.FORMATION || [];
+  return F.find(l => l.slug === slug);
+}
+
+let _mentorOpen = {};       // { pid: { critId: boolean } }
+let _guidedActive = false;  // mode guidé state
+let _guidedStep = 0;        // 0..11 then 12 = summary
+let _guidedPid = null;      // pid en cours de mode guidé
+
+const MENTOR_TOAST_KEY = 'ecom_mentor_toast_seen';
+
+function _mentorToggleKey(pid) {
+  if (!_mentorOpen[pid]) _mentorOpen[pid] = {};
+  return _mentorOpen[pid];
+}
+
+function toggleMentor(pid, cid) {
+  const k = _mentorToggleKey(pid);
+  k[cid] = !k[cid];
+  renderMain();
+}
+
+function _mentorCardHtml(crit) {
+  const map = CRIT_LESSONS[crit.id];
+  if (!map) return '';
+  const lesson = _findLesson(map.primary);
+  if (!lesson) {
+    return `<div class="mentor-card"><div class="mentor-head"><span class="mentor-pill">${ico('book',11)} Mentor Arthur</span></div><div style="font-size:13px;color:var(--text2)">Leçon Skool indisponible (formation_data.js manquant).</div></div>`;
+  }
+  const takeaways = (lesson.takeaways || []).slice(0, 4)
+    .map(t => `<div class="mentor-takeaway">${fmtBold(t)}</div>`).join('');
+  const numbers = (lesson.numbers || []).length
+    ? `<div class="mentor-numbers">${lesson.numbers.slice(0,6).map(n => `<span class="mentor-num">${escapeHtml(n)}</span>`).join('')}</div>`
+    : '';
+  const deeper = map.deeper ? _findLesson(map.deeper) : null;
+  const deeperBtn = deeper
+    ? `<button class="btn-mentor-deep" onclick="event.stopPropagation();go({type:'formation',lesson:'${deeper.slug}'})">${ico('book',12)} Approfondir : ${escapeHtml(deeper.title)} →</button>`
+    : '';
+  return `
+    <div class="mentor-card">
+      <div class="mentor-head">
+        <span class="mentor-pill">${ico('graduation',11)} Mentor Arthur</span>
+        <div class="mentor-lesson-title">${escapeHtml(lesson.title)}</div>
+        <div class="mentor-meta">Leçon ${lesson.n}/27 · ${fmtDuration(lesson.duration_s)}</div>
+      </div>
+      ${takeaways || `<div style="font-size:13px;color:var(--text2)">Pas de takeaways extraits pour cette leçon.</div>`}
+      ${numbers}
+      <div class="mentor-cta">
+        <button class="btn-mentor-deep" onclick="event.stopPropagation();go({type:'formation',lesson:'${lesson.primary || lesson.slug}'})">${ico('book',12)} Voir la leçon complète →</button>
+        ${deeperBtn}
+      </div>
+    </div>
+  `;
+}
+
+function _mentorToastHtml() {
+  if (localStorage.getItem(MENTOR_TOAST_KEY) === '1') return '';
+  return `
+    <div class="mentor-toast" id="mentorToast">
+      <div class="mentor-toast-ico">${ico('graduation',18)}</div>
+      <div class="mentor-toast-body">
+        <strong>Mentor Arthur est là.</strong>
+        <span>Pour chaque critère, ouvre la leçon Skool correspondante. Ou lance le <strong style="color:#fff;display:inline">Mode guidé</strong> pour valider la grille pas à pas avec narration.</span>
+      </div>
+      <button class="mentor-toast-close" onclick="dismissMentorToast()" aria-label="Fermer">×</button>
+    </div>
+  `;
+}
+
+function dismissMentorToast() {
+  localStorage.setItem(MENTOR_TOAST_KEY, '1');
+  const t = document.getElementById('mentorToast');
+  if (t) t.classList.remove('show');
+  setTimeout(() => { if (t) t.remove(); }, 500);
+}
+
+function _maybeShowMentorToast() {
+  if (localStorage.getItem(MENTOR_TOAST_KEY) === '1') return;
+  setTimeout(() => {
+    const t = document.getElementById('mentorToast');
+    if (t) t.classList.add('show');
+  }, 350);
+  setTimeout(() => { dismissMentorToast(); }, 12000);
+}
+
+function startGuided(pid) {
+  _guidedActive = true;
+  _guidedPid = pid;
+  const p = findProduct(pid);
+  // Démarre au premier critère non-validé, sinon au #1
+  const firstUnchecked = CRITERES.find(c => !p?.criteres?.[c.id]);
+  _guidedStep = firstUnchecked ? CRITERES.indexOf(firstUnchecked) : 0;
+  renderMain();
+}
+
+function stopGuided() {
+  _guidedActive = false;
+  _guidedStep = 0;
+  _guidedPid = null;
+  renderMain();
+}
+
+function guidedSet(pid, cid, value) {
+  const p = findProduct(pid);
+  if (!p) return;
+  if (!p.criteres) p.criteres = {};
+  p.criteres[cid] = value;
+  save();
+  // avance auto
+  if (_guidedStep < CRITERES.length) _guidedStep++;
+  renderMain();
+  renderSidebar();
+}
+
+function guidedNav(delta) {
+  _guidedStep = Math.max(0, Math.min(CRITERES.length, _guidedStep + delta));
+  renderMain();
+}
+
+function _renderGuided(p) {
+  const total = CRITERES.length;
+  const score = calcScore(p);
+  // Écran de fin
+  if (_guidedStep >= total) {
+    const verdict = score >= 10 ? { cls:'go', text:'LANCER', emoji:'🚀' }
+                  : score >= 8  ? { cls:'wait', text:'ATTENDRE', emoji:'⏳' }
+                                : { cls:'kill', text:'JETER', emoji:'⛔' };
+    const checkedNames = CRITERES.filter(c => p.criteres?.[c.id]).map(c => escapeHtml(c.titre));
+    const missedNames = CRITERES.filter(c => !p.criteres?.[c.id] && c.star).map(c => escapeHtml(c.titre));
+    return `
+      <div class="card guided-shell">
+        <div class="guided-summary">
+          <div style="font-size:13px;color:var(--text2);letter-spacing:0.06em;text-transform:uppercase;font-weight:600">Grille Arthur — terminée</div>
+          <div class="guided-summary-score">${score}<span class="out-of">/12</span></div>
+          <div class="guided-summary-verdict ${verdict.cls}">${verdict.text}</div>
+          <p style="color:var(--text2);font-size:14px;margin-bottom:18px;line-height:1.6">
+            ${score>=10 ? "Score solide. Ce produit passe la grille — passe à la finance et à la SERP." :
+              score>=8  ? "Score limite : valide les non-négociables manquants avant de lancer." :
+              "Sous le seuil. Cherche pourquoi des critères clés sont manquants — le robot t'a montré la leçon Arthur sur chacun."}
+          </p>
+          ${missedNames.length ? `<p style="font-size:13px;color:var(--red);margin-bottom:14px"><strong>Critères marqués manqués :</strong> ${missedNames.join(' · ')}</p>` : ''}
+          ${checkedNames.length ? `<details style="text-align:left;font-size:13px;color:var(--text2);background:rgba(255,255,255,0.03);padding:10px 14px;border-radius:10px;margin-bottom:18px"><summary style="cursor:pointer;color:var(--text);font-weight:600;margin-bottom:6px">${checkedNames.length} critère${checkedNames.length>1?'s':''} validé${checkedNames.length>1?'s':''}</summary><div style="margin-top:8px;line-height:1.7">${checkedNames.join(' · ')}</div></details>` : ''}
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            <button class="btn" onclick="_guidedStep=0;renderMain()">${ico('refresh',13)||''} Refaire la passe</button>
+            <button class="btn btn-primary" onclick="stopGuided()">Terminer le mode guidé →</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  const c = CRITERES[_guidedStep];
+  const checked = !!p.criteres?.[c.id];
+  const map = CRIT_LESSONS[c.id];
+  const lesson = map ? _findLesson(map.primary) : null;
+  const progress = ((_guidedStep + 1) / total) * 100;
+  const takeawaysHtml = lesson && (lesson.takeaways||[]).length
+    ? lesson.takeaways.slice(0,4).map(t => `<div class="mentor-takeaway">${fmtBold(t)}</div>`).join('')
+    : `<div style="font-size:13px;color:var(--text2)">Pas de leçon Skool extraite pour ce critère.</div>`;
+  const numbersHtml = lesson && (lesson.numbers||[]).length
+    ? `<div class="mentor-numbers">${lesson.numbers.slice(0,5).map(n => `<span class="mentor-num">${escapeHtml(n)}</span>`).join('')}</div>`
+    : '';
+  return `
+    <div class="card guided-shell">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+        <h2 style="margin:0">Mode guidé Arthur</h2>
+        <button class="btn btn-sm" onclick="stopGuided()">${ico('cross',12)||'×'} Quitter le mode guidé</button>
+      </div>
+      <div class="guided-progress-bar"><div class="guided-progress-fill" style="width:${progress}%"></div></div>
+      <div class="guided-step-label">
+        <span class="guided-step-num">Étape ${_guidedStep+1} / ${total}</span>
+        <span>${calcScore(p)} / 12 validés à l'instant</span>
+      </div>
+      <div class="guided-stage">
+        <div class="guided-crit-head">
+          <div class="guided-crit-num">${c.id}</div>
+          <h3 class="guided-crit-title">${c.star?`<span class="star">${ico('star',16)}</span>`:''}${escapeHtml(c.titre)}</h3>
+        </div>
+        <div class="guided-crit-desc">${escapeHtml(c.desc)}</div>
+        <div class="mentor-card" style="margin:0;border-color:rgba(139,92,246,0.4)">
+          <div class="mentor-head">
+            <span class="mentor-pill">${ico('graduation',11)} Mentor Arthur</span>
+            ${lesson ? `<div class="mentor-lesson-title">${escapeHtml(lesson.title)}</div><div class="mentor-meta">Leçon ${lesson.n}/27 · ${fmtDuration(lesson.duration_s)}</div>` : ''}
+          </div>
+          ${takeawaysHtml}
+          ${numbersHtml}
+          ${lesson ? `<div class="mentor-cta"><button class="btn-mentor-deep" onclick="go({type:'formation',lesson:'${lesson.slug}'})">${ico('book',12)} Voir la leçon complète →</button></div>` : ''}
+        </div>
+        <div class="guided-actions">
+          <button class="btn-guided btn-nav" onclick="guidedNav(-1)" ${_guidedStep===0?'disabled':''}>← Précédent</button>
+          <button class="btn-guided btn-reject ${checked===false && p.criteres?.[c.id]===false?'is-checked':''}" onclick="guidedSet('${p.id}',${c.id},false)">Pas validé</button>
+          <button class="btn-guided btn-validate ${checked?'is-checked':''}" onclick="guidedSet('${p.id}',${c.id},true)">${checked?'✓ Validé':'Validé'}</button>
+          <button class="btn-guided btn-nav" onclick="guidedNav(1)">${_guidedStep===total-1?'Terminer →':'Suivant →'}</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function renderProductCriteres(p) {
+  // Mode guidé Arthur — vue plein écran si actif
+  if (_guidedActive && _guidedPid === p.id) {
+    return _renderGuided(p);
+  }
+
   const items = CRITERES.map(c => {
     const checked = !!p.criteres?.[c.id];
-    return `<div class="critere ${checked?'checked':''}" onclick="toggleCritere('${p.id}',${c.id})">
+    const mentorOpen = !!_mentorOpen[p.id]?.[c.id];
+    const map = CRIT_LESSONS[c.id];
+    const hasLesson = map && _findLesson(map.primary);
+    const mentorCard = mentorOpen ? _mentorCardHtml(c) : '';
+    return `<div class="critere ${checked?'checked':''}">
       <input type="checkbox" ${checked?'checked':''} onclick="event.stopPropagation()" onchange="toggleCritere('${p.id}',${c.id})">
-      <div class="critere-text">
+      <div class="critere-text" style="cursor:pointer" onclick="toggleCritere('${p.id}',${c.id})">
         <div class="critere-title">${c.star?`<span class="star" style="color:var(--yellow);display:inline-flex;vertical-align:-2px;margin-right:4px">${ico('star',13)}</span>`:''}${c.titre}</div>
         <div class="critere-desc">${c.desc}</div>
+        ${hasLesson ? `<button class="crit-mentor-toggle ${mentorOpen?'expanded':''}" onclick="event.stopPropagation();toggleMentor('${p.id}',${c.id})">${ico('graduation',12)} ${mentorOpen?'Masquer':'Voir leçon Arthur'} <span class="chev">▾</span></button>` : ''}
+        ${mentorCard}
       </div>
     </div>`;
   }).join('');
   const score = calcScore(p);
+  const totalLessons = CRITERES.filter(c => CRIT_LESSONS[c.id] && _findLesson(CRIT_LESSONS[c.id].primary)).length;
   return `
     <div class="card">
       <h2>Critères de validation Arthur</h2>
-      <p style="font-size:12px;color:var(--text2);margin-bottom:14px">Coche les critères validés. Score minimum : 8/12. Les critères marqués sont non-négociables.</p>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px">Coche les critères validés. Score minimum : 8/12. Les critères marqués sont non-négociables. <strong style="color:var(--accent2)">${totalLessons} leçons Skool</strong> embarquées via Mentor Arthur.</p>
+      <div class="crit-tools-row">
+        <button class="btn-mentor" onclick="startGuided('${p.id}')">${ico('graduation',13)} <span class="pulse-dot"></span> Mode guidé Arthur</button>
+        <span style="font-size:12px;color:var(--text3)">Pas-à-pas narré sur les 12 critères avec leçon embarquée</span>
+      </div>
       ${items}
       <div style="margin-top:14px;padding:14px;background:var(--bg3);border-radius:var(--radius);text-align:center">
         Score : <strong style="font-size:18px">${score}/12</strong> — ${score>=10?'<span style="color:var(--green)">Excellent</span>':score>=8?'<span style="color:var(--yellow)">Acceptable</span>':'<span style="color:var(--red)">Insuffisant</span>'}
       </div>
     </div>
+    ${_mentorToastHtml()}
   `;
 }
 function toggleCritere(pid, cid) {
