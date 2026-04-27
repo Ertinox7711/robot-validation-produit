@@ -2778,6 +2778,120 @@ small.muted { color: var(--text3); font-size: 11px; }
   .sim-card { padding: 14px 16px; }
 }
 
+/* ═════════ RADAR CONCURRENCE GOOGLE ADS — qui squatte l'arène ═════════ */
+.rc-shell { max-width: 1280px; margin: 0 auto; padding: 0 4px 40px; }
+.rc-hero {
+  position: relative; padding: 26px 28px; border-radius: 18px;
+  background: linear-gradient(135deg, rgba(248,113,113,0.10), rgba(251,146,60,0.07) 50%, rgba(34,211,238,0.08));
+  border: 1px solid rgba(248,113,113,0.28); margin-bottom: 16px; overflow: hidden;
+}
+.rc-hero::before { content:''; position:absolute; inset:0; background: radial-gradient(circle at 90% -30%, rgba(251,146,60,0.16), transparent 55%); pointer-events:none; }
+.rc-hero h1 { font-size: 24px; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0 0 6px; position: relative; z-index: 1; }
+.rc-hero h1 svg { color: #fb923c; }
+.rc-hero .rc-tag {
+  margin-left: 6px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600;
+  background: linear-gradient(135deg, rgba(248,113,113,0.18), rgba(251,146,60,0.18));
+  border: 1px solid rgba(248,113,113,0.40); color: #fbbf24;
+}
+.rc-hero p { font-size: 13.5px; color: var(--text2); line-height: 1.6; margin: 0; max-width: 880px; position:relative; z-index:1; }
+.rc-empty { text-align: center; padding: 40px 20px; background: rgba(15,12,28,0.40); border: 1px dashed var(--border); border-radius: 16px; }
+.rc-empty h3 { font-size: 17px; margin-bottom: 8px; color: var(--text); }
+.rc-empty p { color: var(--text2); font-size: 13px; max-width: 540px; margin: 0 auto; line-height: 1.6; }
+.rc-status-bar {
+  display: flex; gap: 18px; align-items: stretch; padding: 14px 18px;
+  background: rgba(15,12,28,0.55); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 14px;
+}
+.rc-status-stat { display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 0 18px 0 0; border-right: 1px solid var(--border); min-width: 110px; }
+.rc-status-num { font-size: 30px; font-weight: 700; line-height: 1; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.rc-status-lbl { font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; text-align: center; }
+.rc-status-dist { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; align-items: center; }
+.rc-dist-row { display: flex; align-items: center; gap: 10px; }
+.rc-dist-tag { padding: 2px 9px; border-radius: 999px; font-size: 10px; font-weight: 600; letter-spacing: 0.04em; min-width: 92px; text-align: center; }
+.rc-dist-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden; min-width: 60px; }
+.rc-dist-fill { height: 100%; transition: width .3s ease; }
+.rc-dist-num { font-size: 12.5px; font-weight: 600; color: var(--text); min-width: 22px; text-align: right; }
+.rc-bg-good { background: rgba(74,222,128,0.18); color: #86efac; border: 1px solid rgba(74,222,128,0.35); }
+.rc-bg-mid  { background: rgba(251,191,36,0.18); color: #fde68a; border: 1px solid rgba(251,191,36,0.35); }
+.rc-bg-hot  { background: rgba(251,146,60,0.18); color: #fdba74; border: 1px solid rgba(251,146,60,0.40); }
+.rc-bg-bad  { background: rgba(248,113,113,0.18); color: #fca5a5; border: 1px solid rgba(248,113,113,0.40); }
+.rc-bg-inst { background: rgba(248,113,113,0.16); color: #fca5a5; border: 1px solid rgba(248,113,113,0.35); }
+.rc-bg-comp { background: rgba(251,191,36,0.14); color: #fde68a; border: 1px solid rgba(251,191,36,0.30); }
+.rc-bg-brand { background: rgba(139,92,246,0.16); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.35); }
+.rc-bg-drop { background: rgba(74,222,128,0.16); color: #86efac; border: 1px solid rgba(74,222,128,0.30); }
+.rc-dist-fill.rc-bg-good { background: linear-gradient(90deg, #4ade80, #34d399); border: none; }
+.rc-dist-fill.rc-bg-mid  { background: linear-gradient(90deg, #fbbf24, #f59e0b); border: none; }
+.rc-dist-fill.rc-bg-hot  { background: linear-gradient(90deg, #fb923c, #f97316); border: none; }
+.rc-dist-fill.rc-bg-bad  { background: linear-gradient(90deg, #f87171, #ef4444); border: none; }
+.rc-podium { padding: 18px 20px; background: rgba(15,12,28,0.55); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 14px; }
+.rc-podium h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text2); margin: 0 0 14px; display: flex; align-items: center; gap: 8px; }
+.rc-podium h2 svg { color: #4ade80; }
+.rc-podium-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.rc-podium-card { padding: 16px; border-radius: 12px; cursor: pointer;
+  background: linear-gradient(135deg, rgba(74,222,128,0.08), rgba(34,211,238,0.05));
+  border: 1px solid rgba(74,222,128,0.30); transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.rc-podium-card:hover { transform: translateY(-2px); border-color: rgba(74,222,128,0.55); box-shadow: 0 12px 28px -16px rgba(74,222,128,0.45); }
+.rc-podium-rank { font-size: 10px; font-weight: 700; color: #4ade80; letter-spacing: 0.10em; text-transform: uppercase; }
+.rc-podium-name { font-size: 14.5px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.rc-podium-niche { font-size: 11.5px; color: var(--text3); }
+.rc-podium-meta { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.rc-podium-why { font-size: 11px; color: var(--text2); line-height: 1.5; margin-top: 4px; }
+.rc-podium-empty { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: rgba(251,146,60,0.08); border: 1px solid rgba(251,146,60,0.30); border-radius: 12px; margin-bottom: 14px; color: #fdba74; font-size: 12.5px; line-height: 1.5; }
+.rc-podium-empty svg { color: #fb923c; flex-shrink: 0; }
+.rc-card { background: rgba(15,12,28,0.55); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; }
+.rc-card-head h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text2); margin: 0 0 14px; display: flex; align-items: center; gap: 8px; }
+.rc-card-head h2 svg { color: var(--accent2); }
+.rc-table-wrap { overflow-x: auto; }
+.rc-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.rc-table thead th { text-align: left; padding: 8px 10px; color: var(--text3); font-weight: 500; font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.rc-table tbody td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+.rc-table tbody tr.rc-row { cursor: pointer; transition: background .15s ease; }
+.rc-table tbody tr.rc-row:hover { background: rgba(139,92,246,0.06); }
+.rc-table tbody tr.rc-row.is-open  td:first-child { box-shadow: inset 3px 0 0 #4ade80; }
+.rc-table tbody tr.rc-row.is-mid   td:first-child { box-shadow: inset 3px 0 0 #fbbf24; }
+.rc-table tbody tr.rc-row.is-hot   td:first-child { box-shadow: inset 3px 0 0 #fb923c; }
+.rc-table tbody tr.rc-row.is-bad   td:first-child { box-shadow: inset 3px 0 0 #f87171; }
+.rc-name { font-weight: 600; color: var(--text); font-size: 13px; line-height: 1.3; }
+.rc-niche { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.rc-cell-tags { display: flex; flex-wrap: wrap; gap: 4px; max-width: 260px; }
+.rc-cell-cpc, .rc-cell-vol, .rc-cell-cpa, .rc-cell-age { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.rc-domain { display: inline-flex; align-items: baseline; padding: 2px 7px; border-radius: 6px; font-size: 10.5px; font-weight: 500; max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rc-domain sub { font-size: 8.5px; opacity: 0.75; margin-left: 3px; }
+.rc-pill { display: inline-flex; padding: 2px 7px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.rc-empty-pill { color: var(--text3); font-size: 11px; font-style: italic; }
+.rc-verdict { display: inline-flex; padding: 4px 10px; border-radius: 999px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.05em; white-space: nowrap; }
+.rc-verdict.is-open { background: rgba(74,222,128,0.18); color: #86efac; border: 1px solid rgba(74,222,128,0.40); }
+.rc-verdict.is-mid  { background: rgba(251,191,36,0.18); color: #fde68a; border: 1px solid rgba(251,191,36,0.40); }
+.rc-verdict.is-hot  { background: rgba(251,146,60,0.18); color: #fdba74; border: 1px solid rgba(251,146,60,0.40); }
+.rc-verdict.is-bad  { background: rgba(248,113,113,0.18); color: #fca5a5; border: 1px solid rgba(248,113,113,0.40); }
+.rc-stale { color: #fb923c; cursor: pointer; text-decoration: underline; font-size: 11px; }
+.rc-stale:hover { color: #fdba74; }
+.rc-fresh { color: var(--text3); font-size: 11px; }
+.rc-kind { display: inline-flex; padding: 2px 7px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 0.05em; vertical-align: middle; margin-right: 4px; }
+.rc-legend { display: flex; flex-direction: column; gap: 8px; padding: 14px 0 0; margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 11.5px; color: var(--text2); line-height: 1.5; }
+.rc-legend-row { display: flex; align-items: flex-start; gap: 6px; }
+.rc-legend-row .rc-kind { flex-shrink: 0; margin-top: 1px; }
+.rc-gauge {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: conic-gradient(var(--rc-c) calc(var(--rc-p)), rgba(255,255,255,0.06) 0);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  position: relative; flex-shrink: 0;
+}
+.rc-gauge::before { content:''; position:absolute; inset:5px; border-radius:50%; background: rgba(15,12,28,0.95); }
+.rc-gauge-num { position: relative; z-index: 1; font-size: 16px; font-weight: 700; color: var(--rc-c); line-height: 1; }
+.rc-gauge-sub { position: relative; z-index: 1; font-size: 8px; color: var(--text3); line-height: 1; margin-top: 1px; letter-spacing: 0.05em; }
+@media (max-width: 980px) {
+  .rc-status-dist { grid-template-columns: 1fr; }
+  .rc-status-bar { flex-direction: column; gap: 12px; align-items: stretch; }
+  .rc-status-stat { border-right: none; border-bottom: 1px solid var(--border); padding: 0 0 12px; }
+  .rc-cell-tags { max-width: 200px; }
+}
+@media (max-width: 720px) {
+  .rc-hero h1 { font-size: 20px; }
+  .rc-card, .rc-podium { padding: 14px 16px; }
+}
+
 </style>
 </head>
 <body>
@@ -3185,14 +3299,27 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.18.0-beta';
-const APP_VERSION_NOTES = 'SIMULATEUR GOOGLE ADS — mode "et si" sur 5 leviers business avec projection 30 jours et heatmap viabilité. Nouvelle vue sidebar entre Tunnel et Recherche auto. 5 sliders live : Clics capturés/mois, CPC, Prix vente, Achat+livraison, Taux conversion. Recompute live : Profit net/mois (KPI hero), CPA estimé (CPC ÷ taux conv), CPA max viable (marge brute - 20%), Headroom CPA, Ratio marge, CA mensuel, ROI pub. Waterfall horizontal CA → coût pub + achat + frais 20% → profit/perte avec segments couleur. Heatmap 5×5 CPC × Prix vente colorée gradient rouge→vert qui matérialise visuellement la zone viable, cellule centrale highlight = scénario actuel, hover montre profit chiffré. Callout actionnable : si non viable, calcule en chiffres précis les 3 leviers à actionner (target prix vente, target CPC, target prix achat) — réponse à la question "qu\'est-ce que je dois changer pour rendre ce produit viable ?". 6 scénarios sauvegardables localStorage avec chip name/profit/meta cliquable pour recharger ou supprimer. Bouton "Simuler" sur chaque fiche produit qui précharge le simulateur depuis les valeurs du produit (vol_capté = 2% du volume mot-clé). Hero gradient cyan/violet/vert avec tag "Mode et si". Audit features : zéro IA ajoutée (conforme à l\'interdiction post v0.17), zéro gamification, calculs 100% locaux basés sur formules Arthur. Pari : aucun SaaS de validation produit (Sell The Trend, Niche Scraper, Helium 10) ne propose un simulateur "et si" — c\'est le moment où l\'opérateur décide si un produit est mort ou récupérable. Le simulateur fait passer l\'app de "scoreur" à "stratège de campagne".';
+const APP_VERSION = '0.19.0-beta';
+const APP_VERSION_NOTES = 'RADAR CONCURRENCE GOOGLE ADS — qui squatte l\'arène ? Nouvelle vue sidebar (entre Simulateur et Recherche auto, icône cible orange) qui exploite tes scans SerpAPI déjà payés pour calculer un Score de Compétitivité 0-100 par produit. Verdict en 4 niveaux : TERRAIN OUVERT (≤25, vert), DISPUTÉ (26-50, jaune), COMPÉTITIF (51-75, orange), SATURÉ — fuir (>75, rouge). Score composite : qui occupe le top 3 organique (3/3 institutionnels = +28 pts) + qui paye sur les ads (institutionnels +16, dropshippers actifs +10) + niveau du CPC (>2.50€ = +18) + viabilité du CPA + manque de volume (<5k = +12). Classifie chaque domaine en INST (Amazon, Cdiscount, Fnac, Leroy Merlin, Boulanger, ManoMano, La Redoute, Castorama, Brico Dépôt, Decathlon, IKEA, Veepee, Showroomprivé, Lidl, Action, Auchan, Carrefour, Leclerc, Cultura, Sephora, Darty…) ou COMP (idealo, leguide, Wikipedia, Futura, lesnumeriques, clubic, 01net, Reddit, Quora, YouTube, journaux et magazines) ou DROP (probable dropshipper indé). Hero gradient rouge/orange/cyan avec tag "qui squatte l\'arène ?". Status bar : compteur scannés/total + distribution 4 buckets en barres horizontales. Podium top 3 terrain ouvert qui passent ALSO volume ≥15k + CPA viable, en cards vertes cliquables avec gauge conique 56px, 2 raisons-clés, et meta pills (vol/CPC/CPA). Tableau "arène complète" trié du moins au plus saturé : produit / gauge score / verdict pill / top 3 organique avec domaines colorisés / top 5 annonceurs (présents dans ad+shop+org avec compteur sources) / CPC / volume / headroom CPA / âge du scan (re-scan en 1-clic si >14 jours). Ligne colorisée à gauche selon bucket (vert/jaune/orange/rouge). Légende footer expliquant les 3 catégories d\'annonceurs. Bouton "Radar Concurrence" dans la sidebar avec badge compteur "terrain ouvert" en orange. Command palette enrichie. Aucun nouveau scan SerpAPI nécessaire — réutilise le cache existant. Aucune IA, aucun appel externe, 100% calcul local. PARI : aucun SaaS de validation produit (Sell The Trend, Niche Scraper, Ecomhunt, Minea, Helium 10) ne croise SERP composition + ads density + CPC + CPA + volume en un score unique avec verdict actionnable. Le Radar transforme un dossier de 30 produits scannés en une priorité Google Ads claire en 5 secondes : "voilà les 3 où il y a de l\'oxygène, voilà les 8 où Amazon te bouffera". Axe GOOGLE ADS-INTELLIGENCE (axe 1 SKILL.md). Audit conforme : zéro IA, zéro gamification, exploite données déjà payées.';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.19.0-beta', date: '2026-04-27', time: '08:19', source: 'radar concurrence google ads',
+    summary: 'RADAR CONCURRENCE GOOGLE ADS — qui squatte l\'arène ? Score compétitivité SERP composite + 4 verdicts',
+    items: [
+      {type:'feat', text:'Nouvelle vue sidebar "Radar Concurrence" (entre Simulateur Ads et Recherche auto, icône target orange, badge compteur "terrain ouvert" en orange). Exploite TES scans SerpAPI déjà payés (cache existant) — aucun nouveau scan, aucune IA, aucune API externe. Calcule un Score de Compétitivité 0-100 par produit avec verdict en 4 niveaux : TERRAIN OUVERT (≤25, vert), DISPUTÉ (26-50, jaune), COMPÉTITIF (51-75, orange), SATURÉ — fuir (>75, rouge).'},
+      {type:'feat', text:'Score composite multi-signaux : qui squatte le top 3 organique (3/3 institutionnels = +28 pts, 2/3 = +20, 1/3 = +10, +8 si comparateur/blog) + qui paye sur les ads (institutionnels +16, dropshippers actifs +10, terrain vierge -5) + niveau du CPC (>2.50€ = +18, >1.50€ = +12, >0.80€ = +6, <0.40€ = -6 pas de demande payante) + viabilité du CPA croisée (CPA mort +10, CPA viable avec headroom >30€ = -10) + manque de volume (<5k = +12, 5-15k = +4). Plus haut = arène plus saturée. Toutes les raisons sont stockées et affichées en clair sur le podium.'},
+      {type:'feat', text:'Classifie chaque domaine de l\'arène en 3 familles avec listes curées : INST (Amazon, Cdiscount, Fnac, Leroy Merlin, Boulanger, ManoMano, Conforama, BUT, Auchan, Carrefour, Leclerc, La Redoute, Castorama, Brico Dépôt, Decathlon, IKEA, Veepee, Showroomprivé, Lidl, Action, Cultura, Sephora, Darty, Monoprix… ~50 domaines) ; COMP (idealo, leguide, kelkoo, prixmoinscher, Wikipedia, Futura, lesnumeriques, clubic, 01net, frandroid, Reddit, Quora, YouTube, journalismes & magazines fr ~35 domaines) ; DROP (probable dropshipper indé ou marque inconnue — ton vrai concurrent direct sur les ads).'},
+      {type:'feat', text:'Hero gradient rouge/orange/cyan avec tag "qui squatte l\'arène ?" et baseline qui pose la question business : "Avant de cramer ton budget Google Ads, vois qui paye déjà pour chaque mot-clé et qui squatte le top 3 organique." Status bar en haut : compteur scannés/total (en gradient violet/fuchsia) + distribution des 4 buckets en barres horizontales colorisées avec compteurs.'},
+      {type:'feat', text:'Podium "Top 3 terrain ouvert" en cards vertes cliquables (gradient vert/cyan, hover translateY+glow) — filtre exigeant : score ≤25 ET CPA viable ET volume ≥15k. Chaque card affiche rang "#1 priorité", gauge conique 56px (conic-gradient avec couleur du verdict), nom + niche, meta pills (volume k / CPC € / CPA headroom), 2 raisons-clés du score. Si aucun ne passe le triple filtre mais qu\'il y a des terrain ouvert, callout orange invitant à compléter les 2 autres critères via le Tunnel Validation.'},
+      {type:'feat', text:'Tableau "arène complète" trié du moins au plus saturé, ligne colorisée à gauche selon bucket (vert/jaune/orange/rouge box-shadow inset). 9 colonnes : Produit (nom+niche) / Score (gauge 56px) / Verdict (pill) / Top 3 organique (3 chips colorisées par kind) / Annonceurs top 5 par présence (chips colorisées avec sub-script du nb de sources ad+shop+org) / CPC € / Volume/mois (k pill) / Headroom CPA (+/- €) / Âge du scan (re-scan en 1-clic si >14 jours, soulignage orange). Hover row = surlignage violet, click = ouvre la fiche produit.'},
+      {type:'feat', text:'Légende footer permanente : 3 lignes expliquant les 3 catégories d\'annonceurs avec exemples concrets ("Amazon, Cdiscount, Fnac, Leroy Merlin, ManoMano, Boulanger… — tu peux pas te battre, ils dominent SEO + budget pub" / "idealo, leguide, Wikipedia, Futura, lesnumeriques… — squattent le SEO, baissent ton CTR organique" / "Probablement dropshipper indé ou marque inconnue — ton vrai concurrent direct sur les ads"). Permet à l\'utilisateur de comprendre pourquoi un domaine est classé là.'},
+      {type:'feat', text:'Empty state si aucun produit scanné : message orange + CTA texte "Ouvre une fiche produit, clique Scan SERP auto, puis reviens ici". Plus tu scannes, plus le Radar est utile pour prioriser.'},
+      {type:'feat', text:'PARI PRODUIT : aucun SaaS de validation produit (Sell The Trend, Niche Scraper, Ecomhunt, Minea, Helium 10) ne croise SERP composition + ads density + CPC + CPA + volume en un score unique avec verdict actionnable. Le Radar transforme un dossier de 30 produits scannés en une priorité Google Ads claire en 5 secondes : "voilà les 3 où il y a de l\'oxygène, voilà les 8 où Amazon te bouffera". Axe GOOGLE ADS-INTELLIGENCE (axe 1 SKILL.md). Audit conforme post v0.17 : zéro IA ajoutée, zéro gamification, exploite données SerpAPI déjà payées (zéro coût supplémentaire).'},
+    ]},
   { v: '0.18.0-beta', date: '2026-04-27', time: '07:35', source: 'simulateur google ads',
     summary: 'SIMULATEUR GOOGLE ADS — mode "et si" sur 5 leviers business + projection 30j + heatmap viabilité',
     items: [
@@ -3517,6 +3644,10 @@ function renderSidebar() {
         <span class="icon" style="color:#67e8f9">${ico('sliders',16)}</span><span>Simulateur Ads</span>
         <span class="count" style="background:rgba(34,211,238,0.18);color:#67e8f9;border:1px solid rgba(34,211,238,0.35)">et si</span>
       </div>
+      <div class="nav-item ${currentView.type==='radar'?'active':''}" onclick="go({type:'radar'})">
+        <span class="icon" style="color:#fb923c">${ico('target',16)}</span><span>Radar Concurrence</span>
+        <span class="count" style="background:rgba(251,146,60,0.18);color:#fdba74;border:1px solid rgba(251,146,60,0.40)">${(typeof _rcOpenCount==='function')?_rcOpenCount():'arène'}</span>
+      </div>
       <div class="nav-item" onclick="openDiscoverModal()" style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(217,70,239,0.06));border:1px solid rgba(139,92,246,0.25);">
         <span class="icon">${ico('search',16)}</span><span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:600">Recherche auto</span>
       </div>
@@ -3730,6 +3861,7 @@ function renderMain() {
   else if (currentView.type === 'duel') m.innerHTML = renderDuel();
   else if (currentView.type === 'tunnel') m.innerHTML = renderTunnel();
   else if (currentView.type === 'simulator') m.innerHTML = renderSimulator();
+  else if (currentView.type === 'radar') m.innerHTML = renderRadarComp();
   else if (currentView.type === 'help') m.innerHTML = renderHelp();
   else if (currentView.type === 'formation') m.innerHTML = renderFormation(currentView.lesson);
   else if (currentView.type === 'changelog') m.innerHTML = renderChangelog();
@@ -5660,6 +5792,308 @@ function renderSimulator() {
     </div>
   `;
 }
+
+/* ═════════ RADAR CONCURRENCE GOOGLE ADS ═════════
+   Pour chaque produit ayant un scan SERP, calcule un Score de Compétitivité
+   0-100 et un verdict en 4 niveaux (TERRAIN OUVERT, DISPUTÉ, COMPÉTITIF,
+   SATURÉ). Classifie chaque domaine de l'arène (top 3 organique + ads + shopping)
+   en INST (Amazon, Cdiscount, Fnac, Leroy Merlin…), COMP (comparateurs, blogs
+   SEO, médias) ou DROP (probable dropshipper indé / marque inconnue).
+   La question répondue : "qui paye et squatte ce mot-clé en ce moment, est-ce
+   que je peux passer ?" Aucun appel externe, aucune IA — 100% calcul local sur
+   les données SerpAPI déjà mises en cache par les scans existants. */
+
+const RC_COMPARATEURS_DOMAINS = [
+  'leguide.com','idealo.fr','prixmoinscher.com','kelkoo.fr','shopzilla.fr',
+  'comparateur-banque.fr','quechoisir.org','60millions-mag.org',
+  'aufeminin.com','futura-sciences.com','wikipedia.org','clubic.com',
+  '01net.com','frandroid.com','presse-citron.net','numerama.com',
+  'lesnumeriques.com','tomsguide.fr','consoglobe.com','reddit.com',
+  'quora.com','youtube.com','youtu.be','linternaute.com','journaldunet.com',
+  'tf1info.fr','francetvinfo.fr','bfmtv.com','lexpress.fr','lefigaro.fr',
+  'lemonde.fr','liberation.fr','marieclaire.fr','elle.fr','huffingtonpost.fr',
+  'doctissimo.fr','passeportsante.net','santemagazine.fr','psychologies.com'
+];
+const RC_INST_EXTRA = [
+  'laredoute.fr','castorama.fr','bricodepot.fr','decathlon.fr',
+  'showroomprive.com','veepee.fr','ikea.com','ikea.fr','bricomarche.com',
+  'bricoman.fr','weldom.fr','mr-bricolage.fr','easycash.fr','gifi.fr',
+  'lidl.fr','action.fr','intermarche.com','leclerc.fr','centrakor.com',
+  'maxitoys.com','jouetspirou.fr','toysrus.fr','natureetdecouvertes.com',
+  'monoprix.fr','franprix.fr','fnac.be','darty.fr','cultura.com','sephora.fr'
+];
+
+function _rcClassifyDomain(d) {
+  if (!d) return 'drop';
+  d = d.toLowerCase().replace(/^www\./, '');
+  if (INSTITUTIONNELS_DOMAINS.some(x => d === x || d.endsWith('.' + x) || d.endsWith(x))) return 'inst';
+  if (RC_INST_EXTRA.some(x => d === x || d.endsWith('.' + x) || d.endsWith(x))) return 'inst';
+  if (RC_COMPARATEURS_DOMAINS.some(x => d === x || d.endsWith('.' + x) || d.endsWith(x))) return 'comp';
+  if (/comparateur|comparatif|guide-|test-|magazine|blog|conseil/i.test(d)) return 'comp';
+  return 'drop';
+}
+window._rcClassifyDomain = _rcClassifyDomain;
+
+function _rcUniqueAdvertisers(p) {
+  const scan = p.serp_scan;
+  if (!scan) return [];
+  const seen = new Map();
+  const add = (d, src) => {
+    if (!d) return;
+    const dom = d.toLowerCase().replace(/^www\./, '');
+    if (!seen.has(dom)) seen.set(dom, { domain: dom, sources: new Set(), kind: _rcClassifyDomain(dom) });
+    seen.get(dom).sources.add(src);
+  };
+  (scan.ads || []).forEach(a => add(a.domain || '', 'ad'));
+  (scan.shopping || []).forEach(s => add(s.domain || '', 'shop'));
+  (scan.organic || []).forEach(o => add(o.domain || '', 'org'));
+  return [...seen.values()].sort((a, b) => b.sources.size - a.sources.size);
+}
+
+// Score 0-100 : composite SERP composition + ads density + CPC + CPA + volume
+// Plus haut = arène plus saturée, plus dur de gagner sur Google Ads
+function _rcCompScore(p) {
+  const scan = p.serp_scan;
+  if (!scan) return null;
+  const organic = scan.organic || [];
+  const ads = scan.ads || [];
+  let score = 0;
+  const reasons = [];
+
+  // Top 3 organique : qui occupe l'espace SEO et baisse ton CTR organique
+  const top3 = organic.slice(0, 3).map(o => ({ ...o, kind: _rcClassifyDomain(o.domain || '') }));
+  const top3Inst = top3.filter(o => o.kind === 'inst').length;
+  const top3Comp = top3.filter(o => o.kind === 'comp').length;
+  if (top3Inst >= 3) { score += 28; reasons.push('top 3 organique 100% institutionnel'); }
+  else if (top3Inst === 2) { score += 20; reasons.push('2/3 du top organique = institutionnels'); }
+  else if (top3Inst === 1) { score += 10; reasons.push('1 institutionnel dans le top 3'); }
+  if (top3Comp >= 1) { score += 8; reasons.push(`${top3Comp} comparateur/blog dans le top 3`); }
+
+  // Ads — qui paye actuellement = tes futurs concurrents directs
+  const adsByKind = ads.reduce((acc, a) => { const k = _rcClassifyDomain(a.domain || ''); acc[k] = (acc[k] || 0) + 1; return acc; }, {});
+  const adsInst = adsByKind.inst || 0;
+  const adsTotal = ads.length;
+  const adsDrop = adsByKind.drop || 0;
+  if (adsInst >= 2) { score += 16; reasons.push(`${adsInst} institutionnels paient déjà sur ce mot-clé`); }
+  else if (adsInst === 1) { score += 10; reasons.push('1 institutionnel paie sur ce mot-clé'); }
+  if (adsDrop >= 3) { score += 10; reasons.push(`${adsDrop} dropshippers paient déjà — guerre des CPC`); }
+  else if (adsDrop >= 1) { score += 5; reasons.push(`${adsDrop} dropshipper(s) paient déjà`); }
+  if (adsTotal === 0) { score -= 5; reasons.push('aucune annonce — terrain vierge ou marché mort'); }
+
+  // CPC : signal le plus direct de la guerre des enchères
+  const cpc = parseFloat(p.cpc) || 0;
+  if (cpc > 2.50) { score += 18; reasons.push(`CPC ${cpc.toFixed(2)}€ très élevé`); }
+  else if (cpc > 1.50) { score += 12; reasons.push(`CPC ${cpc.toFixed(2)}€ élevé`); }
+  else if (cpc > 0.80) { score += 6; reasons.push(`CPC ${cpc.toFixed(2)}€ moyen`); }
+  else if (cpc > 0 && cpc <= 0.40) { score -= 6; reasons.push(`CPC ${cpc.toFixed(2)}€ faible — peu de demande payante`); }
+
+  // CPA cross-check — économie pure
+  const cpaV = _cpaViability(p);
+  if (cpaV.viable === false && cpaV.margin != null) { score += 10; reasons.push(`CPA estimé ${cpaV.est.toFixed(0)}€ > CPA max ${cpaV.max.toFixed(0)}€`); }
+  else if (cpaV.viable === true && cpaV.margin > 30) { score -= 10; reasons.push(`headroom CPA +${cpaV.margin.toFixed(0)}€ — il reste de la place`); }
+
+  // Volume : pas d'oxygène = combat impossible à monétiser
+  const vol = _parseVolume(p.volume_mensuel);
+  if (vol != null) {
+    if (vol < 5000) { score += 12; reasons.push(`volume ${vol.toLocaleString('fr-FR')} < 5k — pas d'oxygène`); }
+    else if (vol < 15000) { score += 4; reasons.push(`volume ${vol.toLocaleString('fr-FR')} entre 5k et 15k`); }
+  }
+
+  score = Math.max(0, Math.min(100, Math.round(score)));
+  let verdict, cls, color;
+  if (score <= 25) { verdict = 'TERRAIN OUVERT'; cls = 'is-open'; color = '#4ade80'; }
+  else if (score <= 50) { verdict = 'DISPUTÉ'; cls = 'is-mid'; color = '#fbbf24'; }
+  else if (score <= 75) { verdict = 'COMPÉTITIF'; cls = 'is-hot'; color = '#fb923c'; }
+  else { verdict = 'SATURÉ — fuir'; cls = 'is-bad'; color = '#f87171'; }
+
+  return { score, verdict, cls, color, reasons, top3, top3Inst, top3Comp,
+    adsByKind, adsInst, adsTotal, adsDrop, cpc, cpaV, vol };
+}
+window._rcCompScore = _rcCompScore;
+
+// Count of "terrain ouvert" products — used for sidebar badge
+function _rcOpenCount() {
+  let n = 0;
+  for (const p of state.products) {
+    if (!p.serp_scan) continue;
+    const c = _rcCompScore(p);
+    if (c && c.score <= 25) n++;
+  }
+  return n;
+}
+window._rcOpenCount = _rcOpenCount;
+
+function _rcGauge(score, color) {
+  return `<div class="rc-gauge" style="--rc-p:${score}%;--rc-c:${color}">
+    <span class="rc-gauge-num">${score}</span>
+    <span class="rc-gauge-sub">/100</span>
+  </div>`;
+}
+
+function _rcKindBadge(kind) {
+  const map = { inst: { lbl: 'INST', cls: 'rc-bg-inst' }, comp: { lbl: 'COMP', cls: 'rc-bg-comp' }, brand: { lbl: 'BRAND', cls: 'rc-bg-brand' }, drop: { lbl: 'DROP', cls: 'rc-bg-drop' } };
+  const m = map[kind] || map.drop;
+  return `<span class="rc-kind ${m.cls}">${m.lbl}</span>`;
+}
+
+function renderRadarComp() {
+  const eligible = state.products.filter(p => p.serp_scan);
+  if (!eligible.length) {
+    return `<div class="rc-shell">
+      <div class="rc-hero">
+        <h1>${ico('target', 26)}Radar Concurrence Google Ads<span class="rc-tag">qui squatte l'arène ?</span></h1>
+        <p>Avant de cramer ton budget Google Ads, le Radar te dit <strong style="color:#fbbf24">qui paye déjà</strong> pour chaque mot-clé et <strong style="color:#fb923c">qui squatte le top 3 organique</strong>. Il exploite tes scans SerpAPI déjà payés — aucun nouveau scan, aucune IA, aucune API externe.</p>
+      </div>
+      <div class="rc-empty">
+        <div style="color:#fb923c;display:inline-flex;margin-bottom:14px">${ico('target', 56)}</div>
+        <h3>Aucun produit n'a encore été scanné</h3>
+        <p>Le Radar a besoin de données SerpAPI pour classer les produits. Ouvre une fiche produit, clique <strong>"Scan SERP auto"</strong>, puis reviens ici pour voir l'arène complète. Plus tu scannes, plus le Radar est utile pour prioriser.</p>
+      </div>
+    </div>`;
+  }
+
+  const scored = eligible.map(p => ({ p, c: _rcCompScore(p) })).filter(x => x.c).sort((a, b) => a.c.score - b.c.score);
+  const buckets = { open: [], mid: [], hot: [], bad: [] };
+  scored.forEach(({ p, c }) => {
+    if (c.score <= 25) buckets.open.push({ p, c });
+    else if (c.score <= 50) buckets.mid.push({ p, c });
+    else if (c.score <= 75) buckets.hot.push({ p, c });
+    else buckets.bad.push({ p, c });
+  });
+
+  // Top podium : terrain ouvert qui passe ALSO volume + CPA viable
+  const podium = buckets.open
+    .filter(({ c }) => c.cpaV.viable !== false && (c.vol == null || c.vol >= 15000))
+    .slice(0, 3);
+
+  const totalScanned = scored.length;
+  const totalProducts = state.products.length;
+  const distTotal = scored.length || 1;
+  const dpct = (n) => Math.round((n / distTotal) * 100);
+
+  const rows = scored.map(({ p, c }) => {
+    const ts = p.serp_scan?.ts || 0;
+    const ageDays = Math.max(0, Math.round((Date.now() / 1000 - ts) / 86400));
+    const stale = ageDays > 14;
+    const top3DomTags = c.top3.map(o => `<span class="rc-domain rc-bg-${o.kind}" title="${escapeHtml(o.domain || '')} · ${o.kind}">${escapeHtml((o.domain || '?').replace(/^www\./, ''))}</span>`).join('') || '<span class="rc-empty-pill">—</span>';
+    const advs = _rcUniqueAdvertisers(p).slice(0, 5);
+    const advTags = advs.length
+      ? advs.map(a => `<span class="rc-domain rc-bg-${a.kind}" title="${escapeHtml(a.domain)} · ${a.kind} · présent dans ${[...a.sources].join('+')}">${escapeHtml(a.domain)}<sub>${a.sources.size}</sub></span>`).join('')
+      : '<span class="rc-empty-pill">aucun annonceur</span>';
+    const cpcStr = c.cpc > 0 ? `${c.cpc.toFixed(2)}€` : '<span class="rc-empty-pill">?</span>';
+    const cpaTag = c.cpaV.viable === true && c.cpaV.margin != null
+      ? `<span class="rc-pill rc-bg-good">+${c.cpaV.margin.toFixed(0)}€</span>`
+      : c.cpaV.viable === false && c.cpaV.margin != null
+        ? `<span class="rc-pill rc-bg-bad">${c.cpaV.margin.toFixed(0)}€</span>`
+        : '<span class="rc-empty-pill">?</span>';
+    const volTag = c.vol == null
+      ? '<span class="rc-empty-pill">?</span>'
+      : c.vol >= 15000 ? `<span class="rc-pill rc-bg-good">${(c.vol / 1000).toFixed(0)}k</span>`
+      : c.vol >= 5000 ? `<span class="rc-pill rc-bg-mid">${(c.vol / 1000).toFixed(1)}k</span>`
+      : `<span class="rc-pill rc-bg-bad">${c.vol}</span>`;
+    return `<tr class="rc-row ${c.cls}" onclick="go({type:'product', id:'${p.id}'})" title="Ouvrir la fiche produit">
+      <td class="rc-cell-name">
+        <div class="rc-name">${escapeHtml(p.name || 'Sans nom')}</div>
+        <div class="rc-niche">${escapeHtml(p.niche || '—')}</div>
+      </td>
+      <td>${_rcGauge(c.score, c.color)}</td>
+      <td><span class="rc-verdict ${c.cls}">${c.verdict}</span></td>
+      <td><div class="rc-cell-tags">${top3DomTags}</div></td>
+      <td><div class="rc-cell-tags">${advTags}</div></td>
+      <td class="rc-cell-cpc">${cpcStr}</td>
+      <td class="rc-cell-vol">${volTag}</td>
+      <td class="rc-cell-cpa">${cpaTag}</td>
+      <td class="rc-cell-age" title="${new Date(ts * 1000).toLocaleString('fr-FR')}">${stale ? `<span class="rc-stale" onclick="event.stopPropagation();scanSerp('${p.id}')">${ageDays}j · re-scan</span>` : `<span class="rc-fresh">${ageDays}j</span>`}</td>
+    </tr>`;
+  }).join('');
+
+  return `<div class="rc-shell">
+    <div class="rc-hero">
+      <h1>${ico('target', 26)}Radar Concurrence Google Ads<span class="rc-tag">qui squatte l'arène ?</span></h1>
+      <p>Avant de cramer ton budget Google Ads, vois <strong style="color:#fbbf24">qui paye déjà</strong> pour chaque mot-clé et <strong style="color:#fb923c">qui squatte le top 3 organique</strong>. Le Radar exploite tes scans SerpAPI existants et classe chaque produit en 4 niveaux d'arène. <strong style="color:#4ade80">Terrain ouvert = priorité absolue.</strong></p>
+    </div>
+
+    <div class="rc-status-bar">
+      <div class="rc-status-stat"><div class="rc-status-num">${totalScanned}</div><div class="rc-status-lbl">scannés / ${totalProducts}</div></div>
+      <div class="rc-status-dist">
+        <div class="rc-dist-row">
+          <span class="rc-dist-tag rc-bg-good">Terrain ouvert</span>
+          <div class="rc-dist-bar"><div class="rc-dist-fill rc-bg-good" style="width:${dpct(buckets.open.length)}%"></div></div>
+          <span class="rc-dist-num">${buckets.open.length}</span>
+        </div>
+        <div class="rc-dist-row">
+          <span class="rc-dist-tag rc-bg-mid">Disputé</span>
+          <div class="rc-dist-bar"><div class="rc-dist-fill rc-bg-mid" style="width:${dpct(buckets.mid.length)}%"></div></div>
+          <span class="rc-dist-num">${buckets.mid.length}</span>
+        </div>
+        <div class="rc-dist-row">
+          <span class="rc-dist-tag rc-bg-hot">Compétitif</span>
+          <div class="rc-dist-bar"><div class="rc-dist-fill rc-bg-hot" style="width:${dpct(buckets.hot.length)}%"></div></div>
+          <span class="rc-dist-num">${buckets.hot.length}</span>
+        </div>
+        <div class="rc-dist-row">
+          <span class="rc-dist-tag rc-bg-bad">Saturé</span>
+          <div class="rc-dist-bar"><div class="rc-dist-fill rc-bg-bad" style="width:${dpct(buckets.bad.length)}%"></div></div>
+          <span class="rc-dist-num">${buckets.bad.length}</span>
+        </div>
+      </div>
+    </div>
+
+    ${podium.length ? `
+      <div class="rc-podium">
+        <h2>${ico('check', 14)}Top ${podium.length} terrain ouvert <span style="margin-left:auto;font-size:11px;color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0">faible compétition + CPA viable + volume ≥ 15k</span></h2>
+        <div class="rc-podium-grid">
+          ${podium.map(({ p, c }, i) => `
+            <div class="rc-podium-card" onclick="go({type:'product', id:'${p.id}'})">
+              <div class="rc-podium-rank">#${i + 1} priorité</div>
+              ${_rcGauge(c.score, c.color)}
+              <div class="rc-podium-name">${escapeHtml(p.name || 'Sans nom')}</div>
+              <div class="rc-podium-niche">${escapeHtml(p.niche || '—')}</div>
+              <div class="rc-podium-meta">
+                ${c.vol != null && c.vol >= 15000 ? `<span class="rc-pill rc-bg-good">${(c.vol / 1000).toFixed(0)}k vol</span>` : ''}
+                ${c.cpc > 0 ? `<span class="rc-pill">${c.cpc.toFixed(2)}€ CPC</span>` : ''}
+                ${c.cpaV.viable === true ? `<span class="rc-pill rc-bg-good">CPA +${c.cpaV.margin.toFixed(0)}€</span>` : ''}
+              </div>
+              <div class="rc-podium-why">${c.reasons.slice(0, 2).map(r => `<div>• ${escapeHtml(r)}</div>`).join('')}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    ` : (buckets.open.length ? `
+      <div class="rc-podium-empty">${ico('warning', 18)}<span><strong>${buckets.open.length} produit(s) en terrain ouvert</strong>, mais aucun ne coche aussi volume ≥ 15k + CPA viable. Renseigne ces 2 critères (Tunnel Validation) pour faire émerger un vrai "winner".</span></div>
+    ` : '')}
+
+    <div class="rc-card">
+      <div class="rc-card-head">
+        <h2>${ico('chart', 16)}Arène complète<span style="margin-left:auto;font-size:11px;color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0">${totalScanned} produit${totalScanned > 1 ? 's' : ''} classé${totalScanned > 1 ? 's' : ''} du moins au plus saturé</span></h2>
+      </div>
+      <div class="rc-table-wrap">
+        <table class="rc-table">
+          <thead>
+            <tr>
+              <th>Produit</th>
+              <th>Score</th>
+              <th>Verdict</th>
+              <th>Top 3 organique</th>
+              <th>Annonceurs (top 5 par présence)</th>
+              <th>CPC</th>
+              <th>Vol/mois</th>
+              <th>Headroom CPA</th>
+              <th>Scan</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <div class="rc-legend">
+        <div class="rc-legend-row">${_rcKindBadge('inst')}<span>Amazon, Cdiscount, Fnac, Leroy Merlin, ManoMano, Boulanger… — tu peux pas te battre, ils dominent SEO + budget pub.</span></div>
+        <div class="rc-legend-row">${_rcKindBadge('comp')}<span>Comparateurs (idealo, leguide…), blogs SEO, médias (Wikipedia, Futura, lesnumeriques…) — squattent le SEO, baissent ton CTR organique.</span></div>
+        <div class="rc-legend-row">${_rcKindBadge('drop')}<span>Probablement dropshipper indé ou marque inconnue — ton vrai concurrent direct sur les ads, à étudier.</span></div>
+      </div>
+    </div>
+  </div>`;
+}
+window.renderRadarComp = renderRadarComp;
 
 /* ═════════ PRODUCT VIEW ═════════ */
 let productTab = 'infos';
@@ -7928,6 +8362,7 @@ function _cmdBuildRegistry() {
   cmds.push({ id:'nav.duel', cat:'Navigation', icon:'sword', label:'Duel Arthur', hint:`Compare 2-${DUEL_MAX} produits sur volume mot-clé / CPA${_duelGet().length ? ` · ${_duelGet().length} en lice` : ''}`, kw:'duel battle versus comparer compare arthur winner crown volume cpa google ads', action:() => go({type:'duel'}) });
   cmds.push({ id:'nav.tunnel', cat:'Navigation', icon:'target', label:'Tunnel Validation Arthur', hint:'Règles volume 15k + CPA = CPC×150 + niche', kw:'tunnel validation volume mot clé cpa cpc niche skool 15000 google ads regle arthur', action:() => go({type:'tunnel'}) });
   cmds.push({ id:'nav.simulator', cat:'Navigation', icon:'sliders', label:'Simulateur Google Ads', hint:'Mode "et si" — projection 30j sur 5 leviers + heatmap viabilité', kw:'simulator simulateur sliders et si scenario projection profit cpa heatmap google ads what if', action:() => go({type:'simulator'}) });
+  cmds.push({ id:'nav.radar', cat:'Navigation', icon:'target', label:'Radar Concurrence Google Ads', hint:'Score compétitivité SERP + qui paye sur le mot-clé · classe TERRAIN OUVERT / DISPUTÉ / COMPÉTITIF / SATURÉ', kw:'radar concurrence competition arene serp institutionnels comparateurs annonceurs google ads who pays compet', action:() => go({type:'radar'}) });
   if (_duelGet().length) {
     cmds.push({ id:'act.duelClear', cat:'Actions', icon:'trash', label:'Vider le duel en cours', hint:`${_duelGet().length} combattants sélectionnés`, kw:'duel vider clear reset', action:() => duelClear() });
   }
