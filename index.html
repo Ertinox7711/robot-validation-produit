@@ -2814,7 +2814,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 
 <header>
   <button class="menu-toggle" aria-label="Ouvrir le menu" onclick="toggleSidebar()" title="Menu (sessions)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg></button>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.17.0-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.18.0-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -3185,14 +3185,27 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.17.0-beta';
-const APP_VERSION_NOTES = 'CLEANUP PRO PRÉCIS EFFICACE — suppression complète des features qui n\'aident pas à décider sur Google Ads. VIRÉ : Palmarès (gamification, hall of fame, streak, achievements, confetti) → ~22 KB code. VIRÉ : Auto-Scorer Claude AI (bouton onglet Critères, 3 modales clé/loading/result, prompt système, fonctions ai*) → ~44 KB. VIRÉ : section Verdict argumenté de Claude du Duel + fonctions duelRunClaude/_duelBuild* → ~12 KB. VIRÉ : toast intrusif Mentor Arthur (auto-popup à l\'arrivée sur Critères). CONSERVÉ : Tunnel Validation Arthur (référence règles 15k+CPA), Duel tableau Google Ads, Mentor Arthur on-demand (bouton "Voir leçon Arthur" + Mode guidé), Atelier Analytics dashboard, Kanban session, SerpAPI scan, Discover. SKILL.md scheduled task ré-écrit avec ÉTAPE 0 OBLIGATOIRE : audit des features existantes à chaque run avec 3 questions (sert-elle Google Ads ? est-elle utilisée ? ajoute-t-elle du bruit ?) — propose de supprimer ce qui ne passe pas. INTERDICTION ABSOLUE d\'ajouter de l\'IA dans l\'app sans demande explicite user. Net : ~80 KB de code retiré (~21% du fichier), zéro feature gadget restante. L\'app fait UNE chose : valider un produit selon les chiffres Google Ads Arthur, point.';
+const APP_VERSION = '0.18.0-beta';
+const APP_VERSION_NOTES = 'SIMULATEUR GOOGLE ADS — mode "et si" sur 5 leviers business avec projection 30 jours et heatmap viabilité. Nouvelle vue sidebar entre Tunnel et Recherche auto. 5 sliders live : Clics capturés/mois, CPC, Prix vente, Achat+livraison, Taux conversion. Recompute live : Profit net/mois (KPI hero), CPA estimé (CPC ÷ taux conv), CPA max viable (marge brute - 20%), Headroom CPA, Ratio marge, CA mensuel, ROI pub. Waterfall horizontal CA → coût pub + achat + frais 20% → profit/perte avec segments couleur. Heatmap 5×5 CPC × Prix vente colorée gradient rouge→vert qui matérialise visuellement la zone viable, cellule centrale highlight = scénario actuel, hover montre profit chiffré. Callout actionnable : si non viable, calcule en chiffres précis les 3 leviers à actionner (target prix vente, target CPC, target prix achat) — réponse à la question "qu\'est-ce que je dois changer pour rendre ce produit viable ?". 6 scénarios sauvegardables localStorage avec chip name/profit/meta cliquable pour recharger ou supprimer. Bouton "Simuler" sur chaque fiche produit qui précharge le simulateur depuis les valeurs du produit (vol_capté = 2% du volume mot-clé). Hero gradient cyan/violet/vert avec tag "Mode et si". Audit features : zéro IA ajoutée (conforme à l\'interdiction post v0.17), zéro gamification, calculs 100% locaux basés sur formules Arthur. Pari : aucun SaaS de validation produit (Sell The Trend, Niche Scraper, Helium 10) ne propose un simulateur "et si" — c\'est le moment où l\'opérateur décide si un produit est mort ou récupérable. Le simulateur fait passer l\'app de "scoreur" à "stratège de campagne".';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.18.0-beta', date: '2026-04-27', time: '07:35', source: 'simulateur google ads',
+    summary: 'SIMULATEUR GOOGLE ADS — mode "et si" sur 5 leviers business + projection 30j + heatmap viabilité',
+    items: [
+      {type:'feat', text:'Nouvelle vue sidebar "Simulateur Ads" (entre Tunnel Validation et Recherche auto, icône sliders cyan, badge "et si"). Hero gradient cyan/violet/vert avec tag "Mode et si" et baseline qui pose la question décisive : "qu\'est-ce qu\'il faut que je change pour que ce produit devienne viable sur Google Ads ?" — c\'est l\'antithèse du SaaS scoreur, c\'est un stratège de campagne.'},
+      {type:'feat', text:'5 sliders live couvrant tous les leviers Google Ads : Clics capturés/mois (100→50k), CPC moyen (0.10→5€), Prix vente (30→800€), Achat + livraison (5→400€), Taux de conversion (0.30→4.00%, défaut Arthur 0.67% = 1 vente / 150 clics). Slider thumb violet/fuchsia avec halo, track gradient vert→ambre→rouge. Valeur live affichée en pill mono. Reset valeurs Arthur 1-clic.'},
+      {type:'feat', text:'6 KPI cards live recompute à chaque drag : Profit net/mois en hero (gradient violet/cyan si +, rouge/fuchsia si -), CPA estimé = CPC ÷ taux conv (vrai math, pas l\'approximation × 150), CPA max viable = marge brute - 20%, Headroom CPA en €, Ratio marge × (Arthur ≥ ×3), CA mensuel. Verdict bandeau adaptatif 4 cas : Viable + headroom / Marge limite / Non viable + 3 leviers chiffrés / Marge brute négative.'},
+      {type:'feat', text:'Waterfall horizontal CA → coût pub + achat produit + frais 20% (TVA + Shopify) → profit ou perte. Segments avec gradients couleur signature (rouge pub / orange achat / jaune frais / vert+cyan profit, ou rouge foncé pour la perte). Légende avec dots colorés. Quand le profit bascule positif/négatif, le segment final change de gradient en live.'},
+      {type:'feat', text:'Heatmap 5×5 CPC × Prix vente : pour chaque combinaison autour du scénario actuel (×0.5 →×1.5 sur CPC, ×0.7 →×1.3 sur prix vente), recalcul du profit net mensuel et coloration gradient rouge → gris → vert basée sur le profit relatif. Cellule centrale highlight blanc = scénario actuel. Tooltip native montre CPC × Vente → profit chiffré. Visualise instantanément la zone de viabilité sans bouger les sliders.'},
+      {type:'feat', text:'Callout intelligent en bas du card sliders : si scénario non viable, calcule en chiffres précis les 3 leviers à actionner pour basculer en vert (target prix vente, target CPC, target prix achat). Exemples : "Monter le prix de vente à 280€ (au lieu de 250€)" / "OU baisser le CPC à 0.42€" / "OU sourcer à 65€ au lieu de 80€". Si viable, callout vert qui suggère de remonter le slider clics pour scaler.'},
+      {type:'feat', text:'6 scénarios sauvegardables localStorage (clé gads_sim_scenarios_v1). Bouton "Sauvegarder ce scénario" → chip avec nom (auto = nom produit + heure), profit/mois en couleur, meta (vente/CPC/conv). Cliquer une chip recharge le scénario dans les sliders. Hover montre une croix rouge pour supprimer. Permet de comparer plusieurs hypothèses sans perdre l\'original.'},
+      {type:'feat', text:'Bouton "Simuler" sur chaque fiche produit (header, à côté de "Ajouter au duel") : précharge le simulateur depuis les valeurs du produit (vol_capté = 2% du volume mot-clé saisi, CPC réel, prix vente, achat+livraison). Source affichée en pill cyan en haut du simulateur ("Chargé depuis : [nom produit]") avec lien vers le produit et bouton "Détacher".'},
+      {type:'feat', text:'PARI PRODUIT : aucun SaaS de validation produit (Sell The Trend, Niche Scraper, Ecomhunt, Minea, Helium 10) ne propose un simulateur "et si" — ils donnent des chiffres figés ("ce produit a tel score, telle compétition"), aucun ne dit "voici ce que tu dois changer pour le rendre viable". Le Simulateur fait passer l\'app de "scoreur" à "stratège de campagne". Audit conforme : zéro IA ajoutée (interdiction post v0.17 respectée), zéro gamification, 100% calculs locaux basés sur les formules Arthur. Axe DIFFERENCIATION RADICALE Google Ads-first (axe 7 du SKILL.md).'},
+    ]},
   { v: '0.17.0-beta', date: '2026-04-27', time: '07:11', source: 'cleanup pro précis efficace',
     summary: 'CLEANUP — suppression de tout ce qui n\'aide pas à décider sur Google Ads (Palmarès, Auto-Scorer AI, Duel Claude, toast Mentor)',
     items: [
@@ -3500,6 +3513,10 @@ function renderSidebar() {
         <span class="icon" style="color:#4ade80">${ico('target',16)}</span><span>Tunnel Validation</span>
         <span class="count" style="background:rgba(74,222,128,0.18);color:#4ade80;border:1px solid rgba(74,222,128,0.35)">15k</span>
       </div>
+      <div class="nav-item ${currentView.type==='simulator'?'active':''}" onclick="go({type:'simulator'})">
+        <span class="icon" style="color:#67e8f9">${ico('sliders',16)}</span><span>Simulateur Ads</span>
+        <span class="count" style="background:rgba(34,211,238,0.18);color:#67e8f9;border:1px solid rgba(34,211,238,0.35)">et si</span>
+      </div>
       <div class="nav-item" onclick="openDiscoverModal()" style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(217,70,239,0.06));border:1px solid rgba(139,92,246,0.25);">
         <span class="icon">${ico('search',16)}</span><span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:600">Recherche auto</span>
       </div>
@@ -3712,6 +3729,7 @@ function renderMain() {
   else if (currentView.type === 'kept') m.innerHTML = renderKept();
   else if (currentView.type === 'duel') m.innerHTML = renderDuel();
   else if (currentView.type === 'tunnel') m.innerHTML = renderTunnel();
+  else if (currentView.type === 'simulator') m.innerHTML = renderSimulator();
   else if (currentView.type === 'help') m.innerHTML = renderHelp();
   else if (currentView.type === 'formation') m.innerHTML = renderFormation(currentView.lesson);
   else if (currentView.type === 'changelog') m.innerHTML = renderChangelog();
@@ -5239,6 +5257,410 @@ function renderTunnel() {
   `;
 }
 
+/* ═════════ SIMULATEUR GOOGLE ADS ═════════
+   Mode "et si" : 5 sliders (clics capturés, CPC, prix vente, prix achat+liv,
+   taux de conversion) recalculent en live le CPA estimé, le CPA max viable,
+   la projection 30 jours (CA, coût pub, coût produits, frais 20%, profit net)
+   et une heatmap CPC × prix vente (5×5) qui matérialise la zone viable.
+   Pari produit : aucun SaaS ne propose de simuler "qu'est-ce qu'il faudrait
+   changer pour rendre ce produit viable ?" — c'est la décision business
+   chiffrée que cherche l'opérateur Google Ads. */
+
+const SIM_STATE_KEY = 'gads_sim_state_v1';
+const SIM_SCENARIOS_KEY = 'gads_sim_scenarios_v1';
+const SIM_DEFAULTS = {
+  vol_capt: 5000,    // clics / mois
+  cpc: 0.50,         // €
+  vente: 250,        // €
+  achat: 80,         // € (achat + livraison)
+  conv: 0.67,        // % (Arthur worst-case = 1 vente / 150 clics ≈ 0.67%)
+  pid: null,
+  source_name: null
+};
+const SIM_SLIDERS = [
+  { key: 'vol_capt', label: 'Clics capturés / mois', icon: 'cart', min: 100, max: 50000, step: 100, unit: 'clics', fmt: (v) => v.toLocaleString('fr-FR') },
+  { key: 'cpc',      label: 'CPC moyen',              icon: 'zap',  min: 0.10, max: 5.00, step: 0.05, unit: '€',     fmt: (v) => v.toFixed(2) },
+  { key: 'vente',    label: 'Prix de vente',          icon: 'trophy', min: 30, max: 800, step: 5, unit: '€',          fmt: (v) => v.toFixed(0) },
+  { key: 'achat',    label: 'Achat + livraison',      icon: 'cart', min: 5, max: 400, step: 1, unit: '€',             fmt: (v) => v.toFixed(0) },
+  { key: 'conv',     label: 'Taux de conversion',     icon: 'target', min: 0.30, max: 4.00, step: 0.05, unit: '%',    fmt: (v) => v.toFixed(2) }
+];
+
+function _simLoad() {
+  try {
+    const raw = localStorage.getItem(SIM_STATE_KEY);
+    if (!raw) return { ...SIM_DEFAULTS };
+    const o = JSON.parse(raw);
+    return { ...SIM_DEFAULTS, ...o };
+  } catch (e) { return { ...SIM_DEFAULTS }; }
+}
+function _simSave(s) {
+  try { localStorage.setItem(SIM_STATE_KEY, JSON.stringify(s)); } catch (e) {}
+}
+function _simScenariosLoad() {
+  try {
+    const raw = localStorage.getItem(SIM_SCENARIOS_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.slice(0, 6) : [];
+  } catch (e) { return []; }
+}
+function _simScenariosSave(arr) {
+  try { localStorage.setItem(SIM_SCENARIOS_KEY, JSON.stringify((arr || []).slice(0, 6))); } catch (e) {}
+}
+
+// Compute everything from a state
+function _simCompute(s) {
+  const conv = Math.max(0.001, s.conv / 100);
+  const margeBrute = s.vente - s.achat;
+  const ratioMarge = s.achat > 0 ? s.vente / s.achat : 0;
+  const cpaEst = s.cpc / conv;
+  const cpaMax = Math.max(0, margeBrute - s.vente * 0.20);
+  const headroom = cpaMax - cpaEst;
+  const viable = cpaEst < cpaMax && margeBrute > 0;
+  const conversions = s.vol_capt * conv;
+  const ca = conversions * s.vente;
+  const coutPub = s.vol_capt * s.cpc;
+  const coutProd = conversions * s.achat;
+  const fees = ca * 0.20;
+  const profit = ca - coutPub - coutProd - fees;
+  const profitPerSale = conversions > 0 ? profit / conversions : 0;
+  const roi = coutPub > 0 ? profit / coutPub : 0;
+  return { conv, margeBrute, ratioMarge, cpaEst, cpaMax, headroom, viable,
+    conversions, ca, coutPub, coutProd, fees, profit, profitPerSale, roi };
+}
+
+function _simVerdict(c, s) {
+  if (c.margeBrute <= 0) return { cls: 'is-bad', text: `Marge brute négative : prix d'achat ${s.achat}€ ≥ prix vente ${s.vente}€. Augmente le prix de vente ou trouve un fournisseur moins cher.` };
+  if (!c.viable) {
+    const deficit = -c.headroom;
+    return { cls: 'is-bad', text: `<strong>Non viable</strong> · CPA estimé ${c.cpaEst.toFixed(0)}€ > CPA max ${c.cpaMax.toFixed(0)}€ (déficit ${deficit.toFixed(0)}€/vente). Pour rééquilibrer : monter le prix de vente, baisser le CPC, ou améliorer le taux de conversion.` };
+  }
+  if (c.headroom < 20) return { cls: 'is-mid', text: `<strong>Marge limite</strong> · CPA viable mais headroom faible (+${c.headroom.toFixed(0)}€). Toute hausse de CPC ou baisse de conv te bascule en perte.` };
+  return { cls: 'is-good', text: `<strong>Viable</strong> · CPA estimé ${c.cpaEst.toFixed(0)}€ < CPA max ${c.cpaMax.toFixed(0)}€ (headroom +${c.headroom.toFixed(0)}€/vente). Profit projeté ${c.profit.toFixed(0)}€/mois sur ${c.conversions.toFixed(0)} ventes.` };
+}
+
+function simLoadFromProduct(pid) {
+  const p = state.products.find(x => x.id === pid);
+  if (!p) return;
+  const s = _simLoad();
+  const vol = _parseVolume(p.volume_mensuel);
+  const cpc = parseFloat(p.cpc);
+  const vente = parseFloat(p.prix_vente);
+  const achat = parseFloat(p.prix_achat) + (parseFloat(p.prix_livraison) || 0);
+  if (vol && vol > 0) s.vol_capt = Math.min(50000, Math.max(100, Math.round(vol * 0.02)));
+  if (cpc && cpc > 0) s.cpc = Math.min(5, Math.max(0.10, cpc));
+  if (vente && vente > 0) s.vente = Math.min(800, Math.max(30, vente));
+  if (achat && achat > 0) s.achat = Math.min(400, Math.max(5, achat));
+  s.pid = pid;
+  s.source_name = p.name;
+  _simSave(s);
+  go({ type: 'simulator' });
+}
+function simResetSource() {
+  const s = _simLoad();
+  s.pid = null;
+  s.source_name = null;
+  _simSave(s);
+  renderMain();
+}
+function simResetDefaults() {
+  _simSave({ ...SIM_DEFAULTS });
+  renderMain();
+}
+
+function simOnSlider(key, valStr) {
+  const s = _simLoad();
+  const v = parseFloat(valStr);
+  if (isNaN(v)) return;
+  s[key] = v;
+  _simSave(s);
+  _simRefreshOutputs();
+}
+function _simRefreshOutputs() {
+  const s = _simLoad();
+  const c = _simCompute(s);
+  SIM_SLIDERS.forEach(sl => {
+    const el = document.getElementById(`sim-val-${sl.key}`);
+    if (el) el.innerHTML = sl.fmt(s[sl.key]) + `<span class="sim-unit">${sl.unit}</span>`;
+  });
+  const kpiBox = document.getElementById('sim-kpis-out');
+  if (kpiBox) kpiBox.innerHTML = _simKpisHtml(c, s);
+  const verdictBox = document.getElementById('sim-verdict-out');
+  if (verdictBox) {
+    const v = _simVerdict(c, s);
+    verdictBox.className = `sim-verdict-bar ${v.cls}`;
+    verdictBox.innerHTML = `${ico('target', 16)}<div>${v.text}</div>`;
+  }
+  const wfBox = document.getElementById('sim-waterfall-out');
+  if (wfBox) wfBox.innerHTML = _simWaterfallHtml(c);
+  const heatBox = document.getElementById('sim-heatmap-out');
+  if (heatBox) heatBox.innerHTML = _simHeatmapHtml(s);
+  const calloutBox = document.getElementById('sim-callout-out');
+  if (calloutBox) calloutBox.innerHTML = _simCalloutHtml(c, s);
+}
+
+function _simKpisHtml(c, s) {
+  const eur = (n) => Math.round(n).toLocaleString('fr-FR');
+  const cpaCls = c.viable ? 'is-good' : 'is-bad';
+  const profitCls = c.profit > 0 ? 'is-good' : 'is-bad';
+  return `
+    <div class="sim-kpi is-hero ${profitCls}">
+      <div class="sim-kpi-lbl">Profit net / mois</div>
+      <div class="sim-kpi-val">${c.profit >= 0 ? '+' : ''}${eur(c.profit)}<span class="sim-unit">€</span></div>
+      <div class="sim-kpi-sub">${c.conversions.toFixed(1)} ventes · ROI pub ${(c.roi * 100).toFixed(0)}%</div>
+    </div>
+    <div class="sim-kpi ${cpaCls}">
+      <div class="sim-kpi-lbl">CPA estimé</div>
+      <div class="sim-kpi-val">${eur(c.cpaEst)}<span class="sim-unit">€</span></div>
+      <div class="sim-kpi-sub">CPC ${s.cpc.toFixed(2)}€ ÷ conv ${s.conv.toFixed(2)}%</div>
+    </div>
+    <div class="sim-kpi ${c.cpaMax > 0 ? 'is-good' : 'is-bad'}">
+      <div class="sim-kpi-lbl">CPA max viable</div>
+      <div class="sim-kpi-val">${eur(c.cpaMax)}<span class="sim-unit">€</span></div>
+      <div class="sim-kpi-sub">marge ${eur(c.margeBrute)}€ - 20% (TVA + Shopify)</div>
+    </div>
+    <div class="sim-kpi ${c.headroom > 0 ? 'is-good' : 'is-bad'}">
+      <div class="sim-kpi-lbl">Headroom CPA</div>
+      <div class="sim-kpi-val">${c.headroom >= 0 ? '+' : ''}${eur(c.headroom)}<span class="sim-unit">€</span></div>
+      <div class="sim-kpi-sub">CPA max - CPA estimé / vente</div>
+    </div>
+    <div class="sim-kpi ${c.ratioMarge >= 3 ? 'is-good' : (c.ratioMarge >= 2 ? 'is-mid' : 'is-bad')}">
+      <div class="sim-kpi-lbl">Ratio marge</div>
+      <div class="sim-kpi-val">×${c.ratioMarge.toFixed(2)}</div>
+      <div class="sim-kpi-sub">vente ÷ achat (Arthur ≥ ×3)</div>
+    </div>
+    <div class="sim-kpi">
+      <div class="sim-kpi-lbl">CA / mois</div>
+      <div class="sim-kpi-val">${eur(c.ca)}<span class="sim-unit">€</span></div>
+      <div class="sim-kpi-sub">${c.conversions.toFixed(1)} ventes × ${eur(s.vente)}€</div>
+    </div>
+  `;
+}
+
+function _simWaterfallHtml(c) {
+  const eur = (n) => Math.round(n).toLocaleString('fr-FR');
+  const segs = [];
+  if (c.coutPub > 0) segs.push({ cls: 'cost-pub', val: c.coutPub, lbl: `Pub ${eur(c.coutPub)}€` });
+  if (c.coutProd > 0) segs.push({ cls: 'cost-prod', val: c.coutProd, lbl: `Achat ${eur(c.coutProd)}€` });
+  if (c.fees > 0) segs.push({ cls: 'cost-fees', val: c.fees, lbl: `Frais ${eur(c.fees)}€` });
+  if (c.profit > 0) segs.push({ cls: 'profit', val: c.profit, lbl: `Profit +${eur(c.profit)}€` });
+  if (c.profit < 0) segs.push({ cls: 'loss', val: -c.profit, lbl: `Perte ${eur(c.profit)}€` });
+  const sum = segs.reduce((a, b) => a + b.val, 0);
+  const segsHtml = segs.map(seg => {
+    const pct = (seg.val / sum) * 100;
+    return `<div class="sim-wf-seg ${seg.cls}" style="width:${pct.toFixed(2)}%" title="${seg.lbl}">${pct >= 8 ? seg.lbl : ''}</div>`;
+  }).join('');
+  return `
+    <div class="sim-wf-bar">${segsHtml || '<div class="sim-wf-seg" style="width:100%;background:rgba(255,255,255,0.05);color:var(--text3)">CA = 0</div>'}</div>
+    <div class="sim-wf-legend">
+      <div class="sim-wf-legend-item"><span class="sim-wf-legend-dot" style="background:linear-gradient(135deg,#f87171,#fb923c)"></span>Pub</div>
+      <div class="sim-wf-legend-item"><span class="sim-wf-legend-dot" style="background:linear-gradient(135deg,#fb923c,#fbbf24)"></span>Achat produit</div>
+      <div class="sim-wf-legend-item"><span class="sim-wf-legend-dot" style="background:linear-gradient(135deg,#fbbf24,#facc15)"></span>Frais 20% (TVA + Shopify)</div>
+      <div class="sim-wf-legend-item"><span class="sim-wf-legend-dot" style="background:${c.profit >= 0 ? 'linear-gradient(135deg,#4ade80,#22d3ee)' : 'linear-gradient(135deg,#b91c1c,#7f1d1d)'}"></span>${c.profit >= 0 ? 'Profit net' : 'Perte'}</div>
+    </div>
+  `;
+}
+
+function _simHeatmapHtml(s) {
+  const cpcs = [
+    Math.max(0.10, s.cpc * 0.5),
+    Math.max(0.10, s.cpc * 0.75),
+    s.cpc,
+    Math.min(5, s.cpc * 1.25),
+    Math.min(5, s.cpc * 1.5)
+  ];
+  const ventes = [
+    Math.max(30, s.vente * 0.7),
+    Math.max(30, s.vente * 0.85),
+    s.vente,
+    Math.min(800, s.vente * 1.15),
+    Math.min(800, s.vente * 1.30)
+  ];
+  const cells = [];
+  for (let yi = 0; yi < 5; yi++) {
+    for (let xi = 0; xi < 5; xi++) {
+      const sim = { ...s, vente: ventes[yi], cpc: cpcs[xi] };
+      const cc = _simCompute(sim);
+      cells.push({ xi, yi, profit: cc.profit, viable: cc.viable, isCurrent: xi === 2 && yi === 2 });
+    }
+  }
+  const profits = cells.map(cc => cc.profit);
+  const maxAbs = Math.max(Math.abs(Math.min(...profits)), Math.max(...profits), 1);
+  function colorFor(profit) {
+    const t = Math.max(-1, Math.min(1, profit / maxAbs));
+    if (t >= 0) {
+      const g = Math.round(74 + (140 - 74) * t);
+      const r = Math.round(80 + (74 - 80) * t);
+      const b = Math.round(80 + (108 - 80) * t);
+      const alpha = 0.18 + Math.abs(t) * 0.55;
+      return `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(2)})`;
+    } else {
+      const r = Math.round(80 + (248 - 80) * (-t));
+      const g = Math.round(80 + (113 - 80) * (-t));
+      const b = Math.round(80 + (113 - 80) * (-t));
+      const alpha = 0.18 + Math.abs(t) * 0.55;
+      return `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(2)})`;
+    }
+  }
+  const eur = (n) => Math.round(n).toLocaleString('fr-FR');
+  let html = `
+    <div class="h-corner">CPC →<br>Prix ↓</div>
+    ${cpcs.map(cc => `<div class="h-axis-x">${cc.toFixed(2)}€</div>`).join('')}
+  `;
+  for (let yi = 0; yi < 5; yi++) {
+    html += `<div class="h-axis-y">${eur(ventes[yi])}€</div>`;
+    for (let xi = 0; xi < 5; xi++) {
+      const cell = cells.find(cc => cc.xi === xi && cc.yi === yi);
+      const sign = cell.profit >= 0 ? '+' : '';
+      html += `<div class="h-cell ${cell.isCurrent ? 'h-current' : ''}" style="background:${colorFor(cell.profit)};color:${cell.profit >= 0 ? '#86efac' : '#fca5a5'}" title="CPC ${cpcs[xi].toFixed(2)}€ × Vente ${eur(ventes[yi])}€ → profit ${eur(cell.profit)}€/mois">${sign}${eur(cell.profit)}€</div>`;
+    }
+  }
+  return `<div class="sim-heatmap">${html}</div>
+    <div class="sim-heatmap-caption">Profit net /mois selon CPC (axe X) et Prix vente (axe Y) — cellule blanche = scénario actuel</div>`;
+}
+
+function _simCalloutHtml(c, s) {
+  if (c.profit > 0 && c.viable) {
+    return `<div class="sim-callout"><strong>${ico('check', 13)} Tu gagnes ${Math.round(c.profit).toLocaleString('fr-FR')}€/mois</strong> sur ${c.conversions.toFixed(0)} ventes. Pour scaler : remonte le slider "Clics capturés" (= part de marché capturée) et observe l'effet sur le profit. Note : 2-5% d'un marché ${(s.vol_capt * 50).toLocaleString('fr-FR')}+ recherches est réaliste avec une bonne LP.</div>`;
+  }
+  if (c.margeBrute <= 0) {
+    return `<div class="sim-callout is-bad"><strong>${ico('warning', 13)} Marge brute négative</strong> — le produit ne peut pas être rentable. Augmente le prix de vente OU trouve un fournisseur moins cher avant de relancer le simulateur.</div>`;
+  }
+  const targetVente = Math.ceil(((c.cpaEst + s.achat) / 0.80) / 5) * 5;
+  const targetCpc = Math.max(0.10, (c.cpaMax * (s.conv / 100)) * 0.95);
+  const targetAchat = Math.max(5, Math.floor(s.vente * 0.80 - c.cpaEst));
+  return `<div class="sim-callout is-bad"><strong>${ico('warning', 13)} Non viable.</strong> Pour basculer en vert, 3 leviers possibles :
+    <ul style="margin:6px 0 0 0;padding-left:18px">
+      <li>Monter le <strong>prix de vente à ${targetVente}€</strong> (au lieu de ${s.vente}€)</li>
+      <li>OU baisser le <strong>CPC à ${targetCpc.toFixed(2)}€</strong> (mot-clé plus précis ou meilleur Quality Score)</li>
+      <li>OU sourcer à <strong>${targetAchat}€</strong> au lieu de ${s.achat}€ (achat + livraison)</li>
+    </ul></div>`;
+}
+
+function simSaveScenario() {
+  const s = _simLoad();
+  const c = _simCompute(s);
+  const arr = _simScenariosLoad();
+  const name = (s.source_name ? s.source_name.slice(0, 18) : 'Scénario') + ' · ' + new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  arr.unshift({
+    id: 'sc_' + Math.random().toString(36).slice(2, 9),
+    name,
+    state: { ...s },
+    profit: c.profit,
+    viable: c.viable,
+    saved: Date.now()
+  });
+  _simScenariosSave(arr);
+  renderMain();
+}
+function simLoadScenario(id) {
+  const arr = _simScenariosLoad();
+  const sc = arr.find(x => x.id === id);
+  if (!sc) return;
+  _simSave(sc.state);
+  renderMain();
+}
+function simDeleteScenario(id, ev) {
+  if (ev) ev.stopPropagation();
+  const arr = _simScenariosLoad().filter(x => x.id !== id);
+  _simScenariosSave(arr);
+  renderMain();
+}
+
+function renderSimulator() {
+  const s = _simLoad();
+  const c = _simCompute(s);
+  const v = _simVerdict(c, s);
+  const scenarios = _simScenariosLoad();
+  const eur = (n) => Math.round(n).toLocaleString('fr-FR');
+
+  const productOpts = state.products
+    .filter(p => parseFloat(p.cpc) || _parseVolume(p.volume_mensuel) || parseFloat(p.prix_vente))
+    .sort((a, b) => (b.status === 'kept' ? 1 : 0) - (a.status === 'kept' ? 1 : 0) || (b.created || 0) - (a.created || 0))
+    .slice(0, 50);
+
+  return `
+    <div class="sim-shell">
+      <div class="sim-hero">
+        <h1>${ico('sliders', 26)}Simulateur Google Ads<span class="sim-tag">Mode "et si"</span></h1>
+        <p>Joue avec les sliders pour répondre à la vraie question : <strong style="color:#67e8f9">qu'est-ce qu'il faut que je change pour que ce produit devienne viable sur Google Ads ?</strong> Le simulateur projette le profit net sur 30 jours, calcule le CPA viable et te dit exactement quel levier actionner.</p>
+      </div>
+
+      ${s.pid && s.source_name ? `
+        <div class="sim-source">
+          ${ico('check', 14)}<span class="sim-source-name">Chargé depuis : ${escapeHtml(s.source_name)}</span>
+          <span class="sim-source-meta">— modifie librement les sliders, l'original n'est pas touché</span>
+          <span class="sim-source-spacer"></span>
+          <button class="sim-btn" onclick="go({type:'product', id:'${s.pid}'})" style="padding:6px 12px;font-size:11.5px;background:transparent;border-color:rgba(139,92,246,0.30)">${ico('arrow-right', 12)} Voir le produit</button>
+          <button class="sim-btn" onclick="simResetSource()" style="padding:6px 12px;font-size:11.5px;background:transparent;border-color:rgba(248,113,113,0.30);color:#fca5a5">${ico('cross', 12)} Détacher</button>
+        </div>` : (productOpts.length ? `
+        <div class="sim-source">
+          ${ico('search', 14)}<span class="sim-source-name">Charger depuis un produit existant</span>
+          <span class="sim-source-spacer"></span>
+          <select onchange="if(this.value){simLoadFromProduct(this.value)}" style="background:rgba(0,0,0,0.30);color:var(--text);border:1px solid rgba(139,92,246,0.30);padding:6px 10px;border-radius:8px;font-size:12px;min-width:200px">
+            <option value="">— Choisis un produit —</option>
+            ${productOpts.map(p => `<option value="${p.id}">${escapeHtml(p.name || 'Sans nom').slice(0, 50)}${p.status === 'kept' ? ' (kept)' : ''}</option>`).join('')}
+          </select>
+        </div>` : '')}
+
+      <div class="sim-grid">
+        <div class="sim-card">
+          <h2><span class="sim-h-icon">${ico('sliders', 16)}</span>Leviers business</h2>
+          <div class="sim-sliders">
+            ${SIM_SLIDERS.map(sl => `
+              <div class="sim-slider">
+                <div class="sim-slider-label"><span class="sim-slider-icon">${ico(sl.icon, 13)}</span>${sl.label}</div>
+                <div class="sim-slider-value" id="sim-val-${sl.key}">${sl.fmt(s[sl.key])}<span class="sim-unit">${sl.unit}</span></div>
+                <input type="range" class="sim-slider-input" min="${sl.min}" max="${sl.max}" step="${sl.step}" value="${s[sl.key]}" oninput="simOnSlider('${sl.key}', this.value)">
+                <div class="sim-slider-marks"><span>${sl.fmt(sl.min)}${sl.unit}</span><span>${sl.fmt(sl.max)}${sl.unit}</span></div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="sim-actions">
+            <button class="sim-btn primary" onclick="simSaveScenario()">${ico('save', 13)} Sauvegarder ce scénario</button>
+            <button class="sim-btn" onclick="simResetDefaults()">${ico('refresh', 13)} Reset valeurs Arthur</button>
+          </div>
+          <div id="sim-callout-out">${_simCalloutHtml(c, s)}</div>
+        </div>
+
+        <div class="sim-card">
+          <h2><span class="sim-h-icon">${ico('chart', 16)}</span>Économie projetée — 30 jours</h2>
+          <div class="sim-kpis" id="sim-kpis-out">${_simKpisHtml(c, s)}</div>
+          <div id="sim-verdict-out" class="sim-verdict-bar ${v.cls}">${ico('target', 16)}<div>${v.text}</div></div>
+          <div class="sim-waterfall" id="sim-waterfall-out">${_simWaterfallHtml(c)}</div>
+        </div>
+      </div>
+
+      <div class="sim-card" style="margin-top:16px">
+        <h2><span class="sim-h-icon">${ico('chart', 16)}</span>Heatmap viabilité — CPC × Prix vente</h2>
+        <div class="sim-heatmap-wrap" id="sim-heatmap-out">${_simHeatmapHtml(s)}</div>
+      </div>
+
+      <div class="sim-card" style="margin-top:16px">
+        <h2><span class="sim-h-icon">${ico('save', 16)}</span>Scénarios sauvegardés <span style="margin-left:auto;font-size:10.5px;color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0">${scenarios.length}/6</span></h2>
+        ${scenarios.length === 0 ? `
+          <div class="sim-scenario-empty">Aucun scénario sauvegardé. Clique "Sauvegarder ce scénario" pour comparer plusieurs hypothèses.</div>
+        ` : `
+          <div class="sim-scenarios">
+            ${scenarios.map(sc => {
+              const pCls = sc.profit >= 0 ? 'is-good' : 'is-bad';
+              const pSign = sc.profit >= 0 ? '+' : '';
+              return `
+                <div class="sim-scenario-chip" onclick="simLoadScenario('${sc.id}')" title="Charger ce scénario">
+                  <div class="sim-scenario-chip-x" onclick="simDeleteScenario('${sc.id}', event)">×</div>
+                  <div class="sim-scenario-chip-name">${escapeHtml(sc.name)}</div>
+                  <div class="sim-scenario-chip-meta">${eur(sc.state.vente)}€ · CPC ${sc.state.cpc.toFixed(2)}€ · ${sc.state.conv.toFixed(2)}%</div>
+                  <div class="sim-scenario-chip-profit ${pCls}">${pSign}${eur(sc.profit)}€/mois</div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
 /* ═════════ PRODUCT VIEW ═════════ */
 let productTab = 'infos';
 function renderProduct(pid) {
@@ -5267,6 +5689,7 @@ function renderProduct(pid) {
         ? `<button class="btn btn-sm" onclick="duelRemove('${p.id}')" title="Retirer ce produit du duel en cours" style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(251,191,36,0.18),rgba(217,70,239,0.14));border-color:rgba(251,191,36,0.40);color:#fde68a">${ico('sword',13)}Dans le duel</button>`
         : `<button class="btn btn-sm" onclick="duelAddFromProduct('${p.id}')" title="Ajouter ce produit au duel en cours (${_duelGet().length}/${DUEL_MAX})" style="display:inline-flex;align-items:center;gap:6px">${ico('sword',13)}Ajouter au duel</button>`
       }
+      <button class="btn btn-sm" onclick="simLoadFromProduct('${p.id}')" title="Charger ce produit dans le Simulateur Google Ads" style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(34,211,238,0.16),rgba(139,92,246,0.12));border-color:rgba(34,211,238,0.40);color:#a5f3fc">${ico('sliders',13)}Simuler</button>
       <button class="btn btn-sm btn-primary" onclick="scanSerp('${p.id}')" ${window._scanning&&window._scanning[p.id]?'disabled':''}>${scanLabel}</button>
       <button class="btn btn-sm btn-danger" onclick="deleteProduct('${p.id}')" style="display:inline-flex;align-items:center;gap:6px;">${ico('trash',13)}Supprimer</button>
     </div>
@@ -7504,6 +7927,7 @@ function _cmdBuildRegistry() {
   cmds.push({ id:'nav.kept', cat:'Navigation', icon:'trophy', label:'Mes produits retenus', hint:`${keptProducts().length} validés au total`, kw:'kept retenus validés trophées', action:() => go({type:'kept'}) });
   cmds.push({ id:'nav.duel', cat:'Navigation', icon:'sword', label:'Duel Arthur', hint:`Compare 2-${DUEL_MAX} produits sur volume mot-clé / CPA${_duelGet().length ? ` · ${_duelGet().length} en lice` : ''}`, kw:'duel battle versus comparer compare arthur winner crown volume cpa google ads', action:() => go({type:'duel'}) });
   cmds.push({ id:'nav.tunnel', cat:'Navigation', icon:'target', label:'Tunnel Validation Arthur', hint:'Règles volume 15k + CPA = CPC×150 + niche', kw:'tunnel validation volume mot clé cpa cpc niche skool 15000 google ads regle arthur', action:() => go({type:'tunnel'}) });
+  cmds.push({ id:'nav.simulator', cat:'Navigation', icon:'sliders', label:'Simulateur Google Ads', hint:'Mode "et si" — projection 30j sur 5 leviers + heatmap viabilité', kw:'simulator simulateur sliders et si scenario projection profit cpa heatmap google ads what if', action:() => go({type:'simulator'}) });
   if (_duelGet().length) {
     cmds.push({ id:'act.duelClear', cat:'Actions', icon:'trash', label:'Vider le duel en cours', hint:`${_duelGet().length} combattants sélectionnés`, kw:'duel vider clear reset', action:() => duelClear() });
   }
