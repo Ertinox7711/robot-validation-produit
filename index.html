@@ -2669,6 +2669,366 @@ small.muted { color: var(--text3); font-size: 11px; }
   .duel-cards { grid-template-columns: 1fr; }
 }
 
+/* ═════════ DUEL — Tableau comparatif Google Ads-first (méthode Arthur) ═════════ */
+.duel-headers {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.duel-header-cell {
+  position: relative;
+  padding: 10px 12px 10px 16px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.10);
+  border-left: 4px solid var(--c);
+  border-radius: 10px;
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer; transition: background .15s, transform .12s;
+}
+.duel-header-cell:hover { background: rgba(255,255,255,0.06); transform: translateY(-1px); }
+.duel-header-cell.winner {
+  border-color: rgba(251,191,36,0.55);
+  border-left-color: var(--c);
+  background: linear-gradient(180deg, rgba(251,191,36,0.10), rgba(255,255,255,0.01));
+  box-shadow: 0 0 0 1px rgba(251,191,36,0.30);
+}
+.duel-header-cell .duel-header-name {
+  font-size: 13.5px; font-weight: 700; color: var(--text);
+  flex: 1; min-width: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.duel-header-cell .duel-header-niche {
+  font-size: 10.5px; color: var(--text3); font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.duel-header-cell .duel-header-crown {
+  color: #fbbf24;
+  filter: drop-shadow(0 0 6px rgba(251,191,36,0.7));
+  flex-shrink: 0;
+}
+.duel-header-cell .duel-header-remove {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: var(--text3);
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; opacity: 0.55; transition: opacity .15s;
+  flex-shrink: 0;
+}
+.duel-header-cell:hover .duel-header-remove { opacity: 1; }
+.duel-header-remove:hover { color: #f87171; border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.15); }
+
+.duel-table-wrap {
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.duel-table-section {
+  padding: 8px 12px 6px;
+  font-size: 10.5px; font-weight: 700;
+  color: #67e8f9;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  background: rgba(34,211,238,0.05);
+  border-top: 1px solid rgba(34,211,238,0.18);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.duel-table-section:first-child { border-top: none; }
+.duel-table-section.is-key { color: #fbbf24; background: rgba(251,191,36,0.06); border-top-color: rgba(251,191,36,0.18); }
+.duel-table-section.is-fin { color: #4ade80; background: rgba(74,222,128,0.05); border-top-color: rgba(74,222,128,0.15); }
+
+.duel-table {
+  display: grid;
+  width: 100%;
+}
+.duel-table-row {
+  display: grid;
+  align-items: stretch;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.duel-table-row:last-child { border-bottom: none; }
+.duel-table-row:hover { background: rgba(255,255,255,0.02); }
+.duel-table-label {
+  padding: 11px 14px;
+  font-size: 12px; color: var(--text2); font-weight: 600;
+  display: flex; align-items: center; gap: 8px;
+  border-right: 1px solid rgba(255,255,255,0.04);
+}
+.duel-table-label .lbl-help {
+  font-size: 10.5px; color: var(--text3); font-weight: 500;
+  margin-left: auto;
+}
+.duel-table-label.is-key { color: var(--text); font-weight: 700; }
+.duel-table-label.is-key::before {
+  content: '';
+  width: 4px; height: 14px; border-radius: 2px;
+  background: linear-gradient(180deg, #fbbf24, #f59e0b);
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+.duel-table-cell {
+  padding: 11px 14px;
+  font-size: 13px; font-weight: 600;
+  color: var(--text);
+  display: flex; align-items: center; gap: 6px;
+  border-right: 1px solid rgba(255,255,255,0.04);
+  font-variant-numeric: tabular-nums;
+}
+.duel-table-cell:last-child { border-right: none; }
+.duel-table-cell.empty { color: var(--text3); font-weight: 500; font-style: italic; font-size: 12px; }
+.duel-table-cell.is-good { color: #4ade80; background: rgba(74,222,128,0.07); }
+.duel-table-cell.is-mid { color: #fbbf24; background: rgba(251,191,36,0.07); }
+.duel-table-cell.is-bad { color: #f87171; background: rgba(248,113,113,0.07); }
+.duel-table-cell.winner-col { background: rgba(251,191,36,0.04); }
+.duel-table-cell.winner-col.is-good { background: rgba(74,222,128,0.10); }
+.duel-table-cell.winner-col.is-bad { background: rgba(248,113,113,0.10); }
+.duel-table-cell .pill-mini {
+  font-size: 9.5px; font-weight: 800; letter-spacing: 0.05em;
+  padding: 2px 6px; border-radius: 4px; text-transform: uppercase;
+  margin-left: auto;
+}
+.duel-table-cell .pill-mini.go { background: rgba(74,222,128,0.20); color: #4ade80; }
+.duel-table-cell .pill-mini.wait { background: rgba(251,191,36,0.20); color: #fbbf24; }
+.duel-table-cell .pill-mini.kill { background: rgba(248,113,113,0.20); color: #f87171; }
+
+.duel-keymetric-banner {
+  background: linear-gradient(135deg, rgba(34,211,238,0.10), rgba(139,92,246,0.06));
+  border: 1px solid rgba(34,211,238,0.25);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  font-size: 12.5px; color: var(--text2);
+}
+.duel-keymetric-banner strong { color: var(--text); font-weight: 700; }
+.duel-keymetric-banner .pill-rule {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 11px; border-radius: 999px;
+  background: rgba(251,191,36,0.15); color: #fbbf24;
+  border: 1px solid rgba(251,191,36,0.35);
+  font-weight: 700; font-size: 11.5px;
+}
+
+@media (max-width: 720px) {
+  .duel-table-wrap { overflow-x: auto; }
+  .duel-table-row { min-width: 520px; }
+}
+
+/* ═════════ TUNNEL VALIDATION ARTHUR — vue dédiée Volume + CPA + Niche ═════════ */
+.tv-shell { max-width: 1080px; margin: 0 auto; }
+.tv-hero {
+  background: linear-gradient(135deg, rgba(74,222,128,0.10), rgba(34,211,238,0.06) 50%, rgba(251,191,36,0.08));
+  border: 1px solid rgba(74,222,128,0.25);
+  border-radius: 16px;
+  padding: 22px 24px;
+  margin-bottom: 22px;
+  position: relative;
+  overflow: hidden;
+}
+.tv-hero h1 {
+  font-size: 24px; font-weight: 800; margin: 0 0 6px;
+  display: flex; align-items: center; gap: 12px;
+  color: var(--text);
+}
+.tv-hero h1 .tv-tag {
+  font-size: 10px; padding: 4px 10px; border-radius: 999px;
+  background: rgba(74,222,128,0.18); color: #4ade80;
+  border: 1px solid rgba(74,222,128,0.35);
+  font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase;
+}
+.tv-hero p { color: var(--text2); font-size: 13.5px; line-height: 1.6; margin: 0; max-width: 720px; }
+.tv-hero .tv-skool {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 12px; padding: 7px 13px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  color: var(--text); font-size: 12px; font-weight: 600;
+  text-decoration: none;
+}
+.tv-hero .tv-skool:hover { background: rgba(255,255,255,0.10); border-color: rgba(74,222,128,0.40); color: #4ade80; }
+
+.tv-rule-banner {
+  background: linear-gradient(135deg, rgba(248,113,113,0.10), rgba(251,191,36,0.06));
+  border: 2px solid rgba(248,113,113,0.40);
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 22px;
+  display: flex; align-items: center; gap: 14px;
+  font-size: 14px; color: var(--text);
+}
+.tv-rule-banner .tv-rule-num {
+  font-size: 24px; font-weight: 900;
+  color: #f87171;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  text-shadow: 0 0 12px rgba(248,113,113,0.5);
+}
+.tv-rule-banner strong { color: #fca5a5; }
+
+.tv-section {
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 20px 22px;
+  margin-bottom: 18px;
+}
+.tv-section h2 {
+  font-size: 17px; font-weight: 800; margin: 0 0 14px;
+  display: flex; align-items: center; gap: 10px;
+  color: var(--text);
+}
+.tv-section h2 .tv-h-icon { color: var(--accent2); display: inline-flex; }
+
+.tv-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.tv-tool {
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.08);
+  border-left: 4px solid var(--c, #4ade80);
+  border-radius: 10px;
+  padding: 14px 14px 12px;
+}
+.tv-tool h3 {
+  font-size: 14px; font-weight: 800; margin: 0 0 4px;
+  color: var(--text);
+}
+.tv-tool .tv-tool-num {
+  font-size: 10px; color: var(--text3); font-weight: 700;
+  letter-spacing: 0.08em; margin-bottom: 4px;
+}
+.tv-tool .tv-tool-tag {
+  display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 999px;
+  background: rgba(74,222,128,0.15); color: #4ade80;
+  font-weight: 700; margin-bottom: 8px;
+}
+.tv-tool ul { font-size: 12px; color: var(--text2); padding-left: 16px; margin: 6px 0; line-height: 1.55; }
+.tv-tool .tv-tool-how {
+  margin-top: 8px; padding-top: 8px;
+  border-top: 1px dashed rgba(255,255,255,0.10);
+  font-size: 11.5px; color: var(--text3); line-height: 1.6;
+}
+.tv-tool .tv-tool-how strong { color: var(--text); display: block; margin-bottom: 3px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+.tv-decision {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.tv-decision th, .tv-decision td {
+  padding: 10px 12px;
+  font-size: 13px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.tv-decision th {
+  background: rgba(255,255,255,0.04);
+  color: var(--text3);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+.tv-decision td.tv-volume { font-weight: 800; font-variant-numeric: tabular-nums; }
+.tv-decision tr.is-good td.tv-volume { color: #4ade80; }
+.tv-decision tr.is-mid td.tv-volume { color: #fbbf24; }
+.tv-decision tr.is-bad td.tv-volume { color: #f87171; }
+.tv-decision td.tv-status { font-weight: 800; font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; }
+.tv-decision tr.is-good td.tv-status { color: #4ade80; }
+.tv-decision tr.is-mid td.tv-status { color: #fbbf24; }
+.tv-decision tr.is-bad td.tv-status { color: #f87171; }
+.tv-decision td.tv-action { color: var(--text2); font-size: 12.5px; line-height: 1.5; }
+
+.tv-formula {
+  background: linear-gradient(135deg, rgba(251,191,36,0.10), rgba(217,70,239,0.06));
+  border: 2px solid rgba(251,191,36,0.40);
+  border-radius: 12px;
+  padding: 16px 20px;
+  text-align: center;
+  font-size: 18px; font-weight: 800;
+  color: #fde68a;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 12px;
+}
+.tv-formula .tv-formula-lbl { font-size: 10px; color: var(--text3); display: block; margin-bottom: 6px; letter-spacing: 0.10em; text-transform: uppercase; font-weight: 700; }
+.tv-formula-sub { font-size: 12px; color: var(--text3); text-align: center; line-height: 1.5; margin-bottom: 16px; }
+
+.tv-examples { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.tv-example {
+  padding: 11px 14px;
+  border-radius: 10px;
+  font-size: 13px; line-height: 1.5;
+  border-left: 4px solid var(--c);
+}
+.tv-example.is-good { background: rgba(74,222,128,0.07); border-left-color: #4ade80; color: var(--text); }
+.tv-example.is-bad { background: rgba(248,113,113,0.07); border-left-color: #f87171; color: var(--text); }
+.tv-example strong { color: var(--text); }
+.tv-example .tv-ex-verdict { font-weight: 800; }
+.tv-example.is-good .tv-ex-verdict { color: #4ade80; }
+.tv-example.is-bad .tv-ex-verdict { color: #f87171; }
+
+.tv-niche-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.tv-niche-card {
+  border-radius: 10px;
+  padding: 14px;
+  border: 1px solid var(--c);
+}
+.tv-niche-card.is-bad {
+  background: rgba(248,113,113,0.06);
+  border-color: rgba(248,113,113,0.30);
+}
+.tv-niche-card.is-good {
+  background: rgba(74,222,128,0.06);
+  border-color: rgba(74,222,128,0.30);
+}
+.tv-niche-card h4 {
+  font-size: 13px; font-weight: 800; margin: 0 0 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.tv-niche-card.is-bad h4 { color: #fca5a5; }
+.tv-niche-card.is-good h4 { color: #86efac; }
+.tv-niche-card ul { font-size: 12.5px; color: var(--text2); padding-left: 18px; margin: 0; line-height: 1.6; }
+
+.tv-niche-example {
+  display: grid; grid-template-columns: 140px 1fr 1fr; gap: 8px;
+  margin-top: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px; overflow: hidden;
+}
+.tv-niche-example > div { padding: 9px 12px; font-size: 12.5px; color: var(--text2); }
+.tv-niche-example .tv-niche-row-h { background: rgba(255,255,255,0.03); color: var(--text3); font-weight: 700; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; }
+.tv-niche-example .tv-niche-bad { background: rgba(248,113,113,0.04); color: #fca5a5; font-weight: 600; }
+.tv-niche-example .tv-niche-good { background: rgba(74,222,128,0.04); color: #86efac; font-weight: 600; }
+
+.tv-rule-or {
+  background: linear-gradient(135deg, rgba(251,191,36,0.10), rgba(74,222,128,0.06));
+  border: 2px solid rgba(251,191,36,0.50);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-top: 18px;
+  text-align: center;
+  font-size: 14px; font-weight: 700;
+  color: #fde68a;
+  line-height: 1.5;
+}
+.tv-rule-or strong { color: #fff; }
+
+@media (max-width: 720px) {
+  .tv-tools-grid { grid-template-columns: 1fr; }
+  .tv-niche-grid { grid-template-columns: 1fr; }
+  .tv-niche-example { grid-template-columns: 1fr; }
+}
+
 </style>
 </head>
 <body>
@@ -2705,7 +3065,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 
 <header>
   <button class="menu-toggle" aria-label="Ouvrir le menu" onclick="toggleSidebar()" title="Menu (sessions)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg></button>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.15.0-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.16.0-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -2980,7 +3340,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 const CRITERES = [
   { id: 1, titre: "Marge forte ++ (gads)", desc: "Prix vente ≥ 3× prix d'achat. Idéal ×4-×5. Tient compte du CPA Google Ads (gamme prix).", star: true },
   { id: 2, titre: "Concurrence présente", desc: "Google Ads + Shopify indé + reviews YouTube. Sans concurrence = pas de demande prouvée.", star: true },
-  { id: 3, titre: "Vérifier traffic / coût pub", desc: "Volume 1k-40k recherches/mois FR (Keyword Planner). Trop peu = mort. Trop = saturé." },
+  { id: 3, titre: "Vérifier traffic / coût pub", desc: "Volume mot-clé ≥ 15 000 recherches/mois FR (Keyword Planner). 5k-15k = OK seulement si produit ≥1500€. <5k = ABANDON. Calcule aussi CPA estimé = CPC × 150 < CPA max viable.", star: true },
   { id: 4, titre: "Précis ou niche", desc: "Pas 'un aspirateur' mais 'aspirateur voiture sans fil 12000Pa'. Variante précise d'un produit existant." },
   { id: 5, titre: "Éviter les institutionnels", desc: "Top 3 Google = Amazon, Fnac, Darty, Leroy Merlin, Cdiscount → jeter (saturé, tu peux pas te battre).", star: true },
   { id: 6, titre: "Faire une marque autour", desc: "Storytelling, nom de domaine dispo, positionnement unique. Pas un produit générique (câble USB)." },
@@ -3131,14 +3491,27 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.15.0-beta';
-const APP_VERSION_NOTES = 'DUEL ARTHUR — comparateur visuel multi-produits avec radar des 12 critères Arthur superposé. Nouvelle page sidebar entre Palmarès et Recherche auto, icône épée or. Sélecteur en chips (jusqu\'à 4 combattants) classés par status (kept en premier triés par score, puis pending, puis reject) avec pastille couleur signature et compteur 0-12. Arena : carte radar SVG centrale 520px avec 12 axes (un par critère Arthur, axes ★ en pointillés or), polygones superposés des combattants en violet/cyan/fuchsia/ambre avec drop-shadow glow, animation duelPolyDraw 0.8s avec stagger 120ms. Vertex dots colorés sur les critères validés. Verdict card automatique avec trophée or + nom du gagnant + texte argumenté chiffré (lead en points, critères ★ couverts, dominance sur les autres). Cartes combattants 220px : avatar gradient initiale, score 32px gradient, verdict pill (LANCER/ATTENDRE/JETER), prix/marge/validés/manqués + barre des 12 critères en mini-bars (vert/rouge/gris, hachuré or pour les ★). Crown SVG flottante au-dessus du winner avec animation duelCrownFloat 2.4s + halo or duelWinnerHalo. Section "Verdict argumenté de Claude" : Sonnet 4.6 reçoit la grille Arthur en système (cacheable) + les 2-4 candidats avec leurs scores/critères/prix/marges et retourne un JSON {winner_pid, why_winner, others:[{pid, why_not, advice}]}. Affichage card winner + mini-cards "pourquoi pas" + advice par concurrent + meta tokens cache. Bouton "Ajouter au duel" sur la page produit (toggle Dans le duel/Ajouter). Persistence localStorage des pids sélectionnés. Compteur dans le nav-item sidebar. Commande palette enrichie. Aucun concurrent SaaS de validation produit (Sell The Trend, Niche Scraper, Ecomhunt, Minea, Pipiads, Helium 10) ne propose un comparateur visuel multi-produits — encore moins avec un radar des critères propriétaires + un AI verdict argumenté.';
+const APP_VERSION = '0.16.0-beta';
+const APP_VERSION_NOTES = 'DUEL GOOGLE ADS-FIRST + TUNNEL VALIDATION ARTHUR — pivot complet du Duel : le radar visuel des 12 critères est REMPLACÉ par un tableau comparatif centré sur les vraies métriques Google Ads (volume mot-clé ≥ 15 000/mois, CPC, CPA estimé = CPC × 150, CPA max viable = marge brute - 20%, verdict CPA viable/non). Helpers : _parseVolume, _volumeStatus, calcCpaEstime, calcCpaMax, _cpaViability. Winner désigné selon hiérarchie Arthur (volume ≥15k > CPA viable > marge > niche > score), pas selon le score 12/12. Verdict adaptatif chiffré qui cite volume/CPA en clair. Bandeau "Règle Arthur n°1 / n°2" qui rappelle les 2 règles non-négociables. Inline verdict pill dans l\'onglet Infos produit (Marché valide/limité/trop petit + CPA viable/trop haut). Critère 3 (volume) marqué ★ et description alignée avec PDF (15 000 seuil au lieu de 1k-40k). Nouvelle vue sidebar "Tunnel Validation Arthur" qui importe le contenu des 2 PDFs (Validation Volume & Coût de Pub + Règle de la niche) avec lien direct Skool, 3 outils Keyword Planner/Semrush/SERanking, arbre de décision volume, formule CPA × exemples chiffrés, comparaison niche vs généraliste. Prompt système Claude duel pivoté : Google Ads-first explicite, hiérarchie volume→CPA→marge→niche→score, refus catégorique du visuel. SKILL.md du scheduled task ré-écrit pour biaiser les runs futurs vers Google Ads-intelligence et exclure les axes "Vision-Led UX / Visual Analytics gadgets / Moments de délice". Aucun SaaS dropshipping ne mesure la viabilité CPA Google Ads avec cette rigueur.';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.16.0-beta', date: '2026-04-27', time: '06:49', source: 'pivot google ads-first',
+    summary: 'PIVOT GOOGLE ADS-FIRST : Duel refondu sur volume mot-clé / CPA + nouvelle vue Tunnel Validation Arthur (PDFs importés)',
+    items: [
+      {type:'fix', text:'Pivot complet du Duel Arthur suite au feedback user : "on s\'en fou du visuel, on fait pas du drop avec Facebook ou TikTok de petit gadget, on utilise Google Ads et des vrais volumes". Le radar SVG des 12 critères est SUPPRIMÉ de l\'arena (le code reste dans la base mais n\'est plus appelé). Remplacé par un tableau comparatif vertical 3 sections (Google Ads · Économie produit · Méthode Arthur) avec colonnes par combattant et heatmap rouge/orange/vert sur chaque cellule selon les seuils Arthur.'},
+      {type:'feat', text:'Nouvelle métrique Google Ads dans l\'arena : Volume mot-clé /mois (≥15k vert · 5-15k orange · <5k rouge), Volume total univers, CPC moyen, CPA estimé (CPC × 150), CPA max viable (marge brute - 20% pour TVA + Shopify), Verdict CPA (viable +Xeur headroom OU trop haut -Xeur déficit). Helpers exposés globalement : _parseVolume, _volumeStatus, calcCpaEstime, calcCpaMax, _cpaViability — réutilisables par toutes les vues (Infos, Duel, Auto-Scorer).'},
+      {type:'feat', text:'Logique winner refondue selon hiérarchie Arthur Google Ads-first : volume ≥15k (priorité absolue) > CPA viable (gros bonus) > headroom CPA en € > score Arthur > ratio marge × > date kept. Le score 12/12 ne décide PAS si la viabilité Google Ads n\'est pas validée — un produit avec score 12 mais volume 2k perd contre un score 8 avec volume 25k et CPA viable. Verdict-card adaptatif qui cite explicitement le volume et le CPA en chiffres : "coche les 2 règles Arthur Google Ads : volume 28 000 ≥ 15 000 (marché valide) et CPA estimé 67€ < CPA max 110€ (headroom +43€)".'},
+      {type:'feat', text:'Bandeau Règle Arthur en tête de l\'arena : pill "Règle n°1 — Volume mot-clé ≥ 15 000/mois" + pill "Règle n°2 — CPA estimé (CPC × 150) < CPA max viable (marge brute - 20%)". Avertissement live "X/N sans volume, Y/N sans CPC — saisis-les" si données manquantes.'},
+      {type:'feat', text:'Nouvelle vue sidebar "Tunnel Validation Arthur" (entre Duel et Recherche auto, icône target verte, count "15k") qui importe DANS le SaaS le contenu des 2 PDFs Arthur. Sections : hero avec lien direct Skool (https://www.skool.com/ecom-inner-circle/classroom/2af915b9?md=5fd4a4919df94979b85c1b37da4832b1), bandeau rouge "15 000" volume minimum, 3 outils (Keyword Planner / Semrush / SERanking) avec avantages + comment utiliser, arbre de décision volume avec heatmap, formule CPA × 150 avec 2 exemples chiffrés (300€ marge 50% → CPA max 90€ vs 400€ marge 55% → CPA max 140€), règle de la niche (généraliste vs niche avec exemple "canapé" vs "canapé style japonais"), CTA "Lancer un duel". Référence interne permanente — la règle est devant les yeux, plus enterrée dans Drive.'},
+      {type:'feat', text:'Onglet Infos produit enrichi : section "Recherche & CPC" précédée d\'un bandeau verdict live qui affiche en temps réel "MARCHÉ VALIDE / LIMITÉ / TROP PETIT" selon le volume saisi + "CPA Xeur < Yeur" ou "CPA Xeur > Yeur" selon les chiffres saisis, avec lien rapide vers le Tunnel Validation. Hints des champs réécrits avec les seuils Arthur explicites en chiffres et couleurs.'},
+      {type:'feat', text:'Critère 3 "Vérifier traffic / coût pub" promu ★ NON-NÉGOCIABLE et description alignée avec PDF Arthur officiel : "Volume mot-clé ≥ 15 000 recherches/mois FR (Keyword Planner). 5k-15k = OK seulement si produit ≥1500€. <5k = ABANDON. Calcule aussi CPA estimé = CPC × 150 < CPA max viable." (Avant : "1k-40k" qui contredisait la méthode officielle.)'},
+      {type:'feat', text:'Prompt système Claude du Duel pivoté Google Ads-first : section "ON FAIT GOOGLE ADS, PAS META/TIKTOK" explicite, hiérarchie de jugement stricte (volume ≥15k > CPA viable > marge ×3 > niche précise > score Arthur > marge brute), exemples de why_winner CHIFFRÉS attendus, règle "le visuel/branding/storytelling NE COMPTE PAS pour ce verdict — on vend sur Google Search/Shopping, pas sur Instagram". Prompt utilisateur restructuré en 3 sections par produit : Google Ads (volume + status + CPC + CPA estimé + CPA max + verdict), Économie (vente/achat/marge avec status seuil ×3), Méthode Arthur (score + ★ manqués) — Claude voit clairement la priorité.'},
+      {type:'fix', text:'SKILL.md du scheduled task daily-improve-robot-validation ré-écrit : ajout "RÈGLE D\'OR PRODUIT — GOOGLE ADS, PAS META/TIKTOK" en tête, exclusion explicite des axes "VISION-LED UX pure / VISUAL ANALYTICS gadgets / MOMENTS DE DÉLICE pure gamification" (ils sont passés en section "❌ AXES À NE PLUS UTILISER"), nouveau axe #1 "GOOGLE ADS-INTELLIGENCE" qui pilote les futurs runs vers : détecteur généraliste, suggestion de variantes niches, calcul CPA live, comparateur de variantes, simulateur de campagne. Toute future feature doit répondre "Est-ce que ça aide à valider/infirmer un produit selon les chiffres Google Ads ?" — sinon poubelle.'},
+    ]},
   { v: '0.15.0-beta', date: '2026-04-27', time: '06:21', source: 'duel arthur',
     summary: 'DUEL ARTHUR — comparateur visuel multi-produits avec radar 12 axes superposé et verdict Claude argumenté',
     items: [
@@ -3419,6 +3792,10 @@ function renderSidebar() {
         <span class="icon" style="color:#fbbf24">${ico('sword',16)}</span><span>Duel Arthur</span>
         ${(_duelGet?.().length || 0) ? `<span class="count" style="background:linear-gradient(135deg,rgba(251,191,36,0.25),rgba(217,70,239,0.18));color:#fde68a;border:1px solid rgba(251,191,36,0.35)">${_duelGet().length}</span>` : ''}
       </div>
+      <div class="nav-item ${currentView.type==='tunnel'?'active':''}" onclick="go({type:'tunnel'})">
+        <span class="icon" style="color:#4ade80">${ico('target',16)}</span><span>Tunnel Validation</span>
+        <span class="count" style="background:rgba(74,222,128,0.18);color:#4ade80;border:1px solid rgba(74,222,128,0.35)">15k</span>
+      </div>
       <div class="nav-item" onclick="openDiscoverModal()" style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(217,70,239,0.06));border:1px solid rgba(139,92,246,0.25);">
         <span class="icon">${ico('search',16)}</span><span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:600">Recherche auto</span>
       </div>
@@ -3634,6 +4011,7 @@ function renderMain() {
   else if (currentView.type === 'kept') m.innerHTML = renderKept();
   else if (currentView.type === 'palmares') m.innerHTML = renderPalmares();
   else if (currentView.type === 'duel') m.innerHTML = renderDuel();
+  else if (currentView.type === 'tunnel') m.innerHTML = renderTunnel();
   else if (currentView.type === 'help') m.innerHTML = renderHelp();
   else if (currentView.type === 'formation') m.innerHTML = renderFormation(currentView.lesson);
   else if (currentView.type === 'changelog') m.innerHTML = renderChangelog();
@@ -4755,23 +5133,80 @@ function _duelInitial(name) {
   return s ? s[0].toUpperCase() : '?';
 }
 
-// Compute the winner: highest score → fewest star-criteria missed → highest margin → most recent kept
+// ── Méthode Arthur — Google Ads metrics ──
+// PDF "VALIDATION VOLUME & COUT DE PUB" : Volume mot-clé minimum 15 000/mois,
+// formule CPA estimé = CPC moyen × 150 clics (worst case 1 vente / 150 clics).
+// CPA max viable = marge brute - frais ~20% du prix vente (TVA + Shopify).
+function _parseVolume(v) {
+  if (v == null || v === '') return null;
+  const s = String(v).trim().toLowerCase().replace(/\s/g, '').replace(',', '.');
+  const m = s.match(/^([0-9.]+)\s*([km]?)/);
+  if (!m) return null;
+  let n = parseFloat(m[1]);
+  if (isNaN(n)) return null;
+  if (m[2] === 'k') n *= 1000;
+  if (m[2] === 'm') n *= 1000000;
+  return Math.round(n);
+}
+function _volumeStatus(vol) {
+  if (vol == null) return { cls:'empty', label:'?', verdict:'volume manquant' };
+  if (vol >= 15000) return { cls:'is-good', label:'MARCHÉ VALIDE', verdict:`${vol.toLocaleString('fr-FR')} ≥ 15 000` };
+  if (vol >= 5000)  return { cls:'is-mid',  label:'MARCHÉ LIMITÉ', verdict:`${vol.toLocaleString('fr-FR')} entre 5k et 15k — produit +1500€ uniquement` };
+  return { cls:'is-bad', label:'MARCHÉ TROP PETIT', verdict:`${vol.toLocaleString('fr-FR')} < 5 000 — abandon` };
+}
+function calcCpaEstime(p) {
+  const cpc = parseFloat(p.cpc);
+  if (!cpc || isNaN(cpc)) return null;
+  return cpc * 150;
+}
+// CPA max viable selon Arthur : marge brute - frais (~20% TTC = TVA + Shopify)
+// Vérifié sur les 2 exemples PDF :
+//   300€ vente, marge 50% (=150€) : CPA max = 150 - 60 = 90€ ✓
+//   400€ vente, marge 55% (=220€) : CPA max = 220 - 80 = 140€ ✓
+function calcCpaMax(p) {
+  const vente = parseFloat(p.prix_vente) || 0;
+  const achat = parseFloat(p.prix_achat) || 0;
+  const liv = parseFloat(p.prix_livraison) || 0;
+  if (!vente || !achat) return null;
+  const margeBrute = vente - achat - liv;
+  const frais = vente * 0.20;
+  return Math.max(0, margeBrute - frais);
+}
+function _cpaViability(p) {
+  const est = calcCpaEstime(p);
+  const max = calcCpaMax(p);
+  if (est == null || max == null) return { cls:'empty', label:'?', viable:null, est, max };
+  const viable = est < max;
+  const margin = max - est;
+  return { cls: viable ? 'is-good' : 'is-bad', label: viable ? 'CPA VIABLE' : 'CPA TROP HAUT', viable, est, max, margin };
+}
+
+// Winner = méthode Arthur Google Ads-first :
+// Pondération : volume ≥15k > CPA viable > marge gain > score Arthur > ratio marge
 function _duelComputeWinner(prods) {
   if (!prods.length) return null;
   const scored = prods.map(p => {
+    const vol = _parseVolume(p.volume_mensuel);
+    const volOk = vol != null && vol >= 15000;
+    const volMid = vol != null && vol >= 5000 && vol < 15000;
+    const cpa = _cpaViability(p);
     const score = calcScore(p);
-    const starMissed = CRITERES.filter(c => c.star && p.criteres && p.criteres[c.id] !== true).length;
     const m = calcMarge(p);
     const ratio = m ? m.ratio : 0;
     const ts = p.keptAt || p.created || 0;
-    return { p, score, starMissed, ratio, ts };
+    let rank = 0;
+    if (volOk) rank += 50000;
+    else if (volMid) rank += 10000;
+    if (cpa.viable === true) rank += 25000;
+    else if (cpa.viable === false) rank -= 5000;
+    if (cpa.margin != null) rank += Math.max(0, cpa.margin) * 30;   // headroom gagne
+    if (vol) rank += Math.min(vol / 50, 5000);                       // bonus volume capped
+    rank += score * 100;
+    rank += ratio * 50;
+    rank += ts / 1e10;
+    return { p, rank };
   });
-  scored.sort((a, b) => {
-    if (b.score !== a.score) return b.score - a.score;
-    if (a.starMissed !== b.starMissed) return a.starMissed - b.starMissed;
-    if (b.ratio !== a.ratio) return b.ratio - a.ratio;
-    return b.ts - a.ts;
-  });
+  scored.sort((a, b) => b.rank - a.rank);
   return scored[0].p;
 }
 
@@ -4890,38 +5325,205 @@ function _duelLegendHtml(prods) {
   }).join('')}</div>`;
 }
 
+// ── DUEL — Tableau comparatif Google Ads-first (méthode Arthur) ──
+// Remplace le radar visuel par le tableau qui compte vraiment pour Google Ads :
+// volume mot-clé, CPC, CPA estimé (CPC×150), CPA max viable, et verdict CPA.
+function _duelTable(prods, winnerPid) {
+  const cols = `200px repeat(${prods.length}, minmax(0, 1fr))`;
+  const fmtEur = v => v == null ? '—' : `${Math.round(v).toLocaleString('fr-FR')} €`;
+  const fmtEurDec = v => v == null ? '—' : `${v.toFixed(2).replace('.', ',')} €`;
+
+  // --- Header row : avatars / names / crown / remove ---
+  const headers = `
+    <div class="duel-headers" style="grid-template-columns:${cols}">
+      <div></div>
+      ${prods.map((p, i) => {
+        const color = DUEL_COLORS[i % DUEL_COLORS.length];
+        const isWinner = p.id === winnerPid;
+        const sess = findSession(p.sessionId);
+        return `
+          <div class="duel-header-cell ${isWinner ? 'winner' : ''}" style="--c:${color}" onclick="go({type:'product',id:'${p.id}'})">
+            ${isWinner ? `<span class="duel-header-crown" title="Winner du duel — méthode Arthur Google Ads">${ico('crown', 22)}</span>` : ''}
+            <div style="flex:1;min-width:0">
+              <div class="duel-header-name" title="${escapeHtml(p.name||'')}">${escapeHtml(p.name || 'Sans nom')}</div>
+              <div class="duel-header-niche">${p.niche ? escapeHtml(p.niche) : '—'}${sess ? ' · ' + escapeHtml((sess.label||'').slice(0,18)) : ''}</div>
+            </div>
+            <button class="duel-header-remove" title="Retirer du duel" onclick="event.stopPropagation();duelRemove('${p.id}')">${ico('cross', 11)}</button>
+          </div>`;
+      }).join('')}
+    </div>
+  `;
+
+  // --- Build a row helper ---
+  const row = (label, cells, opts={}) => {
+    const lblHelp = opts.help ? `<span class="lbl-help">${escapeHtml(opts.help)}</span>` : '';
+    const isKey = opts.key ? 'is-key' : '';
+    return `
+      <div class="duel-table-row" style="grid-template-columns:${cols}">
+        <div class="duel-table-label ${isKey}">${escapeHtml(label)}${lblHelp}</div>
+        ${cells.map((c, i) => {
+          const isWin = prods[i] && prods[i].id === winnerPid;
+          const cls = (c.cls || '') + (isWin ? ' winner-col' : '');
+          return `<div class="duel-table-cell ${cls} ${c.empty ? 'empty' : ''}" title="${escapeHtml(c.title || '')}">${c.html || c.text || '—'}</div>`;
+        }).join('')}
+      </div>`;
+  };
+
+  // ============== SECTION 1 — GOOGLE ADS (les métriques qui décident) ==============
+  const volRow = row('Volume mot-clé /mois', prods.map(p => {
+    const vol = _parseVolume(p.volume_mensuel);
+    const st = _volumeStatus(vol);
+    if (vol == null) return { empty:true, text:'—', title:'Champ Volume mensuel vide — onglet Infos' };
+    return {
+      cls: st.cls,
+      html: `<span>${vol.toLocaleString('fr-FR')}</span><span class="pill-mini ${vol >= 15000 ? 'go' : vol >= 5000 ? 'wait' : 'kill'}">${vol >= 15000 ? 'OK' : vol >= 5000 ? 'LIM' : 'BAS'}</span>`,
+      title: st.verdict
+    };
+  }), { key:true, help:'≥ 15 000' });
+
+  const volTotalRow = row('Volume total univers', prods.map(p => {
+    const v = _parseVolume(p.volume_total);
+    return v == null ? { empty:true } : { text: v.toLocaleString('fr-FR') };
+  }));
+
+  const cpcRow = row('CPC moyen Google Ads', prods.map(p => {
+    const cpc = parseFloat(p.cpc);
+    if (!cpc) return { empty:true };
+    const cls = cpc <= 0.5 ? 'is-good' : cpc <= 1.2 ? 'is-mid' : 'is-bad';
+    return { cls, text: fmtEurDec(cpc) };
+  }));
+
+  const cpaEstRow = row('CPA estimé (CPC × 150)', prods.map(p => {
+    const est = calcCpaEstime(p);
+    return est == null ? { empty:true } : { text: fmtEur(est), title:'Worst case Arthur : 1 vente pour 150 clics avant optimisation' };
+  }), { help:'worst case' });
+
+  const cpaMaxRow = row('CPA max viable', prods.map(p => {
+    const max = calcCpaMax(p);
+    return max == null ? { empty:true, title:'Renseigne prix achat + prix vente pour calculer' } : { text: fmtEur(max), title:'Marge brute - ~20% (TVA + Shopify) selon méthode Arthur' };
+  }), { help:'marge brute - 20%' });
+
+  const cpaVerdictRow = row('Verdict CPA', prods.map(p => {
+    const v = _cpaViability(p);
+    if (v.viable === null) return { empty:true };
+    if (v.viable) return { cls:'is-good', html:`<span>VIABLE</span><span class="pill-mini go">+${Math.round(v.margin)}€</span>`, title:`Marge headroom = ${Math.round(v.margin)}€` };
+    return { cls:'is-bad', html:`<span>TROP HAUT</span><span class="pill-mini kill">-${Math.round(-v.margin)}€</span>`, title:`Dépasse de ${Math.round(-v.margin)}€` };
+  }), { key:true });
+
+  // ============== SECTION 2 — ÉCONOMIE PRODUIT ==============
+  const venteRow = row('Prix vente TTC', prods.map(p => {
+    const v = parseFloat(p.prix_vente);
+    return !v ? { empty:true } : { text: fmtEurDec(v) };
+  }));
+  const achatRow = row('Prix achat + livraison', prods.map(p => {
+    const a = parseFloat(p.prix_achat) || 0;
+    const l = parseFloat(p.prix_livraison) || 0;
+    if (!a) return { empty:true };
+    return { text: fmtEurDec(a + l) };
+  }));
+  const margeRow = row('Marge brute /unité', prods.map(p => {
+    const v = parseFloat(p.prix_vente) || 0;
+    const a = parseFloat(p.prix_achat) || 0;
+    const l = parseFloat(p.prix_livraison) || 0;
+    if (!v || !a) return { empty:true };
+    const mb = v - a - l;
+    return { text: fmtEurDec(mb), cls: mb > 0 ? 'is-good' : 'is-bad' };
+  }));
+  const ratioRow = row('Ratio prix vente / achat', prods.map(p => {
+    const m = calcMarge(p);
+    if (!m || !m.ratio) return { empty:true };
+    const cls = m.ratio >= 4 ? 'is-good' : m.ratio >= 3 ? 'is-mid' : 'is-bad';
+    return { cls, text: '×' + m.ratio.toFixed(2), title:'Arthur : ×3 minimum, idéal ×4-×5' };
+  }), { help:'≥ ×3 (idéal ×4-×5)' });
+
+  // ============== SECTION 3 — CRITÈRES ARTHUR ==============
+  const scoreRow = row('Score Arthur', prods.map(p => {
+    const s = calcScore(p);
+    const cls = s >= 10 ? 'is-good' : s >= 8 ? 'is-mid' : 'is-bad';
+    return { cls, text: `${s}/12` };
+  }), { key:true });
+  const starRow = row('★ non-négociables manqués', prods.map(p => {
+    const missed = CRITERES.filter(c => c.star && p.criteres && p.criteres[c.id] !== true).length;
+    if (missed === 0) return { cls:'is-good', text:'0' };
+    return { cls: missed >= 2 ? 'is-bad' : 'is-mid', text:`${missed} manqué${missed>1?'s':''}` };
+  }));
+  const nicheRow = row('Précision niche', prods.map(p => {
+    const name = (p.name || '').toLowerCase().trim();
+    const niche = (p.niche || '').toLowerCase().trim();
+    // Heuristique : 1-2 mots = générique, 3+ mots ou présence chiffres/specs = niche précise
+    const wordCount = name ? name.split(/\s+/).length : 0;
+    const hasSpec = /\d|sans-fil|cordless|pliable|portable|électrique|bluetooth|usb|smart|connecté|étanche|waterproof|automatique|inox|bambou|japonais|scandinave|nordique|professionnel/i.test(name);
+    if (!name) return { empty:true };
+    if (wordCount >= 3 || hasSpec) return { cls:'is-good', text:'Niche', title:'Mot-clé précis = acheteur qualifié = CPA bas (PDF Arthur)' };
+    if (wordCount === 2) return { cls:'is-mid', text:'Mi-précis', title:'Encore trop large — précise une variante' };
+    return { cls:'is-bad', text:'Généraliste', title:'À éviter absolument — IKEA/Amazon prennent le top' };
+  }), { help:'précis = CPA bas' });
+
+  // ============== Build the table ==============
+  const table = `
+    <div class="duel-table-wrap">
+      <div class="duel-table-section is-key">Google Ads — la décision du marché</div>
+      <div class="duel-table">
+        ${volRow}
+        ${volTotalRow}
+        ${cpcRow}
+        ${cpaEstRow}
+        ${cpaMaxRow}
+        ${cpaVerdictRow}
+      </div>
+      <div class="duel-table-section is-fin">Économie produit</div>
+      <div class="duel-table">
+        ${venteRow}
+        ${achatRow}
+        ${margeRow}
+        ${ratioRow}
+      </div>
+      <div class="duel-table-section">Méthode Arthur — critères &amp; positionnement</div>
+      <div class="duel-table">
+        ${scoreRow}
+        ${starRow}
+        ${nicheRow}
+      </div>
+    </div>
+  `;
+
+  return headers + table;
+}
+
 function _duelVerdictCardHtml(prods, winner) {
   if (!winner) return '';
-  const winnerScore = calcScore(winner);
-  const others = prods.filter(p => p.id !== winner.id);
-  const otherMax = others.length ? Math.max(...others.map(p => calcScore(p))) : 0;
-  const lead = winnerScore - otherMax;
-  const winnerVerdict = _duelVerdict(winner);
-  const winnerStarMissed = CRITERES.filter(c => c.star && winner.criteres && winner.criteres[c.id] !== true).length;
+  const wVol = _parseVolume(winner.volume_mensuel);
+  const wCpa = _cpaViability(winner);
+  const wScore = calcScore(winner);
+  const wMarge = calcMarge(winner);
 
-  // Build a "domine sur N critères vs les autres" stat
-  const dominantCount = CRITERES.filter(c => {
-    const wOk = winner.criteres && winner.criteres[c.id] === true;
-    if (!wOk) return false;
-    return others.some(o => !o.criteres || o.criteres[c.id] !== true);
-  }).length;
+  const parts = [];
+  parts.push(`<strong>${escapeHtml(winner.name || 'Sans nom')}</strong>`);
 
-  let txt;
-  if (winnerVerdict.cls === 'go' && lead >= 2) {
-    txt = `<strong>${escapeHtml(winner.name || 'Sans nom')}</strong> domine ce duel avec <strong>${winnerScore}/12</strong> (avance de +${lead} points sur le suivant) et zéro critère ★ manqué. C'est ton candidat à lancer en premier.`;
-  } else if (winnerVerdict.cls === 'go') {
-    txt = `<strong>${escapeHtml(winner.name || 'Sans nom')}</strong> remporte le duel avec <strong>${winnerScore}/12</strong> et passe la grille Arthur. Bat les autres sur ${dominantCount} critère${dominantCount>1?'s':''}.`;
-  } else if (winnerVerdict.cls === 'wait') {
-    txt = `<strong>${escapeHtml(winner.name || 'Sans nom')}</strong> mène avec <strong>${winnerScore}/12</strong>${winnerStarMissed ? ` (${winnerStarMissed} ★ manqué${winnerStarMissed>1?'s':''})` : ''}. Verdict ATTENDRE — confirme les critères clés avant de lancer.`;
+  if (wVol == null && wCpa.viable === null) {
+    parts.push(`gagne par défaut — <strong>aucune métrique Google Ads renseignée</strong>. Va dans l'onglet Infos pour saisir au minimum le <strong>volume mensuel</strong> et le <strong>CPC moyen</strong>, puis relance le duel.`);
+  } else if (wVol != null && wVol >= 15000 && wCpa.viable === true) {
+    parts.push(`coche les <strong>2 règles Arthur Google Ads</strong> : volume <strong>${wVol.toLocaleString('fr-FR')}</strong> ≥ 15 000 (marché valide) et CPA estimé <strong>${Math.round(wCpa.est)}€</strong> < CPA max <strong>${Math.round(wCpa.max)}€</strong> (headroom +${Math.round(wCpa.margin)}€). C'est ton candidat à lancer en priorité.`);
+  } else if (wVol != null && wVol < 5000) {
+    parts.push(`gagne ce duel mais <strong style="color:#f87171">son volume mot-clé (${wVol.toLocaleString('fr-FR')}) est sous le seuil 5 000</strong>. Selon la règle Arthur : marché trop petit, on abandonne. Refais une session de recherche.`);
+  } else if (wVol != null && wVol < 15000) {
+    const venteOk = (parseFloat(winner.prix_vente) || 0) >= 1500;
+    parts.push(`gagne avec un volume <strong style="color:#fbbf24">${wVol.toLocaleString('fr-FR')}</strong> (entre 5k et 15k = marché limité). Selon Arthur, à ne lancer que sur produit ≥ 1 500€${venteOk ? ' — <strong>OK ici</strong>.' : ' — <strong style="color:#f87171">prix vente insuffisant</strong>, abandonne ou demande à Arthur.'}`);
+  } else if (wCpa.viable === false) {
+    parts.push(`mène le duel mais <strong style="color:#f87171">son CPA estimé ${Math.round(wCpa.est)}€ dépasse son CPA max viable ${Math.round(wCpa.max)}€</strong> (déficit ${Math.round(-wCpa.margin)}€). Revoir le prix d'achat ou augmenter le prix de vente avant de lancer.`);
+  } else if (wVol != null && wVol >= 15000) {
+    parts.push(`a un volume valide (${wVol.toLocaleString('fr-FR')} ≥ 15 000) mais le CPA reste à valider — saisis le CPC pour confirmer la viabilité avant de lancer.`);
   } else {
-    txt = `<strong>${escapeHtml(winner.name || 'Sans nom')}</strong> est le moins pire du duel avec <strong>${winnerScore}/12</strong>. Aucun candidat ne passe la grille Arthur — relance une session de recherche avant d'investir.`;
+    parts.push(`mène le duel avec <strong>${wScore}/12</strong>${wMarge && wMarge.ratio ? ` et marge ×${wMarge.ratio.toFixed(2)}` : ''}, mais sans volume mot-clé renseigné on ne peut pas valider la règle Arthur des 15 000 recherches/mois. Saisis le volume pour trancher.`);
   }
+
+  const txt = parts.join(' ');
 
   return `
     <div class="duel-verdict-card">
       <div class="duel-verdict-trophy">${ico('trophy', 26)}</div>
       <div class="duel-verdict-meta">
-        <div class="duel-verdict-title">Verdict du duel</div>
+        <div class="duel-verdict-title">Verdict Google Ads — méthode Arthur</div>
         <div class="duel-verdict-name">${escapeHtml(winner.name || 'Sans nom')}</div>
         <div class="duel-verdict-text">${txt}</div>
       </div>
@@ -5006,63 +5608,104 @@ function _duelClaudeResultHtml(prods, r) {
 }
 
 function _duelBuildSystemPrompt() {
-  const critList = CRITERES.map(c =>
-    `${c.id}. ${c.titre}${c.star ? ' [★ NON-NÉGOCIABLE]' : ''} — ${c.desc}`
-  ).join('\n');
-  return `Tu es Arthur, expert français du dropshipping Google Ads (Ecom Inner Circle). On te soumet 2 à 4 produits candidats déjà scorés par leur propriétaire selon la grille Arthur des 12 critères. Ton job : juger ce duel et désigner LE produit à lancer en priorité, en argumentant comme un mentor.
+  return `Tu es Arthur, expert français du dropshipping Google Ads (Ecom Inner Circle). On te soumet 2 à 4 produits candidats à comparer. Ton job : désigner LE produit à lancer en priorité selon la **méthode Arthur Google Ads-first**, pas selon des critères "wow" ou visuels.
 
-══ LA GRILLE ARTHUR (12 critères) ══
-${critList}
+══ ON FAIT GOOGLE ADS, PAS META/TIKTOK ══
+On capte une intention d'achat existante via Google Search/Shopping. On ne crée pas la demande avec des vidéos virales. Ce qui compte : volume mot-clé, CPC, CPA viable. Le visuel est secondaire — un faux mur en pierre "boring" se vend mieux qu'un gadget "wow" parce qu'il y a une intention de recherche derrière.
+
+══ RÈGLES NON-NÉGOCIABLES (PDF "Validation Volume & Coût de Pub") ══
+1. **Volume mot-clé minimum : 15 000 recherches/mois** sur le mot-clé principal (Keyword Planner / Semrush / SERanking).
+   - ≥ 15 000 → marché valide, on peut lancer
+   - 5 000 - 15 000 → marché limité, OK seulement si produit ≥ 1 500€, sinon abandon
+   - < 5 000 → marché trop petit, ABANDON
+2. **CPA estimé = CPC moyen × 150 clics** (worst case : 1 vente pour 150 clics avant optimisation).
+3. **CPA max viable = marge brute - (prix vente × 20%)** (les 20% absorbent TVA + Shopify ~3.5%).
+   Exemples PDF : prix 300€ marge 50% → CPA max 90€ ; prix 400€ marge 55% → CPA max 140€.
+4. Si **CPA estimé > CPA max** → le produit n'est PAS viable, peu importe son score Arthur. Revoir prix d'achat ou prix vente.
+5. **Marge brute ≥ ×3** prix d'achat+livraison (idéal ×4-×5).
+6. **Niche précise > généraliste** : "canapé" perd, "canapé style japonais" gagne. Mot-clé précis = acheteur qualifié = CPA bas.
 
 ══ TON TRAVAIL ══
-1. Analyser chaque produit selon : son score (nombre de critères validés), ses critères ★ non-négociables manqués, son prix de vente / sa marge, sa niche, et toute autre donnée fournie.
-2. Désigner UN SEUL gagnant — le produit à lancer en priorité. C'est généralement le score le plus haut, mais une marge supérieure ou la couverture des critères ★ peut renverser un duel serré.
-3. Justifier "why_winner" en 2-3 phrases concrètes et chiffrées (cite le score, la marge, les critères clés).
-4. Pour chaque autre produit, expliquer "why_not" (ce qui le pénalise face au winner) et donner 1 "advice" actionnable pour le remettre en course (ex : "Confirme le volume mensuel sur Keyword Planner avant de relancer").
+1. Pour CHAQUE candidat, juger les 6 règles ci-dessus dans cet ordre de priorité STRICT :
+   a) volume_ok (≥15k OU 5-15k+prix>1500€) → si NON, le produit est éliminé sauf si tous le sont
+   b) cpa_viable (CPA estimé < CPA max) → si NON, lever drapeau rouge
+   c) ratio marge × ≥ 3
+   d) précision niche (généraliste = pénalité)
+   e) score Arthur 12/12 (tie-break)
+   f) marge brute en € (tie-break)
+2. Désigner UN SEUL gagnant : celui qui passe le plus haut dans cette hiérarchie. Le score Arthur ne décide PAS si volume/CPA n'est pas validé.
+3. **why_winner** : 2-3 phrases concrètes et CHIFFRÉES citant volume + CPA estimé + CPA max + headroom. Ex : "Volume 28k ≥ 15k ✓, CPC 0.45€ → CPA estimé 67€ < CPA max 110€ (headroom +43€). Marge ×4.2 confortable."
+4. Pour chaque autre produit, **why_not** chiffré sur la règle bloquante (volume sous seuil, CPA en déficit, marge insuffisante) + **advice** actionnable. Ex : "Volume 8k entre 5k et 15k → produit doit passer 1500€ ; advice : remonte le prix vente à 1690€ pour valider la zone."
 
 ══ FORMAT DE SORTIE — JSON STRICT ══
 {
   "winner_pid": "<pid exact du produit gagnant>",
-  "why_winner": "2-3 phrases en français, concrètes et chiffrées.",
+  "why_winner": "2-3 phrases CHIFFRÉES sur volume + CPA + marge.",
   "others": [
-    { "pid": "<pid>", "why_not": "1-2 phrases.", "advice": "1 phrase actionnable." }
+    { "pid": "<pid>", "why_not": "1-2 phrases citant la règle bloquante avec chiffres.", "advice": "1 phrase actionnable." }
   ]
 }
 
-══ RÈGLES STRICTES ══
+══ RÈGLES STRICTES DU FORMAT ══
 - TOUJOURS répondre en JSON valide pur. Pas de markdown, pas de \`\`\`json, pas de prose autour.
 - Le pid doit correspondre exactement à un pid fourni en entrée.
-- Français direct, jamais pédagogique. Tu es un copilote, pas un cours.
-- Si tous les produits sont mauvais (score < 8), désigne quand même le moins pire en gagnant et dis dans why_winner que c'est un duel à refaire.`;
+- Français direct, jamais pédagogique. Tu es un copilote Google Ads, pas un cours.
+- Si AUCUN candidat n'a de volume renseigné, dis-le franchement dans why_winner : "Aucun candidat avec volume mot-clé renseigné — impossible de valider la règle Arthur des 15 000. Va dans Keyword Planner avant de revenir."
+- Le visuel, le branding, le storytelling NE COMPTENT PAS pour ce verdict. On vend sur Google Search/Shopping, pas sur Instagram.`;
 }
 
 function _duelBuildUserMessage(prods) {
-  const lines = [`# Duel à juger : ${prods.length} produits candidats\n`];
+  const lines = [`# Duel à juger : ${prods.length} produits candidats Google Ads\n`];
   prods.forEach((p, i) => {
     const score = calcScore(p);
     const m = calcMarge(p);
-    const validated = CRITERES.filter(c => p.criteres && p.criteres[c.id] === true).map(c => c.id);
-    const missed = CRITERES.filter(c => p.criteres && p.criteres[c.id] === false).map(c => c.id);
+    const vol = _parseVolume(p.volume_mensuel);
+    const cpaEst = calcCpaEstime(p);
+    const cpaMax = calcCpaMax(p);
+    const cpaHeadroom = (cpaEst != null && cpaMax != null) ? (cpaMax - cpaEst) : null;
     const starMissed = CRITERES.filter(c => c.star && p.criteres && p.criteres[c.id] !== true).map(c => c.id);
+    const validated = CRITERES.filter(c => p.criteres && p.criteres[c.id] === true).map(c => c.id);
+
     lines.push(`## Combattant #${i+1} — pid="${p.id}"`);
     if (p.name) lines.push(`- Nom : ${p.name}`);
     if (p.niche) lines.push(`- Niche : ${p.niche}`);
-    if (p.source) lines.push(`- Source découverte : ${p.source}`);
-    lines.push(`- Score Arthur : ${score}/12`);
-    lines.push(`- Critères validés (true) : [${validated.join(', ') || 'aucun'}]`);
-    lines.push(`- Critères manqués (false) : [${missed.join(', ') || 'aucun'}]`);
-    lines.push(`- Critères ★ non-négociables manqués ou inconnus : [${starMissed.join(', ') || 'aucun'}]`);
+
+    // === MÉTRIQUES GOOGLE ADS — ce qui décide ===
+    lines.push(`### Google Ads (les chiffres qui décident)`);
+    if (vol != null) {
+      const status = vol >= 15000 ? 'MARCHÉ VALIDE (≥15k)' : vol >= 5000 ? 'MARCHÉ LIMITÉ (5-15k, OK si prix≥1500€)' : 'MARCHÉ TROP PETIT (<5k, ABANDON)';
+      lines.push(`- Volume mensuel mot-clé : ${vol.toLocaleString('fr-FR')} → ${status}`);
+    } else {
+      lines.push(`- Volume mensuel mot-clé : NON RENSEIGNÉ (impossible de valider règle des 15 000)`);
+    }
+    if (p.volume_total) lines.push(`- Volume total univers (somme mots-clés liés) : ${p.volume_total}`);
+    if (p.cpc) lines.push(`- CPC moyen Google Ads : ${p.cpc}€`);
+    if (cpaEst != null) lines.push(`- CPA estimé (CPC × 150) : ${Math.round(cpaEst)}€`);
+    if (cpaMax != null) lines.push(`- CPA max viable (marge brute - 20%) : ${Math.round(cpaMax)}€`);
+    if (cpaHeadroom != null) {
+      const ok = cpaHeadroom > 0;
+      lines.push(`- Verdict CPA : ${ok ? 'VIABLE' : 'TROP HAUT'} (${ok ? 'headroom +' : 'déficit '}${Math.round(Math.abs(cpaHeadroom))}€)`);
+    }
+
+    // === ÉCONOMIE PRODUIT ===
+    lines.push(`### Économie`);
+    if (p.prix_vente) lines.push(`- Prix vente TTC : ${p.prix_vente}€`);
     if (p.prix_achat) lines.push(`- Prix achat : ${p.prix_achat}€`);
     if (p.prix_livraison) lines.push(`- Livraison : ${p.prix_livraison}€/u`);
-    if (p.prix_vente) lines.push(`- Prix vente TTC : ${p.prix_vente}€`);
-    if (m && m.ratio) lines.push(`- Ratio marge (vente / [achat+liv]) : ×${m.ratio.toFixed(2)}`);
-    if (m && m.roas) lines.push(`- ROAS estimé : ${m.roas.toFixed(2)}`);
-    if (p.volume_mensuel) lines.push(`- Volume mensuel mot-clé : ${p.volume_mensuel}`);
-    if (p.cpc) lines.push(`- CPC moyen : ${p.cpc}€`);
-    if (p.notes) lines.push(`- Notes : ${p.notes.slice(0, 280)}`);
+    if (m && m.ratio) {
+      const margeStatus = m.ratio >= 4 ? 'OK idéal ≥×4' : m.ratio >= 3 ? 'OK seuil ×3' : 'INSUFFISANT (<×3)';
+      lines.push(`- Ratio marge prix vente / (achat+livraison) : ×${m.ratio.toFixed(2)} → ${margeStatus}`);
+    }
+    if (m && m.margeBrute != null) lines.push(`- Marge brute /unité : ${m.margeBrute.toFixed(2)}€`);
+
+    // === MÉTHODE ARTHUR (contexte secondaire) ===
+    lines.push(`### Score Arthur (contexte secondaire)`);
+    lines.push(`- Score : ${score}/12 (validés : [${validated.join(', ') || 'aucun'}])`);
+    lines.push(`- Critères ★ non-négociables manqués ou inconnus : [${starMissed.join(', ') || 'aucun'}]`);
+    if (p.notes) lines.push(`- Notes : ${p.notes.slice(0, 240)}`);
     lines.push('');
   });
-  lines.push(`Juge ce duel et retourne le JSON.`);
+  lines.push(`Juge ce duel selon la méthode Arthur Google Ads-first (volume ≥15k > CPA viable > marge > niche > score) et retourne le JSON.`);
   return lines.join('\n');
 }
 
@@ -5170,18 +5813,20 @@ function renderDuel() {
   } else {
     const winner = _duelComputeWinner(selectedProds);
     const winnerPid = winner ? winner.id : null;
+    // Quick stats for the rules banner
+    const withVol = selectedProds.filter(p => _parseVolume(p.volume_mensuel) != null).length;
+    const withCpc = selectedProds.filter(p => parseFloat(p.cpc) > 0).length;
     arenaHtml = `
       <div id="duelArena" class="duel-arena">
-        <div class="duel-radar-card">
-          <h3><span style="color:var(--accent2);display:inline-flex">${ico('target', 16)}</span>Radar superposé · les 12 critères Arthur</h3>
-          <div class="duel-radar-sub">Plus le polygone d'un combattant est ample, plus il valide de critères. Les axes ★ sont en pointillés or — un produit qui s'effondre dessus est éliminé.</div>
-          <div class="duel-radar-wrap">${_duelRadarSvg(selectedProds)}</div>
-          ${_duelLegendHtml(selectedProds)}
+        <div class="duel-keymetric-banner">
+          <span class="pill-rule">Règle Arthur n°1</span>
+          <span><strong>Volume mot-clé ≥ 15 000/mois</strong> sur le mot-clé principal — sinon le marché est trop petit.</span>
+          <span class="pill-rule" style="background:rgba(74,222,128,0.15);color:#4ade80;border-color:rgba(74,222,128,0.35)">Règle n°2</span>
+          <span><strong>CPA estimé (CPC × 150) &lt; CPA max viable</strong> (marge brute - 20%) — sinon la pub coûte plus que la marge.</span>
+          ${(withVol < selectedProds.length || withCpc < selectedProds.length) ? `<span style="color:#fbbf24;font-weight:700">⚠ ${selectedProds.length - withVol}/${selectedProds.length} sans volume, ${selectedProds.length - withCpc}/${selectedProds.length} sans CPC — saisis-les dans l'onglet Infos</span>` : ''}
         </div>
         ${_duelVerdictCardHtml(selectedProds, winner)}
-        <div class="duel-cards">
-          ${selectedProds.map((p, i) => _duelCardHtml(p, i, winnerPid)).join('')}
-        </div>
+        ${_duelTable(selectedProds, winnerPid)}
         ${_duelClaudeSectionHtml(selectedProds)}
       </div>
     `;
@@ -5195,6 +5840,176 @@ function renderDuel() {
       </div>
       ${selectorCard}
       ${arenaHtml}
+    </div>
+  `;
+}
+
+/* ═════════ TUNNEL VALIDATION ARTHUR ═════════
+   Vue dédiée qui importe DANS le SaaS le contenu des 2 PDFs Arthur :
+   - "Validation Volume & Coût de Pub" (volume ≥15k, formule CPA = CPC × 150)
+   - "Recherche Produit — La Règle de la Niche" (jamais généraliste)
+   + lien direct vers la section Skool source.
+   Référence permanente accessible depuis la sidebar — la règle est devant
+   les yeux du chercheur produit, plus enterrée dans Drive. */
+const TUNNEL_SKOOL_URL = 'https://www.skool.com/ecom-inner-circle/classroom/2af915b9?md=5fd4a4919df94979b85c1b37da4832b1';
+
+function renderTunnel() {
+  return `
+    <div class="tv-shell">
+      <div class="tv-hero">
+        <h1>${ico('target', 26)}Tunnel Validation Arthur<span class="tv-tag">Méthode Google Ads</span></h1>
+        <p>La référence interne sur les 2 règles non-négociables de la méthode Arthur avant de lancer un produit sur Google Ads : <strong>volume mot-clé ≥ 15 000 recherches/mois</strong> et <strong>CPA estimé &lt; CPA max viable</strong>. Sans ces 2 cases cochées, le marché est trop petit ou la pub coûte plus que la marge.</p>
+        <a class="tv-skool" href="${TUNNEL_SKOOL_URL}" target="_blank" rel="noopener">${ico('graduation', 14)} Section Skool source — Tunnel validation produit ${ico('arrow-right', 12)}</a>
+      </div>
+
+      <div class="tv-rule-banner">
+        <span class="tv-rule-num">15 000</span>
+        <div>
+          <strong>Volume minimum : 15 000 recherches/mois sur ton mot-clé principal.</strong><br>
+          En dessous, on abandonne le produit. Exception : produit ≥ 1 500€ avec volume 5 000-15 000 — demander à Arthur.
+        </div>
+      </div>
+
+      <div class="tv-section">
+        <h2><span class="tv-h-icon">${ico('search', 18)}</span>Les 3 outils pour valider ton volume</h2>
+        <div class="tv-tools-grid">
+          <div class="tv-tool" style="--c:#4ade80">
+            <div class="tv-tool-num">01</div>
+            <h3>Google Ads Keyword Planner</h3>
+            <span class="tv-tool-tag">Gratuit · compte Google Ads requis</span>
+            <ul>
+              <li>Volumes <strong>directement issus de Google Ads</strong></li>
+              <li>Affiche le CPC moyen réel du marché</li>
+              <li>Source la plus fiable pour Google Ads</li>
+              <li>Données 100% alignées avec ta future campagne</li>
+            </ul>
+            <div class="tv-tool-how">
+              <strong>Comment l'utiliser</strong>
+              Google Ads → Outils → Keyword Planner → Découvrir mots-clés ou Obtenir le volume → regarde Volume mensuel + CPC suggéré.
+            </div>
+          </div>
+          <div class="tv-tool" style="--c:#22d3ee">
+            <div class="tv-tool-num">02</div>
+            <h3>Semrush</h3>
+            <span class="tv-tool-tag" style="background:rgba(34,211,238,0.15);color:#67e8f9">Gratuit · essai disponible</span>
+            <ul>
+              <li>Vue complète du marché en quelques secondes</li>
+              <li>Analyse des concurrents qui font de la Search</li>
+              <li>Mots-clés connexes et variantes de ta niche</li>
+              <li>Tendances mensuelles et saisonnalité</li>
+            </ul>
+            <div class="tv-tool-how">
+              <strong>Comment l'utiliser</strong>
+              Keyword Overview → tape ton mot-clé → Volume mensuel + CPC moyen. Bonus : qui fait des pubs sur ce mot-clé.
+            </div>
+          </div>
+          <div class="tv-tool" style="--c:#fbbf24">
+            <div class="tv-tool-num">03</div>
+            <h3>SE Ranking</h3>
+            <span class="tv-tool-tag" style="background:rgba(251,191,36,0.15);color:#fbbf24">Gratuit · essai disponible</span>
+            <ul>
+              <li>Interface claire et très intuitive</li>
+              <li>Volume et CPC en un coup d'œil</li>
+              <li>Recherche de variantes rapide</li>
+              <li>Bon complément à Semrush</li>
+            </ul>
+            <div class="tv-tool-how">
+              <strong>Comment l'utiliser</strong>
+              Recherche de mots-clés → tape ton mot-clé → colonne Volume + colonne CPC. Exporte si besoin.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tv-section">
+        <h2><span class="tv-h-icon">${ico('chart', 18)}</span>Arbre de décision — volume de recherche</h2>
+        <table class="tv-decision">
+          <thead><tr><th>Volume mensuel</th><th>Statut</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr class="is-good"><td class="tv-volume">&gt; 15 000 rech/mois</td><td class="tv-status">Marché valide</td><td class="tv-action">Passe à l'étape suivante : calcul du CPA estimatif.</td></tr>
+            <tr class="is-mid"><td class="tv-volume">5 000 - 15 000</td><td class="tv-status">Marché limité</td><td class="tv-action">Produit ≥ 1 500€ uniquement. Sinon on abandonne. Demander à Arthur.</td></tr>
+            <tr class="is-bad"><td class="tv-volume">&lt; 5 000 rech/mois</td><td class="tv-status">Marché trop petit</td><td class="tv-action">Volume insuffisant. On abandonne ce produit et on cherche autre chose.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tv-section">
+        <h2><span class="tv-h-icon">${ico('zap', 18)}</span>Calculer ton coût d'acquisition avant de lancer</h2>
+        <div class="tv-formula">
+          <span class="tv-formula-lbl">Formule Arthur</span>
+          CPA estimé = CPC moyen × 150 clics
+        </div>
+        <div class="tv-formula-sub">150 clics = worst case scenario — 1 vente pour 150 clics avant toute optimisation. Ce chiffre baisse avec l'optimisation.</div>
+        <div class="tv-examples">
+          <div class="tv-example is-bad" style="--c:#f87171">
+            <strong>CPC 0,80€</strong> → CPA estimé = 0,80 × 150 = <strong>120€</strong>.<br>
+            Produit à 300€, marge 50% : CPA max = 90€ → <span class="tv-ex-verdict">CPA estimé trop élevé (120 &gt; 90).</span> Revoir le prix d'achat ou changer de produit.
+          </div>
+          <div class="tv-example is-good" style="--c:#4ade80">
+            <strong>CPC 0,80€</strong> → CPA estimé = 0,80 × 150 = <strong>120€</strong>.<br>
+            Produit à 400€, marge 55% : CPA max = 140€ → <span class="tv-ex-verdict">CPA estimé OK (120 &lt; 140).</span> Tu peux lancer.
+          </div>
+        </div>
+      </div>
+
+      <div class="tv-section">
+        <h2><span class="tv-h-icon">${ico('warning', 18)}</span>Règle de la niche — ne jamais vendre en généraliste</h2>
+        <div class="tv-niche-grid">
+          <div class="tv-niche-card is-bad">
+            <h4>${ico('cross', 14)}Généraliste — les pièges</h4>
+            <ul>
+              <li><strong>Concurrents trop gros</strong> : IKEA, Roche Bobois, Maisons du Monde — impossible de les battre</li>
+              <li><strong>Coût pub trop élevé</strong> : mots-clés génériques ultra compétitifs, CPC qui explose</li>
+              <li><strong>Taux de conversion bas</strong> : pourquoi acheter chez toi vs un site installé depuis 10 ans ?</li>
+            </ul>
+          </div>
+          <div class="tv-niche-card is-good">
+            <h4>${ico('check', 14)}Niche — les avantages</h4>
+            <ul>
+              <li><strong>Intention d'achat forte</strong> : moins de volume mais acheteurs qui cherchent EXACTEMENT ça</li>
+              <li><strong>CPC réduit</strong> : moins de concurrents sur le mot-clé = budget qui dure plus longtemps</li>
+              <li><strong>Pénétrer par le côté</strong> : construis une autorité sur ta niche avec des datas précises</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tv-niche-example">
+          <div class="tv-niche-row-h"></div>
+          <div class="tv-niche-row-h">Généraliste</div>
+          <div class="tv-niche-row-h">Niche</div>
+          <div>Mot-clé</div>
+          <div class="tv-niche-bad">canapé</div>
+          <div class="tv-niche-good">canapé style japonais</div>
+          <div>Concurrents</div>
+          <div class="tv-niche-bad">IKEA, Roche Bobois, Conforama…</div>
+          <div class="tv-niche-good">Boutiques spécialisées, peu nombreuses</div>
+          <div>Volume / Intention</div>
+          <div class="tv-niche-bad">Très élevé / Faible intention</div>
+          <div class="tv-niche-good">Modéré / Forte intention d'achat</div>
+          <div>CPC</div>
+          <div class="tv-niche-bad">Très élevé</div>
+          <div class="tv-niche-good">Bas à modéré</div>
+          <div>Verdict</div>
+          <div class="tv-niche-bad">À éviter absolument</div>
+          <div class="tv-niche-good">Le bon choix</div>
+        </div>
+        <div class="tv-rule-or">
+          ${ico('star', 14)} <strong>Règle d'or</strong> — Plus ton mot-clé est précis, plus ton acheteur est qualifié et ton CPA bas.
+        </div>
+      </div>
+
+      <div class="tv-section" style="background:linear-gradient(135deg,rgba(139,92,246,0.06),rgba(34,211,238,0.04));border-color:rgba(139,92,246,0.20)">
+        <h2><span class="tv-h-icon">${ico('sword', 18)}</span>Mettre la méthode en pratique</h2>
+        <p style="font-size:13.5px;color:var(--text2);line-height:1.6;margin:0 0 14px">Sur chaque fiche produit, l'onglet <strong>Infos</strong> contient les champs <strong>Volume mensuel</strong>, <strong>Volume total univers</strong> et <strong>CPC moyen</strong>. Une fois remplis :</p>
+        <ul style="font-size:13px;color:var(--text2);line-height:1.7;padding-left:20px;margin:0">
+          <li>L'app calcule automatiquement le <strong>CPA estimé</strong> (CPC × 150) et le <strong>CPA max viable</strong> (marge brute - 20% pour TVA + Shopify)</li>
+          <li>Le <strong>Duel Arthur</strong> compare jusqu'à 4 candidats avec ces métriques en tableau et désigne le winner selon la hiérarchie : volume ≥ 15k → CPA viable → marge → score</li>
+          <li>L'<strong>Auto-Scorer Claude</strong> sur l'onglet Critères inclut ces données dans son raisonnement</li>
+        </ul>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+          <button class="duel-btn primary" onclick="go({type:'duel'})">${ico('sword', 13)} Lancer un duel</button>
+          ${state.products.length ? `<button class="duel-btn" onclick="go({type:'kept'})">${ico('trophy', 13)} Voir mes produits retenus</button>` : ''}
+        </div>
+      </div>
     </div>
   `;
 }
@@ -5301,11 +6116,25 @@ function renderProductInfos(p) {
         <div class="field"><label>Livraison (€)</label><input type="number" step="0.01" value="${p.prix_livraison||''}" oninput="updateProduct('${p.id}','prix_livraison',this.value)"><div class="hint">Par unité</div></div>
         <div class="field"><label>Prix vente (€)</label><input type="number" step="0.01" value="${p.prix_vente||''}" oninput="updateProduct('${p.id}','prix_vente',this.value)"><div class="hint">TTC sur la page</div></div>
       </div>
-      <h3>Recherche & CPC (export Excel)</h3>
+      <h3>Recherche &amp; CPC <span style="font-size:11px;font-weight:600;color:var(--text3);text-transform:none;letter-spacing:0">(les chiffres qui décident — méthode Arthur Google Ads)</span></h3>
+      ${(() => {
+        const vol = _parseVolume(p.volume_mensuel);
+        const cpaEst = calcCpaEstime(p);
+        const cpaMax = calcCpaMax(p);
+        const volStat = _volumeStatus(vol);
+        const cpaV = _cpaViability(p);
+        const volPill = vol == null
+          ? '<span style="font-size:10.5px;color:var(--text3);padding:2px 8px;background:rgba(255,255,255,0.04);border-radius:999px">volume non renseigné</span>'
+          : `<span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:${volStat.cls==='is-good'?'rgba(74,222,128,0.18)':volStat.cls==='is-mid'?'rgba(251,191,36,0.18)':'rgba(248,113,113,0.18)'};color:${volStat.cls==='is-good'?'#4ade80':volStat.cls==='is-mid'?'#fbbf24':'#f87171'}">${volStat.label}</span>`;
+        const cpaPill = cpaV.viable === null
+          ? '<span style="font-size:10.5px;color:var(--text3);padding:2px 8px;background:rgba(255,255,255,0.04);border-radius:999px">CPA non calculable</span>'
+          : `<span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:${cpaV.viable?'rgba(74,222,128,0.18)':'rgba(248,113,113,0.18)'};color:${cpaV.viable?'#4ade80':'#f87171'}">${cpaV.viable?`CPA ${Math.round(cpaV.est)}€ < ${Math.round(cpaV.max)}€`:`CPA ${Math.round(cpaV.est)}€ > ${Math.round(cpaV.max)}€`}</span>`;
+        return `<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;padding:10px 12px;background:linear-gradient(135deg,rgba(34,211,238,0.06),rgba(139,92,246,0.04));border:1px solid rgba(34,211,238,0.18);border-radius:10px"><span style="font-size:11.5px;color:var(--text2);font-weight:600">Verdict Arthur live :</span>${volPill}${cpaPill}<a onclick="go({type:'tunnel'})" style="margin-left:auto;font-size:11px;color:#67e8f9;cursor:pointer;text-decoration:underline">${ico('target',11)} règles complètes →</a></div>`;
+      })()}
       <div class="form-grid">
-        <div class="field"><label>Volume mensuel (mot-clé)</label><input value="${escapeHtml(p.volume_mensuel||'')}" oninput="updateProduct('${p.id}','volume_mensuel',this.value)" placeholder="ex: 3,5K"><div class="hint">Volume Google Keyword Planner du mot-clé principal</div></div>
-        <div class="field"><label>Volume total (univers)</label><input value="${escapeHtml(p.volume_total||'')}" oninput="updateProduct('${p.id}','volume_total',this.value)" placeholder="ex: 29,6K"><div class="hint">Somme des mots-clés liés</div></div>
-        <div class="field"><label>CPC moyen (€)</label><input type="number" step="0.01" value="${p.cpc||''}" oninput="updateProduct('${p.id}','cpc',this.value)"><div class="hint">Coût par clic Google Ads</div></div>
+        <div class="field"><label>Volume mensuel (mot-clé principal)</label><input value="${escapeHtml(p.volume_mensuel||'')}" oninput="updateProduct('${p.id}','volume_mensuel',this.value)" placeholder="ex: 18 000 ou 18K"><div class="hint">Keyword Planner / Semrush / SERanking. Seuil Arthur : <strong style="color:#4ade80">≥ 15 000</strong> = marché valide · <strong style="color:#fbbf24">5-15k</strong> = limité · <strong style="color:#f87171">&lt;5k</strong> = abandon</div></div>
+        <div class="field"><label>Volume total (univers)</label><input value="${escapeHtml(p.volume_total||'')}" oninput="updateProduct('${p.id}','volume_total',this.value)" placeholder="ex: 29,6K"><div class="hint">Somme des mots-clés liés (informatif)</div></div>
+        <div class="field"><label>CPC moyen (€)</label><input type="number" step="0.01" value="${p.cpc||''}" oninput="updateProduct('${p.id}','cpc',this.value)"><div class="hint">CPC suggéré Google Ads. <strong>CPA estimé = CPC × 150</strong> doit rester sous CPA max viable.</div></div>
       </div>
       <h3>Concurrents drop (3 max — export Excel)</h3>
       <div class="form-grid">
@@ -7882,7 +8711,8 @@ function _cmdBuildRegistry() {
   cmds.push({ id:'nav.dashboard', cat:'Navigation', icon:'home', label:'Aller au Dashboard', hint:'Vue d\'ensemble', kw:'dashboard accueil home stats vue', action:() => go({type:'dashboard'}) });
   cmds.push({ id:'nav.kept', cat:'Navigation', icon:'trophy', label:'Mes produits retenus', hint:`${keptProducts().length} validés au total`, kw:'kept retenus validés trophées', action:() => go({type:'kept'}) });
   cmds.push({ id:'nav.palmares', cat:'Navigation', icon:'medal', label:'Palmarès', hint:'Hall of Fame, streak et achievements', kw:'palmarès palmares hall of fame achievements streak gamification', action:() => go({type:'palmares'}) });
-  cmds.push({ id:'nav.duel', cat:'Navigation', icon:'sword', label:'Duel Arthur', hint:`Compare 2-${DUEL_MAX} produits avec radar 12 axes${_duelGet().length ? ` · ${_duelGet().length} en lice` : ''}`, kw:'duel battle versus comparer compare radar arthur winner crown', action:() => go({type:'duel'}) });
+  cmds.push({ id:'nav.duel', cat:'Navigation', icon:'sword', label:'Duel Arthur', hint:`Compare 2-${DUEL_MAX} produits sur volume mot-clé / CPA${_duelGet().length ? ` · ${_duelGet().length} en lice` : ''}`, kw:'duel battle versus comparer compare arthur winner crown volume cpa google ads', action:() => go({type:'duel'}) });
+  cmds.push({ id:'nav.tunnel', cat:'Navigation', icon:'target', label:'Tunnel Validation Arthur', hint:'Règles volume 15k + CPA = CPC×150 + niche', kw:'tunnel validation volume mot clé cpa cpc niche skool 15000 google ads regle arthur', action:() => go({type:'tunnel'}) });
   if (_duelGet().length) {
     cmds.push({ id:'act.duelClear', cat:'Actions', icon:'trash', label:'Vider le duel en cours', hint:`${_duelGet().length} combattants sélectionnés`, kw:'duel vider clear reset', action:() => duelClear() });
   }
