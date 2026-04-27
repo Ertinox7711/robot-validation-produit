@@ -1715,491 +1715,6 @@ small.muted { color: var(--text3); font-size: 11px; }
   .btn-guided { min-width: 100%; }
 }
 
-/* ═════════ AUTO-SCORER ARTHUR — AI-native scoring (Claude API) ═════════ */
-.btn-ai-score {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: linear-gradient(135deg, rgba(34,197,235,0.18), rgba(217,70,239,0.18) 70%, rgba(255,222,89,0.18));
-  border: 1px solid rgba(34,197,235,0.45);
-  color: #f0f7ff;
-  padding: 9px 14px;
-  border-radius: 999px;
-  font-size: 13px; font-weight: 600;
-  cursor: pointer;
-  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
-  letter-spacing: -0.005em;
-  position: relative;
-}
-.btn-ai-score::before {
-  content: '';
-  position: absolute; inset: -2px;
-  border-radius: inherit;
-  background: linear-gradient(135deg, rgba(34,197,235,0.5), rgba(217,70,239,0.5) 70%, rgba(255,222,89,0.5));
-  filter: blur(10px);
-  opacity: 0; transition: opacity .25s ease;
-  z-index: -1;
-}
-.btn-ai-score:hover {
-  transform: translateY(-1px);
-  border-color: rgba(217,70,239,0.7);
-  background: linear-gradient(135deg, rgba(34,197,235,0.32), rgba(217,70,239,0.32) 70%, rgba(255,222,89,0.32));
-}
-.btn-ai-score:hover::before { opacity: 0.5; }
-.btn-ai-score .ai-spark {
-  width: 16px; height: 16px;
-  background: conic-gradient(from 0deg, #22d3ee, #d946ef, #fde047, #22d3ee);
-  border-radius: 50%;
-  display: inline-block;
-  animation: aiSparkSpin 6s linear infinite;
-  box-shadow: 0 0 8px rgba(217,70,239,0.5);
-}
-.btn-ai-score:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
-.btn-ai-score:disabled .ai-spark { animation-duration: 1.5s; }
-@keyframes aiSparkSpin { to { transform: rotate(360deg); } }
-
-/* ── Modal AI Key ── */
-.ai-key-card {
-  background: linear-gradient(135deg, rgba(34,197,235,0.06), rgba(217,70,239,0.06));
-  border: 1px solid rgba(34,197,235,0.18);
-  border-radius: 12px;
-  padding: 16px 18px;
-  margin-bottom: 14px;
-  font-size: 13px;
-  color: var(--text2);
-  line-height: 1.55;
-}
-.ai-key-card strong { color: var(--text); }
-.ai-key-card a { color: #67e8f9; text-decoration: none; border-bottom: 1px dashed rgba(103,232,249,0.4); }
-.ai-key-card a:hover { color: #fde047; border-bottom-color: rgba(253,224,71,0.6); }
-.ai-key-status {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600;
-  letter-spacing: 0.04em; text-transform: uppercase;
-}
-.ai-key-status.ok   { background: rgba(34,197,94,0.18); color: #4ade80; border: 1px solid rgba(34,197,94,0.35); }
-.ai-key-status.none { background: rgba(255,255,255,0.05); color: var(--text3); border: 1px solid rgba(255,255,255,0.08); }
-.ai-disclaimer {
-  margin-top: 12px; font-size: 11px; color: var(--text3); line-height: 1.55;
-  padding: 10px 12px; border-radius: 8px;
-  background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.08);
-}
-
-/* ── Modal AI Loading ── */
-.ai-loading-shell {
-  text-align: center; padding: 22px 6px 10px;
-}
-.ai-loading-orb {
-  width: 88px; height: 88px; margin: 0 auto 18px;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 32% 32%, rgba(34,197,235,0.85), transparent 55%),
-    radial-gradient(circle at 70% 70%, rgba(217,70,239,0.85), transparent 55%),
-    radial-gradient(circle at 50% 50%, rgba(255,222,89,0.4), transparent 70%),
-    #0f0c1d;
-  box-shadow:
-    0 0 32px rgba(34,197,235,0.55),
-    0 0 64px rgba(217,70,239,0.4),
-    inset 0 0 24px rgba(0,0,0,0.45);
-  animation: aiOrbPulse 2.4s ease-in-out infinite;
-  position: relative;
-}
-.ai-loading-orb::after {
-  content: '';
-  position: absolute; inset: -10px;
-  border-radius: 50%;
-  background: conic-gradient(from 0deg, transparent 0deg, rgba(217,70,239,0.45) 90deg, transparent 180deg);
-  filter: blur(6px);
-  animation: aiOrbRing 3.2s linear infinite;
-  z-index: -1;
-}
-@keyframes aiOrbPulse {
-  0%, 100% { transform: scale(1); filter: brightness(1); }
-  50% { transform: scale(1.06); filter: brightness(1.18); }
-}
-@keyframes aiOrbRing { to { transform: rotate(360deg); } }
-.ai-loading-title {
-  font-size: 17px; font-weight: 600; color: var(--text);
-  margin-bottom: 8px; letter-spacing: -0.01em;
-}
-.ai-loading-step {
-  font-size: 13px; color: var(--text2); margin-bottom: 16px;
-  min-height: 18px;
-}
-.ai-loading-dots {
-  display: inline-flex; gap: 6px; margin-top: 4px;
-}
-.ai-loading-dots span {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: linear-gradient(135deg, #22d3ee, #d946ef);
-  animation: aiDotBounce 1.2s ease-in-out infinite;
-}
-.ai-loading-dots span:nth-child(2) { animation-delay: 0.18s; }
-.ai-loading-dots span:nth-child(3) { animation-delay: 0.36s; }
-@keyframes aiDotBounce {
-  0%, 100% { transform: translateY(0); opacity: 0.55; }
-  50% { transform: translateY(-6px); opacity: 1; }
-}
-
-/* ── Modal AI Result ── */
-.ai-result-shell .ai-verdict-banner {
-  display: flex; align-items: center; gap: 18px;
-  padding: 18px 20px; border-radius: 14px;
-  background: linear-gradient(135deg, rgba(34,197,235,0.08), rgba(217,70,239,0.08));
-  border: 1px solid rgba(217,70,239,0.25);
-  margin-bottom: 16px;
-  position: relative; overflow: hidden;
-}
-.ai-result-shell .ai-verdict-banner::before {
-  content: '';
-  position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
-  background: var(--ai-stripe, linear-gradient(180deg, #22d3ee, #d946ef));
-}
-.ai-verdict-score {
-  font-size: 38px; font-weight: 700;
-  background: linear-gradient(135deg, #22d3ee, #d946ef 60%, #fde047);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  letter-spacing: -0.02em; line-height: 1;
-}
-.ai-verdict-score .out { font-size: 18px; color: var(--text3); -webkit-text-fill-color: var(--text3); }
-.ai-verdict-meta { flex: 1; }
-.ai-verdict-pill {
-  display: inline-block;
-  padding: 5px 12px; border-radius: 999px;
-  font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-  margin-bottom: 6px;
-}
-.ai-verdict-pill.go   { background: rgba(34,197,94,0.18); color: #4ade80; border: 1px solid rgba(34,197,94,0.5); }
-.ai-verdict-pill.wait { background: rgba(255,222,89,0.18); color: #fde047; border: 1px solid rgba(255,222,89,0.5); }
-.ai-verdict-pill.kill { background: rgba(239,68,68,0.18); color: #fca5a5; border: 1px solid rgba(239,68,68,0.5); }
-.ai-verdict-summary { color: var(--text2); font-size: 13.5px; line-height: 1.55; }
-
-.ai-section-title {
-  font-size: 11px; font-weight: 700; color: var(--text2);
-  letter-spacing: 0.08em; text-transform: uppercase;
-  margin: 18px 0 8px;
-}
-.ai-crit-grid {
-  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-.ai-crit-item {
-  display: flex; gap: 10px; align-items: flex-start;
-  padding: 10px 12px;
-  background: rgba(255,255,255,0.025);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-left: 3px solid var(--ai-crit, #6b7280);
-  border-radius: 10px;
-  transition: background .15s ease, transform .15s ease;
-  animation: aiCritPop .35s cubic-bezier(.22,.9,.3,1) both;
-}
-.ai-crit-item:hover { background: rgba(255,255,255,0.045); transform: translateX(2px); }
-.ai-crit-item.is-yes { --ai-crit: #4ade80; }
-.ai-crit-item.is-no  { --ai-crit: #f87171; }
-.ai-crit-item.is-unk { --ai-crit: #6b7280; opacity: 0.78; }
-.ai-crit-num {
-  width: 22px; height: 22px; flex-shrink: 0;
-  border-radius: 50%;
-  display: inline-flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 700;
-  background: var(--ai-crit); color: #07060d;
-}
-.ai-crit-body { flex: 1; min-width: 0; }
-.ai-crit-name {
-  font-size: 13px; font-weight: 600; color: var(--text);
-  display: flex; align-items: center; gap: 6px;
-  margin-bottom: 2px;
-}
-.ai-crit-name .star { color: var(--yellow, #fde047); display: inline-flex; }
-.ai-crit-reason {
-  font-size: 12px; color: var(--text2); line-height: 1.4;
-}
-.ai-crit-status {
-  flex-shrink: 0;
-  font-size: 11px; font-weight: 700;
-  padding: 2px 7px; border-radius: 6px;
-  background: rgba(0,0,0,0.25);
-  color: var(--ai-crit);
-  letter-spacing: 0.04em;
-  align-self: flex-start;
-}
-@keyframes aiCritPop {
-  0%   { opacity: 0; transform: translateY(6px) scale(0.97); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.ai-next-action {
-  margin-top: 12px;
-  padding: 12px 14px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, rgba(34,197,235,0.08), rgba(217,70,239,0.06));
-  border: 1px dashed rgba(34,197,235,0.35);
-  font-size: 13px; color: var(--text);
-  line-height: 1.5;
-}
-.ai-next-action strong { color: #67e8f9; font-weight: 700; letter-spacing: 0.02em; }
-
-.ai-niche-suggest {
-  margin-top: 8px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: rgba(255,222,89,0.06);
-  border: 1px solid rgba(255,222,89,0.18);
-  font-size: 12.5px; color: var(--text);
-}
-.ai-niche-suggest strong { color: #fde047; }
-
-.ai-meta-bar {
-  display: flex; flex-wrap: wrap; gap: 8px;
-  margin-top: 14px;
-  font-size: 11px; color: var(--text3);
-}
-.ai-meta-bar span {
-  padding: 3px 8px; border-radius: 999px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
-}
-.ai-meta-bar span.cache-hit {
-  background: rgba(34,197,94,0.1); color: #4ade80; border-color: rgba(34,197,94,0.3);
-}
-
-@media (max-width: 720px) {
-  .ai-crit-grid { grid-template-columns: 1fr; }
-  .ai-verdict-banner { flex-direction: column; text-align: center; gap: 10px; }
-}
-
-/* ═════════ PALMARÈS — Hall of Fame, streaks, achievements ═════════ */
-.pal-hero {
-  position: relative;
-  padding: 28px 30px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, rgba(139,92,246,0.10) 0%, rgba(217,70,239,0.08) 50%, rgba(6,182,212,0.06) 100%);
-  border: 1px solid rgba(139,92,246,0.25);
-  overflow: hidden;
-  margin-bottom: 28px;
-}
-.pal-hero::before {
-  content: ''; position: absolute; inset: -50%;
-  background: conic-gradient(from 0deg, transparent 0%, rgba(139,92,246,0.08) 30%, transparent 60%, rgba(251,191,36,0.06) 80%, transparent 100%);
-  animation: palHeroSpin 30s linear infinite;
-  pointer-events: none;
-}
-@keyframes palHeroSpin { to { transform: rotate(360deg); } }
-.pal-hero-row { position: relative; display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
-.pal-streak {
-  display: flex; align-items: center; gap: 18px;
-  padding: 14px 22px;
-  background: linear-gradient(135deg, rgba(251,146,60,0.18), rgba(239,68,68,0.12));
-  border: 1px solid rgba(251,146,60,0.35);
-  border-radius: 14px;
-  box-shadow: 0 0 32px -8px rgba(251,146,60,0.4);
-}
-.pal-flame {
-  width: 56px; height: 56px;
-  position: relative;
-  display: inline-flex; align-items: center; justify-content: center;
-  background: conic-gradient(from 200deg, #fbbf24, #f97316, #ef4444, #fbbf24);
-  border-radius: 50%;
-  filter: drop-shadow(0 0 14px rgba(251,146,60,0.65));
-  animation: palFlamePulse 1.8s ease-in-out infinite;
-}
-.pal-flame::before {
-  content: ''; position: absolute; inset: 4px;
-  background: radial-gradient(circle at 50% 70%, #fde68a 0%, #f97316 40%, #ef4444 70%, transparent 100%);
-  border-radius: 50%;
-}
-.pal-flame svg { position: relative; z-index: 1; color: #fff7e6; filter: drop-shadow(0 0 4px rgba(0,0,0,0.5)); }
-@keyframes palFlamePulse {
-  0%,100% { transform: scale(1); filter: drop-shadow(0 0 14px rgba(251,146,60,0.65)); }
-  50% { transform: scale(1.06); filter: drop-shadow(0 0 22px rgba(251,146,60,0.85)); }
-}
-.pal-streak-info { display: flex; flex-direction: column; gap: 2px; }
-.pal-streak-value {
-  font-size: 32px; font-weight: 700; line-height: 1;
-  background: linear-gradient(135deg, #fbbf24, #f97316);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-.pal-streak-label { font-size: 12px; color: var(--text2); letter-spacing: 0.04em; text-transform: uppercase; }
-.pal-streak-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
-.pal-stats { display: flex; gap: 12px; flex-wrap: wrap; flex: 1; }
-.pal-stat {
-  flex: 1; min-width: 110px;
-  padding: 10px 14px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 10px;
-}
-.pal-stat-val { font-size: 22px; font-weight: 700; line-height: 1.2; }
-.pal-stat-lbl { font-size: 10px; color: var(--text3); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
-.pal-section-title {
-  font-size: 16px; font-weight: 700; margin: 28px 0 12px;
-  display: flex; align-items: center; gap: 8px; color: var(--text);
-}
-.pal-section-title .pal-spark { color: var(--accent2); display: inline-flex; }
-.pal-section-title .pal-count { font-size: 11px; color: var(--text3); font-weight: 500; padding: 2px 8px; background: rgba(255,255,255,0.05); border-radius: 999px; }
-
-.pal-hof-list { display: flex; flex-direction: column; gap: 6px; }
-.pal-hof-row {
-  display: grid; grid-template-columns: 56px 1fr auto auto; gap: 14px; align-items: center;
-  padding: 12px 16px;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.05);
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background .18s ease, border-color .18s ease, transform .18s ease;
-}
-.pal-hof-row:hover { background: rgba(139,92,246,0.06); border-color: rgba(139,92,246,0.25); transform: translateX(2px); }
-.pal-hof-row.podium-1 { background: linear-gradient(90deg, rgba(251,191,36,0.10), rgba(251,191,36,0.02)); border-color: rgba(251,191,36,0.4); }
-.pal-hof-row.podium-2 { background: linear-gradient(90deg, rgba(203,213,225,0.08), transparent); border-color: rgba(203,213,225,0.25); }
-.pal-hof-row.podium-3 { background: linear-gradient(90deg, rgba(217,119,87,0.08), transparent); border-color: rgba(217,119,87,0.25); }
-.pal-medal {
-  width: 44px; height: 44px;
-  display: inline-flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 18px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.03);
-  color: var(--text2);
-  border: 1px solid rgba(255,255,255,0.06);
-  position: relative;
-}
-.pal-medal.gold {
-  background: radial-gradient(circle at 30% 25%, #fde68a, #f59e0b 60%, #b45309 100%);
-  color: #fff; border-color: #fbbf24;
-  box-shadow: 0 0 14px rgba(251,191,36,0.45);
-  animation: palMedalPulse 2.4s ease-in-out infinite;
-}
-.pal-medal.silver {
-  background: radial-gradient(circle at 30% 25%, #f1f5f9, #cbd5e1 60%, #64748b 100%);
-  color: #1e293b; border-color: #cbd5e1;
-  box-shadow: 0 0 12px rgba(203,213,225,0.35);
-}
-.pal-medal.bronze {
-  background: radial-gradient(circle at 30% 25%, #fed7aa, #c2410c 60%, #7c2d12 100%);
-  color: #fff7ed; border-color: #ea580c;
-  box-shadow: 0 0 12px rgba(217,119,87,0.35);
-}
-@keyframes palMedalPulse {
-  0%,100% { transform: scale(1); }
-  50% { transform: scale(1.06); }
-}
-.pal-hof-info { min-width: 0; }
-.pal-hof-name { font-size: 14px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pal-hof-meta { font-size: 11px; color: var(--text3); margin-top: 2px; display: flex; gap: 6px; flex-wrap: wrap; }
-.pal-hof-meta .dot { color: rgba(255,255,255,0.15); }
-.pal-hof-date { font-size: 11px; color: var(--text3); white-space: nowrap; }
-.pal-score-badge {
-  font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 999px;
-  background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.3);
-  white-space: nowrap;
-}
-.pal-score-badge.score-mid { background: rgba(245,158,11,0.12); color: #f59e0b; border-color: rgba(245,158,11,0.3); }
-.pal-score-badge.score-low { background: rgba(239,68,68,0.10); color: #f87171; border-color: rgba(239,68,68,0.25); }
-.pal-score-badge.score-perfect {
-  background: linear-gradient(90deg, #fbbf24, #d946ef); color: #fff; border: none;
-  box-shadow: 0 0 10px rgba(251,191,36,0.5);
-  animation: palPerfectGlow 1.8s ease-in-out infinite;
-}
-@keyframes palPerfectGlow {
-  0%,100% { box-shadow: 0 0 10px rgba(251,191,36,0.5); }
-  50% { box-shadow: 0 0 18px rgba(217,70,239,0.7); }
-}
-
-.pal-perfect-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px;
-}
-.pal-perfect-card {
-  padding: 14px 16px;
-  background: linear-gradient(135deg, rgba(34,197,94,0.10), rgba(34,197,94,0.02));
-  border: 1px solid rgba(34,197,94,0.30);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: transform .18s ease, box-shadow .18s ease;
-}
-.pal-perfect-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px -10px rgba(34,197,94,0.4); }
-.pal-perfect-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pal-perfect-stat { font-size: 11px; color: var(--text2); display: flex; align-items: center; gap: 8px; }
-.pal-perfect-pill {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 2px 8px; border-radius: 999px;
-  background: rgba(34,197,94,0.18); color: #4ade80;
-  font-size: 10px; font-weight: 600;
-}
-
-.pal-ach-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;
-}
-.pal-ach {
-  position: relative;
-  padding: 16px 14px;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.05);
-  border-radius: 14px;
-  text-align: center;
-  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
-}
-.pal-ach:hover { transform: translateY(-2px); }
-.pal-ach.locked { filter: grayscale(0.85); opacity: 0.55; }
-.pal-ach.locked .pal-ach-icon { color: var(--text3); }
-.pal-ach.unlocked {
-  background: linear-gradient(135deg, rgba(139,92,246,0.10), rgba(217,70,239,0.06));
-  border-color: rgba(139,92,246,0.35);
-  box-shadow: 0 0 18px -6px rgba(139,92,246,0.35);
-}
-.pal-ach.unlocked.fresh { animation: palAchPulse 2s ease-in-out infinite; }
-@keyframes palAchPulse {
-  0%,100% { box-shadow: 0 0 18px -6px rgba(139,92,246,0.35); }
-  50% { box-shadow: 0 0 28px -4px rgba(217,70,239,0.55); }
-}
-.pal-ach-icon {
-  width: 44px; height: 44px; margin: 0 auto 10px;
-  display: inline-flex; align-items: center; justify-content: center;
-  border-radius: 50%;
-  background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(217,70,239,0.16));
-  color: var(--accent2);
-  position: relative;
-}
-.pal-ach.unlocked .pal-ach-icon {
-  background: linear-gradient(135deg, #8b5cf6, #d946ef);
-  color: #fff;
-  filter: drop-shadow(0 0 8px rgba(139,92,246,0.5));
-}
-.pal-ach-lock {
-  position: absolute; top: -4px; right: -4px;
-  width: 18px; height: 18px;
-  background: var(--bg);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text3);
-}
-.pal-ach-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-.pal-ach-desc { font-size: 11px; color: var(--text2); line-height: 1.4; min-height: 30px; }
-.pal-ach-when { font-size: 10px; color: var(--accent2); margin-top: 8px; font-weight: 600; letter-spacing: 0.04em; }
-.pal-ach-prog {
-  margin-top: 8px;
-  height: 4px; border-radius: 999px;
-  background: rgba(255,255,255,0.05);
-  overflow: hidden;
-}
-.pal-ach-prog-fill { height: 100%; background: linear-gradient(90deg, #8b5cf6, #d946ef); border-radius: 999px; }
-.pal-ach-prog-txt { font-size: 10px; color: var(--text3); margin-top: 4px; font-weight: 600; }
-
-.pal-empty {
-  padding: 22px;
-  text-align: center;
-  color: var(--text3);
-  font-size: 13px;
-  background: rgba(255,255,255,0.02);
-  border: 1px dashed rgba(255,255,255,0.08);
-  border-radius: 10px;
-}
-
-@media (max-width: 720px) {
-  .pal-hero-row { gap: 18px; }
-  .pal-stats { width: 100%; }
-  .pal-hof-row { grid-template-columns: 44px 1fr auto; }
-  .pal-hof-row .pal-hof-date { display: none; }
-  .pal-medal { width: 36px; height: 36px; font-size: 14px; }
-}
-
 /* ═════════ DUEL ARTHUR — comparateur visuel multi-produits avec radar 12 axes ═════════ */
 .duel-shell { max-width: 1240px; margin: 0 auto; }
 .duel-hero {
@@ -3029,6 +2544,240 @@ small.muted { color: var(--text3); font-size: 11px; }
   .tv-niche-example { grid-template-columns: 1fr; }
 }
 
+/* ═════════ SIMULATEUR GOOGLE ADS ═════════ */
+.sim-shell { max-width: 1200px; margin: 0 auto; padding: 0 4px 40px; }
+.sim-hero {
+  background: linear-gradient(135deg, rgba(34,211,238,0.10), rgba(139,92,246,0.10) 50%, rgba(74,222,128,0.08));
+  border: 1px solid rgba(34,211,238,0.22);
+  border-radius: 18px;
+  padding: 22px 26px 20px;
+  margin-bottom: 18px;
+  position: relative;
+  overflow: hidden;
+}
+.sim-hero::before {
+  content: ''; position: absolute; top: -50px; right: -50px; width: 220px; height: 220px;
+  background: radial-gradient(circle, rgba(34,211,238,0.20), transparent 70%);
+  filter: blur(30px); pointer-events: none;
+}
+.sim-hero h1 { font-size: 24px; font-weight: 800; display: flex; align-items: center; gap: 10px; margin: 0 0 8px;
+  background: linear-gradient(135deg, #67e8f9, #a78bfa, #86efac);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.sim-hero p { font-size: 13.5px; color: var(--text2); line-height: 1.6; margin: 0; max-width: 720px; }
+.sim-hero .sim-tag {
+  display: inline-block; padding: 3px 10px; font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.05em; background: rgba(34,211,238,0.15); color: #67e8f9; border-radius: 999px;
+  border: 1px solid rgba(34,211,238,0.30); margin-left: 10px; vertical-align: 4px;
+}
+.sim-source {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.25);
+  border-radius: 12px; padding: 10px 14px; margin-bottom: 14px;
+  font-size: 12.5px; color: var(--text2);
+}
+.sim-source-name { font-weight: 700; color: var(--text); font-size: 13px; }
+.sim-source-meta { color: var(--text3); font-size: 11.5px; }
+.sim-source-spacer { flex: 1; }
+.sim-grid {
+  display: grid; gap: 16px; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); align-items: start;
+}
+@media (max-width: 980px) { .sim-grid { grid-template-columns: 1fr; } }
+
+.sim-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 18px 20px;
+}
+.sim-card h2 { font-size: 14px; font-weight: 700; color: var(--text); margin: 0 0 14px;
+  display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.sim-card h2 .sim-h-icon { color: #67e8f9; display: inline-flex; }
+
+/* Sliders */
+.sim-sliders { display: flex; flex-direction: column; gap: 16px; }
+.sim-slider {
+  display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center;
+}
+.sim-slider-label { grid-column: 1; font-size: 12px; font-weight: 700; color: var(--text2); display: flex; align-items: center; gap: 6px; }
+.sim-slider-label .sim-slider-icon { color: #a78bfa; display: inline-flex; }
+.sim-slider-value {
+  grid-column: 2; font-family: 'SF Mono', Monaco, monospace; font-size: 14px; font-weight: 700; color: var(--text);
+  min-width: 90px; text-align: right;
+  background: rgba(139,92,246,0.10); padding: 4px 10px; border-radius: 8px;
+  border: 1px solid rgba(139,92,246,0.22);
+}
+.sim-slider-value .sim-unit { color: var(--text3); font-size: 11px; font-weight: 500; margin-left: 2px; }
+.sim-slider-input { grid-column: 1 / -1; width: 100%; height: 32px; -webkit-appearance: none; appearance: none;
+  background: transparent; cursor: pointer; padding: 0; }
+.sim-slider-input::-webkit-slider-runnable-track {
+  height: 6px; border-radius: 999px;
+  background: linear-gradient(90deg, rgba(74,222,128,0.40), rgba(251,191,36,0.40), rgba(248,113,113,0.40));
+}
+.sim-slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: linear-gradient(135deg, #a78bfa, #f0abfc); border: 2px solid #fff;
+  box-shadow: 0 2px 12px rgba(139,92,246,0.55), 0 0 0 4px rgba(139,92,246,0.10);
+  margin-top: -8px; cursor: grab; transition: transform 0.15s ease;
+}
+.sim-slider-input::-webkit-slider-thumb:hover { transform: scale(1.1); }
+.sim-slider-input::-moz-range-track { height: 6px; border-radius: 999px;
+  background: linear-gradient(90deg, rgba(74,222,128,0.40), rgba(251,191,36,0.40), rgba(248,113,113,0.40));
+}
+.sim-slider-input::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%;
+  background: linear-gradient(135deg, #a78bfa, #f0abfc); border: 2px solid #fff;
+  box-shadow: 0 2px 12px rgba(139,92,246,0.55); cursor: grab;
+}
+.sim-slider-marks {
+  grid-column: 1 / -1; display: flex; justify-content: space-between;
+  font-size: 10px; color: var(--text3); font-family: 'SF Mono', Monaco, monospace;
+  margin-top: -2px;
+}
+
+/* KPI cards */
+.sim-kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.sim-kpi {
+  background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px; padding: 12px 14px; transition: border-color 0.2s ease;
+}
+.sim-kpi-lbl { font-size: 10.5px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+.sim-kpi-val { font-size: 22px; font-weight: 800; font-family: 'SF Mono', Monaco, monospace; color: var(--text); line-height: 1.1; }
+.sim-kpi-val .sim-unit { font-size: 14px; color: var(--text2); font-weight: 500; }
+.sim-kpi-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
+.sim-kpi.is-good { border-color: rgba(74,222,128,0.45); background: rgba(74,222,128,0.06); }
+.sim-kpi.is-good .sim-kpi-val { color: #86efac; }
+.sim-kpi.is-bad { border-color: rgba(248,113,113,0.45); background: rgba(248,113,113,0.06); }
+.sim-kpi.is-bad .sim-kpi-val { color: #fca5a5; }
+.sim-kpi.is-mid { border-color: rgba(251,191,36,0.40); background: rgba(251,191,36,0.05); }
+.sim-kpi.is-mid .sim-kpi-val { color: #fde68a; }
+.sim-kpi.is-hero {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, rgba(139,92,246,0.10), rgba(34,211,238,0.06));
+  border-color: rgba(139,92,246,0.30);
+  padding: 16px 18px;
+}
+.sim-kpi.is-hero .sim-kpi-val { font-size: 30px;
+  background: linear-gradient(135deg, #a78bfa, #67e8f9);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.sim-kpi.is-hero.is-good { background: linear-gradient(135deg, rgba(74,222,128,0.12), rgba(34,211,238,0.06)); border-color: rgba(74,222,128,0.45); }
+.sim-kpi.is-hero.is-good .sim-kpi-val { background: linear-gradient(135deg, #86efac, #67e8f9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.sim-kpi.is-hero.is-bad { background: linear-gradient(135deg, rgba(248,113,113,0.10), rgba(217,70,239,0.06)); border-color: rgba(248,113,113,0.45); }
+.sim-kpi.is-hero.is-bad .sim-kpi-val { background: linear-gradient(135deg, #fca5a5, #f0abfc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+/* Verdict bar */
+.sim-verdict-bar {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin-top: 14px; padding: 12px 14px; border-radius: 12px;
+  font-size: 13px; line-height: 1.5;
+}
+.sim-verdict-bar.is-good { background: linear-gradient(135deg, rgba(74,222,128,0.10), rgba(34,211,238,0.06)); border: 1px solid rgba(74,222,128,0.40); color: #86efac; }
+.sim-verdict-bar.is-bad { background: linear-gradient(135deg, rgba(248,113,113,0.10), rgba(217,70,239,0.06)); border: 1px solid rgba(248,113,113,0.40); color: #fca5a5; }
+.sim-verdict-bar.is-mid { background: rgba(251,191,36,0.06); border: 1px solid rgba(251,191,36,0.30); color: #fde68a; }
+.sim-verdict-bar strong { color: #fff; }
+
+/* Profit waterfall */
+.sim-waterfall { margin-top: 18px; }
+.sim-wf-bar { position: relative; height: 38px; border-radius: 10px; overflow: hidden;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  display: flex; align-items: stretch; }
+.sim-wf-seg {
+  display: flex; align-items: center; justify-content: center; padding: 0 8px;
+  font-size: 11px; font-weight: 700; color: rgba(0,0,0,0.85); white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis; min-width: 0;
+}
+.sim-wf-seg.cost-pub { background: linear-gradient(135deg, #f87171, #fb923c); }
+.sim-wf-seg.cost-prod { background: linear-gradient(135deg, #fb923c, #fbbf24); }
+.sim-wf-seg.cost-fees { background: linear-gradient(135deg, #fbbf24, #facc15); }
+.sim-wf-seg.profit { background: linear-gradient(135deg, #4ade80, #22d3ee); color: rgba(0,0,0,0.85); }
+.sim-wf-seg.loss { background: linear-gradient(135deg, #b91c1c, #7f1d1d); color: #fee2e2; }
+.sim-wf-legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; font-size: 11.5px; }
+.sim-wf-legend-item { display: flex; align-items: center; gap: 6px; color: var(--text2); }
+.sim-wf-legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+/* Heatmap */
+.sim-heatmap-wrap { margin-top: 6px; overflow-x: auto; }
+.sim-heatmap {
+  display: grid; gap: 4px;
+  grid-template-columns: 86px repeat(5, minmax(56px, 1fr));
+  font-size: 11px; font-family: 'SF Mono', Monaco, monospace;
+  min-width: 380px;
+}
+.sim-heatmap .h-corner { color: var(--text3); display: flex; align-items: center; justify-content: center;
+  font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.04em; padding: 4px; line-height: 1.2; text-align: center; }
+.sim-heatmap .h-axis-x, .sim-heatmap .h-axis-y { color: var(--text2); font-weight: 600;
+  display: flex; align-items: center; justify-content: center; padding: 4px 6px;
+  background: rgba(255,255,255,0.03); border-radius: 6px;
+}
+.sim-heatmap .h-cell {
+  display: flex; align-items: center; justify-content: center; padding: 6px 4px;
+  border-radius: 6px; font-weight: 700; min-height: 38px;
+  text-align: center; line-height: 1.2; cursor: default; transition: transform 0.12s ease;
+}
+.sim-heatmap .h-cell:hover { transform: scale(1.06); }
+.sim-heatmap .h-cell.h-current { box-shadow: 0 0 0 2px #fff inset, 0 0 12px rgba(255,255,255,0.45); }
+.sim-heatmap-caption { font-size: 11px; color: var(--text3); margin-top: 8px; text-align: center; }
+
+/* Scenarios */
+.sim-scenarios { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+.sim-scenario-chip {
+  display: flex; flex-direction: column; gap: 3px;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px; padding: 10px 14px; min-width: 140px; cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.15s ease;
+  position: relative;
+}
+.sim-scenario-chip:hover { border-color: rgba(139,92,246,0.40); transform: translateY(-2px); }
+.sim-scenario-chip.is-active { border-color: rgba(139,92,246,0.55); background: rgba(139,92,246,0.08); }
+.sim-scenario-chip-name { font-size: 12px; font-weight: 700; color: var(--text); }
+.sim-scenario-chip-meta { font-size: 10.5px; color: var(--text3); font-family: 'SF Mono', Monaco, monospace; }
+.sim-scenario-chip-profit { font-size: 13px; font-weight: 700; font-family: 'SF Mono', Monaco, monospace; }
+.sim-scenario-chip-profit.is-good { color: #86efac; }
+.sim-scenario-chip-profit.is-bad { color: #fca5a5; }
+.sim-scenario-chip-x {
+  position: absolute; top: 4px; right: 6px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: rgba(248,113,113,0.18); color: #fca5a5;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; opacity: 0; transition: opacity 0.15s ease;
+}
+.sim-scenario-chip:hover .sim-scenario-chip-x { opacity: 1; }
+.sim-scenario-empty {
+  font-size: 12px; color: var(--text3); padding: 12px 16px;
+  border: 1px dashed rgba(255,255,255,0.12); border-radius: 12px;
+  text-align: center;
+}
+.sim-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+.sim-actions .sim-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px; font-size: 12.5px; font-weight: 600;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.10);
+  color: var(--text); border-radius: 10px; cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+.sim-actions .sim-btn:hover { background: rgba(255,255,255,0.07); border-color: rgba(139,92,246,0.40); }
+.sim-actions .sim-btn.primary {
+  background: linear-gradient(135deg, rgba(139,92,246,0.20), rgba(34,211,238,0.16));
+  border-color: rgba(139,92,246,0.40); color: #fff;
+}
+.sim-actions .sim-btn.primary:hover { background: linear-gradient(135deg, rgba(139,92,246,0.30), rgba(34,211,238,0.24)); }
+
+.sim-callout {
+  background: linear-gradient(135deg, rgba(74,222,128,0.07), rgba(34,211,238,0.04));
+  border: 1px solid rgba(74,222,128,0.25);
+  border-radius: 12px; padding: 12px 16px; margin-top: 14px;
+  font-size: 12px; color: var(--text2); line-height: 1.55;
+}
+.sim-callout strong { color: #86efac; }
+.sim-callout.is-bad { background: linear-gradient(135deg, rgba(248,113,113,0.07), rgba(217,70,239,0.04)); border-color: rgba(248,113,113,0.25); }
+.sim-callout.is-bad strong { color: #fca5a5; }
+
+@media (max-width: 720px) {
+  .sim-kpis { grid-template-columns: 1fr; }
+  .sim-hero h1 { font-size: 20px; }
+  .sim-card { padding: 14px 16px; }
+}
+
 </style>
 </head>
 <body>
@@ -3065,7 +2814,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 
 <header>
   <button class="menu-toggle" aria-label="Ouvrir le menu" onclick="toggleSidebar()" title="Menu (sessions)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg></button>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.16.0-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.17.0-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -3238,61 +2987,6 @@ small.muted { color: var(--text3); font-size: 11px; }
 </div>
 
 <!-- ═════════ AUTO-SCORER ARTHUR — modales (clé API, loading, résultats) ═════════ -->
-<div class="modal-bg" id="modalAIKey">
-  <div class="modal">
-    <h3 style="display:flex;align-items:center;gap:8px"><span style="color:#22d3ee;display:inline-flex"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 9 9l-7 1 5 5-1.5 7 6.5-3.5 6.5 3.5L17 15l5-5-7-1z"/></svg></span>Auto-Scorer Arthur — clé Anthropic</h3>
-    <div class="ai-key-card">
-      <strong>Comment ça marche.</strong> L'Auto-Scorer envoie le contexte du produit (nom, niche, prix, volume, concurrents) à <strong>Claude Sonnet 4.6</strong> avec la grille des 12 critères Arthur en prompt système (mis en cache pour économiser ~90% des tokens). Claude renvoie un JSON structuré : score, justification par critère, verdict, prochaine action.
-    </div>
-    <div class="field" style="margin-bottom:14px">
-      <label>Ta clé API Anthropic</label>
-      <input type="password" id="aiKeyInput" placeholder="sk-ant-…" autocomplete="off" spellcheck="false">
-      <div class="hint">Récupère-la sur <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com → API Keys</a>. Coût estimé par scoring : <strong>~0.5-1.5 ¢</strong> (cache hit après le 1er appel).</div>
-    </div>
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-      <span style="font-size:11px;color:var(--text2);letter-spacing:0.06em;text-transform:uppercase;font-weight:600">Statut</span>
-      <span class="ai-key-status" id="aiKeyStatus">…</span>
-    </div>
-    <div class="ai-disclaimer">
-      Ta clé reste <strong>uniquement</strong> dans ton navigateur (localStorage). Elle n'est <strong>jamais</strong> envoyée à un autre serveur que <code>api.anthropic.com</code> directement. Tu peux la supprimer à tout moment.
-    </div>
-    <div class="modal-actions">
-      <button class="btn" onclick="aiDeleteKey()" id="aiDeleteKeyBtn" style="margin-right:auto;color:#fca5a5;border-color:rgba(239,68,68,0.3)">Supprimer ma clé</button>
-      <button class="btn" onclick="closeModal('modalAIKey')">Fermer</button>
-      <button class="btn btn-primary" onclick="aiSaveKey()">Enregistrer & lancer</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-bg" id="modalAILoading">
-  <div class="modal" style="max-width:440px">
-    <div class="ai-loading-shell">
-      <div class="ai-loading-orb"></div>
-      <div class="ai-loading-title">Claude analyse ton produit…</div>
-      <div class="ai-loading-step" id="aiLoadingStep">Chargement de la grille Arthur</div>
-      <div class="ai-loading-dots"><span></span><span></span><span></span></div>
-      <div style="margin-top:18px;font-size:11px;color:var(--text3);line-height:1.5">
-        Modèle <strong style="color:var(--text2)">claude-sonnet-4-6</strong> · prompt caching activé · 1 appel ≈ 4-8 secondes
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal-bg" id="modalAIResult">
-  <div class="modal wide">
-    <h3 style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="color:#22d3ee;display:inline-flex"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 9 9l-7 1 5 5-1.5 7 6.5-3.5 6.5 3.5L17 15l5-5-7-1z"/></svg></span>Verdict Auto-Scorer — Claude × Méthode Arthur</h3>
-    <div style="font-size:12px;color:var(--text3);margin-bottom:14px" id="aiResultProductLine"></div>
-    <div class="ai-result-shell" id="aiResultBody">
-      <!-- rendu dynamique par renderAIResult() -->
-    </div>
-    <div class="modal-actions" style="margin-top:18px">
-      <button class="btn" onclick="aiOpenKeyModal()" style="margin-right:auto;font-size:12px">Gérer ma clé</button>
-      <button class="btn" onclick="closeModal('modalAIResult')">Fermer sans appliquer</button>
-      <button class="btn btn-primary" onclick="aiApplyResult()" id="aiApplyBtn">Appliquer ces réponses au produit</button>
-    </div>
-  </div>
-</div>
-
 <div class="modal-bg" id="modalSync">
   <div class="modal">
     <h3>Synchronisation multi-appareils</h3>
@@ -3394,7 +3088,7 @@ const SYNC_ID_KEY = 'ecom_sync_id';
 
 /* ═════════ STATE ═════════ */
 let state = { sessions: [], products: [] };
-let currentView = { type: 'dashboard', id: null }; // dashboard|kept|palmares|session|product|help
+let currentView = { type: 'dashboard', id: null }; // dashboard|kept|tunnel|duel|session|product|help
 let activeSessionId = null; // selected session for new products
 let saveTimer = null;
 
@@ -3491,14 +3185,26 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.16.0-beta';
-const APP_VERSION_NOTES = 'DUEL GOOGLE ADS-FIRST + TUNNEL VALIDATION ARTHUR — pivot complet du Duel : le radar visuel des 12 critères est REMPLACÉ par un tableau comparatif centré sur les vraies métriques Google Ads (volume mot-clé ≥ 15 000/mois, CPC, CPA estimé = CPC × 150, CPA max viable = marge brute - 20%, verdict CPA viable/non). Helpers : _parseVolume, _volumeStatus, calcCpaEstime, calcCpaMax, _cpaViability. Winner désigné selon hiérarchie Arthur (volume ≥15k > CPA viable > marge > niche > score), pas selon le score 12/12. Verdict adaptatif chiffré qui cite volume/CPA en clair. Bandeau "Règle Arthur n°1 / n°2" qui rappelle les 2 règles non-négociables. Inline verdict pill dans l\'onglet Infos produit (Marché valide/limité/trop petit + CPA viable/trop haut). Critère 3 (volume) marqué ★ et description alignée avec PDF (15 000 seuil au lieu de 1k-40k). Nouvelle vue sidebar "Tunnel Validation Arthur" qui importe le contenu des 2 PDFs (Validation Volume & Coût de Pub + Règle de la niche) avec lien direct Skool, 3 outils Keyword Planner/Semrush/SERanking, arbre de décision volume, formule CPA × exemples chiffrés, comparaison niche vs généraliste. Prompt système Claude duel pivoté : Google Ads-first explicite, hiérarchie volume→CPA→marge→niche→score, refus catégorique du visuel. SKILL.md du scheduled task ré-écrit pour biaiser les runs futurs vers Google Ads-intelligence et exclure les axes "Vision-Led UX / Visual Analytics gadgets / Moments de délice". Aucun SaaS dropshipping ne mesure la viabilité CPA Google Ads avec cette rigueur.';
+const APP_VERSION = '0.17.0-beta';
+const APP_VERSION_NOTES = 'CLEANUP PRO PRÉCIS EFFICACE — suppression complète des features qui n\'aident pas à décider sur Google Ads. VIRÉ : Palmarès (gamification, hall of fame, streak, achievements, confetti) → ~22 KB code. VIRÉ : Auto-Scorer Claude AI (bouton onglet Critères, 3 modales clé/loading/result, prompt système, fonctions ai*) → ~44 KB. VIRÉ : section Verdict argumenté de Claude du Duel + fonctions duelRunClaude/_duelBuild* → ~12 KB. VIRÉ : toast intrusif Mentor Arthur (auto-popup à l\'arrivée sur Critères). CONSERVÉ : Tunnel Validation Arthur (référence règles 15k+CPA), Duel tableau Google Ads, Mentor Arthur on-demand (bouton "Voir leçon Arthur" + Mode guidé), Atelier Analytics dashboard, Kanban session, SerpAPI scan, Discover. SKILL.md scheduled task ré-écrit avec ÉTAPE 0 OBLIGATOIRE : audit des features existantes à chaque run avec 3 questions (sert-elle Google Ads ? est-elle utilisée ? ajoute-t-elle du bruit ?) — propose de supprimer ce qui ne passe pas. INTERDICTION ABSOLUE d\'ajouter de l\'IA dans l\'app sans demande explicite user. Net : ~80 KB de code retiré (~21% du fichier), zéro feature gadget restante. L\'app fait UNE chose : valider un produit selon les chiffres Google Ads Arthur, point.';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.17.0-beta', date: '2026-04-27', time: '07:11', source: 'cleanup pro précis efficace',
+    summary: 'CLEANUP — suppression de tout ce qui n\'aide pas à décider sur Google Ads (Palmarès, Auto-Scorer AI, Duel Claude, toast Mentor)',
+    items: [
+      {type:'fix', text:'Feedback user explicite : "mets le moins d\'IA possible, mets pas d\'IA" + "ya trop de trucs de partout, on veut un truc pro précis et efficace, enlève le palmarès". Pivot complet : audit de TOUTES les features shippées avec 3 questions (sert-elle Google Ads ? est-elle utilisée ? ajoute-t-elle du bruit ?) → suppression chirurgicale de tout ce qui ne passe pas.'},
+      {type:'fix', text:'SUPPRIMÉ : page Palmarès complète (Hall of Fame, streak counter, achievements 12 badges, sessions parfaites, confetti, helpers _palStreak/_palPerfectSessions/_palAchievements/_palMaybeConfetti, constantes PAL_*) → ~22 KB de code retiré. Nav-item sidebar viré, dispatch renderMain viré, commande palette nettoyée. La gamification ne sert pas à décider sur Google Ads — elle distrayait du vrai travail.'},
+      {type:'fix', text:'SUPPRIMÉ : Auto-Scorer Claude AI (v0.13) — bouton "Auto-Scorer · Claude" sur l\'onglet Critères, 3 modales (clé Anthropic / loading orb conique / résultats verdict), fonctions aiAutoScore/aiOpenKeyModal/aiSaveKey/aiDeleteKey/aiApplyResult/_aiCallClaude/_aiBuildSystemPrompt/_aiBuildUserMessage/_aiResultHtml/_aiParseResponse/_aiStartLoadingTicker, state _aiBusy/_aiResults/_aiCurrentPid/_aiPendingPid/_aiLoadingTimers, constantes AI_KEY_STORAGE/AI_MODEL/AI_MAX_TOKENS, CSS .ai-* (~9 KB). Total ~44 KB de code retiré. La méthode Arthur des 12 critères est codée en dur, pas besoin de Claude pour les afficher.'},
+      {type:'fix', text:'SUPPRIMÉ : section "Verdict argumenté de Claude" du Duel (v0.15) + toutes les fonctions associées (_duelClaudeSectionHtml/_duelClaudeResultHtml/_duelBuildSystemPrompt/_duelBuildUserMessage/duelRunClaude) + state _duelClaudeBusy/_duelClaudeResult/_duelClaudeError + invalidations dans toggle/remove/clear → ~12 KB. Le verdict local du Duel cite déjà volume + CPA + headroom en chiffres clairs, l\'argumentation Claude n\'apportait que du bruit.'},
+      {type:'fix', text:'SUPPRIMÉ : toast intrusif Mentor Arthur (auto-popup à chaque arrivée sur l\'onglet Critères). Le bouton "Voir leçon Arthur" sur chaque critère + le Mode guidé Arthur sont CONSERVÉS — ils sont on-demand, pas intrusifs.'},
+      {type:'fix', text:'CONSERVÉ et VALIDÉ Google Ads-first : Sessions/Produits/Grille 12 critères Arthur (cœur), Tunnel Validation Arthur (référence règles 15k+CPA), Duel Arthur (tableau comparatif volume/CPC/CPA), Mentor Arthur on-demand (leçons Skool inline), Onglet Scoring (calculs financiers), Onglet SERP scan (SerpAPI top 3 concurrents), Onglet Page Shopify (checklist statique), Discover (recherche auto SerpAPI), Mes produits retenus, Atelier Analytics dashboard (heatmap critères + sparklines), Kanban session (drag-drop), Formation Skool (référence), Historique versions, Command palette ⌘K.'},
+      {type:'feat', text:'SKILL.md scheduled task ré-écrit avec ÉTAPE 0 OBLIGATOIRE en début de chaque run : audit des features existantes (sert Google Ads ? utilisée ? bruit ?) avec liste explicite des features actuelles à challenger. INTERDICTION ABSOLUE d\'ajouter de l\'IA dans l\'app sans demande explicite user (les v0.13 et v0.15 sont retirées en exemple). Tout futur run doit proposer des suppressions si applicable AVANT d\'envisager un ajout.'},
+      {type:'fix', text:'Net : ~80 KB de code retiré (~21% du fichier passe de ~444 KB à ~364 KB). Zéro feature gadget restante. L\'app fait UNE chose : valider un produit selon les chiffres Google Ads de la méthode Arthur, point. PRO PRÉCIS EFFICACE.'},
+    ]},
   { v: '0.16.0-beta', date: '2026-04-27', time: '06:49', source: 'pivot google ads-first',
     summary: 'PIVOT GOOGLE ADS-FIRST : Duel refondu sur volume mot-clé / CPA + nouvelle vue Tunnel Validation Arthur (PDFs importés)',
     items: [
@@ -3748,7 +3454,8 @@ const ICONS = {
   layers: '<path d="m12 2-9.5 5L12 12l9.5-5L12 2zm-9.5 10L12 17l9.5-5M2.5 17 12 22l9.5-5"/>',
   medal: '<path d="M12 13a4 4 0 1 1 0 8 4 4 0 0 1 0-8zm0 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 2h10l-1.6 6.4A6 6 0 1 0 8.6 8.4L7 2zm2.6 2 .9 3.6a4 4 0 0 1 3 0L14.4 4H9.6z"/>',
   sword: '<path d="M14.5 2.5 21 9l-2 2-1.5-1.5-7.5 7.5L8 19h-2v-2l1-1.5L14.5 8 13 6.5l1.5-4zM7 17l1.5 1.5L4 23l-2-2 4.5-4.5L7 17z"/>',
-  crown: '<path d="M2 7l4 4 6-7 6 7 4-4-2 12H4L2 7zm3 13h14v2H5v-2z"/>'
+  crown: '<path d="M2 7l4 4 6-7 6 7 4-4-2 12H4L2 7zm3 13h14v2H5v-2z"/>',
+  sliders: '<path d="M3 17v2h6v-2H3zm0-7v2h10v-2H3zm0-7v2h14V3H3zm14 18v-2h4v-2h-4v-2h-2v6h2zm-7-7v-2h4V8h-4V6H8v6h2zm-4-2v2h4V8H6z"/>'
 };
 function ico(name, size) {
   const sz = size || 16;
@@ -3784,9 +3491,6 @@ function renderSidebar() {
       <div class="nav-item ${currentView.type==='kept'?'active':''}" onclick="go({type:'kept'})">
         <span class="icon">${ico('trophy',16)}</span><span>Mes produits retenus</span>
         <span class="count">${keptProducts().length}</span>
-      </div>
-      <div class="nav-item ${currentView.type==='palmares'?'active':''}" onclick="go({type:'palmares'})">
-        <span class="icon">${ico('medal',16)}</span><span>Palmarès</span>
       </div>
       <div class="nav-item ${currentView.type==='duel'?'active':''}" onclick="go({type:'duel'})">
         <span class="icon" style="color:#fbbf24">${ico('sword',16)}</span><span>Duel Arthur</span>
@@ -3995,9 +3699,6 @@ function go(view) {
   // Auto-close mobile sidebar drawer on navigation
   document.body.classList.remove('sidebar-open');
   renderAll();
-  if (view.type === 'product' && productTab === 'criteres') {
-    if (typeof _maybeShowMentorToast === 'function') _maybeShowMentorToast();
-  }
 }
 function toggleSidebar(force) {
   const open = (typeof force === 'boolean') ? force : !document.body.classList.contains('sidebar-open');
@@ -4009,7 +3710,6 @@ function renderMain() {
   const m = document.getElementById('main');
   if (currentView.type === 'dashboard') m.innerHTML = renderDashboard();
   else if (currentView.type === 'kept') m.innerHTML = renderKept();
-  else if (currentView.type === 'palmares') m.innerHTML = renderPalmares();
   else if (currentView.type === 'duel') m.innerHTML = renderDuel();
   else if (currentView.type === 'tunnel') m.innerHTML = renderTunnel();
   else if (currentView.type === 'help') m.innerHTML = renderHelp();
@@ -4794,255 +4494,6 @@ function deleteProduct(id) {
   save(); renderAll();
 }
 
-/* ═════════ PALMARÈS — Hall of Fame, streaks, achievements ═════════ */
-const PAL_CONFETTI_KEY = 'pal_last_confetti_date';
-const PAL_LAST_VISIT_KEY = 'pal_last_visit';
-
-function _palStreak() {
-  // Counts consecutive days (going back from today) with at least one product created OR keptAt
-  const days = new Set();
-  state.products.forEach(p => {
-    [p.created, p.keptAt].forEach(t => {
-      if (!t) return;
-      const d = new Date(t); d.setHours(0,0,0,0);
-      days.add(d.getTime());
-    });
-  });
-  if (!days.size) return { streak: 0, today: false };
-  const today = new Date(); today.setHours(0,0,0,0);
-  const todayMs = today.getTime();
-  const oneDay = 86400000;
-  let cursor = days.has(todayMs) ? todayMs : (days.has(todayMs - oneDay) ? todayMs - oneDay : null);
-  if (cursor === null) return { streak: 0, today: false };
-  let streak = 0;
-  while (days.has(cursor)) { streak++; cursor -= oneDay; }
-  return { streak, today: days.has(todayMs) };
-}
-
-function _palPerfectSessions() {
-  // Sessions where 100% of products are kept (and ≥2 products to be meaningful)
-  return state.sessions.map(s => {
-    const prods = state.products.filter(p => p.sessionId === s.id);
-    if (prods.length < 2) return null;
-    const keep = prods.filter(p => p.status === 'keep').length;
-    if (keep !== prods.length) return null;
-    return { session: s, kept: keep, total: prods.length };
-  }).filter(Boolean).sort((a,b) => (b.session.created||0) - (a.session.created||0));
-}
-
-function _palTopNiches() {
-  const map = new Map();
-  state.products.filter(p => p.status === 'keep' && p.niche).forEach(p => {
-    const k = p.niche.trim().toLowerCase();
-    if (!k) return;
-    map.set(k, (map.get(k) || 0) + 1);
-  });
-  return [...map.entries()].sort((a,b) => b[1] - a[1]);
-}
-
-function _palAchievements() {
-  // Returns 12 achievements with unlocked status + condition
-  const products = state.products;
-  const sessions = state.sessions;
-  const kept = keptProducts();
-  const perfectProd = products.find(p => calcScore(p) >= 12);
-  const perfectSess = _palPerfectSessions();
-  const topNiches = _palTopNiches();
-  const masterNiche = topNiches.length && topNiches[0][1] >= 5 ? topNiches[0] : null;
-  const streak = _palStreak().streak;
-
-  const firstProd = products.length ? Math.min(...products.map(p => p.created || Infinity)) : null;
-  const firstSess = sessions.length ? Math.min(...sessions.map(s => s.created || Infinity)) : null;
-  const firstPerfect = perfectProd ? (perfectProd.keptAt || perfectProd.created || null) : null;
-  const firstPerfectSess = perfectSess.length ? (perfectSess[perfectSess.length-1].session.created || null) : null;
-
-  const fmt = (t) => t && isFinite(t) ? new Date(t).toLocaleDateString('fr-FR') : null;
-
-  const list = [
-    { id:'first_prod', icon:'edit', name:'Premier produit', desc:'Tu as créé ton tout premier produit', unlocked: products.length >= 1, when: fmt(firstProd) },
-    { id:'first_sess', icon:'rocket', name:'Première session', desc:'Tu as démarré une session de recherche', unlocked: sessions.length >= 1, when: fmt(firstSess) },
-    { id:'first_keep', icon:'trophy', name:'Premier validé', desc:'Tu as retenu ton premier produit', unlocked: kept.length >= 1, when: kept.length ? fmt(Math.min(...kept.map(p => p.keptAt || p.created || Infinity))) : null },
-    { id:'first_perfect', icon:'star', name:'Premier perfect', desc:'Tu as scoré un produit 12/12', unlocked: !!perfectProd, when: fmt(firstPerfect) },
-    { id:'kept_10', icon:'trophy', name:'10 retenus', desc:'10 produits validés au total', unlocked: kept.length >= 10, progress: { now: kept.length, target: 10 } },
-    { id:'kept_50', icon:'medal', name:'50 retenus', desc:'50 produits validés — la sélection devient série', unlocked: kept.length >= 50, progress: { now: kept.length, target: 50 } },
-    { id:'kept_100', icon:'medal', name:'100 retenus', desc:'Le club des 100 — chercheur aguerri', unlocked: kept.length >= 100, progress: { now: kept.length, target: 100 } },
-    { id:'streak_7', icon:'flame', name:'Streak 7 jours', desc:'7 jours consécutifs de validation', unlocked: streak >= 7, progress: { now: streak, target: 7 } },
-    { id:'streak_30', icon:'flame', name:'Streak 30 jours', desc:'Un mois entier sans rater une journée', unlocked: streak >= 30, progress: { now: streak, target: 30 } },
-    { id:'master_niche', icon:'target', name:'Master niche', desc:'5+ produits validés dans une même niche', unlocked: !!masterNiche, when: masterNiche ? `« ${masterNiche[0]} » · ${masterNiche[1]} produits` : null },
-    { id:'perfect_sess', icon:'spark', name:'Session parfaite', desc:'Une session 100% retenue (≥2 produits)', unlocked: perfectSess.length >= 1, when: fmt(firstPerfectSess) },
-    { id:'sess_10', icon:'folder', name:'10 sessions', desc:'10 sessions de recherche au compteur', unlocked: sessions.length >= 10, progress: { now: sessions.length, target: 10 } },
-  ];
-  return list;
-}
-
-function _palScoreClass(s) {
-  if (s >= 12) return 'score-perfect';
-  if (s >= 9) return '';
-  if (s >= 6) return 'score-mid';
-  return 'score-low';
-}
-
-function _palMaybeConfetti() {
-  const today = new Date().toDateString();
-  if (localStorage.getItem(PAL_CONFETTI_KEY) === today) return;
-  localStorage.setItem(PAL_CONFETTI_KEY, today);
-  setTimeout(() => {
-    const x = window.innerWidth / 2;
-    const y = Math.min(220, window.innerHeight / 4);
-    if (typeof confettiBurst === 'function') confettiBurst(x, y, 'perfect');
-  }, 220);
-}
-
-function renderPalmares() {
-  const products = state.products;
-  const kept = keptProducts();
-  const sessions = state.sessions;
-  const totalScore = products.reduce((sum, p) => sum + calcScore(p), 0);
-  const avgScore = products.length ? (totalScore / products.length) : 0;
-  const streakInfo = _palStreak();
-  const streak = streakInfo.streak;
-
-  // Hall of Fame: top 10 products by score (then by keptAt desc)
-  const hof = [...products]
-    .filter(p => calcScore(p) > 0)
-    .sort((a,b) => {
-      const sa = calcScore(a), sb = calcScore(b);
-      if (sb !== sa) return sb - sa;
-      return (b.keptAt || b.created || 0) - (a.keptAt || a.created || 0);
-    })
-    .slice(0, 10);
-
-  const perfectSess = _palPerfectSessions();
-  const achievements = _palAchievements();
-  const unlockedCount = achievements.filter(a => a.unlocked).length;
-
-  // Detect "fresh" achievements: unlocked but user hasn't seen them yet
-  const lastVisit = parseInt(localStorage.getItem(PAL_LAST_VISIT_KEY) || '0', 10);
-  const freshIds = new Set();
-  if (lastVisit) {
-    achievements.forEach(a => {
-      if (!a.unlocked) return;
-      // Heuristic: fresh if the most recent product/session is after lastVisit
-      const recent = Math.max(
-        ...state.products.map(p => p.keptAt || p.created || 0),
-        ...state.sessions.map(s => s.created || 0),
-        0
-      );
-      if (recent > lastVisit) freshIds.add(a.id);
-    });
-  }
-  // Update last visit (after computing fresh)
-  localStorage.setItem(PAL_LAST_VISIT_KEY, Date.now().toString());
-
-  // Trigger confetti on first visit of the day
-  _palMaybeConfetti();
-
-  const streakSub = streak === 0
-    ? 'Démarre une session aujourd\'hui pour lancer ton streak'
-    : (streakInfo.today
-        ? (streak === 1 ? 'Tu as commencé aujourd\'hui — reviens demain pour 2' : `Continue demain pour ${streak + 1}`)
-        : 'Reprends aujourd\'hui pour ne pas casser le rythme');
-
-  // Hall of Fame rows
-  const hofHtml = hof.length === 0
-    ? `<div class="pal-empty">Aucun produit scoré pour le moment. Score un produit dans la grille des 12 critères et il apparaîtra ici.</div>`
-    : `<div class="pal-hof-list">${hof.map((p, i) => {
-        const score = calcScore(p);
-        const sess = findSession(p.sessionId);
-        const podium = i === 0 ? 'podium-1' : i === 1 ? 'podium-2' : i === 2 ? 'podium-3' : '';
-        const medalClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
-        const date = p.keptAt || p.created;
-        return `
-          <div class="pal-hof-row ${podium}" onclick="go({type:'product',id:'${p.id}'})">
-            <div class="pal-medal ${medalClass}">${i + 1}</div>
-            <div class="pal-hof-info">
-              <div class="pal-hof-name">${escapeHtml(p.name || 'Sans nom')}</div>
-              <div class="pal-hof-meta">
-                ${p.niche ? `<span>${escapeHtml(p.niche)}</span><span class="dot">·</span>` : ''}
-                <span>${escapeHtml(sess?.label || 'session inconnue')}</span>
-              </div>
-            </div>
-            <div class="pal-hof-date">${date ? new Date(date).toLocaleDateString('fr-FR') : '—'}</div>
-            <div class="pal-score-badge ${_palScoreClass(score)}">${score}/12</div>
-          </div>`;
-      }).join('')}</div>`;
-
-  const perfectHtml = perfectSess.length === 0
-    ? `<div class="pal-empty">Pas encore de session parfaite. Une session devient parfaite quand 100% de ses produits (≥2) sont retenus.</div>`
-    : `<div class="pal-perfect-grid">${perfectSess.map(ps => `
-        <div class="pal-perfect-card" onclick="go({type:'session',id:'${ps.session.id}'})">
-          <div class="pal-perfect-name">${escapeHtml(ps.session.label || 'Sans nom')}</div>
-          <div class="pal-perfect-stat">
-            <span class="pal-perfect-pill">${ps.kept}/${ps.total} retenus</span>
-            <span style="color:var(--text3)">${ps.session.created ? new Date(ps.session.created).toLocaleDateString('fr-FR') : '—'}</span>
-          </div>
-        </div>`).join('')}</div>`;
-
-  const achHtml = `<div class="pal-ach-grid">${achievements.map(a => {
-    const cls = a.unlocked ? `unlocked${freshIds.has(a.id) ? ' fresh' : ''}` : 'locked';
-    let extra = '';
-    if (a.unlocked && a.when) {
-      extra = `<div class="pal-ach-when">${escapeHtml(a.when)}</div>`;
-    } else if (a.progress) {
-      const pct = Math.min(100, Math.round((a.progress.now / a.progress.target) * 100));
-      extra = `
-        <div class="pal-ach-prog"><div class="pal-ach-prog-fill" style="width:${pct}%"></div></div>
-        <div class="pal-ach-prog-txt">${a.progress.now}/${a.progress.target}</div>`;
-    }
-    return `
-      <div class="pal-ach ${cls}" title="${escapeHtml(a.desc)}">
-        <div class="pal-ach-icon">${ico(a.icon, 22)}${a.unlocked ? '' : `<span class="pal-ach-lock">${ico('lock', 10)}</span>`}</div>
-        <div class="pal-ach-name">${escapeHtml(a.name)}</div>
-        <div class="pal-ach-desc">${escapeHtml(a.desc)}</div>
-        ${extra}
-      </div>`;
-  }).join('')}</div>`;
-
-  return `
-    <h1 style="font-size:22px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:10px;">
-      <span style="color:var(--accent2);display:inline-flex">${ico('medal', 22)}</span>Palmarès
-    </h1>
-    <p style="color:var(--text2);font-size:13px;margin-bottom:20px">La régularité bat le talent. Garde ton streak, débloque des achievements, célèbre tes meilleurs produits.</p>
-
-    <div class="pal-hero">
-      <div class="pal-hero-row">
-        <div class="pal-streak">
-          <div class="pal-flame">${ico('flame', 26)}</div>
-          <div class="pal-streak-info">
-            <div class="pal-streak-value">${streak}</div>
-            <div class="pal-streak-label">${streak <= 1 ? 'Jour' : 'Jours'} de streak</div>
-            <div class="pal-streak-sub">${escapeHtml(streakSub)}</div>
-          </div>
-        </div>
-        <div class="pal-stats">
-          <div class="pal-stat"><div class="pal-stat-val">${products.length}</div><div class="pal-stat-lbl">Produits scorés</div></div>
-          <div class="pal-stat"><div class="pal-stat-val" style="color:var(--green)">${kept.length}</div><div class="pal-stat-lbl">Retenus</div></div>
-          <div class="pal-stat"><div class="pal-stat-val">${avgScore.toFixed(1)}<span style="font-size:13px;color:var(--text3)">/12</span></div><div class="pal-stat-lbl">Score moyen</div></div>
-          <div class="pal-stat"><div class="pal-stat-val">${sessions.length}</div><div class="pal-stat-lbl">Sessions</div></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="pal-section-title">
-      <span class="pal-spark">${ico('trophy', 18)}</span>Hall of Fame
-      <span class="pal-count">Top ${hof.length}</span>
-    </div>
-    ${hofHtml}
-
-    <div class="pal-section-title">
-      <span class="pal-spark">${ico('spark', 18)}</span>Sessions parfaites
-      <span class="pal-count">${perfectSess.length}</span>
-    </div>
-    ${perfectHtml}
-
-    <div class="pal-section-title">
-      <span class="pal-spark">${ico('medal', 18)}</span>Achievements
-      <span class="pal-count">${unlockedCount}/${achievements.length}</span>
-    </div>
-    ${achHtml}
-  `;
-}
-
 /* ═════════ DUEL ARTHUR — comparateur visuel multi-produits ═════════
    Pari produit : aucun SaaS de validation produit (Sell The Trend, Niche
    Scraper, Ecomhunt, Minea, Helium 10) ne propose un comparateur visuel
@@ -5056,9 +4507,6 @@ function renderPalmares() {
 const DUEL_STORAGE_KEY = 'ecom_duel_selection_v1';
 const DUEL_MAX = 4;
 const DUEL_COLORS = ['#8b5cf6', '#22d3ee', '#d946ef', '#fbbf24'];
-let _duelClaudeBusy = false;
-let _duelClaudeResult = null;     // { winner_pid, why_winner, others:[{pid,why_not,advice}], _usage, _model, _at }
-let _duelClaudeError = null;
 
 function _duelGet() {
   try {
@@ -5531,228 +4979,6 @@ function _duelVerdictCardHtml(prods, winner) {
   `;
 }
 
-function _duelClaudeSectionHtml(prods) {
-  const hasKey = (typeof _aiHasKey === 'function') && _aiHasKey();
-  const showResult = _duelClaudeResult && _duelClaudeResult._pids && _duelClaudeResult._pids.length === prods.length && _duelClaudeResult._pids.every(pid => prods.find(p => p.id === pid));
-  let body;
-  if (_duelClaudeBusy) {
-    body = `<div class="duel-claude-busy"><span class="duel-claude-orb"></span><span>Claude analyse le duel… (~6-10 s)</span></div>`;
-  } else if (_duelClaudeError) {
-    body = `<div style="color:#fca5a5;font-size:13px;padding:10px 0">${escapeHtml(_duelClaudeError)}</div>
-            <div><button class="duel-btn primary" onclick="duelRunClaude()">Réessayer</button></div>`;
-  } else if (showResult) {
-    body = _duelClaudeResultHtml(prods, _duelClaudeResult);
-  } else {
-    const btnLabel = hasKey ? "Demander l'analyse Claude" : "Configurer la clé Claude";
-    body = `
-      <div style="font-size:13px;color:var(--text2);line-height:1.55;margin-bottom:10px">
-        Claude Sonnet 4.6 analyse les ${prods.length} candidats du duel selon la grille Arthur, désigne le produit à lancer en priorité, justifie son choix et donne 1 conseil par concurrent.
-      </div>
-      <div><button class="duel-btn primary" onclick="duelRunClaude()">${ico('bolt', 14)} ${btnLabel}</button>
-      ${hasKey ? `<button class="duel-btn" onclick="aiOpenKeyModal()" style="margin-left:8px">Gérer ma clé</button>` : ''}</div>
-    `;
-  }
-  return `
-    <div class="duel-claude-section">
-      <div class="duel-claude-head">
-        <h4>${ico('bolt', 14)} Verdict argumenté de Claude</h4>
-        <span class="duel-claude-tag">AI · Sonnet 4.6</span>
-      </div>
-      ${body}
-    </div>
-  `;
-}
-
-function _duelClaudeResultHtml(prods, r) {
-  const winnerProd = prods.find(p => p.id === r.winner_pid) || prods[0];
-  const winnerIdx = prods.indexOf(winnerProd);
-  const otherCards = (r.others || []).map(o => {
-    const p = prods.find(pr => pr.id === o.pid);
-    if (!p) return '';
-    const idx = prods.indexOf(p);
-    const color = DUEL_COLORS[idx % DUEL_COLORS.length];
-    return `<div class="duel-claude-other" style="--c:${color}">
-      <div class="name">${escapeHtml(p.name || 'Sans nom')} <span style="color:var(--text3);font-weight:500">· ${calcScore(p)}/12</span></div>
-      <div class="why">${escapeHtml(o.why_not || '')}</div>
-      ${o.advice ? `<div class="advice">${escapeHtml(o.advice)}</div>` : ''}
-    </div>`;
-  }).join('');
-  const u = r._usage || {};
-  const cacheRead = u.cache_read_input_tokens || 0;
-  const cacheCreate = u.cache_creation_input_tokens || 0;
-  const inp = u.input_tokens || 0;
-  const out = u.output_tokens || 0;
-  const cacheBadge = cacheRead > 0
-    ? `<span class="cache-hit">cache hit · ${cacheRead.toLocaleString('fr-FR')} tk</span>`
-    : (cacheCreate > 0 ? `<span>cache créé · ${cacheCreate.toLocaleString('fr-FR')} tk</span>` : '');
-  const winnerColor = DUEL_COLORS[winnerIdx % DUEL_COLORS.length];
-  return `
-    <div class="duel-claude-result">
-      <div class="duel-claude-winner" style="border-color:${winnerColor}66;background:${winnerColor}14">
-        <div style="flex:1">
-          <div class="lbl">À lancer en premier (verdict Claude)</div>
-          <div class="name">${escapeHtml(winnerProd.name || 'Sans nom')}</div>
-          <div class="why">${escapeHtml(r.why_winner || '')}</div>
-        </div>
-      </div>
-      ${otherCards ? `<div class="duel-claude-others">${otherCards}</div>` : ''}
-      <div class="duel-claude-meta">
-        <span>${escapeHtml(r._model || AI_MODEL)}</span>
-        ${cacheBadge}
-        <span>${(inp + cacheRead + cacheCreate).toLocaleString('fr-FR')} tk in</span>
-        <span>${out.toLocaleString('fr-FR')} tk out</span>
-        <span>analysé ${new Date(r._at).toLocaleTimeString('fr-FR')}</span>
-      </div>
-    </div>
-  `;
-}
-
-function _duelBuildSystemPrompt() {
-  return `Tu es Arthur, expert français du dropshipping Google Ads (Ecom Inner Circle). On te soumet 2 à 4 produits candidats à comparer. Ton job : désigner LE produit à lancer en priorité selon la **méthode Arthur Google Ads-first**, pas selon des critères "wow" ou visuels.
-
-══ ON FAIT GOOGLE ADS, PAS META/TIKTOK ══
-On capte une intention d'achat existante via Google Search/Shopping. On ne crée pas la demande avec des vidéos virales. Ce qui compte : volume mot-clé, CPC, CPA viable. Le visuel est secondaire — un faux mur en pierre "boring" se vend mieux qu'un gadget "wow" parce qu'il y a une intention de recherche derrière.
-
-══ RÈGLES NON-NÉGOCIABLES (PDF "Validation Volume & Coût de Pub") ══
-1. **Volume mot-clé minimum : 15 000 recherches/mois** sur le mot-clé principal (Keyword Planner / Semrush / SERanking).
-   - ≥ 15 000 → marché valide, on peut lancer
-   - 5 000 - 15 000 → marché limité, OK seulement si produit ≥ 1 500€, sinon abandon
-   - < 5 000 → marché trop petit, ABANDON
-2. **CPA estimé = CPC moyen × 150 clics** (worst case : 1 vente pour 150 clics avant optimisation).
-3. **CPA max viable = marge brute - (prix vente × 20%)** (les 20% absorbent TVA + Shopify ~3.5%).
-   Exemples PDF : prix 300€ marge 50% → CPA max 90€ ; prix 400€ marge 55% → CPA max 140€.
-4. Si **CPA estimé > CPA max** → le produit n'est PAS viable, peu importe son score Arthur. Revoir prix d'achat ou prix vente.
-5. **Marge brute ≥ ×3** prix d'achat+livraison (idéal ×4-×5).
-6. **Niche précise > généraliste** : "canapé" perd, "canapé style japonais" gagne. Mot-clé précis = acheteur qualifié = CPA bas.
-
-══ TON TRAVAIL ══
-1. Pour CHAQUE candidat, juger les 6 règles ci-dessus dans cet ordre de priorité STRICT :
-   a) volume_ok (≥15k OU 5-15k+prix>1500€) → si NON, le produit est éliminé sauf si tous le sont
-   b) cpa_viable (CPA estimé < CPA max) → si NON, lever drapeau rouge
-   c) ratio marge × ≥ 3
-   d) précision niche (généraliste = pénalité)
-   e) score Arthur 12/12 (tie-break)
-   f) marge brute en € (tie-break)
-2. Désigner UN SEUL gagnant : celui qui passe le plus haut dans cette hiérarchie. Le score Arthur ne décide PAS si volume/CPA n'est pas validé.
-3. **why_winner** : 2-3 phrases concrètes et CHIFFRÉES citant volume + CPA estimé + CPA max + headroom. Ex : "Volume 28k ≥ 15k ✓, CPC 0.45€ → CPA estimé 67€ < CPA max 110€ (headroom +43€). Marge ×4.2 confortable."
-4. Pour chaque autre produit, **why_not** chiffré sur la règle bloquante (volume sous seuil, CPA en déficit, marge insuffisante) + **advice** actionnable. Ex : "Volume 8k entre 5k et 15k → produit doit passer 1500€ ; advice : remonte le prix vente à 1690€ pour valider la zone."
-
-══ FORMAT DE SORTIE — JSON STRICT ══
-{
-  "winner_pid": "<pid exact du produit gagnant>",
-  "why_winner": "2-3 phrases CHIFFRÉES sur volume + CPA + marge.",
-  "others": [
-    { "pid": "<pid>", "why_not": "1-2 phrases citant la règle bloquante avec chiffres.", "advice": "1 phrase actionnable." }
-  ]
-}
-
-══ RÈGLES STRICTES DU FORMAT ══
-- TOUJOURS répondre en JSON valide pur. Pas de markdown, pas de \`\`\`json, pas de prose autour.
-- Le pid doit correspondre exactement à un pid fourni en entrée.
-- Français direct, jamais pédagogique. Tu es un copilote Google Ads, pas un cours.
-- Si AUCUN candidat n'a de volume renseigné, dis-le franchement dans why_winner : "Aucun candidat avec volume mot-clé renseigné — impossible de valider la règle Arthur des 15 000. Va dans Keyword Planner avant de revenir."
-- Le visuel, le branding, le storytelling NE COMPTENT PAS pour ce verdict. On vend sur Google Search/Shopping, pas sur Instagram.`;
-}
-
-function _duelBuildUserMessage(prods) {
-  const lines = [`# Duel à juger : ${prods.length} produits candidats Google Ads\n`];
-  prods.forEach((p, i) => {
-    const score = calcScore(p);
-    const m = calcMarge(p);
-    const vol = _parseVolume(p.volume_mensuel);
-    const cpaEst = calcCpaEstime(p);
-    const cpaMax = calcCpaMax(p);
-    const cpaHeadroom = (cpaEst != null && cpaMax != null) ? (cpaMax - cpaEst) : null;
-    const starMissed = CRITERES.filter(c => c.star && p.criteres && p.criteres[c.id] !== true).map(c => c.id);
-    const validated = CRITERES.filter(c => p.criteres && p.criteres[c.id] === true).map(c => c.id);
-
-    lines.push(`## Combattant #${i+1} — pid="${p.id}"`);
-    if (p.name) lines.push(`- Nom : ${p.name}`);
-    if (p.niche) lines.push(`- Niche : ${p.niche}`);
-
-    // === MÉTRIQUES GOOGLE ADS — ce qui décide ===
-    lines.push(`### Google Ads (les chiffres qui décident)`);
-    if (vol != null) {
-      const status = vol >= 15000 ? 'MARCHÉ VALIDE (≥15k)' : vol >= 5000 ? 'MARCHÉ LIMITÉ (5-15k, OK si prix≥1500€)' : 'MARCHÉ TROP PETIT (<5k, ABANDON)';
-      lines.push(`- Volume mensuel mot-clé : ${vol.toLocaleString('fr-FR')} → ${status}`);
-    } else {
-      lines.push(`- Volume mensuel mot-clé : NON RENSEIGNÉ (impossible de valider règle des 15 000)`);
-    }
-    if (p.volume_total) lines.push(`- Volume total univers (somme mots-clés liés) : ${p.volume_total}`);
-    if (p.cpc) lines.push(`- CPC moyen Google Ads : ${p.cpc}€`);
-    if (cpaEst != null) lines.push(`- CPA estimé (CPC × 150) : ${Math.round(cpaEst)}€`);
-    if (cpaMax != null) lines.push(`- CPA max viable (marge brute - 20%) : ${Math.round(cpaMax)}€`);
-    if (cpaHeadroom != null) {
-      const ok = cpaHeadroom > 0;
-      lines.push(`- Verdict CPA : ${ok ? 'VIABLE' : 'TROP HAUT'} (${ok ? 'headroom +' : 'déficit '}${Math.round(Math.abs(cpaHeadroom))}€)`);
-    }
-
-    // === ÉCONOMIE PRODUIT ===
-    lines.push(`### Économie`);
-    if (p.prix_vente) lines.push(`- Prix vente TTC : ${p.prix_vente}€`);
-    if (p.prix_achat) lines.push(`- Prix achat : ${p.prix_achat}€`);
-    if (p.prix_livraison) lines.push(`- Livraison : ${p.prix_livraison}€/u`);
-    if (m && m.ratio) {
-      const margeStatus = m.ratio >= 4 ? 'OK idéal ≥×4' : m.ratio >= 3 ? 'OK seuil ×3' : 'INSUFFISANT (<×3)';
-      lines.push(`- Ratio marge prix vente / (achat+livraison) : ×${m.ratio.toFixed(2)} → ${margeStatus}`);
-    }
-    if (m && m.margeBrute != null) lines.push(`- Marge brute /unité : ${m.margeBrute.toFixed(2)}€`);
-
-    // === MÉTHODE ARTHUR (contexte secondaire) ===
-    lines.push(`### Score Arthur (contexte secondaire)`);
-    lines.push(`- Score : ${score}/12 (validés : [${validated.join(', ') || 'aucun'}])`);
-    lines.push(`- Critères ★ non-négociables manqués ou inconnus : [${starMissed.join(', ') || 'aucun'}]`);
-    if (p.notes) lines.push(`- Notes : ${p.notes.slice(0, 240)}`);
-    lines.push('');
-  });
-  lines.push(`Juge ce duel selon la méthode Arthur Google Ads-first (volume ≥15k > CPA viable > marge > niche > score) et retourne le JSON.`);
-  return lines.join('\n');
-}
-
-async function duelRunClaude() {
-  const prods = _duelGet().map(pid => state.products.find(p => p.id === pid)).filter(Boolean);
-  if (prods.length < 2) { _duelToast('Sélectionne au moins 2 produits pour lancer un duel.'); return; }
-  if (!(typeof _aiHasKey === 'function') || !_aiHasKey()) {
-    if (typeof aiOpenKeyModal === 'function') aiOpenKeyModal();
-    return;
-  }
-  if (_duelClaudeBusy) return;
-  _duelClaudeBusy = true;
-  _duelClaudeError = null;
-  renderMain();
-  try {
-    const sys = _duelBuildSystemPrompt();
-    const usr = _duelBuildUserMessage(prods);
-    const { text, usage, model } = await _aiCallClaude(sys, usr);
-    let json;
-    try { json = JSON.parse(text.trim()); }
-    catch(e) {
-      const m = text.match(/\{[\s\S]+\}/);
-      if (m) { try { json = JSON.parse(m[0]); } catch(e2) { throw new Error('JSON Claude non parsable.'); } }
-      else throw new Error('Réponse Claude sans JSON.');
-    }
-    if (!json.winner_pid) throw new Error('Réponse Claude sans winner_pid.');
-    if (!prods.find(p => p.id === json.winner_pid)) {
-      // Fallback: take the first valid pid mentioned, else first product
-      const guess = (json.others || []).find(o => prods.find(p => p.id === o.pid));
-      json.winner_pid = guess ? guess.pid : prods[0].id;
-    }
-    _duelClaudeResult = {
-      ...json,
-      _pids: prods.map(p => p.id),
-      _usage: usage || {},
-      _model: model,
-      _at: Date.now()
-    };
-  } catch(e) {
-    console.error('Duel Claude error:', e);
-    _duelClaudeError = 'Analyse Claude — ' + e.message;
-  } finally {
-    _duelClaudeBusy = false;
-    renderMain();
-  }
-}
-
 function renderDuel() {
   const all = state.products;
   const selectedIds = _duelGet();
@@ -5761,10 +4987,10 @@ function renderDuel() {
 
   // Hero
   const heroSubText = selectedProds.length === 0
-    ? `Compose ton duel : sélectionne 2 à ${DUEL_MAX} produits candidats. Le radar des 12 critères Arthur les superpose, le verdict désigne le combattant à lancer en premier, et Claude argumente.`
+    ? `Compose ton duel : sélectionne 2 à ${DUEL_MAX} produits candidats. Tableau comparatif Google Ads (volume mot-clé ≥15k, CPC, CPA estimé = CPC × 150, CPA max viable) + verdict winner selon hiérarchie Arthur.`
     : selectedProds.length === 1
       ? `Sélectionne au moins un second combattant pour lancer le duel.`
-      : `${selectedProds.length} combattants en lice. Radar superposé, verdict auto, analyse Claude argumentée.`;
+      : `${selectedProds.length} combattants en lice. Tableau Google Ads + verdict winner auto selon hiérarchie Arthur (volume ≥15k > CPA viable > marge > niche > score).`;
 
   // Sort all products: kept first (by score desc), then pending (by created desc), then rejected
   const sorted = [...all].sort((a, b) => {
@@ -5827,7 +5053,6 @@ function renderDuel() {
         </div>
         ${_duelVerdictCardHtml(selectedProds, winner)}
         ${_duelTable(selectedProds, winnerPid)}
-        ${_duelClaudeSectionHtml(selectedProds)}
       </div>
     `;
   }
@@ -6003,7 +5228,7 @@ function renderTunnel() {
         <ul style="font-size:13px;color:var(--text2);line-height:1.7;padding-left:20px;margin:0">
           <li>L'app calcule automatiquement le <strong>CPA estimé</strong> (CPC × 150) et le <strong>CPA max viable</strong> (marge brute - 20% pour TVA + Shopify)</li>
           <li>Le <strong>Duel Arthur</strong> compare jusqu'à 4 candidats avec ces métriques en tableau et désigne le winner selon la hiérarchie : volume ≥ 15k → CPA viable → marge → score</li>
-          <li>L'<strong>Auto-Scorer Claude</strong> sur l'onglet Critères inclut ces données dans son raisonnement</li>
+          <li>L'onglet <strong>Critères</strong> affiche le score 0-12 et les critères ★ non-négociables avec les leçons Skool embarquées (Mentor Arthur)</li>
         </ul>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
           <button class="duel-btn primary" onclick="go({type:'duel'})">${ico('sword', 13)} Lancer un duel</button>
@@ -6058,7 +5283,6 @@ function renderProduct(pid) {
 function setProductTab(t) {
   productTab = t;
   renderMain();
-  if (t === 'criteres') _maybeShowMentorToast();
 }
 
 function renderStatusBlock(p) {
@@ -6094,464 +5318,6 @@ function setStatus(pid, status) {
   save(); renderAll();
 }
 
-function renderProductInfos(p) {
-  return `
-    <div class="card">
-      <h2>Informations de base</h2>
-      <div class="form-grid">
-        <div class="field"><label>Nom</label><input value="${escapeHtml(p.name||'')}" oninput="updateProduct('${p.id}','name',this.value)"></div>
-        <div class="field"><label>Source (méthode Skool)</label>
-          <select onchange="updateProduct('${p.id}','source',this.value)">
-            <option value="">— choisir —</option>
-            ${METHODES.map(m => `<option value="${escapeHtml(m.label)}" ${p.source===m.label?'selected':''}>${escapeHtml(m.label)}</option>`).join('')}
-            <option value="Autre" ${p.source==='Autre'?'selected':''}>Autre / direct</option>
-          </select>
-        </div>
-        <div class="field" style="grid-column:1/-1"><label>URL fournisseur</label><input value="${escapeHtml(p.fournisseur_url||'')}" oninput="updateProduct('${p.id}','fournisseur_url',this.value)" placeholder="https://…"></div>
-        <div class="field"><label>Niche / univers</label><input value="${escapeHtml(p.niche||'')}" oninput="updateProduct('${p.id}','niche',this.value)" placeholder="Maison, Sport, Beauté…"></div>
-      </div>
-      <h3>Prix</h3>
-      <div class="form-grid">
-        <div class="field"><label>Prix achat (€)</label><input type="number" step="0.01" value="${p.prix_achat||''}" oninput="updateProduct('${p.id}','prix_achat',this.value)"><div class="hint">Coût unitaire fournisseur (AliExpress)</div></div>
-        <div class="field"><label>Livraison (€)</label><input type="number" step="0.01" value="${p.prix_livraison||''}" oninput="updateProduct('${p.id}','prix_livraison',this.value)"><div class="hint">Par unité</div></div>
-        <div class="field"><label>Prix vente (€)</label><input type="number" step="0.01" value="${p.prix_vente||''}" oninput="updateProduct('${p.id}','prix_vente',this.value)"><div class="hint">TTC sur la page</div></div>
-      </div>
-      <h3>Recherche &amp; CPC <span style="font-size:11px;font-weight:600;color:var(--text3);text-transform:none;letter-spacing:0">(les chiffres qui décident — méthode Arthur Google Ads)</span></h3>
-      ${(() => {
-        const vol = _parseVolume(p.volume_mensuel);
-        const cpaEst = calcCpaEstime(p);
-        const cpaMax = calcCpaMax(p);
-        const volStat = _volumeStatus(vol);
-        const cpaV = _cpaViability(p);
-        const volPill = vol == null
-          ? '<span style="font-size:10.5px;color:var(--text3);padding:2px 8px;background:rgba(255,255,255,0.04);border-radius:999px">volume non renseigné</span>'
-          : `<span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:${volStat.cls==='is-good'?'rgba(74,222,128,0.18)':volStat.cls==='is-mid'?'rgba(251,191,36,0.18)':'rgba(248,113,113,0.18)'};color:${volStat.cls==='is-good'?'#4ade80':volStat.cls==='is-mid'?'#fbbf24':'#f87171'}">${volStat.label}</span>`;
-        const cpaPill = cpaV.viable === null
-          ? '<span style="font-size:10.5px;color:var(--text3);padding:2px 8px;background:rgba(255,255,255,0.04);border-radius:999px">CPA non calculable</span>'
-          : `<span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:${cpaV.viable?'rgba(74,222,128,0.18)':'rgba(248,113,113,0.18)'};color:${cpaV.viable?'#4ade80':'#f87171'}">${cpaV.viable?`CPA ${Math.round(cpaV.est)}€ < ${Math.round(cpaV.max)}€`:`CPA ${Math.round(cpaV.est)}€ > ${Math.round(cpaV.max)}€`}</span>`;
-        return `<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;padding:10px 12px;background:linear-gradient(135deg,rgba(34,211,238,0.06),rgba(139,92,246,0.04));border:1px solid rgba(34,211,238,0.18);border-radius:10px"><span style="font-size:11.5px;color:var(--text2);font-weight:600">Verdict Arthur live :</span>${volPill}${cpaPill}<a onclick="go({type:'tunnel'})" style="margin-left:auto;font-size:11px;color:#67e8f9;cursor:pointer;text-decoration:underline">${ico('target',11)} règles complètes →</a></div>`;
-      })()}
-      <div class="form-grid">
-        <div class="field"><label>Volume mensuel (mot-clé principal)</label><input value="${escapeHtml(p.volume_mensuel||'')}" oninput="updateProduct('${p.id}','volume_mensuel',this.value)" placeholder="ex: 18 000 ou 18K"><div class="hint">Keyword Planner / Semrush / SERanking. Seuil Arthur : <strong style="color:#4ade80">≥ 15 000</strong> = marché valide · <strong style="color:#fbbf24">5-15k</strong> = limité · <strong style="color:#f87171">&lt;5k</strong> = abandon</div></div>
-        <div class="field"><label>Volume total (univers)</label><input value="${escapeHtml(p.volume_total||'')}" oninput="updateProduct('${p.id}','volume_total',this.value)" placeholder="ex: 29,6K"><div class="hint">Somme des mots-clés liés (informatif)</div></div>
-        <div class="field"><label>CPC moyen (€)</label><input type="number" step="0.01" value="${p.cpc||''}" oninput="updateProduct('${p.id}','cpc',this.value)"><div class="hint">CPC suggéré Google Ads. <strong>CPA estimé = CPC × 150</strong> doit rester sous CPA max viable.</div></div>
-      </div>
-      <h3>Concurrents drop (3 max — export Excel)</h3>
-      <div class="form-grid">
-        <div class="field" style="grid-column:1/-1"><label>Lien concurrent 1</label><input value="${escapeHtml(p.concurrent_1||'')}" oninput="updateProduct('${p.id}','concurrent_1',this.value)" placeholder="https://…"></div>
-        <div class="field" style="grid-column:1/-1"><label>Lien concurrent 2</label><input value="${escapeHtml(p.concurrent_2||'')}" oninput="updateProduct('${p.id}','concurrent_2',this.value)" placeholder="https://…"></div>
-        <div class="field" style="grid-column:1/-1"><label>Lien concurrent 3</label><input value="${escapeHtml(p.concurrent_3||'')}" oninput="updateProduct('${p.id}','concurrent_3',this.value)" placeholder="https://…"></div>
-      </div>
-    </div>
-  `;
-}
-/* ═════════ AUTO-SCORER ARTHUR — AI-native scoring (Claude Sonnet 4.6) ═════════ */
-// Pari produit : aucun concurrent SaaS de validation produit ne sait scorer un
-// candidat selon la méthode Arthur — parce que la méthode est privée. On
-// branche Claude sur la grille des 12 critères pour rendre l'évaluation
-// instantanée (4-8s) et argumentée. Clé Anthropic 100% côté user (localStorage,
-// jamais transmise ailleurs que api.anthropic.com).
-
-const AI_KEY_STORAGE = 'ecom_anthropic_api_key_v1';
-const AI_MODEL = 'claude-sonnet-4-6';
-const AI_MAX_TOKENS = 2200;
-let _aiBusy = false;
-let _aiPendingPid = null;        // pid à scorer après save de la clé
-let _aiResults = {};             // { pid: { criteres, score, verdict, summary, next_action, niche_suggestion, _usage, _at } }
-let _aiCurrentPid = null;        // pid affiché dans modalAIResult
-let _aiLoadingTimers = [];
-
-function _aiHasKey() { return !!_aiKeyGet(); }
-function _aiKeyGet() { try { return localStorage.getItem(AI_KEY_STORAGE) || ''; } catch(e) { return ''; } }
-function _aiKeySet(k) { try { localStorage.setItem(AI_KEY_STORAGE, (k||'').trim()); } catch(e) {} }
-function _aiKeyDelete() { try { localStorage.removeItem(AI_KEY_STORAGE); } catch(e) {} }
-
-function aiOpenKeyModal(forPid) {
-  _aiPendingPid = forPid || null;
-  const inp = document.getElementById('aiKeyInput');
-  if (inp) inp.value = _aiKeyGet();
-  _aiUpdateKeyStatus();
-  openModal('modalAIKey');
-  setTimeout(() => { if (inp) inp.focus(); }, 60);
-}
-
-function _aiUpdateKeyStatus() {
-  const has = _aiHasKey();
-  const el = document.getElementById('aiKeyStatus');
-  const del = document.getElementById('aiDeleteKeyBtn');
-  if (el) {
-    el.textContent = has ? 'clé enregistrée' : 'aucune clé';
-    el.className = 'ai-key-status ' + (has ? 'ok' : 'none');
-  }
-  if (del) del.style.display = has ? '' : 'none';
-}
-
-function aiSaveKey() {
-  const inp = document.getElementById('aiKeyInput');
-  const k = (inp?.value || '').trim();
-  if (!k) { alert('Colle ta clé Anthropic d\'abord (sk-ant-…)'); return; }
-  if (!k.startsWith('sk-ant-')) {
-    if (!confirm('Cette clé ne ressemble pas à une clé Anthropic (sk-ant-…). Continuer quand même ?')) return;
-  }
-  _aiKeySet(k);
-  _aiUpdateKeyStatus();
-  closeModal('modalAIKey');
-  if (_aiPendingPid) {
-    const pid = _aiPendingPid; _aiPendingPid = null;
-    setTimeout(() => aiAutoScore(pid), 80);
-  }
-}
-
-function aiDeleteKey() {
-  if (!confirm('Supprimer la clé Anthropic stockée ? Tu pourras la re-coller à tout moment.')) return;
-  _aiKeyDelete();
-  _aiUpdateKeyStatus();
-  const inp = document.getElementById('aiKeyInput');
-  if (inp) inp.value = '';
-}
-
-// ── Prompt système (~1.4k tokens, cacheable via cache_control:ephemeral) ──
-function _aiBuildSystemPrompt() {
-  const critList = CRITERES.map(c =>
-    `${c.id}. ${c.titre}${c.star ? ' [★ NON-NÉGOCIABLE]' : ''}\n   ${c.desc}`
-  ).join('\n\n');
-  return `Tu es l'analyste produit dropshipping d'Arthur (Ecom Inner Circle), expert français du e-commerce sur Google Ads. Ton job : évaluer un produit candidat selon la grille rigoureuse des 12 critères Arthur, et retourner un score JSON structuré.
-
-══ PHILOSOPHIE ARTHUR ══
-- On cible Google Ads (Search + Shopping), PAS Meta Ads. Sur Google on capte une intention d'achat existante, on ne crée pas la demande.
-- La pertinence prime sur le branding : prix juste + match exact des mots-clés + bonne page produit.
-- "Boring marche" : un faux mur en pierre se vend mieux qu'un produit "wow" sur Google.
-- Marge ×3 minimum sur (prix achat + livraison) — idéal ×4 à ×5 — pour absorber le CPA Google Ads.
-- Volume mensuel idéal 1k-40k recherches FR sur le mot-clé principal (ni trop niche, ni saturé).
-- Top 3 Google occupé par institutionnels (Amazon, Fnac, Darty, Cdiscount, Leroy Merlin, Boulanger) → produit à JETER.
-- Cycle d'achat <10 min idéal (prix de vente <300€). Au-delà, le client compare des heures.
-- Variante précise > produit générique : "aspirateur voiture sans fil 12000Pa" gagne, "un aspirateur" perd.
-- Le produit doit demander une explication d'expert pour justifier ton site vs un achat direct sur Amazon.
-
-══ LES 12 CRITÈRES ARTHUR ══
-${critList}
-
-══ TON TRAVAIL ══
-Tu reçois un produit candidat avec ses informations partielles (souvent incomplètes). Tu dois :
-1. Pour CHAQUE critère 1 à 12, décider :
-   - validated: true   → le critère est validé selon les infos disponibles
-   - validated: false  → le critère est NON validé (donnée présente l'infirme)
-   - validated: null   → donnée manquante OU non vérifiable sans navigation web
-2. Justification courte (1 phrase, max ~28 mots) en français, avec la donnée précise quand c'est mesurable. Ex : "Marge ×2.4 < ×3 minimum Arthur" plutôt que "Marge insuffisante". Si null, dire "Donnée manquante : prix d'achat" ou "Non vérifiable sans inspection SERP/site".
-3. Score = nombre de critères avec validated === true.
-4. Verdict global :
-   - "go"   si score ≥ 10 ET aucun critère ★ marqué false
-   - "wait" si score 8-9 OU un seul ★ false
-   - "kill" si score < 8 OU ≥ 2 ★ false
-5. Summary : 2-3 phrases en français qui résume ce qui marche / ce qui bloque.
-6. next_action : 1 phrase actionnable et concrète ("Mesure le volume mensuel sur Keyword Planner avant de décider", "Compare les prix shopping Amazon avant de continuer", etc.).
-7. niche_suggestion : optionnel — si critère 4 est faible OU si le produit est trop générique, suggère une variante plus précise (ex : "Aspirateur voiture sans fil 12000Pa avec accessoire fissures").
-
-══ FORMAT DE SORTIE — JSON STRICT, RIEN D'AUTRE ══
-{
-  "criteres": {
-    "1":  {"validated": true|false|null, "reason": "..."},
-    "2":  {"validated": ..., "reason": "..."},
-    "3":  {"validated": ..., "reason": "..."},
-    "4":  {"validated": ..., "reason": "..."},
-    "5":  {"validated": ..., "reason": "..."},
-    "6":  {"validated": ..., "reason": "..."},
-    "7":  {"validated": ..., "reason": "..."},
-    "8":  {"validated": ..., "reason": "..."},
-    "9":  {"validated": ..., "reason": "..."},
-    "10": {"validated": ..., "reason": "..."},
-    "11": {"validated": ..., "reason": "..."},
-    "12": {"validated": ..., "reason": "..."}
-  },
-  "score": <int 0-12>,
-  "verdict": "go" | "wait" | "kill",
-  "summary": "2-3 phrases en français.",
-  "next_action": "1 phrase actionnable.",
-  "niche_suggestion": "..." OU null
-}
-
-══ RÈGLES STRICTES ══
-- TOUJOURS répondre en JSON valide pur. Pas de markdown, pas de \`\`\`json, pas de prose autour.
-- Score doit correspondre exactement au nombre de validated === true.
-- Sois concret et chiffré quand possible, jamais pédagogique. C'est un copilote, pas un cours.
-- Le français reste naturel et direct — pas de "il convient de", pas de "il est recommandé de".`;
-}
-
-function _aiBuildUserMessage(p) {
-  const lines = [`# Produit candidat à évaluer\n`];
-  if (p.name) lines.push(`**Nom** : ${p.name}`);
-  if (p.niche) lines.push(`**Niche** : ${p.niche}`);
-  if (p.source) lines.push(`**Source de découverte** : ${p.source}`);
-  if (p.fournisseur_url) lines.push(`**URL fournisseur** : ${p.fournisseur_url}`);
-  // Prix
-  if (p.prix_achat) lines.push(`**Prix achat** : ${p.prix_achat}€`);
-  if (p.prix_livraison) lines.push(`**Livraison** : ${p.prix_livraison}€/unité`);
-  if (p.prix_vente) lines.push(`**Prix vente TTC** : ${p.prix_vente}€`);
-  if (p.prix_achat && p.prix_vente) {
-    const pa = parseFloat(p.prix_achat) || 0;
-    const liv = parseFloat(p.prix_livraison) || 0;
-    const pv = parseFloat(p.prix_vente) || 0;
-    const totalAchat = pa + liv;
-    if (totalAchat > 0) {
-      const ratio = pv / totalAchat;
-      lines.push(`**Ratio marge** (prix vente / [achat+liv]) : ×${ratio.toFixed(2)}`);
-    }
-  }
-  // Volume / CPC
-  if (p.volume_mensuel) lines.push(`**Volume mensuel mot-clé principal** : ${p.volume_mensuel}`);
-  if (p.volume_total) lines.push(`**Volume total univers (somme mots-clés liés)** : ${p.volume_total}`);
-  if (p.cpc) lines.push(`**CPC moyen Google Ads** : ${p.cpc}€`);
-  // Concurrents
-  const conc = [p.concurrent_1, p.concurrent_2, p.concurrent_3].filter(Boolean);
-  if (conc.length) lines.push(`**Concurrents drop détectés** : ${conc.length}\n${conc.map((u,i)=>`  ${i+1}. ${u}`).join('\n')}`);
-  // Notes user
-  if (p.notes) lines.push(`**Notes libres** :\n${p.notes}`);
-  // Critères déjà cochés (contexte, à confirmer/contester)
-  const userYes = Object.keys(p.criteres||{}).filter(k => p.criteres[k] === true).map(Number).sort((a,b)=>a-b);
-  if (userYes.length) lines.push(`**Critères cochés par l'utilisateur** (à valider/contester) : ${userYes.join(', ')}`);
-  // Si aucun champ
-  if (lines.length === 1) {
-    lines.push(`(Très peu d'informations disponibles — la plupart des critères seront probablement "null" pour donnée manquante.)`);
-  }
-  lines.push(`\nÉvalue ce produit selon les 12 critères Arthur et retourne le JSON.`);
-  return lines.join('\n');
-}
-
-async function _aiCallClaude(systemPrompt, userMsg) {
-  const key = _aiKeyGet();
-  if (!key) throw new Error('Clé API Anthropic manquante.');
-  const url = 'https://api.anthropic.com/v1/messages';
-  const payload = {
-    model: AI_MODEL,
-    max_tokens: AI_MAX_TOKENS,
-    system: [
-      { type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }
-    ],
-    messages: [
-      { role: 'user', content: userMsg }
-    ]
-  };
-  const r = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      'x-api-key': key,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify(payload)
-  });
-  if (!r.ok) {
-    let detail = '';
-    try { detail = (await r.text()).slice(0, 320); } catch(e) {}
-    throw new Error(`API Anthropic ${r.status} — ${detail || r.statusText}`);
-  }
-  const data = await r.json();
-  const text = (data.content || []).map(b => b.text || '').join('');
-  return { text, usage: data.usage || {}, model: data.model || AI_MODEL };
-}
-
-function _aiParseResponse(text) {
-  if (!text || !text.trim()) throw new Error('Réponse Claude vide.');
-  let json;
-  const trimmed = text.trim();
-  try { json = JSON.parse(trimmed); }
-  catch(e) {
-    // Try to extract JSON from prose / fenced blocks
-    const fenced = trimmed.match(/```(?:json)?\s*([\s\S]+?)```/i);
-    if (fenced) {
-      try { json = JSON.parse(fenced[1].trim()); } catch(e2) {}
-    }
-    if (!json) {
-      const m = trimmed.match(/\{[\s\S]+\}/);
-      if (m) { try { json = JSON.parse(m[0]); } catch(e3) {} }
-    }
-    if (!json) throw new Error('Réponse Claude non-parsable comme JSON. Début : ' + trimmed.slice(0, 120));
-  }
-  if (!json.criteres || typeof json.criteres !== 'object') throw new Error('Champ "criteres" manquant ou invalide.');
-  // Recompute score for safety
-  let s = 0;
-  for (const k of Object.keys(json.criteres)) if (json.criteres[k]?.validated === true) s++;
-  json.score = s;
-  if (!json.verdict) {
-    const starMissed = CRITERES.filter(c => c.star && json.criteres[c.id]?.validated === false).length;
-    json.verdict = (s >= 10 && starMissed === 0) ? 'go' : (s >= 8 && starMissed <= 1) ? 'wait' : 'kill';
-  }
-  return json;
-}
-
-const _AI_LOADING_STEPS = [
-  'Chargement de la grille Arthur',
-  'Construction du prompt système (12 critères)',
-  'Envoi à Claude Sonnet 4.6',
-  'Claude raisonne sur ton produit',
-  'Lecture des critères un par un',
-  'Calcul du verdict final',
-  'Préparation des recommandations',
-];
-function _aiStartLoadingTicker() {
-  _aiStopLoadingTicker();
-  let i = 0;
-  const el = document.getElementById('aiLoadingStep');
-  if (el) el.textContent = _AI_LOADING_STEPS[0];
-  const tick = setInterval(() => {
-    i = Math.min(_AI_LOADING_STEPS.length - 1, i + 1);
-    if (el) el.textContent = _AI_LOADING_STEPS[i];
-    if (i >= _AI_LOADING_STEPS.length - 1) clearInterval(tick);
-  }, 1100);
-  _aiLoadingTimers.push(tick);
-}
-function _aiStopLoadingTicker() {
-  _aiLoadingTimers.forEach(t => clearInterval(t));
-  _aiLoadingTimers = [];
-}
-
-async function aiAutoScore(pid) {
-  if (_aiBusy) return;
-  if (!_aiHasKey()) { aiOpenKeyModal(pid); return; }
-  const p = findProduct(pid);
-  if (!p) { alert('Produit introuvable.'); return; }
-  _aiBusy = true;
-  _aiCurrentPid = pid;
-  // disable button
-  const btn = document.getElementById('aiScoreBtn_' + pid);
-  if (btn) btn.disabled = true;
-  openModal('modalAILoading');
-  _aiStartLoadingTicker();
-  try {
-    const sys = _aiBuildSystemPrompt();
-    const usr = _aiBuildUserMessage(p);
-    const { text, usage, model } = await _aiCallClaude(sys, usr);
-    const parsed = _aiParseResponse(text);
-    _aiResults[pid] = { ...parsed, _usage: usage, _model: model, _at: Date.now() };
-    _aiStopLoadingTicker();
-    closeModal('modalAILoading');
-    aiOpenResultModal(pid);
-  } catch(e) {
-    _aiStopLoadingTicker();
-    closeModal('modalAILoading');
-    console.error('Auto-Scorer error:', e);
-    alert('Auto-Scorer Arthur — ' + e.message);
-  } finally {
-    _aiBusy = false;
-    if (btn) btn.disabled = false;
-  }
-}
-
-function aiOpenResultModal(pid) {
-  const r = _aiResults[pid];
-  const p = findProduct(pid);
-  if (!r || !p) return;
-  _aiCurrentPid = pid;
-  const headLine = document.getElementById('aiResultProductLine');
-  if (headLine) headLine.textContent = `${p.name || 'Produit sans nom'}${p.niche ? ' · ' + p.niche : ''} · analysé ${new Date(r._at).toLocaleTimeString('fr-FR')}`;
-  document.getElementById('aiResultBody').innerHTML = _aiResultHtml(p, r);
-  openModal('modalAIResult');
-}
-
-function _aiVerdictMeta(v) {
-  if (v === 'go')   return { cls:'go',   text:'LANCER',   sub:'Produit qui passe la grille' };
-  if (v === 'wait') return { cls:'wait', text:'ATTENDRE', sub:'Critères clés à confirmer' };
-  return { cls:'kill', text:'JETER', sub:'Trop de blocants' };
-}
-
-function _aiResultHtml(p, r) {
-  const v = _aiVerdictMeta(r.verdict);
-  // Cache stats (Anthropic prompt caching)
-  const u = r._usage || {};
-  const cacheRead = u.cache_read_input_tokens || 0;
-  const cacheCreate = u.cache_creation_input_tokens || 0;
-  const inp = u.input_tokens || 0;
-  const out = u.output_tokens || 0;
-  const cacheBadge = cacheRead > 0
-    ? `<span class="cache-hit">cache hit · ${cacheRead.toLocaleString('fr-FR')} tk lus du cache</span>`
-    : (cacheCreate > 0 ? `<span>cache créé · ${cacheCreate.toLocaleString('fr-FR')} tk</span>` : '');
-  const meta = `
-    <div class="ai-meta-bar">
-      <span>${escapeHtml(r._model || AI_MODEL)}</span>
-      ${cacheBadge}
-      <span>${(inp + cacheRead + cacheCreate).toLocaleString('fr-FR')} tk in</span>
-      <span>${out.toLocaleString('fr-FR')} tk out</span>
-    </div>`;
-
-  const banner = `
-    <div class="ai-verdict-banner" style="--ai-stripe: ${v.cls==='go' ? 'linear-gradient(180deg,#22d3ee,#4ade80)' : v.cls==='wait' ? 'linear-gradient(180deg,#fde047,#fbbf24)' : 'linear-gradient(180deg,#f87171,#dc2626)'}">
-      <div>
-        <div class="ai-verdict-score">${r.score}<span class="out">/12</span></div>
-      </div>
-      <div class="ai-verdict-meta">
-        <span class="ai-verdict-pill ${v.cls}">${v.text}</span>
-        <div class="ai-verdict-summary">${escapeHtml(r.summary || v.sub)}</div>
-      </div>
-    </div>`;
-
-  // Grid des 12 critères
-  const grid = CRITERES.map(c => {
-    const cr = r.criteres[c.id] || r.criteres[String(c.id)] || {};
-    const status = cr.validated;
-    const statusCls = status === true ? 'is-yes' : status === false ? 'is-no' : 'is-unk';
-    const statusLabel = status === true ? 'OUI' : status === false ? 'NON' : '?';
-    const reason = cr.reason || (status === null ? 'Donnée manquante.' : '');
-    return `
-      <div class="ai-crit-item ${statusCls}">
-        <div class="ai-crit-num">${c.id}</div>
-        <div class="ai-crit-body">
-          <div class="ai-crit-name">${c.star ? `<span class="star">${ico('star',12)}</span>` : ''}${escapeHtml(c.titre)}</div>
-          <div class="ai-crit-reason">${escapeHtml(reason)}</div>
-        </div>
-        <span class="ai-crit-status">${statusLabel}</span>
-      </div>`;
-  }).join('');
-
-  const next = r.next_action
-    ? `<div class="ai-next-action"><strong>Prochaine action.</strong> ${escapeHtml(r.next_action)}</div>` : '';
-  const niche = r.niche_suggestion
-    ? `<div class="ai-niche-suggest"><strong>Suggestion de niche/positionnement :</strong> ${escapeHtml(r.niche_suggestion)}</div>` : '';
-
-  return `
-    ${banner}
-    <div class="ai-section-title">Critère par critère (★ = non-négociable)</div>
-    <div class="ai-crit-grid">${grid}</div>
-    ${next}
-    ${niche}
-    ${meta}
-  `;
-}
-
-function aiApplyResult() {
-  const pid = _aiCurrentPid;
-  const r = _aiResults[pid];
-  const p = findProduct(pid);
-  if (!r || !p) return;
-  if (!p.criteres) p.criteres = {};
-  let applied = 0;
-  for (const c of CRITERES) {
-    const cr = r.criteres[c.id] || r.criteres[String(c.id)];
-    if (!cr) continue;
-    if (cr.validated === true)  { p.criteres[c.id] = true;  applied++; }
-    else if (cr.validated === false) { p.criteres[c.id] = false; applied++; }
-    // null = on ne touche pas (on respecte la décision user actuelle)
-  }
-  // Append AI note (idempotent)
-  if (r.summary) {
-    const ts = new Date().toLocaleDateString('fr-FR');
-    const tag = `[Auto-Scorer · Claude · ${ts}]`;
-    const block = `${tag} Score ${r.score}/12 · ${(_aiVerdictMeta(r.verdict)).text}\n${r.summary}${r.next_action ? '\n→ ' + r.next_action : ''}`;
-    if (!(p.notes || '').includes(tag)) {
-      p.notes = (p.notes || '') + (p.notes ? '\n\n' : '') + block;
-    }
-  }
-  save();
-  closeModal('modalAIResult');
-  renderMain(); renderSidebar();
-  // Petit toast natif réutilisé via alert minimaliste — on aurait pu créer un toast dédié
-  // (Hint discret : on log dans la console)
-  console.info(`[Auto-Scorer] ${applied} critère(s) appliqué(s) au produit ${p.id}.`);
-}
-
-
-// Mapping de chaque critère (1-12) vers la/les leçon(s) Skool correspondante(s).
-// Source : 27 leçons transcrites dans formation_data.js (window.FORMATION).
 const CRIT_LESSONS = {
   1:  { primary: 'c1_marge', deeper: 'c1_marge_suite' },
   2:  { primary: 'c2_concurrence' },
@@ -6623,35 +5389,11 @@ function _mentorCardHtml(crit) {
   `;
 }
 
-function _mentorToastHtml() {
-  if (localStorage.getItem(MENTOR_TOAST_KEY) === '1') return '';
-  return `
-    <div class="mentor-toast" id="mentorToast">
-      <div class="mentor-toast-ico">${ico('graduation',18)}</div>
-      <div class="mentor-toast-body">
-        <strong>Mentor Arthur est là.</strong>
-        <span>Pour chaque critère, ouvre la leçon Skool correspondante. Ou lance le <strong style="color:#fff;display:inline">Mode guidé</strong> pour valider la grille pas à pas avec narration.</span>
-      </div>
-      <button class="mentor-toast-close" onclick="dismissMentorToast()" aria-label="Fermer">×</button>
-    </div>
-  `;
-}
+function _mentorToastHtml() { return ''; }
 
-function dismissMentorToast() {
-  localStorage.setItem(MENTOR_TOAST_KEY, '1');
-  const t = document.getElementById('mentorToast');
-  if (t) t.classList.remove('show');
-  setTimeout(() => { if (t) t.remove(); }, 500);
-}
+function dismissMentorToast() {}
 
-function _maybeShowMentorToast() {
-  if (localStorage.getItem(MENTOR_TOAST_KEY) === '1') return;
-  setTimeout(() => {
-    const t = document.getElementById('mentorToast');
-    if (t) t.classList.add('show');
-  }, 350);
-  setTimeout(() => { dismissMentorToast(); }, 12000);
-}
+function _maybeShowMentorToast() {}
 
 function startGuided(pid) {
   _guidedActive = true;
@@ -6794,17 +5536,15 @@ function renderProductCriteres(p) {
     <div class="card">
       <h2>Critères de validation Arthur</h2>
       <p style="font-size:12px;color:var(--text2);margin-bottom:14px">Coche les critères validés. Score minimum : 8/12. Les critères marqués sont non-négociables. <strong style="color:var(--accent2)">${totalLessons} leçons Skool</strong> embarquées via Mentor Arthur.</p>
-      <div class="crit-tools-row">
-        <button class="btn-ai-score" onclick="aiAutoScore('${p.id}')" id="aiScoreBtn_${p.id}" title="Demande à Claude Sonnet 4.6 d'évaluer ce produit selon la grille Arthur"><span class="ai-spark"></span> Auto-Scorer · Claude</button>
-        <button class="btn-mentor" onclick="startGuided('${p.id}')">${ico('graduation',13)} <span class="pulse-dot"></span> Mode guidé Arthur</button>
-        <span style="font-size:12px;color:var(--text3)">Auto-scoring AI ou pas-à-pas narré · 12 critères · leçon Skool embarquée</span>
+      <div class="crit-tools-row">        <button class="duel-btn" onclick="startGuided('${p.id}')">${ico('graduation',13)} <span class="pulse-dot"></span> Mode guidé Arthur</button>
+        <span style="font-size:12px;color:var(--text3)">12 critères · leçon Skool embarquée</span>
       </div>
       ${items}
       <div style="margin-top:14px;padding:14px;background:var(--bg3);border-radius:var(--radius);text-align:center">
         Score : <strong style="font-size:18px">${score}/12</strong> — ${score>=10?'<span style="color:var(--green)">Excellent</span>':score>=8?'<span style="color:var(--yellow)">Acceptable</span>':'<span style="color:var(--red)">Insuffisant</span>'}
       </div>
     </div>
-    ${_mentorToastHtml()}
+    
   `;
 }
 function toggleCritere(pid, cid) {
@@ -6878,6 +5618,58 @@ function renderProductNotes(p) {
   `;
 }
 
+
+function renderProductInfos(p) {
+  return `
+    <div class="card">
+      <h2>Informations de base</h2>
+      <div class="form-grid">
+        <div class="field"><label>Nom</label><input value="${escapeHtml(p.name||'')}" oninput="updateProduct('${p.id}','name',this.value)"></div>
+        <div class="field"><label>Source (méthode Skool)</label>
+          <select onchange="updateProduct('${p.id}','source',this.value)">
+            <option value="">— choisir —</option>
+            ${METHODES.map(m => `<option value="${escapeHtml(m.label)}" ${p.source===m.label?'selected':''}>${escapeHtml(m.label)}</option>`).join('')}
+            <option value="Autre" ${p.source==='Autre'?'selected':''}>Autre / direct</option>
+          </select>
+        </div>
+        <div class="field" style="grid-column:1/-1"><label>URL fournisseur</label><input value="${escapeHtml(p.fournisseur_url||'')}" oninput="updateProduct('${p.id}','fournisseur_url',this.value)" placeholder="https://…"></div>
+        <div class="field"><label>Niche / univers</label><input value="${escapeHtml(p.niche||'')}" oninput="updateProduct('${p.id}','niche',this.value)" placeholder="Maison, Sport, Beauté…"></div>
+      </div>
+      <h3>Prix</h3>
+      <div class="form-grid">
+        <div class="field"><label>Prix achat (€)</label><input type="number" step="0.01" value="${p.prix_achat||''}" oninput="updateProduct('${p.id}','prix_achat',this.value)"><div class="hint">Coût unitaire fournisseur (AliExpress)</div></div>
+        <div class="field"><label>Livraison (€)</label><input type="number" step="0.01" value="${p.prix_livraison||''}" oninput="updateProduct('${p.id}','prix_livraison',this.value)"><div class="hint">Par unité</div></div>
+        <div class="field"><label>Prix vente (€)</label><input type="number" step="0.01" value="${p.prix_vente||''}" oninput="updateProduct('${p.id}','prix_vente',this.value)"><div class="hint">TTC sur la page</div></div>
+      </div>
+      <h3>Recherche &amp; CPC <span style="font-size:11px;font-weight:600;color:var(--text3);text-transform:none;letter-spacing:0">(les chiffres qui décident — méthode Arthur Google Ads)</span></h3>
+      ${(() => {
+        const vol = _parseVolume(p.volume_mensuel);
+        const cpaEst = calcCpaEstime(p);
+        const cpaMax = calcCpaMax(p);
+        const volStat = _volumeStatus(vol);
+        const cpaV = _cpaViability(p);
+        const volPill = vol == null
+          ? '<span style="font-size:10.5px;color:var(--text3);padding:2px 8px;background:rgba(255,255,255,0.04);border-radius:999px">volume non renseigné</span>'
+          : `<span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:${volStat.cls==='is-good'?'rgba(74,222,128,0.18)':volStat.cls==='is-mid'?'rgba(251,191,36,0.18)':'rgba(248,113,113,0.18)'};color:${volStat.cls==='is-good'?'#4ade80':volStat.cls==='is-mid'?'#fbbf24':'#f87171'}">${volStat.label}</span>`;
+        const cpaPill = cpaV.viable === null
+          ? '<span style="font-size:10.5px;color:var(--text3);padding:2px 8px;background:rgba(255,255,255,0.04);border-radius:999px">CPA non calculable</span>'
+          : `<span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:${cpaV.viable?'rgba(74,222,128,0.18)':'rgba(248,113,113,0.18)'};color:${cpaV.viable?'#4ade80':'#f87171'}">${cpaV.viable?`CPA ${Math.round(cpaV.est)}€ < ${Math.round(cpaV.max)}€`:`CPA ${Math.round(cpaV.est)}€ > ${Math.round(cpaV.max)}€`}</span>`;
+        return `<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;padding:10px 12px;background:linear-gradient(135deg,rgba(34,211,238,0.06),rgba(139,92,246,0.04));border:1px solid rgba(34,211,238,0.18);border-radius:10px"><span style="font-size:11.5px;color:var(--text2);font-weight:600">Verdict Arthur live :</span>${volPill}${cpaPill}<a onclick="go({type:'tunnel'})" style="margin-left:auto;font-size:11px;color:#67e8f9;cursor:pointer;text-decoration:underline">${ico('target',11)} règles complètes →</a></div>`;
+      })()}
+      <div class="form-grid">
+        <div class="field"><label>Volume mensuel (mot-clé principal)</label><input value="${escapeHtml(p.volume_mensuel||'')}" oninput="updateProduct('${p.id}','volume_mensuel',this.value)" placeholder="ex: 18 000 ou 18K"><div class="hint">Keyword Planner / Semrush / SERanking. Seuil Arthur : <strong style="color:#4ade80">≥ 15 000</strong> = marché valide · <strong style="color:#fbbf24">5-15k</strong> = limité · <strong style="color:#f87171">&lt;5k</strong> = abandon</div></div>
+        <div class="field"><label>Volume total (univers)</label><input value="${escapeHtml(p.volume_total||'')}" oninput="updateProduct('${p.id}','volume_total',this.value)" placeholder="ex: 29,6K"><div class="hint">Somme des mots-clés liés (informatif)</div></div>
+        <div class="field"><label>CPC moyen (€)</label><input type="number" step="0.01" value="${p.cpc||''}" oninput="updateProduct('${p.id}','cpc',this.value)"><div class="hint">CPC suggéré Google Ads. <strong>CPA estimé = CPC × 150</strong> doit rester sous CPA max viable.</div></div>
+      </div>
+      <h3>Concurrents drop (3 max — export Excel)</h3>
+      <div class="form-grid">
+        <div class="field" style="grid-column:1/-1"><label>Lien concurrent 1</label><input value="${escapeHtml(p.concurrent_1||'')}" oninput="updateProduct('${p.id}','concurrent_1',this.value)" placeholder="https://…"></div>
+        <div class="field" style="grid-column:1/-1"><label>Lien concurrent 2</label><input value="${escapeHtml(p.concurrent_2||'')}" oninput="updateProduct('${p.id}','concurrent_2',this.value)" placeholder="https://…"></div>
+        <div class="field" style="grid-column:1/-1"><label>Lien concurrent 3</label><input value="${escapeHtml(p.concurrent_3||'')}" oninput="updateProduct('${p.id}','concurrent_3',this.value)" placeholder="https://…"></div>
+      </div>
+    </div>
+  `;
+}
 /* ═════════ SERP AUTO-SCAN ═════════ */
 // Use local serp_scout.py if available (PC), otherwise fetch SerpAPI directly with user's key (mobile/cloud)
 const SERP_LOCAL_ENDPOINT = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:7789' : null;
@@ -8710,7 +7502,6 @@ function _cmdBuildRegistry() {
   // Navigation
   cmds.push({ id:'nav.dashboard', cat:'Navigation', icon:'home', label:'Aller au Dashboard', hint:'Vue d\'ensemble', kw:'dashboard accueil home stats vue', action:() => go({type:'dashboard'}) });
   cmds.push({ id:'nav.kept', cat:'Navigation', icon:'trophy', label:'Mes produits retenus', hint:`${keptProducts().length} validés au total`, kw:'kept retenus validés trophées', action:() => go({type:'kept'}) });
-  cmds.push({ id:'nav.palmares', cat:'Navigation', icon:'medal', label:'Palmarès', hint:'Hall of Fame, streak et achievements', kw:'palmarès palmares hall of fame achievements streak gamification', action:() => go({type:'palmares'}) });
   cmds.push({ id:'nav.duel', cat:'Navigation', icon:'sword', label:'Duel Arthur', hint:`Compare 2-${DUEL_MAX} produits sur volume mot-clé / CPA${_duelGet().length ? ` · ${_duelGet().length} en lice` : ''}`, kw:'duel battle versus comparer compare arthur winner crown volume cpa google ads', action:() => go({type:'duel'}) });
   cmds.push({ id:'nav.tunnel', cat:'Navigation', icon:'target', label:'Tunnel Validation Arthur', hint:'Règles volume 15k + CPA = CPC×150 + niche', kw:'tunnel validation volume mot clé cpa cpc niche skool 15000 google ads regle arthur', action:() => go({type:'tunnel'}) });
   if (_duelGet().length) {
