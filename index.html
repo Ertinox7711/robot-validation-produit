@@ -3012,6 +3012,169 @@ small.muted { color: var(--text3); font-size: 11px; }
   .pip-dist-row { grid-template-columns: 90px 1fr 50px; }
 }
 
+/* ═════════ PRÉCISION NICHE — règle Arthur n°3 (jamais généraliste) ═════════ */
+.np-shell { max-width: 1280px; margin: 0 auto; padding: 0 4px 40px; }
+.np-hero {
+  padding: 24px 28px; border-radius: 18px;
+  background: linear-gradient(135deg, rgba(139,92,246,0.16) 0%, rgba(217,70,239,0.12) 45%, rgba(34,211,238,0.14) 100%);
+  border: 1px solid rgba(139,92,246,0.32);
+  position: relative; overflow: hidden; margin-bottom: 18px;
+}
+.np-hero::before { content:''; position:absolute; right:-80px; top:-60px; width:240px; height:240px; border-radius:50%; background: radial-gradient(circle,rgba(217,70,239,0.30),transparent 70%); filter: blur(40px); }
+.np-hero::after { content:''; position:absolute; left:30%; bottom:-100px; width:280px; height:200px; border-radius:50%; background: radial-gradient(circle,rgba(139,92,246,0.20),transparent 70%); filter: blur(45px); }
+.np-hero h1 { font-size: 24px; margin: 0 0 6px; display: inline-flex; align-items: center; gap: 10px; }
+.np-hero h1 svg { color: #c084fc; }
+.np-hero p { font-size: 13.5px; color: var(--text2); margin: 0; max-width: 880px; line-height: 1.55; position: relative; z-index: 1; }
+.np-tag { display:inline-block; padding:2px 10px; border-radius:99px; font-size:10px; font-weight:700; letter-spacing:0.06em; background:linear-gradient(135deg,#c084fc,#f0abfc); color:#0a0815; margin-left:10px; vertical-align:middle; }
+
+.np-rule-bar { display: flex; flex-wrap: wrap; gap: 10px; padding: 12px 16px; background: rgba(255,255,255,0.025); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 18px; align-items: center; }
+.np-rule-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 5px 11px; border-radius: 99px; background: linear-gradient(135deg, rgba(139,92,246,0.18), rgba(217,70,239,0.12)); color: #e9d5ff; border: 1px solid rgba(139,92,246,0.32); font-weight: 600; }
+.np-rule-pill strong { color: #f0abfc; }
+
+.np-cockpit { display: grid; grid-template-columns: 280px 1fr; gap: 22px; padding: 22px 24px; background: rgba(255,255,255,0.025); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 18px; align-items: center; }
+.np-orb-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.np-orb {
+  width: 160px; height: 160px; border-radius: 50%;
+  background: conic-gradient(var(--np-c, #c084fc) calc(var(--np-p, 0) * 1%), rgba(255,255,255,0.05) 0);
+  display: flex; align-items: center; justify-content: center; position: relative;
+}
+.np-orb::before { content:''; position:absolute; inset:10px; border-radius:50%; background: rgba(15,12,28,0.96); }
+.np-orb-num { position: relative; z-index: 1; font-size: 44px; font-weight: 800; line-height: 1; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.np-orb-sub { position: relative; z-index: 1; font-size: 11px; color: var(--text3); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 4px; }
+.np-orb-label { font-size: 14px; font-weight: 700; }
+.np-orb-label.is-excellent { color: #34d399; } .np-orb-label.is-solid { color: #22d3ee; } .np-orb-label.is-mid { color: #fbbf24; } .np-orb-label.is-bad { color: #fb7185; }
+
+.np-buckets { display: flex; flex-direction: column; gap: 8px; }
+.np-buckets h3 { margin: 0 0 4px; font-size: 12px; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; }
+.np-bucket-row { display: grid; grid-template-columns: 200px 1fr 56px; gap: 10px; align-items: center; }
+.np-bucket-label { font-size: 12.5px; color: var(--text); font-weight: 600; }
+.np-bucket-label small { display: block; font-size: 10px; color: var(--text3); font-weight: 400; margin-top: 1px; }
+.np-bucket-bar { height: 24px; border-radius: 6px; background: rgba(255,255,255,0.03); position: relative; overflow: hidden; border: 1px solid var(--border); }
+.np-bucket-fill { height: 100%; border-radius: 6px; transition: width .4s ease; }
+.np-bucket-num { font-size: 15px; font-weight: 700; text-align: right; }
+.np-bg-excellent { background: linear-gradient(90deg, #22c55e, #34d399); }
+.np-bg-solid { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+.np-bg-mid { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.np-bg-bad { background: linear-gradient(90deg, #ef4444, #fb7185); }
+
+.np-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+.np-card { padding: 20px 22px; background: rgba(255,255,255,0.025); border: 1px solid var(--border); border-radius: 14px; }
+.np-card h3 { margin: 0 0 12px; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text2); display: flex; align-items: center; gap: 8px; }
+.np-card h3 .np-card-meta { margin-left: auto; font-size: 11px; color: var(--text3); font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+.np-word-list { display: flex; flex-direction: column; gap: 6px; }
+.np-word-row { display: grid; grid-template-columns: 1fr 60px; gap: 10px; align-items: center; padding: 6px 10px; border-radius: 8px; background: rgba(248,113,113,0.05); border: 1px solid rgba(248,113,113,0.20); }
+.np-word-row strong { color: #fb7185; font-weight: 700; }
+.np-word-row .np-word-count { text-align: right; font-size: 13px; font-weight: 700; color: #fb7185; }
+
+.np-podium-list { display: flex; flex-direction: column; gap: 8px; }
+.np-podium-row { display: grid; grid-template-columns: 32px 1fr 60px 70px; gap: 10px; align-items: center; padding: 8px 12px; border-radius: 8px; background: rgba(52,211,153,0.05); border: 1px solid rgba(52,211,153,0.20); cursor: pointer; transition: all .15s; }
+.np-podium-row:hover { background: rgba(52,211,153,0.12); border-color: rgba(52,211,153,0.40); transform: translateX(2px); }
+.np-podium-rank { font-size: 13px; font-weight: 800; color: #34d399; }
+.np-podium-name { font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.np-podium-score { font-size: 14px; font-weight: 800; color: #34d399; text-align: right; }
+.np-podium-mods { font-size: 10.5px; color: var(--text3); text-align: right; }
+
+.np-fix-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.np-fix-table thead th { text-align: left; padding: 7px 8px; color: var(--text3); font-weight: 600; font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+.np-fix-table thead th.right, .np-fix-table tbody td.right { text-align: right; }
+.np-fix-table tbody tr { transition: background .15s; cursor: pointer; }
+.np-fix-table tbody tr:hover { background: rgba(217,70,239,0.06); }
+.np-fix-table tbody td { padding: 9px 8px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.np-fix-name { font-weight: 600; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.np-fix-niche { color: var(--text3); font-size: 11px; }
+.np-fix-pill { display: inline-flex; padding: 2px 8px; border-radius: 99px; font-size: 10.5px; font-weight: 700; }
+.np-fix-pill.is-excellent { background: rgba(52,211,153,0.18); color: #34d399; }
+.np-fix-pill.is-solid     { background: rgba(34,211,238,0.18); color: #67e8f9; }
+.np-fix-pill.is-mid       { background: rgba(251,191,36,0.18); color: #fbbf24; }
+.np-fix-pill.is-bad       { background: rgba(248,113,113,0.18); color: #fb7185; }
+.np-fix-flag { display: inline-flex; padding: 2px 7px; border-radius: 6px; font-size: 10px; font-weight: 700; background: rgba(248,113,113,0.18); color: #fb7185; }
+.np-fix-mods { display: inline-flex; gap: 4px; flex-wrap: wrap; }
+.np-mod-chip { display: inline-flex; padding: 2px 7px; border-radius: 6px; font-size: 10px; font-weight: 600; background: rgba(139,92,246,0.16); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.30); }
+.np-mod-chip.is-style    { background: rgba(217,70,239,0.16); color: #f0abfc; border-color: rgba(217,70,239,0.30); }
+.np-mod-chip.is-material { background: rgba(34,211,238,0.16); color: #67e8f9; border-color: rgba(34,211,238,0.30); }
+.np-mod-chip.is-usage    { background: rgba(52,211,153,0.16); color: #6ee7b7; border-color: rgba(52,211,153,0.30); }
+.np-mod-chip.is-dimension{ background: rgba(251,191,36,0.16); color: #fde68a; border-color: rgba(251,191,36,0.30); }
+.np-mod-chip.is-audience { background: rgba(251,146,60,0.16); color: #fed7aa; border-color: rgba(251,146,60,0.30); }
+
+.np-empty { padding: 60px 30px; text-align: center; background: rgba(255,255,255,0.02); border: 1px dashed var(--border2); border-radius: 14px; }
+.np-empty h3 { margin: 0 0 8px; color: var(--text); font-size: 18px; }
+.np-empty p { color: var(--text2); font-size: 13px; max-width: 540px; margin: 0 auto; line-height: 1.5; }
+
+/* Badge sur fiche produit (Infos) */
+.np-prod-badge {
+  display: grid; grid-template-columns: 64px 1fr auto; gap: 14px; align-items: center;
+  padding: 12px 16px; border-radius: 12px;
+  background: linear-gradient(135deg, rgba(139,92,246,0.06), rgba(217,70,239,0.04));
+  border: 1px solid rgba(139,92,246,0.22);
+  margin-bottom: 12px;
+}
+.np-prod-orb {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: conic-gradient(var(--np-c, #c084fc) calc(var(--np-p, 0) * 1%), rgba(255,255,255,0.06) 0);
+  display: flex; align-items: center; justify-content: center; position: relative;
+}
+.np-prod-orb::before { content:''; position:absolute; inset:5px; border-radius:50%; background: rgba(15,12,28,0.96); }
+.np-prod-orb-num { position: relative; z-index: 1; font-size: 18px; font-weight: 800; line-height: 1; }
+.np-prod-info { font-size: 12.5px; line-height: 1.55; }
+.np-prod-info strong { font-size: 13px; }
+.np-prod-info .np-prod-reasons { color: var(--text3); font-size: 11px; margin-top: 2px; }
+.np-prod-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.np-prod-cta {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 9px;
+  background: linear-gradient(135deg, #8b5cf6, #d946ef); color: #fff; font-weight: 700; font-size: 12px;
+  border: 0; cursor: pointer; transition: all .15s;
+  box-shadow: 0 4px 14px rgba(139,92,246,0.30);
+}
+.np-prod-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(217,70,239,0.40); }
+
+/* Modale variantes */
+.np-var-shell { display: flex; flex-direction: column; gap: 14px; padding: 6px 2px; }
+.np-var-head { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 12px 14px; background: rgba(139,92,246,0.06); border-radius: 10px; border: 1px solid rgba(139,92,246,0.20); }
+.np-var-head .np-var-root { font-size: 14px; font-weight: 700; color: #c4b5fd; }
+.np-var-head .np-var-tag { font-size: 11px; color: var(--text3); }
+.np-var-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.np-var-card {
+  padding: 14px 16px; border-radius: 12px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.np-var-card-head { display: flex; align-items: flex-start; gap: 10px; }
+.np-var-card-name { font-size: 14px; font-weight: 700; color: var(--text); flex: 1; line-height: 1.35; }
+.np-var-card-score { font-size: 18px; font-weight: 800; line-height: 1; flex-shrink: 0; }
+.np-var-card-verdict { font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 99px; align-self: flex-start; }
+.np-var-card-verdict.is-excellent { background: rgba(52,211,153,0.18); color: #34d399; }
+.np-var-card-verdict.is-solid     { background: rgba(34,211,238,0.18); color: #67e8f9; }
+.np-var-card-verdict.is-mid       { background: rgba(251,191,36,0.18); color: #fbbf24; }
+.np-var-card-verdict.is-bad       { background: rgba(248,113,133,0.18); color: #fb7185; }
+.np-var-card-actions { display: flex; gap: 8px; align-items: center; }
+.np-var-explore-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: 8px;
+  background: linear-gradient(135deg, rgba(52,211,153,0.18), rgba(34,211,238,0.14));
+  color: #6ee7b7; border: 1px solid rgba(52,211,153,0.40); font-weight: 700; font-size: 11.5px;
+  cursor: pointer; transition: all .15s;
+}
+.np-var-explore-btn:hover { background: linear-gradient(135deg, rgba(52,211,153,0.32), rgba(34,211,238,0.24)); transform: translateY(-1px); }
+
+@media (max-width: 980px) {
+  .np-grid { grid-template-columns: 1fr; }
+  .np-cockpit { grid-template-columns: 1fr; gap: 18px; }
+  .np-orb-wrap { align-items: flex-start; }
+  .np-bucket-row { grid-template-columns: 130px 1fr 50px; }
+  .np-var-grid { grid-template-columns: 1fr; }
+  .np-prod-badge { grid-template-columns: 56px 1fr; }
+  .np-prod-actions { grid-column: 1/-1; justify-content: flex-end; }
+}
+@media (max-width: 720px) {
+  .np-hero h1 { font-size: 20px; }
+  .np-card, .np-cockpit { padding: 14px 16px; }
+  .np-bucket-row { grid-template-columns: 1fr; }
+  .np-bucket-num { text-align: left; }
+}
+
 </style>
 </head>
 <body>
@@ -3048,7 +3211,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 
 <header>
   <button class="menu-toggle" aria-label="Ouvrir le menu" onclick="toggleSidebar()" title="Menu (sessions)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg></button>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.18.0-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.21.0-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -3109,6 +3272,23 @@ small.muted { color: var(--text3); font-size: 11px; }
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('modalProduct')">Annuler</button>
       <button class="btn btn-primary" onclick="createProduct()">Créer produit</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalNpVariants" onclick="event.stopPropagation()">
+  <div class="modal wide" onclick="event.stopPropagation()">
+    <h3 style="display:flex;align-items:center;gap:8px;">
+      <span style="color:#c084fc;display:inline-flex"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 9 9l-7 1 5 5-1.5 7 6.5-3.5 6.5 3.5L17 15l5-5-7-1z"/></svg></span>
+      Comparateur de variantes plus niches
+    </h3>
+    <p style="font-size:12.5px;color:var(--text2);margin-bottom:14px;line-height:1.5;">
+      8 variantes générées localement à partir des listes Arthur curées (style × matière × usage × dimension × audience).
+      Chaque variante est scorée sur la précision niche. Clique <strong>Explorer</strong> pour créer un nouveau produit dans la session courante.
+    </p>
+    <div id="npVariantsBody"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modalNpVariants')">Fermer</button>
     </div>
   </div>
 </div>
@@ -3419,14 +3599,27 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.20.0-beta';
-const APP_VERSION_NOTES = 'PIPELINE GOOGLE ADS — santé du portefeuille selon les 2 règles non-négociables Arthur. Nouvelle vue sidebar (entre Radar Concurrence et Recherche auto, icône chart cyan, badge score santé live ex 47%) qui répond à UNE question : "mon pipeline est-il sain selon les chiffres Google Ads ?". Hero cyan/vert/violet. Cockpit 2 colonnes : Health-orb conique 160px score 0-100 (composite : 40 pts sur % volume Arthur OK + 40 pts sur % CPA viable parmi calculables + 20 pts sur % SERP scannés) avec label adaptatif (Excellent ≥80 / Solide ≥60 / Mitigé ≥40 / Fragile ≥20 / Critique <20) et stats 3 lignes en clair, à côté Funnel de validation Arthur 5 étapes (Total → Volume Arthur OK ≥15k OU ≥5k si prix ≥1500€ → CPA viable → Score ≥8/12 → Retenus) avec barres horizontales gradient cyan→vert→jaune→fuchsia + drop-off % entre étapes. 2 distributions en cards : Volumes mot-clé en 5 buckets (<5k rouge "abandon" / 5-15k orange "≥1500€ only" / 15-50k vert "valide" / 50-150k vert "solide" / >150k cyan "majeur") et CPC en 5 buckets (<0.40€ gris "pas de demande" / 0.40-0.80€ vert "low cost" / 0.80-1.50€ vert "sweet spot Arthur" / 1.50-2.50€ orange "élevé" / >2.50€ rouge "saturé"), avec compteur renseignés/total. 2 cards row 3 : Donut viabilité CPA conic 140px (vert viable / rouge non viable / gris données manquantes) avec % central + légende latérale chiffrée, et Top 10 niches du pipeline en table (Niche / Nb produits / Vol moyen / CPC moyen / % CPA viable colorisé / Score moyen) classées par volume moyen décroissant. Section finale "Alertes actionnables" : 7 patterns d\'alertes auto-générées avec verdict couleur (good/mid/bad), titre chiffré, détail explicatif, et chips cliquables vers les fiches produit (max 6 par alerte) — "X produits prêts à lancer (non retenus)" en VERT, "X paradoxes score≥8 mais CPA non viable" en ORANGE, "X CPA non viable" en ROUGE, "X volume <15k ET prix <1500€" en ROUGE, "X sans CPC renseigné" en ORANGE, "X arène SATURÉE" en ROUGE, "X sans volume mot-clé" en ORANGE. Empty state si pipeline vide. PARI : aucun SaaS de validation produit (Sell The Trend, Niche Scraper, Ecomhunt, Minea, Helium 10) ne donne une vue cockpit cross-produits qui matérialise les RÈGLES ARTHUR en chiffres + alertes. L\'app passe de "scoreur produit par produit" à "diagnostic du portefeuille". Le Pipeline complète parfaitement Radar (qui montre la concurrence par produit) et Simulateur (qui montre les leviers à actionner) — c\'est la 3e jambe du tabouret Google Ads-first. Audit conforme : zéro IA ajoutée, zéro gamification, calcul local sur state.products, réutilise les helpers Arthur existants (_parseVolume, _cpaViability, calcCpaEstime, calcCpaMax, calcScore, _rcCompScore). Axe DATA ANALYTICS GOOGLE ADS (axe 4 SKILL.md).';
+const APP_VERSION = '0.21.0-beta';
+const APP_VERSION_NOTES = 'PRÉCISION NICHE — règle Arthur n°3 (jamais généraliste) encodée en feature active. Score 0-100 par produit, badge live sur chaque fiche, comparateur de variantes plus niches qui génère 8 alternatives en 1 clic, vue cockpit cross-portefeuille (distribution 4 verdicts, top mots généralistes à virer, podium ULTRA-PRÉCIS, tableau de correction par urgence). Listes statiques curées depuis transcripts Skool c4_precis_niche + c11_motcle_non_precis + tableau_recherche : ~100 mots généralistes français + ~130 modifieurs catégorisés (style/matière/usage/dimension/audience). Score composite : longueur du nom (≥4 mots +20, 3 mots +5, ≤2 mots -18 à -35) + modifieurs trouvés (+12/modif, max +60) + niche déclarée précise (+10 si ≥3 mots) avec plafond automatique si mot généraliste détecté sans modifieur (≤25 = REFUS). 4 verdicts : NICHE ULTRA-PRÉCISE ≥80 vert / PRÉCISE 60-79 cyan / À AFFINER 40-59 jaune / GÉNÉRALISTE — REFUS <40 rouge. Badge sur fiche produit (onglet Infos) avec orb 64px + verdict coloré + 3 raisons chiffrées + bouton "Générer variantes plus niches" en CTA gradient violet/fuchsia. Modale comparateur 8 cards : nom variante + score + verdict pill + chips modifieurs colorisés par catégorie + bouton "Explorer cette variante" qui crée un nouveau produit pré-rempli dans la session courante (variante + niche héritée + note traçabilité). Variantes générées par 8 templates déterministes (seed = hash du nom+niche, donc même input → même suggestions reproductibles) qui combinent style×dimension, usage×matière, style×matière, usage×audience, dimension×style, matière×usage, style×audience, usage×dimension. Nouvelle vue sidebar "Précision Niche" entre Pipeline et Recherche auto (icône target violet, badge live "X à virer" en violet/fuchsia). Hero gradient violet/fuchsia/cyan + bandeau 2 règles non-négo (Précis ≥3 mots+modifieurs / Refus mot généraliste seul) + lien Tunnel. Cockpit 2 cols : orb 160px score moyen pipeline (label adaptatif Excellent/Précis/Mitigé/Trop généraliste) + distribution 4 buckets en barres horizontales colorisées (vert/cyan/jaune/rouge). 2 cards : Top 10 mots généralistes les plus fréquents avec compteur (à virer en priorité), Podium ULTRA-PRÉCIS top 10 (à pousser, cliquable). Tableau de correction par urgence : 24 produits classés du plus généraliste au plus précis avec score colorisé, verdict pill, mot généraliste flag rouge, chips modifieurs (max 2 par catégorie), longueur du nom — clique une ligne pour ouvrir la fiche. Helpers exposés window._npPrecisionScore, _npGenerateVariants, _npGeneralistCount, openNpVariantsModal, npExploreVariant, renderNichePrecision. Command palette enrichie (nav.niche). PARI : aucun SaaS de validation produit (Sell The Trend, Niche Scraper, Ecomhunt, Minea, Helium 10) ne challenge la précision du nom contre une méthode propriétaire et ne propose des variantes plus niches en 1 clic. La Précision Niche fait passer l\'app de "scoreur passif" à "coach actif qui refuse le travail mal fait". 4e jambe du tabouret Google Ads-first, complète Simulateur (leviers), Radar (concurrence) et Pipeline (santé) en couvrant le INPUT (qualité du produit dès l\'ajout). Audit conforme post v0.17 : zéro IA ajoutée (listes statiques curées, pas de LLM), zéro gamification, calcul local sur state.products, exploite la formation Skool transcrite (déjà payée). Axe GOOGLE ADS-INTELLIGENCE (axe 1 SKILL.md), couvre directement la 3e règle non-négociable Arthur sous-exploitée jusqu\'ici.';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.21.0-beta', date: '2026-04-27', time: '11:18', source: 'précision niche',
+    summary: 'PRÉCISION NICHE — règle Arthur n°3 (jamais généraliste) encodée en feature active · score 0-100 + comparateur de variantes + cockpit',
+    items: [
+      {type:'feat', text:'Nouvelle vue sidebar "Précision Niche" (entre Pipeline et Recherche auto, icône target violet, badge live "X à virer" en violet/fuchsia). Encode la 3e règle non-négociable Arthur (transcripts c4_precis_niche + c11_motcle_non_precis + tableau_recherche) en feature active. Hero gradient violet/fuchsia/cyan + bandeau 2 règles Arthur (Précis ≥3 mots+modifieurs / Refus mot généraliste seul) + lien Tunnel. L\'app passe de "scoreur passif" à "coach actif qui refuse le travail mal fait".'},
+      {type:'feat', text:'Helper _npPrecisionScore(name, niche) — score composite 0-100 : longueur du nom (≥4 mots +20, 3 mots +5, 2 mots -18, ≤1 mot -35) + modifieurs trouvés (+12/modif, max +60) + niche déclarée précise (+10 si ≥3 mots) avec plafond automatique si mot généraliste détecté sans modifieur (≤25 = REFUS). Listes statiques curées : ~100 mots généralistes français + ~130 modifieurs catégorisés (style ~30, matière ~30, usage ~30, dimension ~25, audience ~17). Match par word-boundary + normalisation NFD pour gérer les accents. 4 verdicts : NICHE ULTRA-PRÉCISE ≥80 vert / PRÉCISE 60-79 cyan / À AFFINER 40-59 jaune / GÉNÉRALISTE — REFUS <40 rouge.'},
+      {type:'feat', text:'Badge sur fiche produit (onglet Infos, en tête de la card) : orb 64px conique gradient avec score numérique coloré + verdict en gras + 3 raisons chiffrées (mot généraliste détecté / longueur du nom / modifieurs trouvés par catégorie / niche déclarée). Bouton CTA "Générer variantes plus niches" en gradient violet/fuchsia avec halo qui ouvre la modale comparateur. Live recompute à chaque save du nom ou de la niche.'},
+      {type:'feat', text:'Modale comparateur de variantes : 8 templates déterministes (seed = hash du nom+niche, donc même input → même suggestions reproductibles) qui combinent style×dimension, usage×matière, style×matière, usage×audience, dimension×style, matière×usage, style×audience, usage×dimension. Chaque variante affiche : nom + score précision + verdict pill colorisé + chips modifieurs (5 catégories colorisées : style fuchsia / matière cyan / usage vert / dimension jaune / audience orange) + bouton "Explorer cette variante" qui crée un nouveau produit pré-rempli dans la session courante avec note de traçabilité ("Variante plus niche dérivée de [original] · Précision Niche Arthur — score X/100"). Dédup automatique des variantes identiques.'},
+      {type:'feat', text:'Cockpit cross-portefeuille : orb 160px score moyen pipeline (label adaptatif Excellent ≥80 vert / Précis ≥60 cyan / Mitigé ≥40 jaune / Trop généraliste <40 rouge) avec stats 3 lignes (total · X en GÉNÉRALISTE · Y en ULTRA-PRÉCISE), à côté distribution 4 buckets en barres horizontales colorisées (NICHE ULTRA-PRÉCISE vert / PRÉCISE cyan / À AFFINER jaune / GÉNÉRALISTE rouge) avec compteurs et %.'},
+      {type:'feat', text:'2 cards focus en grid : Top 10 mots généralistes les plus fréquents dans le pipeline en lignes rouges avec compteur (à virer en priorité), et Podium ULTRA-PRÉCIS top 10 produits ≥80 en lignes vertes cliquables avec rang #1-10 + nom + score + nb modifieurs (à pousser sur Google Ads).'},
+      {type:'feat', text:'Tableau de correction par urgence : 24 produits classés du plus généraliste au plus précis (les pires en haut). 6 colonnes : Produit/niche, Score colorisé selon verdict, Verdict pill, Mot généraliste détecté en flag rouge, Chips modifieurs trouvés (max 2 par catégorie), Longueur du nom. Chaque ligne cliquable pour ouvrir la fiche produit et la corriger en 1 clic.'},
+      {type:'feat', text:'Helpers exposés window._npPrecisionScore, _npGenerateVariants, _npGeneralistCount, openNpVariantsModal, npExploreVariant, renderNichePrecision. Command palette enrichie (nav.niche). Empty state propre si pipeline vide ("Crée une session, ajoute des produits avec leur nom et niche. La Précision Niche te dira instantanément quels produits sont condamnés par leur appellation trop générique avant même que tu ouvres Keyword Planner").'},
+      {type:'feat', text:'PARI PRODUIT : aucun SaaS de validation produit (Sell The Trend, Niche Scraper, Ecomhunt, Minea, Helium 10, Pipiads) ne challenge la précision du nom contre une méthode propriétaire et ne propose des variantes plus niches en 1 clic. C\'est un MOAT direct : on encode la "Règle de la Niche" Arthur en feature active. La Précision Niche est la 4e jambe du tabouret Google Ads-first et complète Simulateur (leviers), Radar (concurrence) et Pipeline (santé) en couvrant le INPUT (qualité du produit dès l\'ajout). Audit conforme post v0.17 : zéro IA ajoutée (listes statiques curées, pas de LLM), zéro gamification, calcul local sur state.products, exploite la formation Skool transcrite (déjà payée). Axe GOOGLE ADS-INTELLIGENCE (axe 1 SKILL.md), couvre directement la 3e règle non-négociable Arthur sous-exploitée jusqu\'ici.'},
+    ]},
   { v: '0.20.0-beta', date: '2026-04-27', time: '09:25', source: 'pipeline google ads',
     summary: 'PIPELINE GOOGLE ADS — santé du portefeuille selon les 2 règles Arthur · funnel + distributions + alertes actionnables',
     items: [
@@ -3786,6 +3979,10 @@ function renderSidebar() {
         <span class="icon" style="color:#22d3ee">${ico('chart',16)}</span><span>Pipeline Google Ads</span>
         <span class="count" style="background:rgba(34,211,238,0.18);color:#67e8f9;border:1px solid rgba(34,211,238,0.40)">${(typeof _pipHealth==='function' && state.products.length)?(_pipHealth().score+'%'):'santé'}</span>
       </div>
+      <div class="nav-item ${currentView.type==='niche'?'active':''}" onclick="go({type:'niche'})">
+        <span class="icon" style="color:#c084fc">${ico('target',16)}</span><span>Précision Niche</span>
+        <span class="count" style="background:rgba(217,70,239,0.18);color:#f0abfc;border:1px solid rgba(217,70,239,0.40)">${(typeof _npGeneralistCount==='function' && state.products.length)?(_npGeneralistCount()+' à virer'):'règle 3'}</span>
+      </div>
       <div class="nav-item" onclick="openDiscoverModal()" style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(217,70,239,0.06));border:1px solid rgba(139,92,246,0.25);">
         <span class="icon">${ico('search',16)}</span><span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:600">Recherche auto</span>
       </div>
@@ -4001,6 +4198,7 @@ function renderMain() {
   else if (currentView.type === 'simulator') m.innerHTML = renderSimulator();
   else if (currentView.type === 'radar') m.innerHTML = renderRadarComp();
   else if (currentView.type === 'pipeline') m.innerHTML = renderPipeline();
+  else if (currentView.type === 'niche') m.innerHTML = renderNichePrecision();
   else if (currentView.type === 'help') m.innerHTML = renderHelp();
   else if (currentView.type === 'formation') m.innerHTML = renderFormation(currentView.lesson);
   else if (currentView.type === 'changelog') m.innerHTML = renderChangelog();
@@ -6601,6 +6799,447 @@ window.renderPipeline = renderPipeline;
 window._pipKeptCount = _pipKeptCount;
 window._pipHealth = _pipHealth;
 
+/* ═════════ PRÉCISION NICHE — règle Arthur n°3 (jamais généraliste) ═════════
+   Encode la "Règle de la Niche" Arthur (transcript c4_precis_niche.txt +
+   c11_motcle_non_precis.txt + tableau_recherche.txt) en feature active.
+   Listes statiques curées — zéro IA, calcul local. */
+
+const NP_GENERALIST_WORDS = [
+  // meubles
+  'canapé','canape','fauteuil','table','chaise','lit','armoire','étagère','etagere','bureau','commode','buffet','vaisselier','tabouret','pouf','banc','bibliothèque','bibliotheque','vitrine','meuble',
+  // déco
+  'lampe','luminaire','miroir','rideau','coussin','couette','drap','vase','horloge','tableau','tapis','statuette','plaid',
+  // vêtements
+  'vêtement','vetement','robe','pantalon','jupe','chemise','pull','t-shirt','tshirt','manteau','veste','gilet','short','jean','blouson','sweat','chemisier',
+  // accessoires
+  'sac','sacoche','ceinture','chapeau','casquette','écharpe','echarpe','gant','lunette','montre','bague','collier','bracelet','broche','bonnet',
+  // chaussures
+  'chaussure','basket','botte','sandale','mocassin','escarpin','espadrille',
+  // outils
+  'outil','perceuse','scie','marteau','tournevis','clé','tronçonneuse',
+  // équipement
+  'vélo','velo','trottinette','casque','console','ordinateur','téléphone','telephone','tv','télé','tele','écouteur','ecouteur','enceinte',
+  // literie cuisine
+  'matelas','oreiller','traversin','sommier','parure','casserole','poêle','poele','couteau','barbecue','parasol','transat','plancha',
+  // bébé animal beauté
+  'poussette','biberon','doudou','laisse','panier','croquette','crème','creme','parfum',
+  // tech accessoires
+  'housse','étui','etui','chargeur','câble','cable','support'
+];
+
+const NP_STYLE_MODIFIERS = ['scandinave','japonais','japandi','industriel','vintage','rétro','retro','bohème','boheme','moderne','minimaliste','luxe','design','rustique','contemporain','chesterfield','loft','art déco','art deco','shabby chic','exotique','ethnique','tropical','marocain','asiatique','méditerranéen','mediterraneen','haussmannien','baroque','wabi-sabi'];
+
+const NP_MATERIAL_MODIFIERS = ['lin','coton','velours','cuir','simili-cuir','simili cuir','daim','chêne','chene','noyer','teck','bambou','rotin','osier','marbre','verre','céramique','ceramique','métal','metal','laiton','bois massif','tissu','soie','laine','feutre','résine','resine','synthétique','synthetique','déperlant','deperlant','waterproof','micro-fibre','microfibre','cannage'];
+
+const NP_USAGE_MODIFIERS = ['convertible','pliable','modulable','réversible','reversible','déhoussable','dehoussable','amovible','lavable','imperméable','impermeable','anti-tâche','antitache','extérieur','exterieur','jardin','balcon','salon','chambre','bureau','cuisine','professionnel','voyage','camping','rangement','intelligent','connecté','connecte','suspendu','mural','encastrable','articulé','articule'];
+
+const NP_DIMENSION_MODIFIERS = ['60cm','80cm','100cm','120cm','140cm','160cm','180cm','200cm','2 places','3 places','4 places','5 places','6 places','compact','studio','xl','xxl','grande taille','format géant','format geant','queen','king','format familial'];
+
+const NP_AUDIENCE_MODIFIERS = ['enfant','bébé','bebe','adolescent','homme','femme','senior','pour chat','pour chien','animaux','étudiant','etudiant','famille','nomade','voyageur','sportif','gamer','télétravail','teletravail'];
+
+const NP_MOD_CATEGORIES = [
+  { key:'style',     list: NP_STYLE_MODIFIERS },
+  { key:'material',  list: NP_MATERIAL_MODIFIERS },
+  { key:'usage',     list: NP_USAGE_MODIFIERS },
+  { key:'dimension', list: NP_DIMENSION_MODIFIERS },
+  { key:'audience',  list: NP_AUDIENCE_MODIFIERS },
+];
+
+function _npNorm(s) {
+  return (s == null ? '' : String(s)).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
+}
+
+function _npHasWord(text, word) {
+  const t = _npNorm(text);
+  const w = _npNorm(word);
+  if (!w) return false;
+  if (w.includes(' ') || w.includes('-')) return t.indexOf(w) !== -1;
+  const re = new RegExp('(^|[^a-z0-9])' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '($|[^a-z0-9])');
+  return re.test(t);
+}
+
+function _npCap(s) {
+  s = (s || '').toString();
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function _npPrecisionScore(name, niche) {
+  const text = (name || '') + ' ' + (niche || '');
+  const wordCount = _npNorm(name || '').split(/[\s,;\-_/]+/).filter(Boolean).length;
+  const nicheWords = _npNorm(niche || '').split(/[\s,;\-_/]+/).filter(Boolean).length;
+
+  let generalistFlag = null;
+  for (const g of NP_GENERALIST_WORDS) {
+    if (_npHasWord(name || '', g)) { generalistFlag = g; break; }
+  }
+
+  const found = { style: [], material: [], usage: [], dimension: [], audience: [] };
+  for (const cat of NP_MOD_CATEGORIES) {
+    for (const m of cat.list) {
+      if (_npHasWord(text, m)) {
+        if (!found[cat.key].some(x => _npNorm(x) === _npNorm(m))) found[cat.key].push(m);
+      }
+    }
+  }
+  const totalModifs = found.style.length + found.material.length + found.usage.length + found.dimension.length + found.audience.length;
+
+  let score = 50;
+  if (wordCount >= 4) score += 20;
+  else if (wordCount === 3) score += 5;
+  else if (wordCount === 2) score -= 18;
+  else if (wordCount <= 1) score -= 35;
+
+  score += Math.min(totalModifs * 12, 60);
+
+  if (nicheWords >= 3) score += 10;
+  else if (nicheWords === 2) score += 4;
+
+  if (generalistFlag) {
+    if (totalModifs === 0)      score = Math.min(score, 25);
+    else if (totalModifs === 1) score = Math.min(score, 50);
+    else if (totalModifs === 2) score = Math.min(score, 70);
+  }
+
+  if (!name || !name.trim()) score = 0;
+
+  score = Math.max(0, Math.min(100, Math.round(score)));
+
+  let verdict, cls, color;
+  if (score >= 80)      { verdict = 'NICHE ULTRA-PRÉCISE'; cls = 'is-excellent'; color = '#34d399'; }
+  else if (score >= 60) { verdict = 'PRÉCISE';             cls = 'is-solid';     color = '#22d3ee'; }
+  else if (score >= 40) { verdict = 'À AFFINER';           cls = 'is-mid';       color = '#fbbf24'; }
+  else                  { verdict = 'GÉNÉRALISTE — REFUS'; cls = 'is-bad';       color = '#fb7185'; }
+
+  const reasons = [];
+  if (generalistFlag) reasons.push(`mot généraliste détecté : "${generalistFlag}"`);
+  if (wordCount >= 4)      reasons.push(`nom à ${wordCount} mots — précis`);
+  else if (wordCount === 3) reasons.push(`nom à 3 mots — limite`);
+  else if (wordCount > 0)   reasons.push(`nom à ${wordCount} mot${wordCount>1?'s':''} — trop court`);
+  if (totalModifs > 0) {
+    const cats = NP_MOD_CATEGORIES.filter(c => found[c.key].length > 0).map(c => c.key);
+    reasons.push(`${totalModifs} modifieur${totalModifs>1?'s':''} (${cats.join(' + ')})`);
+  } else {
+    reasons.push('aucun modifieur (style/matière/usage/dimension/audience)');
+  }
+  if (nicheWords >= 3) reasons.push(`niche déclarée précise (${nicheWords} mots)`);
+
+  return { score, verdict, cls, color, reasons, generalistFlag, modifiersFound: found, totalModifs, wordCount, nicheWords };
+}
+
+function _npFindRoot(name) {
+  for (const g of NP_GENERALIST_WORDS) {
+    if (_npHasWord(name || '', g)) return g.replace(/-/g, ' ');
+  }
+  const tokens = _npNorm(name || '').split(/[\s,;\-_/]+/).filter(Boolean);
+  if (tokens.length === 0) return 'produit';
+  // Skip leading common adjectives if a noun-like word exists
+  return tokens[0];
+}
+
+function _npGenerateVariants(name, niche) {
+  const root = _npFindRoot(name);
+  // Deterministic seed so same input → same suggestions
+  const seedStr = _npNorm((name || '') + '|' + (niche || ''));
+  let seed = 7;
+  for (let i = 0; i < seedStr.length; i++) seed = ((seed * 31) + seedStr.charCodeAt(i)) >>> 0;
+  const pick = (arr, salt) => arr[((seed + salt * 101) >>> 0) % arr.length];
+
+  const templates = [
+    () => `${_npCap(root)} ${pick(NP_STYLE_MODIFIERS, 1)} ${pick(NP_DIMENSION_MODIFIERS, 2)}`,
+    () => `${_npCap(root)} ${pick(NP_USAGE_MODIFIERS, 3)} ${pick(NP_MATERIAL_MODIFIERS, 4)}`,
+    () => `${_npCap(root)} ${pick(NP_STYLE_MODIFIERS, 5)} ${pick(NP_MATERIAL_MODIFIERS, 6)}`,
+    () => `${_npCap(root)} ${pick(NP_USAGE_MODIFIERS, 7)} ${pick(NP_AUDIENCE_MODIFIERS, 8)}`,
+    () => `${_npCap(root)} ${pick(NP_DIMENSION_MODIFIERS, 9)} ${pick(NP_STYLE_MODIFIERS, 10)}`,
+    () => `${_npCap(root)} ${pick(NP_MATERIAL_MODIFIERS, 11)} ${pick(NP_USAGE_MODIFIERS, 12)}`,
+    () => `${_npCap(root)} ${pick(NP_STYLE_MODIFIERS, 13)} ${pick(NP_AUDIENCE_MODIFIERS, 14)}`,
+    () => `${_npCap(root)} ${pick(NP_USAGE_MODIFIERS, 15)} ${pick(NP_DIMENSION_MODIFIERS, 16)}`,
+  ];
+
+  const out = [];
+  const seen = new Set();
+  for (const t of templates) {
+    const variantName = t().replace(/\s+/g, ' ').trim();
+    const k = _npNorm(variantName);
+    if (seen.has(k)) continue;
+    seen.add(k);
+    const sc = _npPrecisionScore(variantName, niche);
+    out.push({ name: variantName, score: sc.score, verdict: sc.verdict, cls: sc.cls, color: sc.color, modifiersFound: sc.modifiersFound, totalModifs: sc.totalModifs });
+  }
+  return { root, variants: out };
+}
+
+function _npGeneralistCount() {
+  return state.products.filter(p => _npPrecisionScore(p.name, p.niche).score < 40).length;
+}
+
+function _npStats() {
+  const scored = state.products.map(p => ({ p, sc: _npPrecisionScore(p.name, p.niche) }));
+  return {
+    scored,
+    excellent: scored.filter(x => x.sc.score >= 80),
+    solid:     scored.filter(x => x.sc.score >= 60 && x.sc.score < 80),
+    mid:       scored.filter(x => x.sc.score >= 40 && x.sc.score < 60),
+    bad:       scored.filter(x => x.sc.score < 40),
+    avg:       scored.length ? Math.round(scored.reduce((s,x) => s + x.sc.score, 0) / scored.length) : 0,
+    total:     scored.length,
+  };
+}
+
+function _npRenderProductBadge(p) {
+  const sc = _npPrecisionScore(p.name, p.niche);
+  const reasonsHtml = sc.reasons.slice(0, 3).map(r => escapeHtml(r)).join(' · ');
+  return `
+    <div class="np-prod-badge" id="npBadge_${p.id}">
+      <div class="np-prod-orb" style="--np-c:${sc.color}; --np-p:${sc.score}">
+        <div class="np-prod-orb-num" style="color:${sc.color}">${sc.score}</div>
+      </div>
+      <div class="np-prod-info">
+        <strong style="color:${sc.color}">${escapeHtml(sc.verdict)}</strong>
+        <span style="color:var(--text3); margin-left:6px;">précision niche · règle Arthur n°3</span>
+        <div class="np-prod-reasons">${reasonsHtml}</div>
+      </div>
+      <div class="np-prod-actions">
+        <button class="np-prod-cta" onclick="openNpVariantsModal('${p.id}')">${ico('spark',13)} Générer variantes plus niches</button>
+      </div>
+    </div>
+  `;
+}
+
+function _npRefreshBadge(p) {
+  const wrap = document.getElementById('npBadge_' + p.id);
+  if (!wrap) return;
+  // Replace the badge in place — keeps focus on whichever input the user is editing.
+  const tmp = document.createElement('div');
+  tmp.innerHTML = _npRenderProductBadge(p).trim();
+  const fresh = tmp.firstElementChild;
+  if (fresh) wrap.replaceWith(fresh);
+}
+
+let _npVarsCache = null;
+
+function openNpVariantsModal(pid) {
+  const p = findProduct(pid);
+  if (!p) return;
+  const result = _npGenerateVariants(p.name, p.niche);
+  _npVarsCache = { pid, root: result.root, variants: result.variants };
+  document.getElementById('npVariantsBody').innerHTML = _npVariantsModalBody(p, result);
+  openModal('modalNpVariants');
+}
+
+function _npVariantsModalBody(p, result) {
+  const cards = result.variants.map((v, i) => {
+    const modsHtml = NP_MOD_CATEGORIES.flatMap(cat =>
+      (v.modifiersFound[cat.key] || []).map(m => `<span class="np-mod-chip is-${cat.key}">${escapeHtml(m)}</span>`)
+    ).join('');
+    return `
+      <div class="np-var-card">
+        <div class="np-var-card-head">
+          <div class="np-var-card-name">${escapeHtml(v.name)}</div>
+          <div class="np-var-card-score" style="color:${v.color}">${v.score}</div>
+        </div>
+        <span class="np-var-card-verdict ${v.cls}">${escapeHtml(v.verdict)}</span>
+        <div class="np-fix-mods">${modsHtml || '<span style="color:var(--text3);font-size:11px">aucun modifieur</span>'}</div>
+        <div class="np-var-card-actions">
+          <button class="np-var-explore-btn" onclick="npExploreVariant(${i})">${ico('rocket',12)} Explorer cette variante</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="np-var-shell">
+      <div class="np-var-head">
+        <span class="np-var-root">Mot-racine détecté : <strong>${escapeHtml(result.root)}</strong></span>
+        <span class="np-var-tag">${result.variants.length} variantes générées · combine style × matière × usage × dimension × audience</span>
+      </div>
+      <div class="np-var-grid">${cards}</div>
+      <p style="font-size:11.5px;color:var(--text3);margin:0;line-height:1.55">
+        Variantes déterministes générées localement à partir des listes Arthur curées (zéro IA).
+        "Explorer" crée un nouveau produit dans la session courante — tu n'as plus qu'à renseigner volume mot-clé + CPC pour valider Google Ads.
+      </p>
+    </div>
+  `;
+}
+
+function npExploreVariant(idx) {
+  if (!_npVarsCache) return;
+  const v = _npVarsCache.variants[idx];
+  if (!v) return;
+  const p = findProduct(_npVarsCache.pid);
+  if (!p) return;
+  const pid = 'p_' + Date.now();
+  state.products.push({
+    id: pid,
+    sessionId: p.sessionId,
+    name: v.name,
+    source: p.source || '',
+    fournisseur_url: '',
+    prix_achat: '', prix_livraison: '', prix_vente: '',
+    niche: p.niche || '',
+    notes: `Variante plus niche dérivée de "${p.name}" (Précision Niche Arthur — score ${v.score}/100).`,
+    criteres: {}, page_checklist: {}, created: Date.now(),
+    status: 'pending', keptAt: null, rejectedReason: ''
+  });
+  save();
+  closeModal('modalNpVariants');
+  go({ type: 'product', id: pid });
+}
+
+function renderNichePrecision() {
+  if (!state.products.length) {
+    return `<div class="np-shell">
+      <div class="np-hero">
+        <h1>${ico('target', 26)}Précision Niche<span class="np-tag">règle Arthur n°3</span></h1>
+        <p>Vue cockpit qui matérialise la <strong style="color:#c084fc">3e règle non-négociable Arthur</strong> : un produit doit être <strong style="color:#34d399">précis</strong>, jamais <strong style="color:#fb7185">généraliste</strong>. Score 0-100 par produit, distribution du portefeuille, top mots généralistes à virer, podium ULTRA-PRÉCIS, et tableau de correction trié par urgence.</p>
+      </div>
+      <div class="np-empty">
+        <h3>Pipeline vide</h3>
+        <p>Crée une session, ajoute des produits avec leur nom et niche. La Précision Niche te dira instantanément quels produits sont condamnés par leur appellation trop générique avant même que tu ouvres Keyword Planner.</p>
+      </div>
+    </div>`;
+  }
+
+  const stats = _npStats();
+  const total = stats.total;
+  const dist = [
+    { key:'excellent', label:'NICHE ULTRA-PRÉCISE',  hint:'≥80 — pousse',    n: stats.excellent.length, cls:'excellent' },
+    { key:'solid',     label:'PRÉCISE',              hint:'60-79 — bon',     n: stats.solid.length,     cls:'solid' },
+    { key:'mid',       label:'À AFFINER',            hint:'40-59 — recadre', n: stats.mid.length,       cls:'mid' },
+    { key:'bad',       label:'GÉNÉRALISTE — REFUS',  hint:'<40 — vire',      n: stats.bad.length,       cls:'bad' },
+  ];
+  const maxN = Math.max(...dist.map(d => d.n), 1);
+
+  // Health (avg) → label
+  const avg = stats.avg;
+  let healthLabel, healthCls, healthColor;
+  if (avg >= 80)      { healthLabel = 'Excellent';     healthCls = 'is-excellent'; healthColor = '#34d399'; }
+  else if (avg >= 60) { healthLabel = 'Précis';        healthCls = 'is-solid';     healthColor = '#22d3ee'; }
+  else if (avg >= 40) { healthLabel = 'Mitigé';        healthCls = 'is-mid';       healthColor = '#fbbf24'; }
+  else                { healthLabel = 'Trop généraliste'; healthCls = 'is-bad';    healthColor = '#fb7185'; }
+
+  // Top generalist words
+  const wordCounts = new Map();
+  stats.scored.forEach(x => {
+    if (x.sc.generalistFlag && x.sc.score < 40) {
+      const w = x.sc.generalistFlag;
+      wordCounts.set(w, (wordCounts.get(w) || 0) + 1);
+    }
+  });
+  const topGeneric = [...wordCounts.entries()].sort((a,b) => b[1] - a[1]).slice(0, 10);
+
+  // Top ultra-précis
+  const topPrecise = [...stats.excellent].sort((a,b) => b.sc.score - a.sc.score).slice(0, 10);
+
+  // Tableau de correction (les plus généralistes en premier)
+  const fixList = [...stats.scored]
+    .filter(x => x.sc.score < 60)
+    .sort((a,b) => a.sc.score - b.sc.score)
+    .slice(0, 24);
+
+  const distHtml = dist.map(d => {
+    const w = Math.max(2, (d.n / maxN) * 100);
+    const pct = total ? Math.round((d.n / total) * 100) : 0;
+    return `<div class="np-bucket-row">
+      <div class="np-bucket-label">${d.label}<small>${d.hint} · ${pct}%</small></div>
+      <div class="np-bucket-bar"><div class="np-bucket-fill np-bg-${d.cls}" style="width:${w}%"></div></div>
+      <div class="np-bucket-num">${d.n}</div>
+    </div>`;
+  }).join('');
+
+  const genericHtml = topGeneric.length === 0
+    ? `<div style="padding:20px;text-align:center;color:var(--text3);font-size:12px">Aucun produit généraliste détecté — top du top</div>`
+    : topGeneric.map(([w, n]) => `<div class="np-word-row"><strong>${escapeHtml(w)}</strong><div class="np-word-count">${n}</div></div>`).join('');
+
+  const preciseHtml = topPrecise.length === 0
+    ? `<div style="padding:20px;text-align:center;color:var(--text3);font-size:12px">Aucun produit ULTRA-PRÉCIS encore — pousse les noms à 4+ mots avec style/matière/usage</div>`
+    : topPrecise.map((x, i) => {
+        const mods = x.sc.totalModifs;
+        return `<div class="np-podium-row" onclick="go({type:'product', id:'${x.p.id}'})">
+          <div class="np-podium-rank">#${i+1}</div>
+          <div class="np-podium-name" title="${escapeHtml(x.p.name||'')}">${escapeHtml(x.p.name||'Sans nom')}</div>
+          <div class="np-podium-score">${x.sc.score}</div>
+          <div class="np-podium-mods">${mods} mod.</div>
+        </div>`;
+      }).join('');
+
+  const fixHtml = fixList.length === 0
+    ? `<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">Aucun produit à corriger — pipeline propre côté niche</td></tr>`
+    : fixList.map(x => {
+        const allMods = NP_MOD_CATEGORIES.flatMap(cat =>
+          (x.sc.modifiersFound[cat.key] || []).slice(0, 2).map(m => `<span class="np-mod-chip is-${cat.key}">${escapeHtml(m)}</span>`)
+        ).join('');
+        return `<tr onclick="go({type:'product', id:'${x.p.id}'})">
+          <td>
+            <div class="np-fix-name">${escapeHtml(x.p.name||'Sans nom')}</div>
+            <div class="np-fix-niche">${escapeHtml(x.p.niche||'—')}</div>
+          </td>
+          <td class="right" style="color:${x.sc.color};font-weight:800">${x.sc.score}</td>
+          <td><span class="np-fix-pill ${x.sc.cls}">${escapeHtml(x.sc.verdict)}</span></td>
+          <td>${x.sc.generalistFlag ? `<span class="np-fix-flag">${escapeHtml(x.sc.generalistFlag)}</span>` : '<span style="color:var(--text3);font-size:11px">—</span>'}</td>
+          <td><div class="np-fix-mods">${allMods || '<span style="color:var(--text3);font-size:11px">aucun</span>'}</div></td>
+          <td class="right" style="font-size:11px;color:var(--text3)">${x.sc.wordCount} mot${x.sc.wordCount>1?'s':''}</td>
+        </tr>`;
+      }).join('');
+
+  return `<div class="np-shell">
+    <div class="np-hero">
+      <h1>${ico('target', 26)}Précision Niche<span class="np-tag">règle Arthur n°3</span></h1>
+      <p>Vue cockpit qui matérialise la <strong style="color:#c084fc">3e règle non-négociable Arthur</strong> : un produit doit être <strong style="color:#34d399">précis</strong>, jamais <strong style="color:#fb7185">généraliste</strong>. Score 0-100 par produit, distribution du portefeuille, top mots généralistes à virer, podium ULTRA-PRÉCIS, et tableau de correction trié par urgence. Aucune IA — listes statiques curées depuis les leçons Skool d'Arthur.</p>
+    </div>
+
+    <div class="np-rule-bar">
+      <span class="np-rule-pill">${ico('check',11)}Règle <strong>Précis ≥3 mots + style/matière/usage/dimension/audience</strong></span>
+      <span class="np-rule-pill">${ico('cross',11)}Refus <strong>Mot généraliste seul ("canapé", "table", "chaussure", …)</strong></span>
+      <a onclick="go({type:'tunnel'})" style="margin-left:auto;font-size:11px;color:#c084fc;cursor:pointer;text-decoration:underline">${ico('book',11)} méthode Arthur complète →</a>
+    </div>
+
+    <div class="np-cockpit">
+      <div class="np-orb-wrap">
+        <div class="np-orb" style="--np-c:${healthColor}; --np-p:${avg}">
+          <div style="position:relative;z-index:1;text-align:center;">
+            <div class="np-orb-num">${avg}</div>
+            <div class="np-orb-sub">/ 100</div>
+          </div>
+        </div>
+        <div class="np-orb-label ${healthCls}">${healthLabel}</div>
+        <div style="font-size:11px;color:var(--text3);text-align:center;line-height:1.5">${total} produit${total>1?'s':''} · score moyen<br>${stats.bad.length} en GÉNÉRALISTE<br>${stats.excellent.length} en ULTRA-PRÉCISE</div>
+      </div>
+      <div class="np-buckets">
+        <h3>Distribution des verdicts</h3>
+        ${distHtml}
+      </div>
+    </div>
+
+    <div class="np-grid">
+      <div class="np-card">
+        <h3>${ico('warning', 14)}Top mots généralistes à virer<span class="np-card-meta">${topGeneric.length ? topGeneric.reduce((s,[,n])=>s+n,0)+' produits concernés' : '0 généraliste'}</span></h3>
+        <div class="np-word-list">${genericHtml}</div>
+      </div>
+      <div class="np-card">
+        <h3>${ico('star', 14)}Podium ULTRA-PRÉCIS — à pousser<span class="np-card-meta">${topPrecise.length} produit${topPrecise.length>1?'s':''} ≥80</span></h3>
+        <div class="np-podium-list">${preciseHtml}</div>
+      </div>
+    </div>
+
+    <div class="np-card">
+      <h3>${ico('edit', 14)}Tableau de correction — par urgence<span class="np-card-meta">${fixList.length} produit${fixList.length>1?'s':''} à recadrer · clique une ligne pour ouvrir la fiche</span></h3>
+      <table class="np-fix-table">
+        <thead>
+          <tr><th>Produit / niche</th><th class="right">Score</th><th>Verdict</th><th>Mot généraliste</th><th>Modifieurs trouvés</th><th class="right">Long.</th></tr>
+        </thead>
+        <tbody>${fixHtml}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+window.renderNichePrecision = renderNichePrecision;
+window._npPrecisionScore = _npPrecisionScore;
+window._npGenerateVariants = _npGenerateVariants;
+window._npGeneralistCount = _npGeneralistCount;
+window.openNpVariantsModal = openNpVariantsModal;
+window.npExploreVariant = npExploreVariant;
+
 /* ═════════ PRODUCT VIEW ═════════ */
 let productTab = 'infos';
 function renderProduct(pid) {
@@ -6986,6 +7625,7 @@ function renderProductInfos(p) {
   return `
     <div class="card">
       <h2>Informations de base</h2>
+      ${_npRenderProductBadge(p)}
       <div class="form-grid">
         <div class="field"><label>Nom</label><input value="${escapeHtml(p.name||'')}" oninput="updateProduct('${p.id}','name',this.value)"></div>
         <div class="field"><label>Source (méthode Skool)</label>
@@ -7305,6 +7945,10 @@ function updateProduct(pid, field, value) {
   p[field] = value;
   save();
   renderSidebar();
+  // Live recompute of the Précision Niche badge when the name or niche changes
+  if (field === 'name' || field === 'niche') {
+    if (typeof _npRefreshBadge === 'function') _npRefreshBadge(p);
+  }
 }
 
 function renderHelp() {
@@ -8870,6 +9514,7 @@ function _cmdBuildRegistry() {
   cmds.push({ id:'nav.simulator', cat:'Navigation', icon:'sliders', label:'Simulateur Google Ads', hint:'Mode "et si" — projection 30j sur 5 leviers + heatmap viabilité', kw:'simulator simulateur sliders et si scenario projection profit cpa heatmap google ads what if', action:() => go({type:'simulator'}) });
   cmds.push({ id:'nav.radar', cat:'Navigation', icon:'target', label:'Radar Concurrence Google Ads', hint:'Score compétitivité SERP + qui paye sur le mot-clé · classe TERRAIN OUVERT / DISPUTÉ / COMPÉTITIF / SATURÉ', kw:'radar concurrence competition arene serp institutionnels comparateurs annonceurs google ads who pays compet', action:() => go({type:'radar'}) });
   cmds.push({ id:'nav.pipeline', cat:'Navigation', icon:'chart', label:'Pipeline Google Ads', hint:'Santé du portefeuille selon les 2 règles Arthur · funnel + distributions volumes/CPC + alertes actionnables', kw:'pipeline cockpit sante health funnel distribution volume cpc cpa donut alertes alerts arthur google ads portefeuille', action:() => go({type:'pipeline'}) });
+  cmds.push({ id:'nav.niche', cat:'Navigation', icon:'target', label:'Précision Niche', hint:'Règle Arthur n°3 — jamais généraliste · score précision 0-100 + générateur de variantes', kw:'niche precision generaliste mot cle modifieur style matière usage dimension audience arthur regle variantes generer', action:() => go({type:'niche'}) });
   if (_duelGet().length) {
     cmds.push({ id:'act.duelClear', cat:'Actions', icon:'trash', label:'Vider le duel en cours', hint:`${_duelGet().length} combattants sélectionnés`, kw:'duel vider clear reset', action:() => duelClear() });
   }
