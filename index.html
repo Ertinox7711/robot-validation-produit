@@ -2200,6 +2200,475 @@ small.muted { color: var(--text3); font-size: 11px; }
   .pal-medal { width: 36px; height: 36px; font-size: 14px; }
 }
 
+/* ═════════ DUEL ARTHUR — comparateur visuel multi-produits avec radar 12 axes ═════════ */
+.duel-shell { max-width: 1240px; margin: 0 auto; }
+.duel-hero {
+  background: linear-gradient(135deg, rgba(139,92,246,0.10), rgba(34,211,238,0.06) 45%, rgba(217,70,239,0.08));
+  border: 1px solid rgba(139,92,246,0.22);
+  border-radius: 18px;
+  padding: 24px 26px;
+  margin-bottom: 22px;
+  position: relative;
+  overflow: hidden;
+}
+.duel-hero::before {
+  content: '';
+  position: absolute;
+  inset: -40% -10% auto auto;
+  width: 360px; height: 360px;
+  background: radial-gradient(circle, rgba(139,92,246,0.25), transparent 60%);
+  filter: blur(20px);
+  pointer-events: none;
+}
+.duel-hero h1 {
+  font-size: 26px; font-weight: 800; margin: 0 0 4px;
+  display: flex; align-items: center; gap: 12px;
+  background: linear-gradient(135deg, #fff 0%, #c4b5fd 50%, #f5d0fe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+}
+.duel-hero .duel-sub { color: var(--text2); font-size: 13.5px; line-height: 1.55; max-width: 640px; position: relative; }
+.duel-hero .duel-tag { font-size: 10px; padding: 4px 10px; border-radius: 999px; background: rgba(217,70,239,0.18); color: #f5d0fe; border: 1px solid rgba(217,70,239,0.35); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; vertical-align: middle; margin-left: 6px; }
+
+.duel-empty {
+  text-align: center;
+  padding: 38px 20px;
+  background: rgba(255,255,255,0.02);
+  border: 1px dashed rgba(255,255,255,0.10);
+  border-radius: 14px;
+  color: var(--text2);
+  font-size: 14px;
+}
+.duel-empty strong { color: var(--text); }
+
+.duel-selector-card {
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 22px;
+}
+.duel-selector-head {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px; flex-wrap: wrap;
+}
+.duel-selector-head h3 { font-size: 15px; font-weight: 700; margin: 0; color: var(--text); }
+.duel-selector-head .duel-counter {
+  font-size: 11px; padding: 3px 9px; border-radius: 999px;
+  background: rgba(139,92,246,0.18); color: var(--accent2);
+  border: 1px solid rgba(139,92,246,0.35); font-weight: 700;
+}
+.duel-selector-head .duel-hint {
+  font-size: 12px; color: var(--text3); margin-left: auto;
+}
+
+.duel-chips {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  max-height: 240px; overflow-y: auto;
+  padding: 4px 2px;
+}
+.duel-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 11px; border-radius: 999px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  cursor: pointer; user-select: none;
+  font-size: 12.5px; color: var(--text);
+  transition: background .15s, border-color .15s, transform .12s;
+  white-space: nowrap; max-width: 320px;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.duel-chip:hover { background: rgba(255,255,255,0.07); transform: translateY(-1px); }
+.duel-chip.selected {
+  background: linear-gradient(135deg, rgba(139,92,246,0.25), rgba(217,70,239,0.18));
+  border-color: rgba(217,70,239,0.55);
+  box-shadow: 0 0 0 1px rgba(217,70,239,0.25), 0 6px 16px -10px rgba(217,70,239,0.6);
+  color: #fff;
+}
+.duel-chip.selected::before {
+  content: ''; width: 14px; height: 14px;
+  border-radius: 50%; background: var(--c, #d946ef);
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.5), 0 0 8px var(--c, #d946ef);
+  flex-shrink: 0;
+}
+.duel-chip.disabled { opacity: 0.45; cursor: not-allowed; }
+.duel-chip-score {
+  font-size: 10.5px; font-weight: 700;
+  padding: 2px 6px; border-radius: 4px;
+  background: rgba(0,0,0,0.4); color: var(--text2);
+}
+.duel-chip-score.s-good { background: rgba(74,222,128,0.18); color: #4ade80; }
+.duel-chip-score.s-mid { background: rgba(251,191,36,0.18); color: #fbbf24; }
+.duel-chip-score.s-bad { background: rgba(248,113,113,0.18); color: #f87171; }
+
+.duel-controls {
+  display: flex; align-items: center; gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.duel-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 14px; border-radius: 9px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: var(--text);
+  font-size: 12.5px; font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, transform .1s;
+}
+.duel-btn:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.18); }
+.duel-btn:active { transform: translateY(1px); }
+.duel-btn.primary {
+  background: linear-gradient(135deg, #8b5cf6, #d946ef);
+  color: #fff; border-color: rgba(217,70,239,0.55);
+  box-shadow: 0 6px 18px -8px rgba(139,92,246,0.6);
+}
+.duel-btn.primary:hover { filter: brightness(1.10); }
+.duel-btn.danger { background: rgba(248,113,113,0.10); border-color: rgba(248,113,113,0.30); color: #fca5a5; }
+.duel-btn.danger:hover { background: rgba(248,113,113,0.16); }
+.duel-btn[disabled] { opacity: 0.55; cursor: not-allowed; }
+
+.duel-arena {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+}
+.duel-radar-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 22px 22px 18px;
+  position: relative;
+  overflow: hidden;
+}
+.duel-radar-card::before {
+  content: '';
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 460px; height: 460px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(139,92,246,0.10), transparent 65%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+.duel-radar-card h3 {
+  font-size: 14px; font-weight: 700; margin: 0 0 6px;
+  display: flex; align-items: center; gap: 8px;
+  position: relative;
+}
+.duel-radar-card .duel-radar-sub {
+  font-size: 12px; color: var(--text3); margin-bottom: 14px; position: relative;
+}
+.duel-radar-wrap {
+  position: relative;
+  width: 100%; max-width: 520px;
+  margin: 0 auto;
+  aspect-ratio: 1/1;
+}
+.duel-radar { width: 100%; height: 100%; display: block; }
+.duel-radar .ax-line { stroke: rgba(255,255,255,0.06); stroke-width: 1; }
+.duel-radar .ax-line.star { stroke: rgba(251,191,36,0.18); stroke-width: 1.4; stroke-dasharray: 3 3; }
+.duel-radar .ring { fill: none; stroke: rgba(255,255,255,0.045); stroke-width: 1; }
+.duel-radar .ring.outer { stroke: rgba(255,255,255,0.10); }
+.duel-radar .ax-num {
+  font-size: 9.5px; fill: var(--text3); font-weight: 600;
+  text-anchor: middle; dominant-baseline: middle;
+  font-family: var(--font-mono, ui-monospace, monospace);
+}
+.duel-radar .ax-num.star { fill: #fbbf24; }
+.duel-radar .ax-num-bg {
+  fill: rgba(7,6,13,0.72);
+  stroke: rgba(255,255,255,0.10);
+  stroke-width: 0.6;
+}
+.duel-radar .poly {
+  stroke-width: 2.2;
+  fill-opacity: 0.16;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 6px var(--poly-c, #fff));
+  animation: duelPolyDraw 0.8s ease-out both;
+  transform-origin: 50% 50%;
+}
+.duel-radar .vertex {
+  stroke-width: 1.4;
+  stroke: rgba(7,6,13,0.6);
+}
+@keyframes duelPolyDraw {
+  from { transform: scale(0.3); opacity: 0; }
+  60% { opacity: 1; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.duel-legend {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  margin-top: 14px; justify-content: center;
+}
+.duel-legend-item {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 10px; border-radius: 999px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  font-size: 11.5px; color: var(--text2);
+  font-weight: 600;
+}
+.duel-legend-item .swatch {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--c); box-shadow: 0 0 8px var(--c);
+}
+.duel-legend-item .lbl { color: var(--text); max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.duel-legend-item .sc { color: var(--text3); font-size: 10.5px; }
+
+.duel-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+.duel-card {
+  position: relative;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 16px 16px 14px;
+  display: flex; flex-direction: column; gap: 10px;
+  cursor: pointer;
+  transition: transform .18s, box-shadow .25s, border-color .2s;
+  overflow: hidden;
+}
+.duel-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: var(--c);
+  box-shadow: 0 0 12px var(--c);
+}
+.duel-card:hover { transform: translateY(-2px); border-color: var(--c); }
+.duel-card.winner {
+  border-color: rgba(251,191,36,0.55);
+  box-shadow: 0 0 0 1px rgba(251,191,36,0.35), 0 14px 36px -16px rgba(251,191,36,0.6);
+  background: linear-gradient(180deg, rgba(251,191,36,0.10), rgba(255,255,255,0.01));
+  animation: duelWinnerHalo 3.2s ease-in-out infinite;
+}
+@keyframes duelWinnerHalo {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(251,191,36,0.35), 0 14px 36px -16px rgba(251,191,36,0.55); }
+  50% { box-shadow: 0 0 0 1px rgba(251,191,36,0.55), 0 18px 46px -16px rgba(251,191,36,0.85); }
+}
+.duel-crown {
+  position: absolute;
+  top: -22px; left: 50%;
+  transform: translateX(-50%);
+  width: 44px; height: 44px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #fbbf24;
+  filter: drop-shadow(0 0 14px rgba(251,191,36,0.85));
+  animation: duelCrownFloat 2.4s ease-in-out infinite;
+  z-index: 2;
+}
+@keyframes duelCrownFloat {
+  0%, 100% { transform: translateX(-50%) translateY(0) rotate(-3deg); }
+  50% { transform: translateX(-50%) translateY(-4px) rotate(3deg); }
+}
+.duel-card-head {
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.duel-card-avatar {
+  width: 42px; height: 42px;
+  border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800;
+  background: linear-gradient(135deg, var(--c), color-mix(in srgb, var(--c) 55%, #000));
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 6px 14px -8px var(--c);
+  text-transform: uppercase;
+}
+.duel-card-name {
+  font-size: 13.5px; font-weight: 700; line-height: 1.3;
+  color: var(--text);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.duel-card-niche { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+.duel-score-row { display: flex; align-items: baseline; gap: 8px; }
+.duel-score-big {
+  font-size: 32px; font-weight: 800; line-height: 1;
+  background: linear-gradient(135deg, var(--c), color-mix(in srgb, var(--c) 50%, #fff));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.duel-score-out { font-size: 13px; color: var(--text3); font-weight: 600; }
+.duel-verdict-pill {
+  font-size: 9.5px; font-weight: 800; letter-spacing: 0.08em;
+  padding: 3px 8px; border-radius: 999px;
+  text-transform: uppercase;
+  margin-left: auto;
+}
+.duel-verdict-pill.go { background: rgba(74,222,128,0.18); color: #4ade80; border: 1px solid rgba(74,222,128,0.35); }
+.duel-verdict-pill.wait { background: rgba(251,191,36,0.18); color: #fbbf24; border: 1px solid rgba(251,191,36,0.35); }
+.duel-verdict-pill.kill { background: rgba(248,113,113,0.18); color: #f87171; border: 1px solid rgba(248,113,113,0.35); }
+
+.duel-card-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+  font-size: 11.5px;
+}
+.duel-card-stat { display: flex; flex-direction: column; gap: 1px; }
+.duel-card-stat .lbl { color: var(--text3); font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; }
+.duel-card-stat .val { color: var(--text); font-weight: 700; }
+
+.duel-card-bars {
+  display: flex; gap: 4px;
+  margin-top: 4px;
+}
+.duel-card-bar {
+  flex: 1; height: 6px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+.duel-card-bar.is-yes { background: var(--c); box-shadow: 0 0 6px var(--c); }
+.duel-card-bar.is-no { background: rgba(248,113,113,0.50); }
+.duel-card-bar.is-unk { background: rgba(255,255,255,0.10); }
+.duel-card-bar.star::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(45deg, rgba(251,191,36,0.45) 0 2px, transparent 2px 4px);
+}
+
+.duel-card-remove {
+  position: absolute;
+  top: 8px; right: 8px;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.45);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--text3);
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  opacity: 0; transition: opacity .15s;
+  font-size: 14px; line-height: 0;
+}
+.duel-card:hover .duel-card-remove { opacity: 1; }
+.duel-card-remove:hover { color: #f87171; border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.12); }
+.duel-card-remove svg { width: 11px; height: 11px; }
+
+.duel-verdict-card {
+  background: linear-gradient(135deg, rgba(251,191,36,0.10), rgba(217,70,239,0.06));
+  border: 1px solid rgba(251,191,36,0.30);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex; gap: 14px; align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+}
+.duel-verdict-card::before {
+  content: '';
+  position: absolute;
+  inset: -50% auto auto -10%;
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, rgba(251,191,36,0.18), transparent 65%);
+  filter: blur(20px);
+  pointer-events: none;
+}
+.duel-verdict-trophy {
+  width: 50px; height: 50px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 0 18px rgba(251,191,36,0.6);
+  position: relative;
+}
+.duel-verdict-meta { flex: 1; min-width: 0; position: relative; }
+.duel-verdict-title { font-size: 11px; font-weight: 700; color: #fbbf24; letter-spacing: 0.10em; text-transform: uppercase; margin-bottom: 2px; }
+.duel-verdict-name { font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.duel-verdict-text { font-size: 13px; color: var(--text2); line-height: 1.55; }
+.duel-verdict-text strong { color: var(--text); }
+
+.duel-claude-section {
+  background: linear-gradient(180deg, rgba(34,211,238,0.06), rgba(217,70,239,0.04));
+  border: 1px solid rgba(34,211,238,0.22);
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+.duel-claude-head {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 8px;
+}
+.duel-claude-head h4 { font-size: 14px; font-weight: 700; margin: 0; color: var(--text); }
+.duel-claude-head .duel-claude-tag {
+  font-size: 9.5px; padding: 3px 8px; border-radius: 999px;
+  background: rgba(34,211,238,0.18); color: #67e8f9;
+  border: 1px solid rgba(34,211,238,0.35); font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.duel-claude-sub { font-size: 12px; color: var(--text3); margin-bottom: 12px; }
+.duel-claude-busy {
+  display: flex; align-items: center; gap: 12px;
+  color: var(--text2); font-size: 13px;
+  padding: 14px 0;
+}
+.duel-claude-orb {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #22d3ee, #8b5cf6, #d946ef, #fbbf24, #22d3ee);
+  animation: duelOrbSpin 1.4s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(139,92,246,0.6));
+}
+@keyframes duelOrbSpin { to { transform: rotate(360deg); } }
+.duel-claude-result {
+  display: flex; flex-direction: column; gap: 12px;
+}
+.duel-claude-winner {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 14px;
+  background: rgba(251,191,36,0.08);
+  border: 1px solid rgba(251,191,36,0.30);
+  border-radius: 10px;
+}
+.duel-claude-winner .lbl { font-size: 10px; font-weight: 700; color: #fbbf24; letter-spacing: 0.10em; text-transform: uppercase; margin-bottom: 3px; }
+.duel-claude-winner .name { font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.duel-claude-winner .why { font-size: 13px; color: var(--text2); line-height: 1.55; }
+.duel-claude-others {
+  display: grid; grid-template-columns: 1fr; gap: 8px;
+}
+.duel-claude-other {
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.03);
+  border-left: 3px solid var(--c);
+  border-radius: 8px;
+  font-size: 12.5px;
+}
+.duel-claude-other .name { font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.duel-claude-other .why { color: var(--text2); margin-bottom: 4px; line-height: 1.5; }
+.duel-claude-other .advice { color: var(--text3); font-style: italic; line-height: 1.5; }
+.duel-claude-other .advice::before { content: '→ '; color: #67e8f9; font-weight: 700; font-style: normal; }
+.duel-claude-meta {
+  font-size: 10.5px; color: var(--text3); margin-top: 6px;
+  display: flex; gap: 12px; flex-wrap: wrap;
+  font-family: var(--font-mono, ui-monospace, monospace);
+}
+.duel-claude-meta span { padding: 2px 6px; background: rgba(255,255,255,0.03); border-radius: 4px; }
+.duel-claude-meta .cache-hit { color: #4ade80; background: rgba(74,222,128,0.10); }
+
+@media (max-width: 720px) {
+  .duel-hero { padding: 18px; }
+  .duel-hero h1 { font-size: 21px; }
+  .duel-radar-card { padding: 14px; }
+  .duel-cards { grid-template-columns: 1fr 1fr; }
+  .duel-verdict-card { flex-direction: column; }
+}
+@media (max-width: 460px) {
+  .duel-cards { grid-template-columns: 1fr; }
+}
+
 </style>
 </head>
 <body>
@@ -2236,7 +2705,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 
 <header>
   <button class="menu-toggle" aria-label="Ouvrir le menu" onclick="toggleSidebar()" title="Menu (sessions)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg></button>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.13.0-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.15.0-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -2662,14 +3131,25 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.14.0-beta';
-const APP_VERSION_NOTES = 'PALMARÈS — l\'app célèbre la régularité du chercheur produit. Nouvelle page sidebar entre Mes produits retenus et Recherche auto. Hero : streak counter (jours consécutifs avec activité de validation) avec flamme animée conique-gradient, total de produits scorés, total de keep, score moyen. Hall of Fame : Top 10 all-time des produits par score, avec podium gold/silver/bronze pulsant pour les 3 premiers, niche, session, date. Sessions parfaites : liste des sessions où 100% des produits ont été retenus (rare, valuable signal). Achievements : grille de 12 badges débloquables (Premier produit, Première session, Premier perfect 12/12, 10 retenus, 50 retenus, 100 retenus, 7-day streak, 30-day streak, Master niche, Session parfaite, Sessions x10, Sessions x50). Les locked sont grisés avec icône cadenas, les unlocked brillent en gradient signature avec date d\'unlock + animation pulse. Confetti gradient violet/fuchsia/cyan/jaune lancé à la première ouverture du jour de la page. Inspiré des récompenses Strava/Duolingo : la régularité bat le talent en dropshipping (Arthur). Aucun concurrent SaaS (Sell The Trend, Niche Scraper, Ecomhunt, Minea, Pipiads, Helium 10) ne fait du gamification sérieuse — c\'est notre moat de fidélisation au long cours.';
+const APP_VERSION = '0.15.0-beta';
+const APP_VERSION_NOTES = 'DUEL ARTHUR — comparateur visuel multi-produits avec radar des 12 critères Arthur superposé. Nouvelle page sidebar entre Palmarès et Recherche auto, icône épée or. Sélecteur en chips (jusqu\'à 4 combattants) classés par status (kept en premier triés par score, puis pending, puis reject) avec pastille couleur signature et compteur 0-12. Arena : carte radar SVG centrale 520px avec 12 axes (un par critère Arthur, axes ★ en pointillés or), polygones superposés des combattants en violet/cyan/fuchsia/ambre avec drop-shadow glow, animation duelPolyDraw 0.8s avec stagger 120ms. Vertex dots colorés sur les critères validés. Verdict card automatique avec trophée or + nom du gagnant + texte argumenté chiffré (lead en points, critères ★ couverts, dominance sur les autres). Cartes combattants 220px : avatar gradient initiale, score 32px gradient, verdict pill (LANCER/ATTENDRE/JETER), prix/marge/validés/manqués + barre des 12 critères en mini-bars (vert/rouge/gris, hachuré or pour les ★). Crown SVG flottante au-dessus du winner avec animation duelCrownFloat 2.4s + halo or duelWinnerHalo. Section "Verdict argumenté de Claude" : Sonnet 4.6 reçoit la grille Arthur en système (cacheable) + les 2-4 candidats avec leurs scores/critères/prix/marges et retourne un JSON {winner_pid, why_winner, others:[{pid, why_not, advice}]}. Affichage card winner + mini-cards "pourquoi pas" + advice par concurrent + meta tokens cache. Bouton "Ajouter au duel" sur la page produit (toggle Dans le duel/Ajouter). Persistence localStorage des pids sélectionnés. Compteur dans le nav-item sidebar. Commande palette enrichie. Aucun concurrent SaaS de validation produit (Sell The Trend, Niche Scraper, Ecomhunt, Minea, Pipiads, Helium 10) ne propose un comparateur visuel multi-produits — encore moins avec un radar des critères propriétaires + un AI verdict argumenté.';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.15.0-beta', date: '2026-04-27', time: '06:21', source: 'duel arthur',
+    summary: 'DUEL ARTHUR — comparateur visuel multi-produits avec radar 12 axes superposé et verdict Claude argumenté',
+    items: [
+      {type:'feat', text:'Nouvelle page sidebar "Duel Arthur" (entre Palmarès et Recherche auto), icône épée or. Sélecteur en chips de tous les produits (kept en premier triés par score, puis pending par date desc, puis reject). Chaque chip cliquable affiche un dot couleur signature (violet/cyan/fuchsia/ambre selon position) si sélectionné, et son score 0-12 en pastille colorée (vert/ambre/rouge). Max 4 combattants — au-delà, toast "duel plein". Persistence localStorage.'},
+      {type:'feat', text:'Radar superposé SVG 520px : 12 axes (un par critère Arthur, espacés 30°), 4 anneaux concentriques (25/50/75/100%), axes ★ non-négociables en pointillés or, numéros de critères en pastilles autour du contour avec tooltip native (titre du critère). 1 polygone par combattant (fillOpacity 0.16, stroke 2.2px, drop-shadow glow couleur). Valeurs : critère validé → rayon 100%, inconnu → 42%, refusé → 18% (stub minimal pour que le polygone reste visible). Vertex dots colorés sur les critères validés. Animation duelPolyDraw 0.8s scale 0.3→1 avec stagger 120ms par combattant.'},
+      {type:'feat', text:'Cards combattants sous le radar (220px min, grid auto-fit) : avatar gradient 42px avec initiale du produit, nom 13.5px clamp 2 lignes, niche/session, score 32px gradient (couleur signature → blanc), pill verdict LANCER/ATTENDRE/JETER (computé localement par règle Arthur : score≥10+0★ manqué → go ; score≥8 et ≤1 ★ → wait ; sinon kill), 4 stats (prix vente / ratio marge × / validés /12 / manqués), barre des 12 critères en mini-bars (vert plein si OUI, rouge si NON, gris si ?, hachure or si ★) avec tooltip critère. Card winner highlight border or + animation duelWinnerHalo 3.2s box-shadow pulse. Crown SVG 44px flottante au-dessus avec animation duelCrownFloat 2.4s rotate -3°/+3° + drop-shadow or. Bouton remove ✕ apparaît au hover.'},
+      {type:'feat', text:'Verdict card auto sous le radar : trophée or 50px + nom du gagnant + texte argumenté chiffré qui change selon la qualité du duel. "X domine ce duel avec Y/12 (avance de +Z points sur le suivant) et zéro critère ★ manqué" si verdict go + lead ≥2. "X mène avec Y/12 (N ★ manqués). Verdict ATTENDRE — confirme les critères clés" si verdict wait. "X est le moins pire avec Y/12. Aucun candidat ne passe la grille — relance une session" si verdict kill. Tie-break : score → critères ★ manqués → ratio marge → date kept.'},
+      {type:'feat', text:'Section "Verdict argumenté de Claude" : Sonnet 4.6 reçoit la grille Arthur en prompt système (cacheable via cache_control:ephemeral) + les 2-4 candidats avec scores/critères validés-manqués/★ manqués/prix/marge/ROAS/volume/CPC/notes et retourne un JSON {winner_pid, why_winner, others:[{pid, why_not, advice}]}. Affichage : card winner gold avec name 15px et why 13px ; mini-cards "pourquoi pas + advice" pour chaque autre, border-left coloré signature ; meta tokens (cache hit/créé, in/out, modèle, heure). Réutilise la clé Anthropic stockée par l\'Auto-Scorer (modale clé partagée). Loading orb conique 26px en attente. Bouton "Réessayer" si erreur.'},
+      {type:'feat', text:'Bouton "Ajouter au duel" dans le header de chaque page produit (état toggle "Dans le duel" ambre si déjà présent). Permet de bâtir un duel depuis la navigation produit sans aller au sélecteur. Compteur live dans le nav-item sidebar (pastille gold). Commande palette : "Duel Arthur" + "Vider le duel en cours" (visible seulement si non-vide).'},
+      {type:'feat', text:'PARI PRODUIT : aucun SaaS de validation produit (Sell The Trend, Niche Scraper, Ecomhunt, Minea, Pipiads, Helium 10) ne propose un comparateur visuel multi-produits. Le chercheur produit shortliste 2-4 candidats avant de décider lequel lancer en premier — c\'est le moment de vérité où il quitte l\'app pour Excel. Le Duel Arthur garde cette décision DANS l\'app avec une représentation visuelle inédite (radar des critères propriétaires) et un AI verdict argumenté. Vision F (axe COLLABORATIVE/PARTAGE + VISUAL ANALYTICS + DIFFERENCIATION RADICALE).'},
+    ]},
   { v: '0.14.0-beta', date: '2026-04-27', time: '05:30', source: 'palmarès',
     summary: 'PALMARÈS — la page qui célèbre la régularité du chercheur produit',
     items: [
@@ -2893,7 +3373,9 @@ const ICONS = {
   flame: '<path d="M13.5 0.67c.67 4.5 4.5 6.16 4.5 9.83a6 6 0 0 1-12 0c0-1.83.83-3.5 2-4.83.67 1.17 1.83 2 3 2 0-3 1.5-5.5 2.5-7zm-1 17.83a2.5 2.5 0 0 1-2.5-2.5c0-1 .67-1.83 1.67-2.17.5 1 1.33 1.5 2.33 1.5 0 .67-.5 3.17-1.5 3.17z"/>',
   spark: '<path d="M12 2 9 9l-7 1 5 5-1.5 7 6.5-3.5 6.5 3.5L17 15l5-5-7-1z"/>',
   layers: '<path d="m12 2-9.5 5L12 12l9.5-5L12 2zm-9.5 10L12 17l9.5-5M2.5 17 12 22l9.5-5"/>',
-  medal: '<path d="M12 13a4 4 0 1 1 0 8 4 4 0 0 1 0-8zm0 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 2h10l-1.6 6.4A6 6 0 1 0 8.6 8.4L7 2zm2.6 2 .9 3.6a4 4 0 0 1 3 0L14.4 4H9.6z"/>'
+  medal: '<path d="M12 13a4 4 0 1 1 0 8 4 4 0 0 1 0-8zm0 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 2h10l-1.6 6.4A6 6 0 1 0 8.6 8.4L7 2zm2.6 2 .9 3.6a4 4 0 0 1 3 0L14.4 4H9.6z"/>',
+  sword: '<path d="M14.5 2.5 21 9l-2 2-1.5-1.5-7.5 7.5L8 19h-2v-2l1-1.5L14.5 8 13 6.5l1.5-4zM7 17l1.5 1.5L4 23l-2-2 4.5-4.5L7 17z"/>',
+  crown: '<path d="M2 7l4 4 6-7 6 7 4-4-2 12H4L2 7zm3 13h14v2H5v-2z"/>'
 };
 function ico(name, size) {
   const sz = size || 16;
@@ -2932,6 +3414,10 @@ function renderSidebar() {
       </div>
       <div class="nav-item ${currentView.type==='palmares'?'active':''}" onclick="go({type:'palmares'})">
         <span class="icon">${ico('medal',16)}</span><span>Palmarès</span>
+      </div>
+      <div class="nav-item ${currentView.type==='duel'?'active':''}" onclick="go({type:'duel'})">
+        <span class="icon" style="color:#fbbf24">${ico('sword',16)}</span><span>Duel Arthur</span>
+        ${(_duelGet?.().length || 0) ? `<span class="count" style="background:linear-gradient(135deg,rgba(251,191,36,0.25),rgba(217,70,239,0.18));color:#fde68a;border:1px solid rgba(251,191,36,0.35)">${_duelGet().length}</span>` : ''}
       </div>
       <div class="nav-item" onclick="openDiscoverModal()" style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(217,70,239,0.06));border:1px solid rgba(139,92,246,0.25);">
         <span class="icon">${ico('search',16)}</span><span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:600">Recherche auto</span>
@@ -3147,6 +3633,7 @@ function renderMain() {
   if (currentView.type === 'dashboard') m.innerHTML = renderDashboard();
   else if (currentView.type === 'kept') m.innerHTML = renderKept();
   else if (currentView.type === 'palmares') m.innerHTML = renderPalmares();
+  else if (currentView.type === 'duel') m.innerHTML = renderDuel();
   else if (currentView.type === 'help') m.innerHTML = renderHelp();
   else if (currentView.type === 'formation') m.innerHTML = renderFormation(currentView.lesson);
   else if (currentView.type === 'changelog') m.innerHTML = renderChangelog();
@@ -4178,6 +4665,540 @@ function renderPalmares() {
   `;
 }
 
+/* ═════════ DUEL ARTHUR — comparateur visuel multi-produits ═════════
+   Pari produit : aucun SaaS de validation produit (Sell The Trend, Niche
+   Scraper, Ecomhunt, Minea, Helium 10) ne propose un comparateur visuel
+   des produits candidats. Le chercheur produit shortliste 2-4 candidats
+   avant de décider lequel lancer en premier. Le Duel Arthur affiche un
+   radar SVG 12 axes (un par critère Arthur) avec polygones superposés
+   des combattants, plus une déclaration auto du winner avec couronne
+   animée et une analyse Claude argumentée. Vision F (axe COLLABORATIVE
+   + VISUAL ANALYTICS + DIFFERENCIATION RADICALE). */
+
+const DUEL_STORAGE_KEY = 'ecom_duel_selection_v1';
+const DUEL_MAX = 4;
+const DUEL_COLORS = ['#8b5cf6', '#22d3ee', '#d946ef', '#fbbf24'];
+let _duelClaudeBusy = false;
+let _duelClaudeResult = null;     // { winner_pid, why_winner, others:[{pid,why_not,advice}], _usage, _model, _at }
+let _duelClaudeError = null;
+
+function _duelGet() {
+  try {
+    const raw = localStorage.getItem(DUEL_STORAGE_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    if (!Array.isArray(arr)) return [];
+    // Filter out products that no longer exist
+    return arr.filter(pid => state.products.find(p => p.id === pid)).slice(0, DUEL_MAX);
+  } catch(e) { return []; }
+}
+function _duelSave(arr) {
+  try { localStorage.setItem(DUEL_STORAGE_KEY, JSON.stringify(arr.slice(0, DUEL_MAX))); } catch(e) {}
+}
+function duelToggle(pid) {
+  const cur = _duelGet();
+  const i = cur.indexOf(pid);
+  if (i >= 0) cur.splice(i, 1);
+  else if (cur.length < DUEL_MAX) cur.push(pid);
+  else { _duelToast(`Maximum ${DUEL_MAX} produits dans un duel — retire-en un avant.`); return; }
+  _duelSave(cur);
+  _duelClaudeResult = null;
+  _duelClaudeError = null;
+  if (currentView.type === 'duel') renderAll(); else renderSidebar();
+}
+function duelRemove(pid) {
+  const cur = _duelGet().filter(x => x !== pid);
+  _duelSave(cur);
+  _duelClaudeResult = null;
+  _duelClaudeError = null;
+  if (currentView.type === 'duel') renderAll();
+}
+function duelClear() {
+  _duelSave([]);
+  _duelClaudeResult = null;
+  _duelClaudeError = null;
+  renderAll();
+}
+function duelAddFromProduct(pid) {
+  const cur = _duelGet();
+  if (cur.includes(pid)) { _duelToast('Ce produit est déjà dans le duel.'); go({type:'duel'}); return; }
+  if (cur.length >= DUEL_MAX) { _duelToast(`Le duel est plein (${DUEL_MAX} max).`); go({type:'duel'}); return; }
+  cur.push(pid);
+  _duelSave(cur);
+  go({type:'duel'});
+}
+function _duelToast(msg) {
+  let t = document.getElementById('duelToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'duelToast';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff;padding:11px 18px;border-radius:10px;font-size:13px;font-weight:600;z-index:99999;box-shadow:0 14px 40px -10px rgba(217,70,239,0.6);transition:opacity .2s';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => { t.style.opacity = '0'; }, 3000);
+}
+
+function _duelScoreClass(s) { return s >= 9 ? 's-good' : s >= 6 ? 's-mid' : 's-bad'; }
+function _duelVerdict(p) {
+  const score = calcScore(p);
+  const starMissed = CRITERES.filter(c => c.star && p.criteres && p.criteres[c.id] !== true).length;
+  if (score >= 10 && starMissed === 0) return { cls:'go', text:'LANCER' };
+  if (score >= 8 && starMissed <= 1) return { cls:'wait', text:'ATTENDRE' };
+  return { cls:'kill', text:'JETER' };
+}
+
+function _duelInitial(name) {
+  const s = (name || '?').trim();
+  return s ? s[0].toUpperCase() : '?';
+}
+
+// Compute the winner: highest score → fewest star-criteria missed → highest margin → most recent kept
+function _duelComputeWinner(prods) {
+  if (!prods.length) return null;
+  const scored = prods.map(p => {
+    const score = calcScore(p);
+    const starMissed = CRITERES.filter(c => c.star && p.criteres && p.criteres[c.id] !== true).length;
+    const m = calcMarge(p);
+    const ratio = m ? m.ratio : 0;
+    const ts = p.keptAt || p.created || 0;
+    return { p, score, starMissed, ratio, ts };
+  });
+  scored.sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    if (a.starMissed !== b.starMissed) return a.starMissed - b.starMissed;
+    if (b.ratio !== a.ratio) return b.ratio - a.ratio;
+    return b.ts - a.ts;
+  });
+  return scored[0].p;
+}
+
+// Build the radar chart SVG: 12 axes (one per criterion), 1 polygon per product
+function _duelRadarSvg(prods) {
+  const W = 520, H = 520, cx = W/2, cy = H/2;
+  const R = 178;
+  const axes = CRITERES.length; // 12
+  const angleFor = i => -Math.PI/2 + (2 * Math.PI * i) / axes;
+
+  // Background grid: concentric rings
+  let svg = `<svg class="duel-radar" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" aria-label="Radar des 12 critères Arthur">`;
+  // Rings
+  [0.25, 0.5, 0.75].forEach(f => {
+    svg += `<circle class="ring" cx="${cx}" cy="${cy}" r="${(R*f).toFixed(1)}"/>`;
+  });
+  svg += `<circle class="ring outer" cx="${cx}" cy="${cy}" r="${R}"/>`;
+
+  // Axes
+  CRITERES.forEach((c, i) => {
+    const a = angleFor(i);
+    const x = cx + R * Math.cos(a);
+    const y = cy + R * Math.sin(a);
+    svg += `<line class="ax-line ${c.star ? 'star' : ''}" x1="${cx.toFixed(1)}" y1="${cy.toFixed(1)}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`;
+  });
+
+  // Polygons per product (animated draw via CSS transform)
+  prods.forEach((p, idx) => {
+    const color = DUEL_COLORS[idx % DUEL_COLORS.length];
+    const points = CRITERES.map((c, i) => {
+      const v = p.criteres ? p.criteres[c.id] : null;
+      // value: true → 1.0 ; false → 0.18 (small stub so polygon is visible) ; undefined/null → 0.45
+      const val = v === true ? 1.0 : v === false ? 0.18 : 0.42;
+      const r = R * val;
+      const a = angleFor(i);
+      const x = cx + r * Math.cos(a);
+      const y = cy + r * Math.sin(a);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(' ');
+    svg += `<polygon class="poly" points="${points}" fill="${color}" stroke="${color}" style="--poly-c:${color};animation-delay:${(idx * 0.12).toFixed(2)}s"/>`;
+    // Vertex dots for validated criteria (value === true) + star halo
+    CRITERES.forEach((c, i) => {
+      if (!p.criteres || p.criteres[c.id] !== true) return;
+      const a = angleFor(i);
+      const x = cx + R * Math.cos(a);
+      const y = cy + R * Math.sin(a);
+      svg += `<circle class="vertex" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.6" fill="${color}"/>`;
+    });
+  });
+
+  // Axis numbers (criterion id) on the outer ring with background pill
+  CRITERES.forEach((c, i) => {
+    const a = angleFor(i);
+    const r = R + 18;
+    const x = cx + r * Math.cos(a);
+    const y = cy + r * Math.sin(a);
+    svg += `<circle class="ax-num-bg" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="11"/>`;
+    svg += `<text class="ax-num ${c.star ? 'star' : ''}" x="${x.toFixed(1)}" y="${y.toFixed(1)}"><title>${escapeHtml(c.titre)}</title>${c.id}</text>`;
+  });
+
+  svg += `</svg>`;
+  return svg;
+}
+
+function _duelCardHtml(p, idx, winnerPid) {
+  const color = DUEL_COLORS[idx % DUEL_COLORS.length];
+  const score = calcScore(p);
+  const m = calcMarge(p);
+  const v = _duelVerdict(p);
+  const isWinner = p.id === winnerPid;
+  const sess = findSession(p.sessionId);
+  const validated = CRITERES.filter(c => p.criteres && p.criteres[c.id] === true).length;
+  const missed = CRITERES.filter(c => p.criteres && p.criteres[c.id] === false).length;
+  // 12 micro-bars representing criteria status
+  const bars = CRITERES.map(c => {
+    const st = p.criteres ? p.criteres[c.id] : null;
+    const cls = st === true ? 'is-yes' : st === false ? 'is-no' : 'is-unk';
+    return `<div class="duel-card-bar ${cls} ${c.star ? 'star' : ''}" title="${escapeHtml(c.id + '. ' + c.titre)} — ${st === true ? 'OUI' : st === false ? 'NON' : '?'}"></div>`;
+  }).join('');
+  const crown = isWinner ? `<span class="duel-crown" title="Winner du duel">${ico('crown', 28)}</span>` : '';
+  return `
+    <div class="duel-card ${isWinner ? 'winner' : ''}" style="--c:${color}" onclick="go({type:'product',id:'${p.id}'})">
+      ${crown}
+      <button class="duel-card-remove" title="Retirer du duel" onclick="event.stopPropagation();duelRemove('${p.id}')">${ico('cross', 11)}</button>
+      <div class="duel-card-head">
+        <div class="duel-card-avatar">${escapeHtml(_duelInitial(p.name))}</div>
+        <div style="flex:1;min-width:0">
+          <div class="duel-card-name" title="${escapeHtml(p.name||'')}">${escapeHtml(p.name || 'Sans nom')}</div>
+          <div class="duel-card-niche">${p.niche ? escapeHtml(p.niche) : '—'}${sess ? ' · ' + escapeHtml(sess.label || '') : ''}</div>
+        </div>
+      </div>
+      <div class="duel-score-row">
+        <span class="duel-score-big">${score}</span>
+        <span class="duel-score-out">/12</span>
+        <span class="duel-verdict-pill ${v.cls}">${v.text}</span>
+      </div>
+      <div class="duel-card-stats">
+        <div class="duel-card-stat"><span class="lbl">Prix vente</span><span class="val">${p.prix_vente ? Number(p.prix_vente).toFixed(2) + ' €' : '—'}</span></div>
+        <div class="duel-card-stat"><span class="lbl">Marge ×</span><span class="val">${m && m.ratio ? '×' + m.ratio.toFixed(2) : '—'}</span></div>
+        <div class="duel-card-stat"><span class="lbl">Validés</span><span class="val" style="color:#4ade80">${validated}/12</span></div>
+        <div class="duel-card-stat"><span class="lbl">Manqués</span><span class="val" style="color:${missed ? '#f87171' : 'var(--text3)'}">${missed}</span></div>
+      </div>
+      <div class="duel-card-bars" title="État des 12 critères Arthur (rayé = critère ★ non-négociable)">${bars}</div>
+    </div>
+  `;
+}
+
+function _duelLegendHtml(prods) {
+  return `<div class="duel-legend">${prods.map((p, i) => {
+    const color = DUEL_COLORS[i % DUEL_COLORS.length];
+    return `<span class="duel-legend-item" style="--c:${color}">
+      <span class="swatch"></span>
+      <span class="lbl">${escapeHtml(p.name || 'Sans nom')}</span>
+      <span class="sc">${calcScore(p)}/12</span>
+    </span>`;
+  }).join('')}</div>`;
+}
+
+function _duelVerdictCardHtml(prods, winner) {
+  if (!winner) return '';
+  const winnerScore = calcScore(winner);
+  const others = prods.filter(p => p.id !== winner.id);
+  const otherMax = others.length ? Math.max(...others.map(p => calcScore(p))) : 0;
+  const lead = winnerScore - otherMax;
+  const winnerVerdict = _duelVerdict(winner);
+  const winnerStarMissed = CRITERES.filter(c => c.star && winner.criteres && winner.criteres[c.id] !== true).length;
+
+  // Build a "domine sur N critères vs les autres" stat
+  const dominantCount = CRITERES.filter(c => {
+    const wOk = winner.criteres && winner.criteres[c.id] === true;
+    if (!wOk) return false;
+    return others.some(o => !o.criteres || o.criteres[c.id] !== true);
+  }).length;
+
+  let txt;
+  if (winnerVerdict.cls === 'go' && lead >= 2) {
+    txt = `<strong>${escapeHtml(winner.name || 'Sans nom')}</strong> domine ce duel avec <strong>${winnerScore}/12</strong> (avance de +${lead} points sur le suivant) et zéro critère ★ manqué. C'est ton candidat à lancer en premier.`;
+  } else if (winnerVerdict.cls === 'go') {
+    txt = `<strong>${escapeHtml(winner.name || 'Sans nom')}</strong> remporte le duel avec <strong>${winnerScore}/12</strong> et passe la grille Arthur. Bat les autres sur ${dominantCount} critère${dominantCount>1?'s':''}.`;
+  } else if (winnerVerdict.cls === 'wait') {
+    txt = `<strong>${escapeHtml(winner.name || 'Sans nom')}</strong> mène avec <strong>${winnerScore}/12</strong>${winnerStarMissed ? ` (${winnerStarMissed} ★ manqué${winnerStarMissed>1?'s':''})` : ''}. Verdict ATTENDRE — confirme les critères clés avant de lancer.`;
+  } else {
+    txt = `<strong>${escapeHtml(winner.name || 'Sans nom')}</strong> est le moins pire du duel avec <strong>${winnerScore}/12</strong>. Aucun candidat ne passe la grille Arthur — relance une session de recherche avant d'investir.`;
+  }
+
+  return `
+    <div class="duel-verdict-card">
+      <div class="duel-verdict-trophy">${ico('trophy', 26)}</div>
+      <div class="duel-verdict-meta">
+        <div class="duel-verdict-title">Verdict du duel</div>
+        <div class="duel-verdict-name">${escapeHtml(winner.name || 'Sans nom')}</div>
+        <div class="duel-verdict-text">${txt}</div>
+      </div>
+    </div>
+  `;
+}
+
+function _duelClaudeSectionHtml(prods) {
+  const hasKey = (typeof _aiHasKey === 'function') && _aiHasKey();
+  const showResult = _duelClaudeResult && _duelClaudeResult._pids && _duelClaudeResult._pids.length === prods.length && _duelClaudeResult._pids.every(pid => prods.find(p => p.id === pid));
+  let body;
+  if (_duelClaudeBusy) {
+    body = `<div class="duel-claude-busy"><span class="duel-claude-orb"></span><span>Claude analyse le duel… (~6-10 s)</span></div>`;
+  } else if (_duelClaudeError) {
+    body = `<div style="color:#fca5a5;font-size:13px;padding:10px 0">${escapeHtml(_duelClaudeError)}</div>
+            <div><button class="duel-btn primary" onclick="duelRunClaude()">Réessayer</button></div>`;
+  } else if (showResult) {
+    body = _duelClaudeResultHtml(prods, _duelClaudeResult);
+  } else {
+    const btnLabel = hasKey ? "Demander l'analyse Claude" : "Configurer la clé Claude";
+    body = `
+      <div style="font-size:13px;color:var(--text2);line-height:1.55;margin-bottom:10px">
+        Claude Sonnet 4.6 analyse les ${prods.length} candidats du duel selon la grille Arthur, désigne le produit à lancer en priorité, justifie son choix et donne 1 conseil par concurrent.
+      </div>
+      <div><button class="duel-btn primary" onclick="duelRunClaude()">${ico('bolt', 14)} ${btnLabel}</button>
+      ${hasKey ? `<button class="duel-btn" onclick="aiOpenKeyModal()" style="margin-left:8px">Gérer ma clé</button>` : ''}</div>
+    `;
+  }
+  return `
+    <div class="duel-claude-section">
+      <div class="duel-claude-head">
+        <h4>${ico('bolt', 14)} Verdict argumenté de Claude</h4>
+        <span class="duel-claude-tag">AI · Sonnet 4.6</span>
+      </div>
+      ${body}
+    </div>
+  `;
+}
+
+function _duelClaudeResultHtml(prods, r) {
+  const winnerProd = prods.find(p => p.id === r.winner_pid) || prods[0];
+  const winnerIdx = prods.indexOf(winnerProd);
+  const otherCards = (r.others || []).map(o => {
+    const p = prods.find(pr => pr.id === o.pid);
+    if (!p) return '';
+    const idx = prods.indexOf(p);
+    const color = DUEL_COLORS[idx % DUEL_COLORS.length];
+    return `<div class="duel-claude-other" style="--c:${color}">
+      <div class="name">${escapeHtml(p.name || 'Sans nom')} <span style="color:var(--text3);font-weight:500">· ${calcScore(p)}/12</span></div>
+      <div class="why">${escapeHtml(o.why_not || '')}</div>
+      ${o.advice ? `<div class="advice">${escapeHtml(o.advice)}</div>` : ''}
+    </div>`;
+  }).join('');
+  const u = r._usage || {};
+  const cacheRead = u.cache_read_input_tokens || 0;
+  const cacheCreate = u.cache_creation_input_tokens || 0;
+  const inp = u.input_tokens || 0;
+  const out = u.output_tokens || 0;
+  const cacheBadge = cacheRead > 0
+    ? `<span class="cache-hit">cache hit · ${cacheRead.toLocaleString('fr-FR')} tk</span>`
+    : (cacheCreate > 0 ? `<span>cache créé · ${cacheCreate.toLocaleString('fr-FR')} tk</span>` : '');
+  const winnerColor = DUEL_COLORS[winnerIdx % DUEL_COLORS.length];
+  return `
+    <div class="duel-claude-result">
+      <div class="duel-claude-winner" style="border-color:${winnerColor}66;background:${winnerColor}14">
+        <div style="flex:1">
+          <div class="lbl">À lancer en premier (verdict Claude)</div>
+          <div class="name">${escapeHtml(winnerProd.name || 'Sans nom')}</div>
+          <div class="why">${escapeHtml(r.why_winner || '')}</div>
+        </div>
+      </div>
+      ${otherCards ? `<div class="duel-claude-others">${otherCards}</div>` : ''}
+      <div class="duel-claude-meta">
+        <span>${escapeHtml(r._model || AI_MODEL)}</span>
+        ${cacheBadge}
+        <span>${(inp + cacheRead + cacheCreate).toLocaleString('fr-FR')} tk in</span>
+        <span>${out.toLocaleString('fr-FR')} tk out</span>
+        <span>analysé ${new Date(r._at).toLocaleTimeString('fr-FR')}</span>
+      </div>
+    </div>
+  `;
+}
+
+function _duelBuildSystemPrompt() {
+  const critList = CRITERES.map(c =>
+    `${c.id}. ${c.titre}${c.star ? ' [★ NON-NÉGOCIABLE]' : ''} — ${c.desc}`
+  ).join('\n');
+  return `Tu es Arthur, expert français du dropshipping Google Ads (Ecom Inner Circle). On te soumet 2 à 4 produits candidats déjà scorés par leur propriétaire selon la grille Arthur des 12 critères. Ton job : juger ce duel et désigner LE produit à lancer en priorité, en argumentant comme un mentor.
+
+══ LA GRILLE ARTHUR (12 critères) ══
+${critList}
+
+══ TON TRAVAIL ══
+1. Analyser chaque produit selon : son score (nombre de critères validés), ses critères ★ non-négociables manqués, son prix de vente / sa marge, sa niche, et toute autre donnée fournie.
+2. Désigner UN SEUL gagnant — le produit à lancer en priorité. C'est généralement le score le plus haut, mais une marge supérieure ou la couverture des critères ★ peut renverser un duel serré.
+3. Justifier "why_winner" en 2-3 phrases concrètes et chiffrées (cite le score, la marge, les critères clés).
+4. Pour chaque autre produit, expliquer "why_not" (ce qui le pénalise face au winner) et donner 1 "advice" actionnable pour le remettre en course (ex : "Confirme le volume mensuel sur Keyword Planner avant de relancer").
+
+══ FORMAT DE SORTIE — JSON STRICT ══
+{
+  "winner_pid": "<pid exact du produit gagnant>",
+  "why_winner": "2-3 phrases en français, concrètes et chiffrées.",
+  "others": [
+    { "pid": "<pid>", "why_not": "1-2 phrases.", "advice": "1 phrase actionnable." }
+  ]
+}
+
+══ RÈGLES STRICTES ══
+- TOUJOURS répondre en JSON valide pur. Pas de markdown, pas de \`\`\`json, pas de prose autour.
+- Le pid doit correspondre exactement à un pid fourni en entrée.
+- Français direct, jamais pédagogique. Tu es un copilote, pas un cours.
+- Si tous les produits sont mauvais (score < 8), désigne quand même le moins pire en gagnant et dis dans why_winner que c'est un duel à refaire.`;
+}
+
+function _duelBuildUserMessage(prods) {
+  const lines = [`# Duel à juger : ${prods.length} produits candidats\n`];
+  prods.forEach((p, i) => {
+    const score = calcScore(p);
+    const m = calcMarge(p);
+    const validated = CRITERES.filter(c => p.criteres && p.criteres[c.id] === true).map(c => c.id);
+    const missed = CRITERES.filter(c => p.criteres && p.criteres[c.id] === false).map(c => c.id);
+    const starMissed = CRITERES.filter(c => c.star && p.criteres && p.criteres[c.id] !== true).map(c => c.id);
+    lines.push(`## Combattant #${i+1} — pid="${p.id}"`);
+    if (p.name) lines.push(`- Nom : ${p.name}`);
+    if (p.niche) lines.push(`- Niche : ${p.niche}`);
+    if (p.source) lines.push(`- Source découverte : ${p.source}`);
+    lines.push(`- Score Arthur : ${score}/12`);
+    lines.push(`- Critères validés (true) : [${validated.join(', ') || 'aucun'}]`);
+    lines.push(`- Critères manqués (false) : [${missed.join(', ') || 'aucun'}]`);
+    lines.push(`- Critères ★ non-négociables manqués ou inconnus : [${starMissed.join(', ') || 'aucun'}]`);
+    if (p.prix_achat) lines.push(`- Prix achat : ${p.prix_achat}€`);
+    if (p.prix_livraison) lines.push(`- Livraison : ${p.prix_livraison}€/u`);
+    if (p.prix_vente) lines.push(`- Prix vente TTC : ${p.prix_vente}€`);
+    if (m && m.ratio) lines.push(`- Ratio marge (vente / [achat+liv]) : ×${m.ratio.toFixed(2)}`);
+    if (m && m.roas) lines.push(`- ROAS estimé : ${m.roas.toFixed(2)}`);
+    if (p.volume_mensuel) lines.push(`- Volume mensuel mot-clé : ${p.volume_mensuel}`);
+    if (p.cpc) lines.push(`- CPC moyen : ${p.cpc}€`);
+    if (p.notes) lines.push(`- Notes : ${p.notes.slice(0, 280)}`);
+    lines.push('');
+  });
+  lines.push(`Juge ce duel et retourne le JSON.`);
+  return lines.join('\n');
+}
+
+async function duelRunClaude() {
+  const prods = _duelGet().map(pid => state.products.find(p => p.id === pid)).filter(Boolean);
+  if (prods.length < 2) { _duelToast('Sélectionne au moins 2 produits pour lancer un duel.'); return; }
+  if (!(typeof _aiHasKey === 'function') || !_aiHasKey()) {
+    if (typeof aiOpenKeyModal === 'function') aiOpenKeyModal();
+    return;
+  }
+  if (_duelClaudeBusy) return;
+  _duelClaudeBusy = true;
+  _duelClaudeError = null;
+  renderMain();
+  try {
+    const sys = _duelBuildSystemPrompt();
+    const usr = _duelBuildUserMessage(prods);
+    const { text, usage, model } = await _aiCallClaude(sys, usr);
+    let json;
+    try { json = JSON.parse(text.trim()); }
+    catch(e) {
+      const m = text.match(/\{[\s\S]+\}/);
+      if (m) { try { json = JSON.parse(m[0]); } catch(e2) { throw new Error('JSON Claude non parsable.'); } }
+      else throw new Error('Réponse Claude sans JSON.');
+    }
+    if (!json.winner_pid) throw new Error('Réponse Claude sans winner_pid.');
+    if (!prods.find(p => p.id === json.winner_pid)) {
+      // Fallback: take the first valid pid mentioned, else first product
+      const guess = (json.others || []).find(o => prods.find(p => p.id === o.pid));
+      json.winner_pid = guess ? guess.pid : prods[0].id;
+    }
+    _duelClaudeResult = {
+      ...json,
+      _pids: prods.map(p => p.id),
+      _usage: usage || {},
+      _model: model,
+      _at: Date.now()
+    };
+  } catch(e) {
+    console.error('Duel Claude error:', e);
+    _duelClaudeError = 'Analyse Claude — ' + e.message;
+  } finally {
+    _duelClaudeBusy = false;
+    renderMain();
+  }
+}
+
+function renderDuel() {
+  const all = state.products;
+  const selectedIds = _duelGet();
+  const selectedSet = new Set(selectedIds);
+  const selectedProds = selectedIds.map(pid => all.find(p => p.id === pid)).filter(Boolean);
+
+  // Hero
+  const heroSubText = selectedProds.length === 0
+    ? `Compose ton duel : sélectionne 2 à ${DUEL_MAX} produits candidats. Le radar des 12 critères Arthur les superpose, le verdict désigne le combattant à lancer en premier, et Claude argumente.`
+    : selectedProds.length === 1
+      ? `Sélectionne au moins un second combattant pour lancer le duel.`
+      : `${selectedProds.length} combattants en lice. Radar superposé, verdict auto, analyse Claude argumentée.`;
+
+  // Sort all products: kept first (by score desc), then pending (by created desc), then rejected
+  const sorted = [...all].sort((a, b) => {
+    const stOrder = (s) => s === 'keep' ? 0 : (s === 'reject' ? 2 : 1);
+    const sa = stOrder(a.status), sb = stOrder(b.status);
+    if (sa !== sb) return sa - sb;
+    if (a.status === 'keep' && b.status === 'keep') return calcScore(b) - calcScore(a);
+    return (b.created || 0) - (a.created || 0);
+  });
+
+  const chipsHtml = sorted.length === 0
+    ? `<div class="duel-empty"><strong>Aucun produit dans la base.</strong><br>Crée une session et ajoute des candidats pour lancer un duel.</div>`
+    : `<div class="duel-chips">${sorted.map((p, idx) => {
+        const isSel = selectedSet.has(p.id);
+        const idxColor = isSel ? DUEL_COLORS[selectedIds.indexOf(p.id) % DUEL_COLORS.length] : '#888';
+        const score = calcScore(p);
+        const stIcon = p.status === 'keep' ? '★ ' : p.status === 'reject' ? '✗ ' : '';
+        const isDisabled = !isSel && selectedIds.length >= DUEL_MAX;
+        return `<span class="duel-chip ${isSel ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" style="--c:${idxColor}" onclick="duelToggle('${p.id}')" title="${escapeHtml(p.name || '')}${p.niche ? ' · ' + escapeHtml(p.niche) : ''}">
+          <span>${escapeHtml(stIcon + (p.name || 'Sans nom').slice(0, 38))}</span>
+          <span class="duel-chip-score ${_duelScoreClass(score)}">${score}/12</span>
+        </span>`;
+      }).join('')}</div>`;
+
+  const selectorCard = `
+    <div class="duel-selector-card">
+      <div class="duel-selector-head">
+        <h3>Choisis tes combattants</h3>
+        <span class="duel-counter">${selectedIds.length}/${DUEL_MAX}</span>
+        <span class="duel-hint">${selectedIds.length >= 2 ? 'Le duel est prêt — scroll pour voir le verdict' : 'Sélectionne au moins 2 produits'}</span>
+      </div>
+      ${chipsHtml}
+      <div class="duel-controls">
+        ${selectedIds.length ? `<button class="duel-btn danger" onclick="duelClear()">${ico('trash', 13)} Vider la sélection</button>` : ''}
+        ${selectedProds.length >= 2 ? `<button class="duel-btn primary" onclick="document.getElementById('duelArena')?.scrollIntoView({behavior:'smooth',block:'start'})">${ico('arrow-down', 13)} Voir le verdict</button>` : ''}
+      </div>
+    </div>
+  `;
+
+  let arenaHtml;
+  if (selectedProds.length < 2) {
+    arenaHtml = `<div class="duel-empty">
+      <strong>Le duel attend des combattants.</strong><br>
+      Sélectionne 2 à ${DUEL_MAX} produits ci-dessus pour révéler le radar superposé des 12 critères Arthur, le verdict du gagnant et l'analyse Claude.
+    </div>`;
+  } else {
+    const winner = _duelComputeWinner(selectedProds);
+    const winnerPid = winner ? winner.id : null;
+    arenaHtml = `
+      <div id="duelArena" class="duel-arena">
+        <div class="duel-radar-card">
+          <h3><span style="color:var(--accent2);display:inline-flex">${ico('target', 16)}</span>Radar superposé · les 12 critères Arthur</h3>
+          <div class="duel-radar-sub">Plus le polygone d'un combattant est ample, plus il valide de critères. Les axes ★ sont en pointillés or — un produit qui s'effondre dessus est éliminé.</div>
+          <div class="duel-radar-wrap">${_duelRadarSvg(selectedProds)}</div>
+          ${_duelLegendHtml(selectedProds)}
+        </div>
+        ${_duelVerdictCardHtml(selectedProds, winner)}
+        <div class="duel-cards">
+          ${selectedProds.map((p, i) => _duelCardHtml(p, i, winnerPid)).join('')}
+        </div>
+        ${_duelClaudeSectionHtml(selectedProds)}
+      </div>
+    `;
+  }
+
+  return `
+    <div class="duel-shell">
+      <div class="duel-hero">
+        <h1><span style="color:#fbbf24;display:inline-flex">${ico('sword', 24)}</span>Duel Arthur<span class="duel-tag">Beta</span></h1>
+        <div class="duel-sub">${heroSubText}</div>
+      </div>
+      ${selectorCard}
+      ${arenaHtml}
+    </div>
+  `;
+}
+
 /* ═════════ PRODUCT VIEW ═════════ */
 let productTab = 'infos';
 function renderProduct(pid) {
@@ -4202,6 +5223,10 @@ function renderProduct(pid) {
   return `
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap">
       <h1 style="font-size:22px;font-weight:700;flex:1;min-width:200px">${statusEmoji(p.status)} ${escapeHtml(p.name)}</h1>
+      ${(_duelGet().includes(p.id))
+        ? `<button class="btn btn-sm" onclick="duelRemove('${p.id}')" title="Retirer ce produit du duel en cours" style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(251,191,36,0.18),rgba(217,70,239,0.14));border-color:rgba(251,191,36,0.40);color:#fde68a">${ico('sword',13)}Dans le duel</button>`
+        : `<button class="btn btn-sm" onclick="duelAddFromProduct('${p.id}')" title="Ajouter ce produit au duel en cours (${_duelGet().length}/${DUEL_MAX})" style="display:inline-flex;align-items:center;gap:6px">${ico('sword',13)}Ajouter au duel</button>`
+      }
       <button class="btn btn-sm btn-primary" onclick="scanSerp('${p.id}')" ${window._scanning&&window._scanning[p.id]?'disabled':''}>${scanLabel}</button>
       <button class="btn btn-sm btn-danger" onclick="deleteProduct('${p.id}')" style="display:inline-flex;align-items:center;gap:6px;">${ico('trash',13)}Supprimer</button>
     </div>
@@ -6857,6 +7882,10 @@ function _cmdBuildRegistry() {
   cmds.push({ id:'nav.dashboard', cat:'Navigation', icon:'home', label:'Aller au Dashboard', hint:'Vue d\'ensemble', kw:'dashboard accueil home stats vue', action:() => go({type:'dashboard'}) });
   cmds.push({ id:'nav.kept', cat:'Navigation', icon:'trophy', label:'Mes produits retenus', hint:`${keptProducts().length} validés au total`, kw:'kept retenus validés trophées', action:() => go({type:'kept'}) });
   cmds.push({ id:'nav.palmares', cat:'Navigation', icon:'medal', label:'Palmarès', hint:'Hall of Fame, streak et achievements', kw:'palmarès palmares hall of fame achievements streak gamification', action:() => go({type:'palmares'}) });
+  cmds.push({ id:'nav.duel', cat:'Navigation', icon:'sword', label:'Duel Arthur', hint:`Compare 2-${DUEL_MAX} produits avec radar 12 axes${_duelGet().length ? ` · ${_duelGet().length} en lice` : ''}`, kw:'duel battle versus comparer compare radar arthur winner crown', action:() => go({type:'duel'}) });
+  if (_duelGet().length) {
+    cmds.push({ id:'act.duelClear', cat:'Actions', icon:'trash', label:'Vider le duel en cours', hint:`${_duelGet().length} combattants sélectionnés`, kw:'duel vider clear reset', action:() => duelClear() });
+  }
   cmds.push({ id:'nav.help', cat:'Navigation', icon:'book', label:'Méthode & aide', hint:'Tunnel de validation Arthur', kw:'aide méthode help', action:() => go({type:'help'}) });
   cmds.push({ id:'nav.formation', cat:'Navigation', icon:'graduation', label:'Formation Skool', hint:'27 leçons transcrites', kw:'formation skool cours leçons arthur', action:() => go({type:'formation'}) });
   cmds.push({ id:'nav.changelog', cat:'Navigation', icon:'notes', label:'Historique des versions', hint:`${CHANGELOG.length} versions shippées`, kw:'historique versions changelog mises à jour', action:() => go({type:'changelog'}) });
