@@ -3211,7 +3211,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 
 <header>
   <button class="menu-toggle" aria-label="Ouvrir le menu" onclick="toggleSidebar()" title="Menu (sessions)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg></button>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.23.0-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.24.0-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -3297,26 +3297,17 @@ small.muted { color: var(--text3); font-size: 11px; }
   <div class="modal">
     <h3>Paramètres</h3>
     <div class="field" style="margin-bottom:14px">
-      <label>Ta clé SerpAPI principale</label>
-      <input type="password" id="settingsSerpKey" placeholder="Colle ta clé SerpAPI…">
-      <div class="hint">Va sur <a href="https://serpapi.com/manage-api-key" target="_blank">serpapi.com/manage-api-key</a> · Plan gratuit : 100 recherches/mois.</div>
-    </div>
-    <div class="field" style="margin-bottom:14px">
-      <label>Clés supplémentaires (rotation auto)</label>
-      <textarea id="settingsSerpKeyExtra" rows="4" placeholder="Une clé par ligne. Quand la principale est épuisée, le scout bascule automatiquement sur la suivante."></textarea>
-      <div class="hint">Crée plusieurs comptes SerpAPI gratuits (1 mail = 100 recherches/mois). Le serp_scout les rotate quand l'une atteint sa limite.</div>
-    </div>
-    <div class="field" style="margin-bottom:14px">
-      <label>Quota restant</label>
-      <div id="settingsQuotaBox" style="padding:12px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid var(--border);font-size:12px;line-height:1.6;color:var(--text2);">
-        <em style="color:var(--text3)">Clique "Vérifier quota" pour interroger SerpAPI…</em>
+      <label>Backend SERP</label>
+      <div id="settingsBackendBox" style="padding:14px;border-radius:10px;background:linear-gradient(135deg,rgba(34,211,238,0.08),rgba(139,92,246,0.06));border:1px solid rgba(34,211,238,0.30);font-size:13px;line-height:1.55;color:var(--text2);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="color:var(--green);display:inline-flex" id="settingsBackendIco"></span><strong style="color:var(--text)">Mode scrape illimité</strong><span class="pill" style="font-size:10px;background:rgba(34,197,94,0.14);border:1px solid rgba(34,197,94,0.4);color:var(--green)">aucune clé requise</span></div>
+        Source primaire <strong>Bing FR</strong> (organic + ads + shopping) avec fallback <strong>DuckDuckGo</strong> pour l'organic. Le scrape se fait en local via <code>serp_scout.py</code> sur <code>localhost:7789</code>. Cache 30 jours sur disque.
+        <div id="settingsBackendStatus" style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);font-size:12px;color:var(--text3)"><em>Vérification du backend…</em></div>
+        <button class="btn btn-sm" style="margin-top:10px" onclick="checkBackendStatus()">Re-vérifier le backend</button>
       </div>
-      <button class="btn btn-sm" style="margin-top:8px" onclick="checkSerpQuota()">Vérifier quota</button>
     </div>
-    <p style="font-size:12px;color:var(--text3);line-height:1.5;">Ta clé reste dans <strong>ton</strong> appareil + ton compte Firebase. Elle n'est jamais envoyée à un serveur tiers autre que SerpAPI.</p>
+    <p style="font-size:12px;color:var(--text3);line-height:1.5;">Lance le backend depuis ton terminal : <code style="background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:4px">python serp_scout.py</code> dans le dossier projet. Aucune donnée ne quitte ton appareil — le scrape Bing/DDG se fait depuis ta machine.</p>
     <div class="modal-actions">
-      <button class="btn" onclick="closeModal('modalSettings')">Annuler</button>
-      <button class="btn btn-primary" onclick="saveSettings()">Enregistrer</button>
+      <button class="btn btn-primary" onclick="closeModal('modalSettings')">Fermer</button>
     </div>
   </div>
 </div>
@@ -3599,14 +3590,31 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.23.0-beta';
-const APP_VERSION_NOTES = 'AUTO-SCORE 8/12 CRITÈRES ARTHUR (Z1 SKILL.md) — l\'algo coche maintenant en local jusqu\'à 8 critères sur 12 depuis les données déjà connues (prix achat/vente, volume mensuel, CPC, niche, scan SERP) au lieu de seulement 3 (c2/c5/c12 via SERP autoChecks). Helper window._autoScoreCriteres(p) retourne {auto, reasons} chiffrés par critère ; window.applyAutoScoreCriteres(p) applique en respectant les choix manuels user (p.criteres_auto track ce qui vient de l\'algo, jamais d\'override sur un critère que l\'user a coché lui-même). Bouton "Auto-scorer (algo)" sur la grille critères + auto-trigger après chaque scan SERP. Badge "ALGO" cyan sur chaque critère auto-rempli avec raison chiffrée italique en sous-ligne. Critères couverts : C1 Marge ×3 (depuis calcMarge ratio ≥3), C2 Concurrence (organic+ads+shopping), C3 Volume+CPA (≥15k OU 5-15k si prix ≥1500€ + CPA viable), C4 Précision niche (depuis _npPrecisionScore : ≥60 valide, <40 refus), C5 Pas d\'institutionnels top 3 (depuis SERP), C6 Marque autour (top 3 organique 0 institutionnel), C8 Besoin d\'expert (forums/blogs/Reddit/YouTube ≥2 dans top 10), C9 Cycle court (prix <300€ Arthur ; >800€ = frein), C12 Search ads (ads ou shopping ≥5). Restent en jugement humain : C7 sourcing, C10 recherche marque, C11 mot-clé non précis. Toggle manuel (toggleCritere/guidedSet) supprime automatiquement le tag p.criteres_auto[cid] — l\'user reprend la main. Note traçabilité auto-écrite dans p.notes au premier auto-score : "[Auto-score algo · DD/MM/YYYY] N/12 critères calculés (X validés, Y manqués) · Z appliqués, W préservés". MÉTRIQUE ALGORITHMIQUE AVANT/APRÈS : produit complet (prix+volume+CPC+SERP scan) → 3/12 auto avant → 9/12 auto après (×3 couverture) ; produit minimal (prix+nom seul) → 0/12 avant → 3/12 après (c1+c4+c9 calculables sans SERP). Test e2e sur 4 cas synthétiques : produit idéal (Aspirateur robot piscine 199€/45€/vol 25k/SERP propre) → 8 validés ✓ + 1 manqué (CPA juste au-dessus) sur 9 calculables. Produit toxique (Canapé 1200€/600€/vol 8k/top 3 institutionnels) → 7 manqués ✓ + 2 validés sur 9 calculables (l\'algo refuse correctement). Idempotent : 2e run = 0 applied / 7 kept / 0 skipped. Préservation user : si user a coché c1=false manuellement, l\'auto-score ne réécrit jamais c1. PARI : transfert de 5 critères de travail manuel (10min de coches) vers 1 clic algo (0,1ms). L\'app passe de "scoreur passif où l\'user remplit la grille" à "moteur d\'inférence Arthur où l\'user valide ce qui demande jugement". BACKEND ILLIMITÉ SANS CLÉ API — refonte complète de serp_scout.py qui pivote du SerpAPI payant (limite mensuelle ~250 req/clé) vers du scraping direct Bing FR + DuckDuckGo, illimité et gratuit. Test E2E validé : aspirateur robot xiaomi → organic 10/10, ads 2 (récupérés via buyer-intent suffix retry " acheter"/" prix"), shopping 20/20 avec prix moyen 347€, autoChecks c2/c12 = TRUE, cache 30j hit en 10ms vs 10s pour cold. Pipeline : urllib stdlib + UA rotation 6 desktop FR + cookies CONSENT pré-acceptés + throttle 1.5s/req Bing + retry backoff 8-30s sur 429. Source primaire Bing FR (HTML statique propre, classes stables b_algo / b_ad / br-gOffCard depuis 2018) car Google direct bloque toute requête sans JS (page enablejs au lieu de SERP). DuckDuckGo HTML en fallback (organic only, jamais bloqué). SerpAPI conservé en fallback ultime opt-in via .serp_env USE_SERPAPI_FALLBACK=1 (utile pour Google Shopping carousels exacts). Décodage URLs Bing en double-pass : base64-url-safe (avec strip prefix "a1") puis URL-decode (Bing wrappe les liens dans bing.com/ck/a?u=BASE64URL et la chaîne décodée est elle-même URL-encodée). Cache TTL 30 jours (vs 24h avant) — divise le volume de requêtes effectives par 30+ pour les rescans. PARI : on supprime totalement la dépendance SerpAPI payante (qui plafonnait à 250 req/clé/mois) au profit d\'un backend zéro-coût zéro-clé-api avec parité fonctionnelle 90% sur Arthur (organic + shopping carousel + auto-checks c2/c5/c12). Si Bing change son DOM, fallback DDG garde l\'organic ; si DDG bloque, fallback SerpAPI ultime garde la parité. PRÉCISION NICHE — règle Arthur n°3 (jamais généraliste) encodée en feature active. Score 0-100 par produit, badge live sur chaque fiche, comparateur de variantes plus niches qui génère 8 alternatives en 1 clic, vue cockpit cross-portefeuille (distribution 4 verdicts, top mots généralistes à virer, podium ULTRA-PRÉCIS, tableau de correction par urgence). Listes statiques curées depuis transcripts Skool c4_precis_niche + c11_motcle_non_precis + tableau_recherche : ~100 mots généralistes français + ~130 modifieurs catégorisés (style/matière/usage/dimension/audience). Score composite : longueur du nom (≥4 mots +20, 3 mots +5, ≤2 mots -18 à -35) + modifieurs trouvés (+12/modif, max +60) + niche déclarée précise (+10 si ≥3 mots) avec plafond automatique si mot généraliste détecté sans modifieur (≤25 = REFUS). 4 verdicts : NICHE ULTRA-PRÉCISE ≥80 vert / PRÉCISE 60-79 cyan / À AFFINER 40-59 jaune / GÉNÉRALISTE — REFUS <40 rouge. Badge sur fiche produit (onglet Infos) avec orb 64px + verdict coloré + 3 raisons chiffrées + bouton "Générer variantes plus niches" en CTA gradient violet/fuchsia. Modale comparateur 8 cards : nom variante + score + verdict pill + chips modifieurs colorisés par catégorie + bouton "Explorer cette variante" qui crée un nouveau produit pré-rempli dans la session courante (variante + niche héritée + note traçabilité). Variantes générées par 8 templates déterministes (seed = hash du nom+niche, donc même input → même suggestions reproductibles) qui combinent style×dimension, usage×matière, style×matière, usage×audience, dimension×style, matière×usage, style×audience, usage×dimension. Nouvelle vue sidebar "Précision Niche" entre Pipeline et Recherche auto (icône target violet, badge live "X à virer" en violet/fuchsia). Hero gradient violet/fuchsia/cyan + bandeau 2 règles non-négo (Précis ≥3 mots+modifieurs / Refus mot généraliste seul) + lien Tunnel. Cockpit 2 cols : orb 160px score moyen pipeline (label adaptatif Excellent/Précis/Mitigé/Trop généraliste) + distribution 4 buckets en barres horizontales colorisées (vert/cyan/jaune/rouge). 2 cards : Top 10 mots généralistes les plus fréquents avec compteur (à virer en priorité), Podium ULTRA-PRÉCIS top 10 (à pousser, cliquable). Tableau de correction par urgence : 24 produits classés du plus généraliste au plus précis avec score colorisé, verdict pill, mot généraliste flag rouge, chips modifieurs (max 2 par catégorie), longueur du nom — clique une ligne pour ouvrir la fiche. Helpers exposés window._npPrecisionScore, _npGenerateVariants, _npGeneralistCount, openNpVariantsModal, npExploreVariant, renderNichePrecision. Command palette enrichie (nav.niche). PARI : aucun SaaS de validation produit (Sell The Trend, Niche Scraper, Ecomhunt, Minea, Helium 10) ne challenge la précision du nom contre une méthode propriétaire et ne propose des variantes plus niches en 1 clic. La Précision Niche fait passer l\'app de "scoreur passif" à "coach actif qui refuse le travail mal fait". 4e jambe du tabouret Google Ads-first, complète Simulateur (leviers), Radar (concurrence) et Pipeline (santé) en couvrant le INPUT (qualité du produit dès l\'ajout). Audit conforme post v0.17 : zéro IA ajoutée (listes statiques curées, pas de LLM), zéro gamification, calcul local sur state.products, exploite la formation Skool transcrite (déjà payée). Axe GOOGLE ADS-INTELLIGENCE (axe 1 SKILL.md), couvre directement la 3e règle non-négociable Arthur sous-exploitée jusqu\'ici.';
+const APP_VERSION = '0.24.0-beta';
+const APP_VERSION_NOTES = 'CLEANUP CLÉS SERPAPI — suppression totale du code SerpAPI (front + back) suite demande user explicite "enleve tout ce qui est cle api serp api". Front : virée la modale Settings de gestion des clés (champ principal + clés extra + bouton vérifier quota), retirées les fonctions getSerpKey/setSerpKey/getAllSerpKeys/getSerpKeysExtra/setSerpKeysExtra/fetchAccountQuota/checkSerpQuota/serpDirectFetch/_isQuotaErr/_serpFetchPair, retirée la constante SERPAPI_KEY_STORAGE, retiré window._deadKeys, retirée la mention codetabs proxy dans verifyAds. saveSettings remplacé par closeModal direct. La modale Settings affiche désormais "Mode scrape illimité (Bing FR + DuckDuckGo) - aucune clé requise" avec health-check live du backend (bouton "Re-vérifier le backend" → fetch /health → mode/cache_entries/cache_ttl_days affichés inline). serpFetch simplifié : appelle uniquement le backend local, throw une erreur claire avec instructions ("Lance python serp_scout.py") si offline (mobile/cloud). refreshDiscoverQuota refait pour afficher l\'état du backend local (Backend up + mode + cache_entries + TTL) au lieu des compteurs SerpAPI. runDiscover check SERP_LOCAL_ENDPOINT au lieu de getSerpKey, alert clair en mode web. verifyAds : si pas de backend local, propose juste un lien externe vers adstransparency.google.com (au lieu d\'utiliser une clé user). Command palette : hint mis à jour de "Clé SerpAPI, sync" → "Backend SERP, sync". Back-end serp_scout.py : retirées USE_SERPAPI_FALLBACK, _load_serpapi_keys(), SERPAPI_KEYS, _dead_serpapi_keys, _serpapi_call(), _shopping_serpapi_fallback(), tous les blocs `if USE_SERPAPI_FALLBACK and SERPAPI_KEYS` dans fetch_search/fetch_shopping/verify_ads/quota_summary/main. /health renvoie maintenant {mode:"scrape", primary_source:"bing_fr", fallback_source:"duckduckgo"}. /quota simplifié à un dict immuable {mode:"scrape", unlimited:true, total_searches_left:-1}. verify_ads : best-effort 100% scrape Bing site:operator (la donnée est moins riche que SerpAPI, on l\'accepte). Header docstring du fichier mis à jour (v3, "Tout le code SerpAPI a ete retire en v0.24"). MÉTRIQUE ALGO : 0 clé API à entrer/gérer (avant : 1 principale + N extras dans Settings) · 0€ vs ~50€/mois SerpAPI · illimité vs 250 req/clé/mois · ~150 lignes de code mort viréees du HTML (~7720→7715), ~110 lignes viréees du Python (~700→~590 lignes). PARI : code base nettoyé, plus aucune surface d\'attaque côté clés, plus aucun chemin "fallback" qui pourrait surprendre l\'user en re-tirant une vieille clé d\'un localStorage. Le backend local serp_scout.py (Bing FR + DuckDuckGo) est désormais le SEUL chemin pour la recherche auto et les scans SERP. AUTO-SCORE 8/12 CRITÈRES ARTHUR (Z1 SKILL.md) — l\'algo coche maintenant en local jusqu\'à 8 critères sur 12 depuis les données déjà connues (prix achat/vente, volume mensuel, CPC, niche, scan SERP) au lieu de seulement 3 (c2/c5/c12 via SERP autoChecks). Helper window._autoScoreCriteres(p) retourne {auto, reasons} chiffrés par critère ; window.applyAutoScoreCriteres(p) applique en respectant les choix manuels user (p.criteres_auto track ce qui vient de l\'algo, jamais d\'override sur un critère que l\'user a coché lui-même). Bouton "Auto-scorer (algo)" sur la grille critères + auto-trigger après chaque scan SERP. Badge "ALGO" cyan sur chaque critère auto-rempli avec raison chiffrée italique en sous-ligne. Critères couverts : C1 Marge ×3 (depuis calcMarge ratio ≥3), C2 Concurrence (organic+ads+shopping), C3 Volume+CPA (≥15k OU 5-15k si prix ≥1500€ + CPA viable), C4 Précision niche (depuis _npPrecisionScore : ≥60 valide, <40 refus), C5 Pas d\'institutionnels top 3 (depuis SERP), C6 Marque autour (top 3 organique 0 institutionnel), C8 Besoin d\'expert (forums/blogs/Reddit/YouTube ≥2 dans top 10), C9 Cycle court (prix <300€ Arthur ; >800€ = frein), C12 Search ads (ads ou shopping ≥5). Restent en jugement humain : C7 sourcing, C10 recherche marque, C11 mot-clé non précis. Toggle manuel (toggleCritere/guidedSet) supprime automatiquement le tag p.criteres_auto[cid] — l\'user reprend la main. Note traçabilité auto-écrite dans p.notes au premier auto-score : "[Auto-score algo · DD/MM/YYYY] N/12 critères calculés (X validés, Y manqués) · Z appliqués, W préservés". MÉTRIQUE ALGORITHMIQUE AVANT/APRÈS : produit complet (prix+volume+CPC+SERP scan) → 3/12 auto avant → 9/12 auto après (×3 couverture) ; produit minimal (prix+nom seul) → 0/12 avant → 3/12 après (c1+c4+c9 calculables sans SERP). Test e2e sur 4 cas synthétiques : produit idéal (Aspirateur robot piscine 199€/45€/vol 25k/SERP propre) → 8 validés ✓ + 1 manqué (CPA juste au-dessus) sur 9 calculables. Produit toxique (Canapé 1200€/600€/vol 8k/top 3 institutionnels) → 7 manqués ✓ + 2 validés sur 9 calculables (l\'algo refuse correctement). Idempotent : 2e run = 0 applied / 7 kept / 0 skipped. Préservation user : si user a coché c1=false manuellement, l\'auto-score ne réécrit jamais c1. PARI : transfert de 5 critères de travail manuel (10min de coches) vers 1 clic algo (0,1ms). L\'app passe de "scoreur passif où l\'user remplit la grille" à "moteur d\'inférence Arthur où l\'user valide ce qui demande jugement". BACKEND ILLIMITÉ SANS CLÉ API — refonte complète de serp_scout.py qui pivote du SerpAPI payant (limite mensuelle ~250 req/clé) vers du scraping direct Bing FR + DuckDuckGo, illimité et gratuit. Test E2E validé : aspirateur robot xiaomi → organic 10/10, ads 2 (récupérés via buyer-intent suffix retry " acheter"/" prix"), shopping 20/20 avec prix moyen 347€, autoChecks c2/c12 = TRUE, cache 30j hit en 10ms vs 10s pour cold. Pipeline : urllib stdlib + UA rotation 6 desktop FR + cookies CONSENT pré-acceptés + throttle 1.5s/req Bing + retry backoff 8-30s sur 429. Source primaire Bing FR (HTML statique propre, classes stables b_algo / b_ad / br-gOffCard depuis 2018) car Google direct bloque toute requête sans JS (page enablejs au lieu de SERP). DuckDuckGo HTML en fallback (organic only, jamais bloqué). SerpAPI conservé en fallback ultime opt-in via .serp_env USE_SERPAPI_FALLBACK=1 (utile pour Google Shopping carousels exacts). Décodage URLs Bing en double-pass : base64-url-safe (avec strip prefix "a1") puis URL-decode (Bing wrappe les liens dans bing.com/ck/a?u=BASE64URL et la chaîne décodée est elle-même URL-encodée). Cache TTL 30 jours (vs 24h avant) — divise le volume de requêtes effectives par 30+ pour les rescans. PARI : on supprime totalement la dépendance SerpAPI payante (qui plafonnait à 250 req/clé/mois) au profit d\'un backend zéro-coût zéro-clé-api avec parité fonctionnelle 90% sur Arthur (organic + shopping carousel + auto-checks c2/c5/c12). Si Bing change son DOM, fallback DDG garde l\'organic ; si DDG bloque, fallback SerpAPI ultime garde la parité. PRÉCISION NICHE — règle Arthur n°3 (jamais généraliste) encodée en feature active. Score 0-100 par produit, badge live sur chaque fiche, comparateur de variantes plus niches qui génère 8 alternatives en 1 clic, vue cockpit cross-portefeuille (distribution 4 verdicts, top mots généralistes à virer, podium ULTRA-PRÉCIS, tableau de correction par urgence). Listes statiques curées depuis transcripts Skool c4_precis_niche + c11_motcle_non_precis + tableau_recherche : ~100 mots généralistes français + ~130 modifieurs catégorisés (style/matière/usage/dimension/audience). Score composite : longueur du nom (≥4 mots +20, 3 mots +5, ≤2 mots -18 à -35) + modifieurs trouvés (+12/modif, max +60) + niche déclarée précise (+10 si ≥3 mots) avec plafond automatique si mot généraliste détecté sans modifieur (≤25 = REFUS). 4 verdicts : NICHE ULTRA-PRÉCISE ≥80 vert / PRÉCISE 60-79 cyan / À AFFINER 40-59 jaune / GÉNÉRALISTE — REFUS <40 rouge. Badge sur fiche produit (onglet Infos) avec orb 64px + verdict coloré + 3 raisons chiffrées + bouton "Générer variantes plus niches" en CTA gradient violet/fuchsia. Modale comparateur 8 cards : nom variante + score + verdict pill + chips modifieurs colorisés par catégorie + bouton "Explorer cette variante" qui crée un nouveau produit pré-rempli dans la session courante (variante + niche héritée + note traçabilité). Variantes générées par 8 templates déterministes (seed = hash du nom+niche, donc même input → même suggestions reproductibles) qui combinent style×dimension, usage×matière, style×matière, usage×audience, dimension×style, matière×usage, style×audience, usage×dimension. Nouvelle vue sidebar "Précision Niche" entre Pipeline et Recherche auto (icône target violet, badge live "X à virer" en violet/fuchsia). Hero gradient violet/fuchsia/cyan + bandeau 2 règles non-négo (Précis ≥3 mots+modifieurs / Refus mot généraliste seul) + lien Tunnel. Cockpit 2 cols : orb 160px score moyen pipeline (label adaptatif Excellent/Précis/Mitigé/Trop généraliste) + distribution 4 buckets en barres horizontales colorisées (vert/cyan/jaune/rouge). 2 cards : Top 10 mots généralistes les plus fréquents avec compteur (à virer en priorité), Podium ULTRA-PRÉCIS top 10 (à pousser, cliquable). Tableau de correction par urgence : 24 produits classés du plus généraliste au plus précis avec score colorisé, verdict pill, mot généraliste flag rouge, chips modifieurs (max 2 par catégorie), longueur du nom — clique une ligne pour ouvrir la fiche. Helpers exposés window._npPrecisionScore, _npGenerateVariants, _npGeneralistCount, openNpVariantsModal, npExploreVariant, renderNichePrecision. Command palette enrichie (nav.niche). PARI : aucun SaaS de validation produit (Sell The Trend, Niche Scraper, Ecomhunt, Minea, Helium 10) ne challenge la précision du nom contre une méthode propriétaire et ne propose des variantes plus niches en 1 clic. La Précision Niche fait passer l\'app de "scoreur passif" à "coach actif qui refuse le travail mal fait". 4e jambe du tabouret Google Ads-first, complète Simulateur (leviers), Radar (concurrence) et Pipeline (santé) en couvrant le INPUT (qualité du produit dès l\'ajout). Audit conforme post v0.17 : zéro IA ajoutée (listes statiques curées, pas de LLM), zéro gamification, calcul local sur state.products, exploite la formation Skool transcrite (déjà payée). Axe GOOGLE ADS-INTELLIGENCE (axe 1 SKILL.md), couvre directement la 3e règle non-négociable Arthur sous-exploitée jusqu\'ici.';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.24.0-beta', date: '2026-04-27', time: '15:35', source: 'algo',
+    summary: 'CLEANUP CLÉS SERPAPI — suppression totale du code SerpAPI (front + back) · backend 100% scrape Bing FR + DDG · zéro clé à gérer',
+    items: [
+      {type:'feat', text:'Front : virée la modale Settings de gestion des clés SerpAPI (champ principal + clés extras + bouton vérifier quota). Remplacée par une carte "Mode scrape illimité - aucune clé requise" avec health-check live du backend local (bouton Re-vérifier qui ping /health, affiche mode + cache_entries + TTL inline).'},
+      {type:'feat', text:'Front : retirées toutes les fonctions JS de gestion des clés SerpAPI : getSerpKey, setSerpKey, getAllSerpKeys, getSerpKeysExtra, setSerpKeysExtra, fetchAccountQuota, checkSerpQuota, serpDirectFetch, _isQuotaErr, _serpFetchPair. Retirées les constantes SERPAPI_KEY_STORAGE, window._deadKeys. Retirée la fonction saveSettings (la modale n\'a plus rien à sauvegarder). ~150 lignes de code mort viré.'},
+      {type:'feat', text:'Front : serpFetch simplifié — appelle uniquement le backend local serp_scout.py via SERP_LOCAL_ENDPOINT. Si offline (version web), throw avec instructions claires : "La recherche auto nécessite que serp_scout.py tourne sur ton PC (localhost:7789). Lance le backend puis recharge."'},
+      {type:'feat', text:'Front : refreshDiscoverQuota repensé. Avant : "SerpAPI : 47 / 250 recherches restantes · 1 clé". Après : "Backend up · mode scrape · illimité, aucune clé requise · X requêtes cachées (TTL 30j)". Ou en mode offline : alerte claire avec instructions de relance.'},
+      {type:'feat', text:'Front : runDiscover check SERP_LOCAL_ENDPOINT (backend dispo) au lieu de getSerpKey (clé configurée). Alert clair en mode web : "La recherche auto nécessite ton PC où serp_scout.py tourne. Tu peux toujours scorer manuellement les produits que tu ajoutes."'},
+      {type:'feat', text:'Front : verifyAds (vérification ads sur un domaine via Google Ads Transparency Center) — supprimé le fallback codetabs proxy avec clé user. Si backend local offline, propose juste un lien direct vers adstransparency.google.com (au lieu de demander une clé). Le check ads-transparency reste fonctionnel via le backend local en mode best-effort scrape Bing.'},
+      {type:'feat', text:'Front : Command palette — hint de "Paramètres" mis à jour de "Clé SerpAPI, sync, formules" → "Backend SERP, sync".'},
+      {type:'feat', text:'Backend serp_scout.py : retirées USE_SERPAPI_FALLBACK (variable env), _load_serpapi_keys() (chargement multi-clés depuis .serp_env), SERPAPI_KEYS et _dead_serpapi_keys (état runtime), _serpapi_call() (appel SerpAPI avec rotation), _shopping_serpapi_fallback() (fallback shopping). Retirés les blocs `if USE_SERPAPI_FALLBACK and SERPAPI_KEYS` dans fetch_search, fetch_shopping, verify_ads, quota_summary, main. ~110 lignes de Python virées.'},
+      {type:'feat', text:'Backend /health : retour adapté {mode:"scrape", unlimited:true, primary_source:"bing_fr", fallback_source:"duckduckgo", cache_entries, cache_ttl_days}. /quota simplifié à un dict immuable. main() print mis à jour pour annoncer "v3 - scraping mode (NO API KEY, illimite)".'},
+      {type:'feat', text:'Backend verify_ads : sans SerpAPI, on bascule sur un best-effort 100% scrape — recherche Bing site:domain pour vérifier la présence indexée du domaine. La donnée est moins riche que SerpAPI Ads Transparency Center mais c\'est assumé : pour la liste exhaustive des creatives actives, lien vers adstransparency.google.com fourni dans le retour.'},
+      {type:'feat', text:'Backend header docstring : pivoté de "v2 + fallback opt-in" à "v3 - tout le code SerpAPI a été retiré en v0.24". Liste des sources réduite à 2 (Bing FR primary + DuckDuckGo fallback) au lieu de 3.'},
+      {type:'perf', text:'MÉTRIQUE ALGO : 0 clé API à entrer/gérer (avant : 1 principale + N extras à configurer dans Settings) · 0€/mois vs ~50€/mois SerpAPI · illimité vs 250 req/clé/mois · ~150 lignes virées HTML + ~110 lignes virées Python = ~260 lignes de code de gestion de clés/quotas/fallback supprimées au total.'},
+      {type:'feat', text:'PARI : code base assaini, plus aucune surface "tu dois renseigner ta clé" qui pourrait perdre l\'utilisateur, plus aucun chemin de fallback caché qui pourrait re-tirer une vieille clé d\'un localStorage oublié. Le backend local serp_scout.py (Bing FR + DuckDuckGo) est désormais le SEUL chemin pour la recherche auto et les scans SERP. ⚠ Relance le backend Python (Ctrl+C puis python serp_scout.py).'},
+    ]},
   { v: '0.23.0-beta', date: '2026-04-27', time: '15:12', source: 'algo',
     summary: 'AUTO-SCORE 8/12 CRITÈRES ARTHUR — l\'algo coche en local jusqu\'à 8/12 critères depuis prix+volume+CPC+niche+SERP (vs 3/12 avant). Travail manuel transféré vers l\'algo.',
     items: [
@@ -7719,170 +7727,51 @@ function renderProductInfos(p) {
 /* ═════════ SERP AUTO-SCAN ═════════ */
 // Use local serp_scout.py if available (PC), otherwise fetch SerpAPI directly with user's key (mobile/cloud)
 const SERP_LOCAL_ENDPOINT = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:7789' : null;
-const SERPAPI_KEY_STORAGE = 'serpapi_key';
 window._scanning = window._scanning || {};
 
 const INSTITUTIONNELS_DOMAINS = ['amazon.fr','amazon.com','cdiscount.com','fnac.com','darty.com','leroymerlin.fr','boulanger.com','manomano.fr','conforama.fr','but.fr','temu.com','shein.com','aliexpress.com','ebay.fr','rakuten.com','rueducommerce.fr','auchan.fr','carrefour.fr'];
 
-function getSerpKey() { return state._serpapi_key || localStorage.getItem(SERPAPI_KEY_STORAGE) || ''; }
-function getSerpKeysExtra() { return state._serpapi_keys_extra || []; }
-function getAllSerpKeys() {
-  const arr = [];
-  const main = getSerpKey();
-  if (main) arr.push(main);
-  for (const k of getSerpKeysExtra()) if (k && !arr.includes(k)) arr.push(k);
-  return arr;
-}
-function setSerpKey(k) {
-  state._serpapi_key = k;
-  localStorage.setItem(SERPAPI_KEY_STORAGE, k);
-  save();
-}
-function setSerpKeysExtra(arr) {
-  state._serpapi_keys_extra = arr.filter(k => k && k.trim()).map(k => k.trim());
-  save();
-}
-
-async function fetchAccountQuota(key) {
-  // SerpAPI doesn't allow CORS → if local serp_scout is up, call /quota,
-  // else go through codetabs proxy like the scan does.
-  const tail = key.slice(-6);
-  // 1) Try local scout (only on PC). It returns aggregate {keys: [...]}.
-  if (SERP_LOCAL_ENDPOINT && !window._scoutQuotaCache) {
-    try {
-      const r = await fetch(SERP_LOCAL_ENDPOINT + '/quota');
-      if (r.ok) {
-        window._scoutQuotaCache = await r.json();
-      }
-    } catch(e) {}
-  }
-  if (window._scoutQuotaCache && Array.isArray(window._scoutQuotaCache.keys)) {
-    const found = window._scoutQuotaCache.keys.find(k => k.key_tail === tail);
-    if (found && !found.error) {
-      return {
-        key_tail: tail,
-        searches_left: found.searches_left || 0,
-        monthly_limit: found.monthly_limit || null,
-        this_month_usage: found.this_month_usage,
-        account_email: found.account_email,
-        plan: found.plan_id
-      };
-    }
-  }
-  // 2) Browser fallback via codetabs proxy
-  try {
-    const url = 'https://api.codetabs.com/v1/proxy/?quest=' +
-      encodeURIComponent('https://serpapi.com/account.json?api_key=' + encodeURIComponent(key));
-    const r = await fetch(url);
-    if (!r.ok) return { error: 'HTTP '+r.status, key_tail: tail };
-    const d = await r.json();
-    if (d.error) return { error: d.error, key_tail: tail };
-    return {
-      key_tail: tail,
-      searches_left: d.plan_searches_left ?? d.searches_left ?? d.total_searches_left ?? 0,
-      monthly_limit: d.searches_per_month ?? d.plan_monthly_searches ?? d.plan_searches ?? null,
-      this_month_usage: d.this_month_usage ?? null,
-      account_email: d.account_email,
-      plan: d.plan_id || d.plan_name
-    };
-  } catch(e) { return { error: e.message, key_tail: tail }; }
-}
-
-async function checkSerpQuota() {
-  const box = document.getElementById('settingsQuotaBox');
-  const keys = getAllSerpKeys();
-  if (!keys.length) { box.innerHTML = '<span style="color:var(--red)">Aucune clé configurée.</span>'; return; }
-  window._scoutQuotaCache = null; // force refresh
-  box.innerHTML = '<em style="color:var(--text3)">Interrogation SerpAPI…</em>';
-  const results = await Promise.all(keys.map(k => fetchAccountQuota(k)));
-  let totalLeft = 0, totalLimit = 0;
-  const rows = results.map((r, i) => {
-    if (r.error) {
-      return `<div style="padding:6px 0;border-bottom:1px solid var(--border);"><strong>Clé #${i+1} (…${r.key_tail})</strong> · <span style="color:var(--red)">erreur: ${escapeHtml(r.error)}</span></div>`;
-    }
-    totalLeft += +r.searches_left || 0;
-    if (r.monthly_limit) totalLimit += +r.monthly_limit;
-    const pct = r.monthly_limit ? Math.round((r.searches_left / r.monthly_limit) * 100) : null;
-    const color = r.searches_left > 20 ? 'var(--green)' : r.searches_left > 0 ? 'var(--yellow)' : 'var(--red)';
-    return `<div style="padding:6px 0;border-bottom:1px solid var(--border);">
-      <strong>Clé #${i+1} (…${r.key_tail})</strong>${r.account_email?' · '+escapeHtml(r.account_email):''}${r.plan?' · <span class="pill" style="font-size:9px">'+escapeHtml(r.plan)+'</span>':''}
-      <div style="font-size:11px;color:var(--text2);margin-top:2px">Restant : <strong style="color:${color}">${r.searches_left}</strong>${r.monthly_limit?' / '+r.monthly_limit+(pct!==null?' ('+pct+'%)':''):''}${r.this_month_usage!==null&&r.this_month_usage!==undefined?' · usage mois : '+r.this_month_usage:''}</div>
-    </div>`;
-  }).join('');
-  const totalLine = `<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);font-weight:600;">Total cumulé : <span style="color:${totalLeft>50?'var(--green)':totalLeft>0?'var(--yellow)':'var(--red)'}">${totalLeft}</span>${totalLimit?' / '+totalLimit:''} recherches restantes</div>`;
-  box.innerHTML = rows + totalLine;
-}
 function domainOf(url) { try { return (new URL(url)).hostname.replace(/^www\./, '').toLowerCase(); } catch(e) { return ''; } }
 function isInstitutionnel(d) { return INSTITUTIONNELS_DOMAINS.some(x => d.endsWith(x)); }
 
-window._deadKeys = window._deadKeys || new Set();
-function _isQuotaErr(msg) {
-  const m = (msg||'').toLowerCase();
-  return m.includes('run out') || m.includes('credits') || m.includes('exceeded') || m.includes('rate limit') || m.includes('searches left');
-}
-async function _serpFetchPair(query, key) {
-  const proxy = (u) => 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(u);
-  const base = 'https://serpapi.com/search.json';
-  const common = `&api_key=${encodeURIComponent(key)}&gl=fr&hl=fr&google_domain=google.fr`;
-  const [r1, r2] = await Promise.all([
-    fetch(proxy(`${base}?engine=google&q=${encodeURIComponent(query)}&num=20${common}`)).then(r=>r.json()),
-    fetch(proxy(`${base}?engine=google_shopping&q=${encodeURIComponent(query)}&num=20${common}`)).then(r=>r.json())
-  ]);
-  return [r1, r2];
-}
-async function serpDirectFetch(query) {
-  const allKeys = getAllSerpKeys().filter(k => !window._deadKeys.has(k));
-  if (!allKeys.length) throw new Error('Aucune clé SerpAPI active. Ajoute / vérifie tes clés dans Paramètres.');
-  let r1, r2, lastErr;
-  for (const key of allKeys) {
-    try {
-      [r1, r2] = await _serpFetchPair(query, key);
-      const e = (r1?.error || r2?.error);
-      if (e && _isQuotaErr(e)) { window._deadKeys.add(key); lastErr = e; continue; }
-      if (r1?.error) throw new Error(r1.error);
-      if (r2?.error) throw new Error(r2.error);
-      break;
-    } catch(e) { lastErr = e.message; if (_isQuotaErr(e.message)) { window._deadKeys.add(key); continue; } throw e; }
+// Backend health check (mode scrape illimité — Bing FR + DuckDuckGo).
+// Affiche un résumé live dans la modale Settings.
+async function checkBackendStatus() {
+  const box = document.getElementById('settingsBackendStatus');
+  const ico = document.getElementById('settingsBackendIco');
+  if (!box) return;
+  if (!SERP_LOCAL_ENDPOINT) {
+    if (ico) ico.innerHTML = window.ico ? window.ico('alert',16) : '!';
+    box.innerHTML = `<span style="color:var(--yellow)">Tu es sur la version web (${escapeHtml(location.hostname)}). Le backend local <code>serp_scout.py</code> n'est joignable que depuis localhost — donc la recherche auto et les scans SERP ne marchent que sur ton PC où tu as lancé le backend Python.</span>`;
+    return;
   }
-  if (!r1 || !r2) throw new Error('Toutes les clés SerpAPI sont épuisées. ' + (lastErr||''));
-  // Build result similar to serp_scout.py format
-  const ads = (r1.ads || []).map(a => ({ title: a.title||'', link: a.link||a.displayed_link||'', domain: domainOf(a.link||a.displayed_link||''), description: a.description||a.snippet||'', position: a.position }));
-  const organic = (r1.organic_results||[]).slice(0,10).map(o => { const d = domainOf(o.link||''); return { title: o.title||'', link: o.link||'', domain: d, snippet: o.snippet||'', position: o.position, institutionnel: isInstitutionnel(d) }; });
-  const inline_shopping = (r1.inline_shopping_results || r1.shopping_results || []).slice(0,5).map(s => ({ title: s.title||'', price: s.price||'', source: s.source||'', link: s.link||'', domain: domainOf(s.link||'') }));
-  const shopping = (r2.shopping_results||[]).slice(0,20).map(s => { const d = domainOf(s.link||s.product_link||''); return { title: s.title||'', price: s.price||'', extracted_price: s.extracted_price, source: s.source||'', link: s.link||s.product_link||'', domain: d, rating: s.rating, reviews: s.reviews, institutionnel: isInstitutionnel(d) }; });
-  // autoChecks
-  const top3 = organic.slice(0,3);
-  const has_inst_top3 = top3.some(o => o.institutionnel);
-  const c2 = organic.length >= 3 && (ads.length >= 1 || shopping.length >= 5);
-  const c5 = !has_inst_top3;
-  const c12 = ads.length >= 1;
-  const prices = shopping.map(s=>s.extracted_price).filter(Boolean);
-  const avg = prices.length ? Math.round(prices.reduce((a,b)=>a+b,0)/prices.length*100)/100 : null;
-  const inst_count = organic.filter(o=>o.institutionnel).length + shopping.filter(s=>s.institutionnel).length;
-  return {
-    query, ts: Math.floor(Date.now()/1000),
-    ads, organic, inline_shopping, shopping,
-    autoChecks: {
-      c2_concurrence: c2, c5_pas_institutionnels_top3: c5, c12_search_ads: c12,
-      stats: { n_ads: ads.length, n_organic: organic.length, n_shopping: shopping.length, n_institutionnels_total: inst_count, has_institutionnels_top3: has_inst_top3, avg_shopping_price: avg }
-    }
-  };
+  box.innerHTML = '<em style="color:var(--text3)">Vérification…</em>';
+  try {
+    const t0 = performance.now();
+    const r = await fetch(SERP_LOCAL_ENDPOINT + '/health', { cache: 'no-store' });
+    const dt = Math.round(performance.now() - t0);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    if (ico) ico.innerHTML = window.ico ? window.ico('check',16) : 'OK';
+    box.innerHTML = `<strong style="color:var(--green)">Backend up</strong> (${dt}ms) · mode <strong>${escapeHtml(d.mode||'scrape')}</strong> · ${d.cache_entries||0} requêtes en cache · TTL ${d.cache_ttl_days||30} jours`;
+  } catch(e) {
+    if (ico) ico.innerHTML = window.ico ? window.ico('alert',16) : '!';
+    box.innerHTML = `<span style="color:var(--red)">Backend injoignable</span> sur <code>localhost:7789</code>. Lance <code>python serp_scout.py</code> dans <code>C:\\Users\\maths\\Documents\\recherche produit\\</code>, puis re-clique ce bouton. <em>(${escapeHtml(e.message)})</em>`;
+  }
 }
 
 async function serpFetch(query, force) {
-  // Try local backend first if on PC
-  if (SERP_LOCAL_ENDPOINT) {
-    try {
-      const f = force ? '&force=1' : '';
-      const resp = await fetch(`${SERP_LOCAL_ENDPOINT}/scan?q=${encodeURIComponent(query)}${f}`);
-      if (resp.ok) {
-        const data = await resp.json();
-        if (!data.error) return data;
-      }
-    } catch(e) { /* fall through to direct */ }
+  if (!SERP_LOCAL_ENDPOINT) {
+    throw new Error("Backend local indisponible : la recherche auto nécessite que tu sois sur ton PC où serp_scout.py tourne (localhost:7789). Lance le backend puis recharge.");
   }
-  // Fallback: direct from browser using user's key
-  return await serpDirectFetch(query);
+  const f = force ? '&force=1' : '';
+  const resp = await fetch(`${SERP_LOCAL_ENDPOINT}/scan?q=${encodeURIComponent(query)}${f}`);
+  if (!resp.ok) {
+    throw new Error("Backend serp_scout.py injoignable. Lance `python serp_scout.py` dans le dossier projet et recharge.");
+  }
+  const data = await resp.json();
+  if (data.error) throw new Error(data.error);
+  return data;
 }
 
 /* ═════════ AUTO-SCORE CRITÈRES ARTHUR (Z1 SKILL.md) ═════════
@@ -8477,20 +8366,14 @@ async function syncPull() {
   } catch (e) { msg.textContent = 'Erreur : ' + e.message; }
 }
 
-/* ═════════ SETTINGS ═════════ */
-function saveSettings() {
-  const k = document.getElementById('settingsSerpKey').value.trim();
-  setSerpKey(k);
-  const extra = (document.getElementById('settingsSerpKeyExtra').value || '').split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-  setSerpKeysExtra(extra);
-  closeModal('modalSettings');
-  if (k || extra.length) alert(`Clé(s) enregistrée(s) (${(k?1:0)+extra.length} total). La recherche auto est disponible.`);
-}
+/* ═════════ SETTINGS ═════════
+   Plus de clé SerpAPI à gérer depuis v0.22 — backend local serp_scout.py
+   en mode scrape illimité (Bing FR + DuckDuckGo). La modale Settings
+   n'affiche plus que l'état du backend. */
 function openSettingsPrefilled() {
-  document.getElementById('settingsSerpKey').value = getSerpKey();
-  document.getElementById('settingsSerpKeyExtra').value = getSerpKeysExtra().join('\n');
-  document.getElementById('settingsQuotaBox').innerHTML = '<em style="color:var(--text3)">Clique "Vérifier quota" pour interroger SerpAPI…</em>';
   openModal('modalSettings');
+  // Lance la vérification du backend (async, non bloquante).
+  setTimeout(checkBackendStatus, 30);
 }
 
 /* ═════════ DISCOVERY — niches porteuses + dédup ═════════ */
@@ -8616,22 +8499,18 @@ function markNicheSeen(n) {
 async function refreshDiscoverQuota() {
   const el = document.getElementById('discoverQuota');
   if (!el) return;
-  const keys = getAllSerpKeys();
-  if (!keys.length) { el.innerHTML = ''; return; }
-  el.innerHTML = `<span style="color:var(--text3)">${ico('chart',12)} Quota SerpAPI : interrogation…</span>`;
+  if (!SERP_LOCAL_ENDPOINT) {
+    el.innerHTML = `<span style="color:var(--yellow);display:inline-flex;align-items:center;gap:6px">${ico('alert',12)}</span><span>Backend local indisponible (version web) — la recherche auto nécessite ton PC avec <code>python serp_scout.py</code>.</span>`;
+    return;
+  }
+  el.innerHTML = `<span style="color:var(--text3)">${ico('chart',12)} Vérification du backend local…</span>`;
   try {
-    const results = await Promise.all(keys.map(k => fetchAccountQuota(k)));
-    let totalLeft = 0, totalLimit = 0, errors = 0;
-    for (const r of results) {
-      if (r.error) { errors++; continue; }
-      totalLeft += +r.searches_left || 0;
-      if (r.monthly_limit) totalLimit += +r.monthly_limit;
-    }
-    const color = totalLeft > 50 ? 'var(--green)' : totalLeft > 0 ? 'var(--yellow)' : 'var(--red)';
-    const pct = totalLimit ? Math.round((totalLeft/totalLimit)*100) : null;
-    el.innerHTML = `<span style="color:var(--accent2);display:inline-flex">${ico('chart',12)}</span><span>SerpAPI : <strong style="color:${color}">${totalLeft}</strong>${totalLimit?' / '+totalLimit:''}${pct!==null?' ('+pct+'%)':''} recherches restantes · ${keys.length} clé${keys.length>1?'s':''}${errors?' · <span style="color:var(--red)">'+errors+' erreur(s)</span>':''}</span>`;
+    const r = await fetch(SERP_LOCAL_ENDPOINT + '/health', { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP '+r.status);
+    const d = await r.json();
+    el.innerHTML = `<span style="color:var(--green);display:inline-flex;align-items:center;gap:6px">${ico('check',12)}</span><span><strong style="color:var(--green)">Backend up</strong> · mode <strong>${escapeHtml(d.mode||'scrape')}</strong> · <strong>illimité</strong>, aucune clé requise · ${d.cache_entries||0} requêtes cachées (TTL ${d.cache_ttl_days||30}j)</span>`;
   } catch(e) {
-    el.innerHTML = `<span style="color:var(--text3)">Quota indisponible : ${escapeHtml(e.message)}</span>`;
+    el.innerHTML = `<span style="color:var(--red);display:inline-flex;align-items:center;gap:6px">${ico('alert',12)}</span><span><strong style="color:var(--red)">Backend injoignable</strong> sur localhost:7789. Lance <code>python serp_scout.py</code> dans le dossier projet, puis recharge la page.</span>`;
   }
 }
 
@@ -8713,11 +8592,8 @@ function openDiscoverModal() {
   const btn = document.getElementById('discoverBtn'); if (btn) btn.innerHTML = `<span id="discoverBtnIco" style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('bolt',14)}</span>Surprends-moi`;
   refreshDiscoverStats();
   refreshDiscoverQuota();
-  if (!getSerpKey()) {
-    if (confirm('Tu dois d\'abord ajouter ta clé SerpAPI dans les paramètres.\n\nOuvrir les paramètres ?')) {
-      openModal('modalSettings');
-      document.getElementById('settingsSerpKey').value = '';
-    }
+  if (!SERP_LOCAL_ENDPOINT) {
+    alert("La recherche auto nécessite que tu sois sur ton PC où serp_scout.py tourne (localhost:7789).\n\nDepuis la version web/mobile, tu peux toujours scorer manuellement les produits que tu ajoutes.");
     return;
   }
   openModal('modalDiscover');
@@ -8859,13 +8735,10 @@ async function verifyAds(domain, btn) {
       if (r.ok) data = await r.json();
     }
     if (!data) {
-      // Browser fallback via codetabs proxy
-      const keys = getAllSerpKeys().filter(k => !window._deadKeys.has(k));
-      if (!keys.length) { out.innerHTML = '<span style="color:var(--red)">Pas de clé SerpAPI configurée</span>'; return; }
-      const proxy = (u) => 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(u);
-      const url = `https://serpapi.com/search.json?engine=google_ads_transparency_center&text=${encodeURIComponent(domain)}&region=2250&api_key=${encodeURIComponent(keys[0])}`;
-      const r = await fetch(proxy(url));
-      data = await r.json();
+      // Pas de backend local : on offre juste un lien vers Google Ads Transparency Center.
+      const transparencyUrl = `https://adstransparency.google.com/?domain=${encodeURIComponent(domain)}&region=FR`;
+      out.innerHTML = `<span style="color:var(--text3)">Backend local indisponible — </span><a href="${escapeHtml(transparencyUrl)}" target="_blank" rel="noopener" style="color:var(--accent2);font-size:11px">vérifier manuellement sur Ads Transparency Center</a>`;
+      return;
     }
     const ads = data.ad_creatives || data.advertiser_ads || data.ads || [];
     const advertiser = data.advertiser || (data.advertisers && data.advertisers[0]) || null;
@@ -9735,7 +9608,7 @@ function _cmdBuildRegistry() {
   cmds.push({ id:'act.newSession', cat:'Actions', icon:'rocket', label:'Nouvelle session de recherche', hint:'Démarre une session datée', kw:'nouvelle session create new', action:() => openSessionModal() });
   cmds.push({ id:'act.newProduct', cat:'Actions', icon:'edit', label:'Nouveau produit', hint:'Ajoute un produit dans la session active', kw:'nouveau produit ajouter add new', shortcut:['Ctrl','N'], action:() => openProductModal() });
   cmds.push({ id:'act.discover', cat:'Actions', icon:'search', label:'Recherche auto (Discover)', hint:'Scrape SerpAPI sur des niches', kw:'discover recherche auto serpapi auto', action:() => openDiscoverModal() });
-  cmds.push({ id:'act.settings', cat:'Actions', icon:'gear', label:'Paramètres', hint:'Clé SerpAPI, sync, formules', kw:'paramètres settings préférences config', action:() => openSettingsPrefilled() });
+  cmds.push({ id:'act.settings', cat:'Actions', icon:'gear', label:'Paramètres', hint:'Backend SERP, sync', kw:'paramètres settings préférences config backend serp', action:() => openSettingsPrefilled() });
   cmds.push({ id:'act.sync', cat:'Actions', icon:'cloud', label:'Synchronisation cloud', hint:'jsonblob.com (ID partagé)', kw:'sync synchronisation cloud backup', action:() => openSyncModal() });
 
   // Sessions
