@@ -1126,6 +1126,190 @@ small.muted { color: var(--text3); font-size: 11px; }
   100% { transform: scale(1); box-shadow: none; }
 }
 .kanban-card.just-landed { animation: cardLand .45s ease-out; }
+
+/* ═════════ ATELIER ANALYTICS (dashboard refonte) ═════════ */
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+@media (max-width: 980px) { .dash-grid { grid-template-columns: 1fr; } }
+.dash-grid .card { margin-bottom: 0; }
+.card.dash-wide { grid-column: 1 / -1; }
+
+.an-h2 { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; letter-spacing: -0.005em; }
+.an-h2 .an-ico { display: inline-flex; color: var(--accent2); }
+.an-h2 .an-sub { font-weight: 400; color: var(--text3); font-size: 12px; margin-left: 6px; }
+.an-empty { padding: 24px 8px; text-align: center; color: var(--text3); font-size: 13px; }
+
+/* Stat card with embedded sparkline */
+.stat-card.has-spark { position: relative; overflow: hidden; }
+.stat-card .stat-spark {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 36px;
+  pointer-events: none;
+  opacity: 0.55;
+}
+.stat-card .stat-spark svg { width: 100%; height: 100%; display: block; }
+.stat-card .stat-spark path.line { fill: none; stroke: var(--accent2); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 4px rgba(217,70,239,0.45)); }
+.stat-card .stat-spark path.area { fill: url(#sparkArea); opacity: 0.35; }
+.stat-card .stat-trend { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 999px; display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; }
+.stat-card .stat-trend.up { color: var(--green); background: rgba(52,211,153,0.10); }
+.stat-card .stat-trend.down { color: var(--red); background: rgba(251,113,133,0.10); }
+.stat-card .stat-trend.flat { color: var(--text3); background: rgba(255,255,255,0.04); }
+
+/* Heatmap critères Arthur */
+.crit-heat { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+@media (max-width: 720px) { .crit-heat { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .crit-heat { grid-template-columns: 1fr; } }
+.crit-cell {
+  position: relative;
+  background: var(--bg3);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 10px;
+  padding: 9px 11px 11px;
+  overflow: hidden;
+  transition: transform .18s ease, border-color .18s ease;
+  cursor: default;
+}
+.crit-cell:hover { transform: translateY(-2px); border-color: rgba(139,92,246,0.35); }
+.crit-cell::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: var(--fill, 0%);
+  background: linear-gradient(90deg, var(--c1, var(--accent)), var(--c2, var(--accent2)));
+  opacity: 0.16;
+  transition: width .8s cubic-bezier(.2,.7,.3,1);
+  pointer-events: none;
+}
+.crit-cell-row { position: relative; display: flex; align-items: center; gap: 8px; z-index: 1; }
+.crit-cell-id {
+  font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: 0.06em;
+  width: 22px; height: 22px; border-radius: 6px;
+  background: rgba(255,255,255,0.04);
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.crit-cell.cell-strong .crit-cell-id { color: var(--green); background: rgba(52,211,153,0.14); }
+.crit-cell.cell-weak .crit-cell-id { color: var(--red); background: rgba(251,113,133,0.14); }
+.crit-cell-title { font-size: 12px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.25; letter-spacing: -0.005em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.crit-cell-pct { position: relative; z-index: 1; font-size: 18px; font-weight: 700; margin-top: 4px; letter-spacing: -0.02em; color: var(--text); }
+.crit-cell-pct .of { font-size: 10px; font-weight: 500; color: var(--text3); margin-left: 6px; letter-spacing: 0; }
+.crit-cell.cell-strong .crit-cell-pct { color: var(--green); }
+.crit-cell.cell-weak .crit-cell-pct { color: var(--red); }
+.crit-cell-star { color: var(--yellow); display: inline-flex; vertical-align: -2px; margin-right: 2px; filter: drop-shadow(0 0 3px rgba(251,191,36,0.45)); }
+
+/* Top niches gagnantes */
+.niche-rank { display: flex; flex-direction: column; gap: 7px; margin-top: 10px; }
+.niche-row {
+  position: relative;
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 11px;
+  background: var(--bg3);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform .18s ease, border-color .18s ease;
+}
+.niche-row:hover { transform: translateX(3px); border-color: rgba(139,92,246,0.35); }
+.niche-row::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: var(--fill, 0%);
+  background: linear-gradient(90deg, rgba(139,92,246,0.18), rgba(217,70,239,0.10));
+  transition: width .8s cubic-bezier(.2,.7,.3,1);
+  pointer-events: none;
+}
+.niche-rk { position: relative; z-index: 1; font-size: 11px; font-weight: 700; color: var(--text3); width: 18px; }
+.niche-row.r1 .niche-rk { color: var(--yellow); }
+.niche-row.r2 .niche-rk { color: var(--accent3); }
+.niche-row.r3 .niche-rk { color: var(--accent2); }
+.niche-name { position: relative; z-index: 1; flex: 1; font-size: 13px; font-weight: 500; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.niche-stat { position: relative; z-index: 1; font-size: 12px; color: var(--text2); display: flex; align-items: center; gap: 8px; }
+.niche-stat .niche-keep { color: var(--green); font-weight: 700; }
+.niche-stat .niche-tot { color: var(--text3); }
+
+/* Funnel pending → keep / reject */
+.funnel-wrap { display: flex; align-items: stretch; gap: 12px; margin-top: 10px; padding: 8px 0 4px; }
+.funnel-stage {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 14px 12px;
+  position: relative;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+  transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease;
+}
+.funnel-stage:hover { transform: translateY(-2px); box-shadow: 0 6px 18px -8px rgba(139,92,246,0.30); }
+.funnel-stage .fs-label { font-size: 10px; font-weight: 600; letter-spacing: 0.10em; color: var(--text3); text-transform: uppercase; }
+.funnel-stage .fs-val { font-size: 28px; font-weight: 700; letter-spacing: -0.025em; margin-top: 4px; color: var(--text); }
+.funnel-stage .fs-pct { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.funnel-stage.f-pending .fs-val { color: var(--blue); }
+.funnel-stage.f-keep .fs-val { color: var(--green); }
+.funnel-stage.f-reject .fs-val { color: var(--red); }
+.funnel-stage.f-pending { box-shadow: inset 0 -3px 0 rgba(96,165,250,0.55); }
+.funnel-stage.f-keep    { box-shadow: inset 0 -3px 0 rgba(52,211,153,0.55); }
+.funnel-stage.f-reject  { box-shadow: inset 0 -3px 0 rgba(251,113,133,0.55); }
+.funnel-arrow { display: flex; align-items: center; color: var(--text3); font-size: 18px; }
+@media (max-width: 720px) { .funnel-wrap { flex-direction: column; } .funnel-arrow { transform: rotate(90deg); align-self: center; } }
+.funnel-svg { width: 100%; height: 90px; margin-top: 12px; }
+
+/* Velocity sparkline 14 days */
+.velocity-chart { width: 100%; height: 150px; margin-top: 8px; display: block; }
+.velocity-chart .vline { fill: none; stroke: var(--accent2); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 6px rgba(217,70,239,0.55)); }
+.velocity-chart .varea { fill: url(#velocityArea); }
+.velocity-chart .vdot { fill: var(--accent2); }
+.velocity-chart .vdot.last { fill: var(--text); stroke: var(--accent2); stroke-width: 2; }
+.velocity-chart .vlabel { fill: var(--text3); font: 600 9px ui-sans-serif, system-ui, sans-serif; }
+.velocity-chart .vgrid { stroke: rgba(255,255,255,0.04); stroke-width: 1; }
+.velocity-meta { display: flex; gap: 18px; font-size: 12px; color: var(--text2); margin-top: 6px; flex-wrap: wrap; }
+.velocity-meta b { color: var(--text); font-weight: 700; }
+
+/* Score distribution histogram */
+.score-dist { display: flex; align-items: flex-end; gap: 4px; height: 110px; margin-top: 12px; padding-bottom: 22px; position: relative; border-bottom: 1px dashed rgba(255,255,255,0.06); }
+.score-dist .sd-bar {
+  flex: 1;
+  border-radius: 5px 5px 0 0;
+  position: relative;
+  min-height: 3px;
+  transition: transform .2s ease, filter .2s ease;
+  cursor: default;
+  background: linear-gradient(180deg, var(--barC1, var(--accent)), var(--barC2, var(--accent2)));
+}
+.score-dist .sd-bar:hover { transform: translateY(-3px); filter: brightness(1.18); }
+.score-dist .sd-bar .sd-cnt { position: absolute; top: -16px; left: 0; right: 0; text-align: center; font-size: 10px; color: var(--text2); font-weight: 600; }
+.score-dist .sd-bar .sd-axis { position: absolute; top: calc(100% + 4px); left: 0; right: 0; text-align: center; font-size: 10px; color: var(--text3); font-weight: 600; }
+.score-dist .sd-bar.sd-perfect { background: linear-gradient(180deg, #fbbf24, #d946ef); box-shadow: 0 -4px 14px rgba(217,70,239,0.40); }
+
+/* Health score badge in hero */
+.health-orb {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 50%;
+  font-size: 16px; font-weight: 700;
+  position: relative;
+  background: conic-gradient(var(--healthC, var(--accent2)) calc(var(--healthP, 0%) * 1), rgba(255,255,255,0.05) 0);
+  margin-right: 10px;
+}
+.health-orb::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: var(--card-bg, #0f0c1d);
+}
+.health-orb span { position: relative; z-index: 1; color: var(--text); }
+
+/* Compact recent kept (in narrow column) */
+.kept-card.kept-compact { padding: 10px 12px; }
+.kept-card.kept-compact .name { font-size: 13px; }
+.kept-card.kept-compact .meta { font-size: 11px; }
+
 </style>
 </head>
 <body>
@@ -1162,7 +1346,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 
 <header>
   <button class="menu-toggle" aria-label="Ouvrir le menu" onclick="toggleSidebar()" title="Menu (sessions)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg></button>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.10.0-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.11.0-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -1532,14 +1716,26 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.10.0-beta';
-const APP_VERSION_NOTES = 'KANBAN BOARD pour la vue Session : drag-drop natif entre Pending / Retenus / Rejetés, cartes design avec score badge colorisé (rouge/ambre/vert/perfect-pulse violet), confetti gradient quand un score ≥9 passe Keep, explosion plus large pour un 12/12 parfait, toggle Kanban ↔ Table persistant en localStorage, animation cardLand sur la nouvelle position, drag-over highlight violet sur la colonne cible. La vue Session devient un terrain de jeu visuel — première feature signature qui différencie radicalement de Sell The Trend / Niche Scraper.';
+const APP_VERSION = '0.11.0-beta';
+const APP_VERSION_NOTES = 'ATELIER ANALYTICS — refonte du dashboard en cockpit vivant : heatmap des 12 critères Arthur (vert ≥70% · rouge ≤30%) qui révèle EXACTEMENT quel critère bloque tes produits, sparkline vélocité 14 jours avec moyenne et pic, top 6 niches gagnantes classées par retenus, funnel pending → keep / reject avec taux de conversion, distribution des scores 0-12 en histogramme dégradé (perfect 12/12 en gradient violet/jaune avec glow), health-orb conique 0-100% qui résume la santé du pipeline, sparklines miniatures intégrées dans les stat-cards, badge tendance vs 7j-1. Le dashboard passe de "5 stats + 1 bar chart" à un vrai cockpit Helium-10-style.';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.11.0-beta', date: '2026-04-27', time: '02:17', source: 'atelier analytics',
+    summary: 'ATELIER ANALYTICS : le dashboard devient un cockpit vivant qui révèle où ça bloque',
+    items: [
+      {type:'feat', text:'Heatmap des 12 critères Arthur — chaque cellule affiche le % de produits qui valident ce critère, colorisée par fill (vert ≥70% strong, rouge ≤30% weak, gradient violet/fuchsia entre les deux). Identifie en un coup d\'œil le critère qui bloque le plus tes produits — info inédite que ZÉRO concurrent SaaS de validation produit ne montre.'},
+      {type:'feat', text:'Vélocité 14 jours en sparkline SVG : ligne avec aire dégradée, dot signature sur le jour courant, axe Y avec ticks 0/médian/max, axe X avec dates tous les 3 jours. Met en évidence le pic et la moyenne par jour. Stat-card "Vélocité 7j" avec badge tendance ↑↓ vs les 7 jours précédents.'},
+      {type:'feat', text:'Top 6 niches gagnantes : classement par nombre de produits retenus, avec barre de progression interne (--fill CSS var), pastille keep absolu / total / taux de conversion. Mes podiums #1/#2/#3 colorisés (or/cyan/fuchsia).'},
+      {type:'feat', text:'Funnel pending → keep / reject : 3 stages avec valeur 28px, % du flux total, conversion globale, hover lift. Inset border-bottom colorisé par stage (bleu/vert/rouge).'},
+      {type:'feat', text:'Distribution des scores 0 → 12 en histogramme : 13 colonnes dégradées (rouge < 6, ambre 6-8, vert ≥9, gradient or → fuchsia animé pour le perfect 12/12 avec glow). Compteur en haut de chaque barre.'},
+      {type:'feat', text:'Health-orb 0-100% en conic-gradient à côté du titre : pastille animée qui résume la santé du pipeline (Excellent ≥30% keep / Bon rythme ≥15% / Sélectif ≥5% / À ajuster), avec couleur dynamique selon le palier.'},
+      {type:'ux', text:'3 sparklines miniatures intégrées DANS les stat-cards (Sessions / Produits 14j / Retenus 14j) — micro-context sans alourdir, drop-shadow signature violet/fuchsia/vert.'},
+      {type:'ux', text:'Layout 2-col responsive (.dash-grid) qui empile en 1 col à 980px et 720px, heatmap qui passe de 3 cols → 2 cols → 1 col, funnel en colonne avec arrows tournés sur mobile.'},
+    ]},
   { v: '0.10.0-beta', date: '2026-04-27', time: '01:19', source: 'kanban session board',
     summary: 'KANBAN BOARD : la vue Session devient un terrain de jeu visuel drag-drop',
     items: [
@@ -1712,7 +1908,13 @@ const ICONS = {
   hourglass: '<path d="M6 2v6l4 4-4 4v6h12v-6l-4-4 4-4V2H6zm10 14.5V20H8v-3.5l4-4 4 4z"/>',
   bolt: '<path d="M7 2v11h3v9l7-12h-4l4-8z"/>',
   lock: '<path d="M18 8h-1V6a5 5 0 0 0-10 0v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zM9 6a3 3 0 0 1 6 0v2H9V6z"/>',
-  inbox: '<path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 12h-4l-2 2h-2l-2-2H5V5h14v10z"/>'
+  inbox: '<path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 12h-4l-2 2h-2l-2-2H5V5h14v10z"/>',
+  'arrow-right': '<path d="M5 12h12l-4-4 1.41-1.41L20.83 12l-6.42 5.41L13 16l4-4H5v0z"/>',
+  'arrow-up': '<path d="M12 5l7 7-1.41 1.41L13 8.83V20h-2V8.83l-4.59 4.58L5 12l7-7z"/>',
+  'arrow-down': '<path d="M12 19l-7-7 1.41-1.41L11 15.17V4h2v11.17l4.59-4.58L19 12l-7 7z"/>',
+  flame: '<path d="M13.5 0.67c.67 4.5 4.5 6.16 4.5 9.83a6 6 0 0 1-12 0c0-1.83.83-3.5 2-4.83.67 1.17 1.83 2 3 2 0-3 1.5-5.5 2.5-7zm-1 17.83a2.5 2.5 0 0 1-2.5-2.5c0-1 .67-1.83 1.67-2.17.5 1 1.33 1.5 2.33 1.5 0 .67-.5 3.17-1.5 3.17z"/>',
+  spark: '<path d="M12 2 9 9l-7 1 5 5-1.5 7 6.5-3.5 6.5 3.5L17 15l5-5-7-1z"/>',
+  layers: '<path d="m12 2-9.5 5L12 12l9.5-5L12 2zm-9.5 10L12 17l9.5-5M2.5 17 12 22l9.5-5"/>'
 };
 function ico(name, size) {
   const sz = size || 16;
@@ -2013,6 +2215,214 @@ function renderChangelog() {
   `;
 }
 
+/* ═════════ ATELIER ANALYTICS — helpers ═════════ */
+function _an_velocity14() {
+  const days = 14;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const buckets = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(today); d.setDate(today.getDate() - i);
+    buckets.push({ ts: d.getTime(), label: d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }), count: 0 });
+  }
+  const cutoff = today.getTime() - (days - 1) * 86400000;
+  for (const p of keptProducts()) {
+    if (!p.keptAt) continue;
+    const dt = new Date(p.keptAt); dt.setHours(0,0,0,0);
+    const ts = dt.getTime();
+    if (ts < cutoff) continue;
+    const idx = buckets.findIndex(b => b.ts === ts);
+    if (idx >= 0) buckets[idx].count++;
+  }
+  return buckets;
+}
+
+function _an_critHeatmap() {
+  const scored = state.products.filter(p => p.criteres && Object.keys(p.criteres).length > 0);
+  if (scored.length === 0) return null;
+  const out = CRITERES.map(c => {
+    const hit = scored.filter(p => !!p.criteres?.[c.id]).length;
+    return { id: c.id, titre: c.titre, star: !!c.star, hit, total: scored.length, pct: Math.round(hit / scored.length * 100) };
+  });
+  return { rows: out, sample: scored.length };
+}
+
+function _an_topNiches() {
+  const map = new Map();
+  for (const p of state.products) {
+    const sess = findSession(p.sessionId);
+    const k = (p.niche || sess?.label || '—').trim().toLowerCase();
+    if (!k || k === '—') continue;
+    const display = (p.niche || sess?.label || '').trim();
+    if (!map.has(k)) map.set(k, { name: display, total: 0, kept: 0, pending: 0, reject: 0 });
+    const r = map.get(k);
+    r.total++;
+    if (p.status === 'keep') r.kept++;
+    else if (p.status === 'reject') r.reject++;
+    else r.pending++;
+  }
+  const arr = Array.from(map.values()).filter(r => r.total >= 1);
+  arr.sort((a, b) => (b.kept - a.kept) || (b.total - a.total));
+  return arr.slice(0, 6);
+}
+
+function _an_scoreDist() {
+  const buckets = Array.from({ length: 13 }, (_, i) => ({ score: i, count: 0 }));
+  for (const p of state.products) {
+    if (!p.criteres || Object.keys(p.criteres).length === 0) continue;
+    const s = calcScore(p);
+    if (s >= 0 && s <= 12) buckets[s].count++;
+  }
+  return buckets;
+}
+
+function _an_healthScore() {
+  const total = state.products.length;
+  if (total === 0) return { value: 0, color: 'var(--text3)', label: 'Démarre' };
+  const kept = keptProducts().length;
+  const rate = kept / total;
+  const v = Math.round(rate * 100);
+  let color = 'var(--red)', label = 'À ajuster';
+  if (rate >= 0.30) { color = 'var(--green)'; label = 'Excellent'; }
+  else if (rate >= 0.15) { color = 'var(--accent2)'; label = 'Bon rythme'; }
+  else if (rate >= 0.05) { color = 'var(--yellow)'; label = 'Sélectif'; }
+  return { value: v, color, label };
+}
+
+function _an_sparklineSvg(values, opts) {
+  if (!values || values.length === 0) return '';
+  const w = 240, h = 36, pad = 2;
+  const max = Math.max(1, ...values);
+  const stepX = (w - 2 * pad) / Math.max(1, values.length - 1);
+  const pts = values.map((v, i) => {
+    const x = pad + i * stepX;
+    const y = h - pad - (v / max) * (h - 2 * pad);
+    return [x, y];
+  });
+  const linePath = pts.map((p, i) => (i === 0 ? `M${p[0].toFixed(1)},${p[1].toFixed(1)}` : `L${p[0].toFixed(1)},${p[1].toFixed(1)}`)).join(' ');
+  const areaPath = `${linePath} L${pts[pts.length-1][0].toFixed(1)},${h-pad} L${pts[0][0].toFixed(1)},${h-pad} Z`;
+  const gradId = 'sparkArea_' + (opts?.key || Math.floor(Math.random() * 1e6));
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <defs><linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${opts?.color || '#d946ef'}" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="${opts?.color || '#d946ef'}" stop-opacity="0"/>
+    </linearGradient></defs>
+    <path class="area" d="${areaPath}" fill="url(#${gradId})"/>
+    <path class="line" d="${linePath}" stroke="${opts?.color || '#d946ef'}"/>
+  </svg>`;
+}
+
+function _an_velocityChartSvg(buckets) {
+  const w = 720, h = 150, padL = 32, padR = 14, padT = 14, padB = 24;
+  const innerW = w - padL - padR, innerH = h - padT - padB;
+  const max = Math.max(2, ...buckets.map(b => b.count));
+  const stepX = innerW / Math.max(1, buckets.length - 1);
+  const pts = buckets.map((b, i) => {
+    const x = padL + i * stepX;
+    const y = padT + innerH - (b.count / max) * innerH;
+    return { x, y, b, i };
+  });
+  const lineD = pts.map((p, i) => (i === 0 ? `M${p.x.toFixed(1)},${p.y.toFixed(1)}` : `L${p.x.toFixed(1)},${p.y.toFixed(1)}`)).join(' ');
+  const areaD = `${lineD} L${pts[pts.length-1].x.toFixed(1)},${padT+innerH} L${pts[0].x.toFixed(1)},${padT+innerH} Z`;
+
+  const ticks = [0, max / 2, max].map(v => Math.round(v));
+  const gridLines = ticks.map(v => {
+    const y = padT + innerH - (v / max) * innerH;
+    return `<line class="vgrid" x1="${padL}" y1="${y.toFixed(1)}" x2="${w - padR}" y2="${y.toFixed(1)}"/>` +
+           `<text class="vlabel" x="${padL - 6}" y="${(y + 3).toFixed(1)}" text-anchor="end">${v}</text>`;
+  }).join('');
+
+  const xLabels = pts.map((p, i) => {
+    if (i % 3 !== 0 && i !== pts.length - 1) return '';
+    return `<text class="vlabel" x="${p.x.toFixed(1)}" y="${h - 6}" text-anchor="middle">${p.b.label}</text>`;
+  }).join('');
+
+  const dots = pts.map((p, i) => `<circle class="vdot ${i === pts.length - 1 ? 'last' : ''}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${i === pts.length - 1 ? 4 : 2.4}"><title>${p.b.label} : ${p.b.count} retenu${p.b.count > 1 ? 's' : ''}</title></circle>`).join('');
+
+  return `<svg class="velocity-chart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <defs><linearGradient id="velocityArea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d946ef" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#d946ef" stop-opacity="0"/>
+    </linearGradient></defs>
+    ${gridLines}
+    <path class="varea" d="${areaD}"/>
+    <path class="vline" d="${lineD}"/>
+    ${dots}
+    ${xLabels}
+  </svg>`;
+}
+
+function _an_critHeatmapHtml(data) {
+  if (!data) return `<div class="an-empty">Démarre une session et coche des critères pour voir la heatmap.</div>`;
+  const cellHtml = data.rows.map(r => {
+    const cls = r.pct >= 70 ? 'cell-strong' : (r.pct <= 30 ? 'cell-weak' : '');
+    const c1 = r.pct >= 70 ? '#34d399' : (r.pct <= 30 ? '#fb7185' : '#8b5cf6');
+    const c2 = r.pct >= 70 ? '#06b6d4' : (r.pct <= 30 ? '#fbbf24' : '#d946ef');
+    return `<div class="crit-cell ${cls}" style="--fill:${r.pct}%;--c1:${c1};--c2:${c2}" title="${escapeHtml(r.titre)} — ${r.hit}/${r.total} produits validés">
+      <div class="crit-cell-row">
+        <div class="crit-cell-id">${r.id}</div>
+        <div class="crit-cell-title">${r.star ? `<span class="crit-cell-star">${ico('star',11)}</span>` : ''}${escapeHtml(r.titre)}</div>
+      </div>
+      <div class="crit-cell-pct">${r.pct}%<span class="of">${r.hit}/${r.total}</span></div>
+    </div>`;
+  }).join('');
+  return `<div class="crit-heat">${cellHtml}</div>`;
+}
+
+function _an_topNichesHtml(rows) {
+  if (rows.length === 0) return `<div class="an-empty">Pas encore assez de niches pour un classement.</div>`;
+  const max = Math.max(1, ...rows.map(r => r.kept || r.total));
+  return `<div class="niche-rank">${rows.map((r, i) => {
+    const pct = (r.kept || r.total) / max * 100;
+    const keepRate = r.total ? Math.round(r.kept / r.total * 100) : 0;
+    return `<div class="niche-row r${i+1}" style="--fill:${pct.toFixed(1)}%">
+      <div class="niche-rk">#${i+1}</div>
+      <div class="niche-name" title="${escapeHtml(r.name)}">${escapeHtml(r.name)}</div>
+      <div class="niche-stat"><span class="niche-keep">${r.kept}</span><span class="niche-tot">/ ${r.total}</span><span style="color:var(--text3)">·</span><span>${keepRate}%</span></div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function _an_funnelHtml(pend, kept, rej) {
+  const total = pend + kept + rej;
+  const pct = (n) => total ? Math.round(n / total * 100) : 0;
+  return `<div class="funnel-wrap">
+    <div class="funnel-stage f-pending">
+      <div class="fs-label">En attente</div>
+      <div class="fs-val">${pend}</div>
+      <div class="fs-pct">${pct(pend)}% du flux</div>
+    </div>
+    <div class="funnel-arrow">${ico('arrow-right', 18)}</div>
+    <div class="funnel-stage f-keep">
+      <div class="fs-label">Retenus</div>
+      <div class="fs-val">${kept}</div>
+      <div class="fs-pct">${pct(kept)}% · ${total ? Math.round(kept / total * 100) : 0}% conv.</div>
+    </div>
+    <div class="funnel-arrow">${ico('arrow-right', 18)}</div>
+    <div class="funnel-stage f-reject">
+      <div class="fs-label">Rejetés</div>
+      <div class="fs-val">${rej}</div>
+      <div class="fs-pct">${pct(rej)}% du flux</div>
+    </div>
+  </div>`;
+}
+
+function _an_scoreDistHtml(buckets) {
+  const max = Math.max(1, ...buckets.map(b => b.count));
+  const totalScored = buckets.reduce((s, b) => s + b.count, 0);
+  if (totalScored === 0) return `<div class="an-empty">Coche les 12 critères Arthur sur des produits pour voir leur distribution.</div>`;
+  return `<div class="score-dist">${buckets.map(b => {
+    const h = b.count === 0 ? 0 : Math.max(4, b.count / max * 100);
+    const isPerfect = b.score === 12 && b.count > 0;
+    let c1 = '#fb7185', c2 = '#fbbf24';
+    if (b.score >= 9) { c1 = '#34d399'; c2 = '#06b6d4'; }
+    else if (b.score >= 6) { c1 = '#fbbf24'; c2 = '#d946ef'; }
+    return `<div class="sd-bar ${isPerfect ? 'sd-perfect' : ''}" style="height:${h}%;--barC1:${c1};--barC2:${c2}" title="Score ${b.score}/12 : ${b.count} produit${b.count > 1 ? 's' : ''}">
+      ${b.count > 0 ? `<div class="sd-cnt">${b.count}</div>` : ''}
+      <div class="sd-axis">${b.score}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
 function renderDashboard() {
   const total = state.products.length;
   const kept = keptProducts().length;
@@ -2021,17 +2431,49 @@ function renderDashboard() {
   const sessions = state.sessions.length;
   const keepRate = total ? Math.round(kept / total * 100) : 0;
 
-  // Chart: products per session (last 10)
-  const sorted = [...state.sessions].sort((a,b) => (a.created||0) - (b.created||0)).slice(-10);
-  const max = Math.max(1, ...sorted.map(s => productsInSession(s.id).length));
-  const chart = sorted.map(s => {
-    const n = productsInSession(s.id).length;
-    const h = (n / max * 100);
-    return `<div style="flex:1;display:flex;flex-direction:column">
-      <div class="bar" style="height:${h}%" title="${escapeHtml(s.label)}: ${n} produits"></div>
-      <div class="bar-label">${n}</div>
-    </div>`;
-  }).join('');
+  // Velocity 14 days
+  const velocity = _an_velocity14();
+  const velocityCounts = velocity.map(b => b.count);
+  const velocity7 = velocityCounts.slice(-7).reduce((s, v) => s + v, 0);
+  const velocityPrev7 = velocityCounts.slice(0, 7).reduce((s, v) => s + v, 0);
+  const velocityDelta = velocity7 - velocityPrev7;
+  const velocityTrendCls = velocityDelta > 0 ? 'up' : (velocityDelta < 0 ? 'down' : 'flat');
+  const velocityTrendIco = velocityDelta > 0 ? ico('arrow-up', 11) : (velocityDelta < 0 ? ico('arrow-down', 11) : '');
+  const velocityBest = Math.max(0, ...velocityCounts);
+  const velocityAvg = velocityCounts.length ? (velocityCounts.reduce((s, v) => s + v, 0) / velocityCounts.length).toFixed(1) : '0';
+
+  // Health score
+  const health = _an_healthScore();
+
+  // Heatmap critères
+  const heatmap = _an_critHeatmap();
+
+  // Top niches
+  const topNiches = _an_topNiches();
+
+  // Score distribution
+  const scoreDist = _an_scoreDist();
+
+  // Sessions sparkline (products per session, last 10)
+  const lastSessions = [...state.sessions].sort((a,b) => (a.created||0) - (b.created||0)).slice(-10);
+  const sessionCounts = lastSessions.map(s => productsInSession(s.id).length);
+  const sessionsSpark = _an_sparklineSvg(sessionCounts.length ? sessionCounts : [0,0,0], { color: '#8b5cf6', key: 'sess' });
+  const keptSpark = _an_sparklineSvg(velocityCounts, { color: '#34d399', key: 'kept' });
+  const productsSpark = (() => {
+    const days = 14;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const buckets = Array.from({ length: days }, (_, i) => {
+      const d = new Date(today); d.setDate(today.getDate() - (days - 1 - i));
+      return { ts: d.getTime(), c: 0 };
+    });
+    for (const p of state.products) {
+      if (!p.created) continue;
+      const dt = new Date(p.created); dt.setHours(0,0,0,0);
+      const idx = buckets.findIndex(b => b.ts === dt.getTime());
+      if (idx >= 0) buckets[idx].c++;
+    }
+    return _an_sparklineSvg(buckets.map(b => b.c), { color: '#d946ef', key: 'prod' });
+  })();
 
   const recent = [...keptProducts()].sort((a,b) => (b.keptAt||0) - (a.keptAt||0)).slice(0, 5);
   const recentHtml = recent.length === 0
@@ -2039,7 +2481,7 @@ function renderDashboard() {
     : recent.map(p => {
         const s = findSession(p.sessionId);
         const score = calcScore(p);
-        return `<div class="kept-card" onclick="go({type:'product',id:'${p.id}'})">
+        return `<div class="kept-card kept-compact" onclick="go({type:'product',id:'${p.id}'})">
           <div style="color:var(--green);display:inline-flex">${ico('check',22)}</div>
           <div style="flex:1">
             <div class="name">${escapeHtml(p.name)}</div>
@@ -2049,31 +2491,91 @@ function renderDashboard() {
       }).join('');
 
   return `
-    <h1 style="font-size:22px;font-weight:700;margin-bottom:6px">Dashboard</h1>
-    <p style="color:var(--text2);margin-bottom:24px">Vue d'ensemble de ta recherche produit</p>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px;flex-wrap:wrap">
+      <h1 style="font-size:22px;font-weight:700;margin:0">Atelier Analytics</h1>
+      <div style="display:flex;align-items:center;gap:8px;padding:5px 11px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:999px">
+        <div class="health-orb" style="width:30px;height:30px;font-size:11px;--healthC:${health.color};--healthP:${health.value}%"><span>${health.value}</span></div>
+        <div style="font-size:12px;font-weight:600;color:${health.color}">${health.label}</div>
+        <div style="font-size:11px;color:var(--text3)">· santé du pipeline</div>
+      </div>
+    </div>
+    <p style="color:var(--text2);margin-bottom:20px">Cockpit de ta recherche produit — métriques live, blocants des critères Arthur, niches gagnantes</p>
 
     <div class="stats-row">
-      <div class="stat-card"><div class="stat-label">Sessions</div><div class="stat-value">${sessions}</div></div>
-      <div class="stat-card"><div class="stat-label">Produits analysés</div><div class="stat-value">${total}</div></div>
-      <div class="stat-card"><div class="stat-label">Retenus</div><div class="stat-value" style="color:var(--green)">${kept}</div><div class="stat-sub">${keepRate}% de sélection</div></div>
-      <div class="stat-card"><div class="stat-label">En attente</div><div class="stat-value" style="color:var(--blue)">${pend}</div></div>
-      <div class="stat-card"><div class="stat-label">Rejetés</div><div class="stat-value" style="color:var(--red)">${rej}</div></div>
+      <div class="stat-card has-spark">
+        <div class="stat-label">Sessions</div>
+        <div class="stat-value">${sessions}</div>
+        <div class="stat-spark">${sessionsSpark}</div>
+      </div>
+      <div class="stat-card has-spark">
+        <div class="stat-label">Produits analysés</div>
+        <div class="stat-value">${total}</div>
+        <div class="stat-sub">14j</div>
+        <div class="stat-spark">${productsSpark}</div>
+      </div>
+      <div class="stat-card has-spark">
+        <div class="stat-label">Retenus</div>
+        <div class="stat-value" style="color:var(--green)">${kept}</div>
+        <div class="stat-sub">${keepRate}% de sélection</div>
+        <div class="stat-spark">${keptSpark}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Vélocité 7j</div>
+        <div class="stat-value" style="color:var(--accent2)">${velocity7}</div>
+        ${velocityTrendCls === 'flat' && velocityDelta === 0
+          ? `<div class="stat-trend flat">stable</div>`
+          : `<div class="stat-trend ${velocityTrendCls}">${velocityTrendIco}${velocityDelta > 0 ? '+' : ''}${velocityDelta} vs 7j-1</div>`}
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">En attente</div>
+        <div class="stat-value" style="color:var(--blue)">${pend}</div>
+        <div class="stat-sub">${rej} rejetés</div>
+      </div>
+    </div>
+
+    <div class="card dash-wide">
+      <div class="an-h2"><span class="an-ico">${ico('chart',16)}</span>Vélocité — produits retenus / jour <span class="an-sub">14 derniers jours · pic ${velocityBest} · moy ${velocityAvg}/j</span></div>
+      ${velocityCounts.some(v => v > 0)
+        ? _an_velocityChartSvg(velocity)
+        : `<div class="an-empty">Pas encore de produit retenu sur les 14 derniers jours. Le graphique se remplit dès la première validation.</div>`}
+    </div>
+
+    <div class="dash-grid">
+      <div class="card">
+        <div class="an-h2"><span class="an-ico">${ico('target',16)}</span>Heatmap des 12 critères Arthur ${heatmap ? `<span class="an-sub">${heatmap.sample} produit${heatmap.sample > 1 ? 's' : ''} évalué${heatmap.sample > 1 ? 's' : ''}</span>` : ''}</div>
+        <p style="font-size:12px;color:var(--text3);margin:4px 0 0">Quel critère bloque le plus tes produits ? Vert ≥70% validés · rouge ≤30% (zone à challenger).</p>
+        ${_an_critHeatmapHtml(heatmap)}
+      </div>
+
+      <div class="card">
+        <div class="an-h2"><span class="an-ico">${ico('flame',16)}</span>Niches gagnantes <span class="an-sub">top 6 par retenus</span></div>
+        <p style="font-size:12px;color:var(--text3);margin:4px 0 0">Tes meilleurs terrains de chasse — où tu valides le plus de produits.</p>
+        ${_an_topNichesHtml(topNiches)}
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <div class="card">
+        <div class="an-h2"><span class="an-ico">${ico('layers',16)}</span>Funnel de validation <span class="an-sub">flux global</span></div>
+        ${_an_funnelHtml(pend, kept, rej)}
+      </div>
+
+      <div class="card">
+        <div class="an-h2"><span class="an-ico">${ico('spark',16)}</span>Distribution des scores <span class="an-sub">0 → 12 critères</span></div>
+        <p style="font-size:12px;color:var(--text3);margin:4px 0 0">Sur les produits que tu as évalués — où tombent les scores ?</p>
+        ${_an_scoreDistHtml(scoreDist)}
+      </div>
     </div>
 
     <div class="card">
-      <h2>Produits par session (10 dernières)</h2>
-      <div class="chart-wrap"><div class="chart">${chart || '<div class="empty" style="width:100%">Pas encore de données</div>'}</div></div>
+      <div class="an-h2"><span class="an-ico">${ico('trophy',16)}</span>Derniers produits retenus</div>
+      <div style="margin-top:8px">${recentHtml}</div>
+      ${recent.length ? `<div style="margin-top:12px"><a onclick="go({type:'kept'})" style="cursor:pointer">Voir tous les retenus →</a></div>` : ''}
     </div>
 
     <div class="card">
-      <h2>Derniers produits retenus</h2>
-      ${recentHtml}
-      ${recent.length ? `<div style="margin-top:12px"><a onclick="go({type:'kept'})" style="cursor:pointer">Voir tous →</a></div>` : ''}
-    </div>
-
-    <div class="card">
-      <h2>Actions rapides</h2>
-      <div class="row">
+      <div class="an-h2"><span class="an-ico">${ico('bolt',16)}</span>Actions rapides</div>
+      <div class="row" style="margin-top:10px">
         <button class="btn btn-primary" onclick="openSessionModal()">+ Nouvelle session</button>
         <button class="btn" onclick="openProductModal()">+ Nouveau produit</button>
         <button class="btn" onclick="exportAll()">Export JSON</button>
