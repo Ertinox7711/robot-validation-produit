@@ -3175,6 +3175,120 @@ small.muted { color: var(--text3); font-size: 11px; }
   .np-bucket-num { text-align: left; }
 }
 
+/* ═════════ SETUP BACKEND PAGE ═════════ */
+.setup-shell { max-width: 1100px; margin: 0 auto; padding: 0 4px 40px; }
+.setup-hero {
+  background: linear-gradient(135deg, rgba(34,211,238,0.10), rgba(139,92,246,0.08), rgba(34,197,94,0.06));
+  border: 1px solid rgba(34,211,238,0.30);
+  border-radius: 18px;
+  padding: 26px 28px;
+  margin-bottom: 18px;
+  position: relative;
+  overflow: hidden;
+}
+.setup-hero::before {
+  content: '';
+  position: absolute;
+  inset: -50px -50px auto auto;
+  width: 250px; height: 250px;
+  background: radial-gradient(circle, rgba(34,211,238,0.18), transparent 60%);
+  pointer-events: none;
+}
+.setup-hero-tag {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent2);
+  background: rgba(34,211,238,0.10);
+  border: 1px solid rgba(34,211,238,0.35);
+  border-radius: 999px;
+  padding: 4px 10px;
+  margin-bottom: 12px;
+}
+.setup-hero-title {
+  font-size: 26px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #67e8f9, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 8px;
+  line-height: 1.2;
+}
+.setup-hero-sub { font-size: 14px; color: var(--text2); line-height: 1.55; margin: 0; max-width: 720px; }
+.setup-hero-sub code {
+  background: rgba(0,0,0,0.30);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--accent2);
+}
+.setup-orb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+@keyframes setupPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.18); opacity: 0.7; }
+}
+.setup-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-top: 18px;
+}
+.setup-card {
+  background: rgba(255,255,255,0.025);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.setup-card:hover { border-color: rgba(34,211,238,0.30); transform: translateY(-1px); }
+.setup-card-h {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.setup-card-p {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.55;
+  margin: 0 0 10px;
+}
+.setup-card-p code {
+  background: rgba(0,0,0,0.30);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  color: var(--accent2);
+}
+.setup-details summary { list-style: none; }
+.setup-details summary::-webkit-details-marker { display: none; }
+.setup-details summary::before { content: '▶'; margin-right: 8px; font-size: 10px; color: var(--text3); }
+.setup-details[open] summary::before { content: '▼'; }
+.setup-details h4 { font-size: 13px; font-weight: 700; }
+.setup-details ol li, .setup-details ul li { margin-bottom: 5px; }
+.setup-details code {
+  background: rgba(0,0,0,0.30);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  color: var(--accent2);
+}
+@media (max-width: 760px) {
+  .setup-grid { grid-template-columns: 1fr; }
+  .setup-hero { padding: 20px 18px; }
+  .setup-hero-title { font-size: 22px; }
+}
+
 </style>
 </head>
 <body>
@@ -3211,7 +3325,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 
 <header>
   <button class="menu-toggle" aria-label="Ouvrir le menu" onclick="toggleSidebar()" title="Menu (sessions)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg></button>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.24.0-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.25.0-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -3590,14 +3704,30 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.24.0-beta';
-const APP_VERSION_NOTES = 'CLEANUP CLÉS SERPAPI — suppression totale du code SerpAPI (front + back) suite demande user explicite "enleve tout ce qui est cle api serp api". Front : virée la modale Settings de gestion des clés (champ principal + clés extra + bouton vérifier quota), retirées les fonctions getSerpKey/setSerpKey/getAllSerpKeys/getSerpKeysExtra/setSerpKeysExtra/fetchAccountQuota/checkSerpQuota/serpDirectFetch/_isQuotaErr/_serpFetchPair, retirée la constante SERPAPI_KEY_STORAGE, retiré window._deadKeys, retirée la mention codetabs proxy dans verifyAds. saveSettings remplacé par closeModal direct. La modale Settings affiche désormais "Mode scrape illimité (Bing FR + DuckDuckGo) - aucune clé requise" avec health-check live du backend (bouton "Re-vérifier le backend" → fetch /health → mode/cache_entries/cache_ttl_days affichés inline). serpFetch simplifié : appelle uniquement le backend local, throw une erreur claire avec instructions ("Lance python serp_scout.py") si offline (mobile/cloud). refreshDiscoverQuota refait pour afficher l\'état du backend local (Backend up + mode + cache_entries + TTL) au lieu des compteurs SerpAPI. runDiscover check SERP_LOCAL_ENDPOINT au lieu de getSerpKey, alert clair en mode web. verifyAds : si pas de backend local, propose juste un lien externe vers adstransparency.google.com (au lieu d\'utiliser une clé user). Command palette : hint mis à jour de "Clé SerpAPI, sync" → "Backend SERP, sync". Back-end serp_scout.py : retirées USE_SERPAPI_FALLBACK, _load_serpapi_keys(), SERPAPI_KEYS, _dead_serpapi_keys, _serpapi_call(), _shopping_serpapi_fallback(), tous les blocs `if USE_SERPAPI_FALLBACK and SERPAPI_KEYS` dans fetch_search/fetch_shopping/verify_ads/quota_summary/main. /health renvoie maintenant {mode:"scrape", primary_source:"bing_fr", fallback_source:"duckduckgo"}. /quota simplifié à un dict immuable {mode:"scrape", unlimited:true, total_searches_left:-1}. verify_ads : best-effort 100% scrape Bing site:operator (la donnée est moins riche que SerpAPI, on l\'accepte). Header docstring du fichier mis à jour (v3, "Tout le code SerpAPI a ete retire en v0.24"). MÉTRIQUE ALGO : 0 clé API à entrer/gérer (avant : 1 principale + N extras dans Settings) · 0€ vs ~50€/mois SerpAPI · illimité vs 250 req/clé/mois · ~150 lignes de code mort viréees du HTML (~7720→7715), ~110 lignes viréees du Python (~700→~590 lignes). PARI : code base nettoyé, plus aucune surface d\'attaque côté clés, plus aucun chemin "fallback" qui pourrait surprendre l\'user en re-tirant une vieille clé d\'un localStorage. Le backend local serp_scout.py (Bing FR + DuckDuckGo) est désormais le SEUL chemin pour la recherche auto et les scans SERP. AUTO-SCORE 8/12 CRITÈRES ARTHUR (Z1 SKILL.md) — l\'algo coche maintenant en local jusqu\'à 8 critères sur 12 depuis les données déjà connues (prix achat/vente, volume mensuel, CPC, niche, scan SERP) au lieu de seulement 3 (c2/c5/c12 via SERP autoChecks). Helper window._autoScoreCriteres(p) retourne {auto, reasons} chiffrés par critère ; window.applyAutoScoreCriteres(p) applique en respectant les choix manuels user (p.criteres_auto track ce qui vient de l\'algo, jamais d\'override sur un critère que l\'user a coché lui-même). Bouton "Auto-scorer (algo)" sur la grille critères + auto-trigger après chaque scan SERP. Badge "ALGO" cyan sur chaque critère auto-rempli avec raison chiffrée italique en sous-ligne. Critères couverts : C1 Marge ×3 (depuis calcMarge ratio ≥3), C2 Concurrence (organic+ads+shopping), C3 Volume+CPA (≥15k OU 5-15k si prix ≥1500€ + CPA viable), C4 Précision niche (depuis _npPrecisionScore : ≥60 valide, <40 refus), C5 Pas d\'institutionnels top 3 (depuis SERP), C6 Marque autour (top 3 organique 0 institutionnel), C8 Besoin d\'expert (forums/blogs/Reddit/YouTube ≥2 dans top 10), C9 Cycle court (prix <300€ Arthur ; >800€ = frein), C12 Search ads (ads ou shopping ≥5). Restent en jugement humain : C7 sourcing, C10 recherche marque, C11 mot-clé non précis. Toggle manuel (toggleCritere/guidedSet) supprime automatiquement le tag p.criteres_auto[cid] — l\'user reprend la main. Note traçabilité auto-écrite dans p.notes au premier auto-score : "[Auto-score algo · DD/MM/YYYY] N/12 critères calculés (X validés, Y manqués) · Z appliqués, W préservés". MÉTRIQUE ALGORITHMIQUE AVANT/APRÈS : produit complet (prix+volume+CPC+SERP scan) → 3/12 auto avant → 9/12 auto après (×3 couverture) ; produit minimal (prix+nom seul) → 0/12 avant → 3/12 après (c1+c4+c9 calculables sans SERP). Test e2e sur 4 cas synthétiques : produit idéal (Aspirateur robot piscine 199€/45€/vol 25k/SERP propre) → 8 validés ✓ + 1 manqué (CPA juste au-dessus) sur 9 calculables. Produit toxique (Canapé 1200€/600€/vol 8k/top 3 institutionnels) → 7 manqués ✓ + 2 validés sur 9 calculables (l\'algo refuse correctement). Idempotent : 2e run = 0 applied / 7 kept / 0 skipped. Préservation user : si user a coché c1=false manuellement, l\'auto-score ne réécrit jamais c1. PARI : transfert de 5 critères de travail manuel (10min de coches) vers 1 clic algo (0,1ms). L\'app passe de "scoreur passif où l\'user remplit la grille" à "moteur d\'inférence Arthur où l\'user valide ce qui demande jugement". BACKEND ILLIMITÉ SANS CLÉ API — refonte complète de serp_scout.py qui pivote du SerpAPI payant (limite mensuelle ~250 req/clé) vers du scraping direct Bing FR + DuckDuckGo, illimité et gratuit. Test E2E validé : aspirateur robot xiaomi → organic 10/10, ads 2 (récupérés via buyer-intent suffix retry " acheter"/" prix"), shopping 20/20 avec prix moyen 347€, autoChecks c2/c12 = TRUE, cache 30j hit en 10ms vs 10s pour cold. Pipeline : urllib stdlib + UA rotation 6 desktop FR + cookies CONSENT pré-acceptés + throttle 1.5s/req Bing + retry backoff 8-30s sur 429. Source primaire Bing FR (HTML statique propre, classes stables b_algo / b_ad / br-gOffCard depuis 2018) car Google direct bloque toute requête sans JS (page enablejs au lieu de SERP). DuckDuckGo HTML en fallback (organic only, jamais bloqué). SerpAPI conservé en fallback ultime opt-in via .serp_env USE_SERPAPI_FALLBACK=1 (utile pour Google Shopping carousels exacts). Décodage URLs Bing en double-pass : base64-url-safe (avec strip prefix "a1") puis URL-decode (Bing wrappe les liens dans bing.com/ck/a?u=BASE64URL et la chaîne décodée est elle-même URL-encodée). Cache TTL 30 jours (vs 24h avant) — divise le volume de requêtes effectives par 30+ pour les rescans. PARI : on supprime totalement la dépendance SerpAPI payante (qui plafonnait à 250 req/clé/mois) au profit d\'un backend zéro-coût zéro-clé-api avec parité fonctionnelle 90% sur Arthur (organic + shopping carousel + auto-checks c2/c5/c12). Si Bing change son DOM, fallback DDG garde l\'organic ; si DDG bloque, fallback SerpAPI ultime garde la parité. PRÉCISION NICHE — règle Arthur n°3 (jamais généraliste) encodée en feature active. Score 0-100 par produit, badge live sur chaque fiche, comparateur de variantes plus niches qui génère 8 alternatives en 1 clic, vue cockpit cross-portefeuille (distribution 4 verdicts, top mots généralistes à virer, podium ULTRA-PRÉCIS, tableau de correction par urgence). Listes statiques curées depuis transcripts Skool c4_precis_niche + c11_motcle_non_precis + tableau_recherche : ~100 mots généralistes français + ~130 modifieurs catégorisés (style/matière/usage/dimension/audience). Score composite : longueur du nom (≥4 mots +20, 3 mots +5, ≤2 mots -18 à -35) + modifieurs trouvés (+12/modif, max +60) + niche déclarée précise (+10 si ≥3 mots) avec plafond automatique si mot généraliste détecté sans modifieur (≤25 = REFUS). 4 verdicts : NICHE ULTRA-PRÉCISE ≥80 vert / PRÉCISE 60-79 cyan / À AFFINER 40-59 jaune / GÉNÉRALISTE — REFUS <40 rouge. Badge sur fiche produit (onglet Infos) avec orb 64px + verdict coloré + 3 raisons chiffrées + bouton "Générer variantes plus niches" en CTA gradient violet/fuchsia. Modale comparateur 8 cards : nom variante + score + verdict pill + chips modifieurs colorisés par catégorie + bouton "Explorer cette variante" qui crée un nouveau produit pré-rempli dans la session courante (variante + niche héritée + note traçabilité). Variantes générées par 8 templates déterministes (seed = hash du nom+niche, donc même input → même suggestions reproductibles) qui combinent style×dimension, usage×matière, style×matière, usage×audience, dimension×style, matière×usage, style×audience, usage×dimension. Nouvelle vue sidebar "Précision Niche" entre Pipeline et Recherche auto (icône target violet, badge live "X à virer" en violet/fuchsia). Hero gradient violet/fuchsia/cyan + bandeau 2 règles non-négo (Précis ≥3 mots+modifieurs / Refus mot généraliste seul) + lien Tunnel. Cockpit 2 cols : orb 160px score moyen pipeline (label adaptatif Excellent/Précis/Mitigé/Trop généraliste) + distribution 4 buckets en barres horizontales colorisées (vert/cyan/jaune/rouge). 2 cards : Top 10 mots généralistes les plus fréquents avec compteur (à virer en priorité), Podium ULTRA-PRÉCIS top 10 (à pousser, cliquable). Tableau de correction par urgence : 24 produits classés du plus généraliste au plus précis avec score colorisé, verdict pill, mot généraliste flag rouge, chips modifieurs (max 2 par catégorie), longueur du nom — clique une ligne pour ouvrir la fiche. Helpers exposés window._npPrecisionScore, _npGenerateVariants, _npGeneralistCount, openNpVariantsModal, npExploreVariant, renderNichePrecision. Command palette enrichie (nav.niche). PARI : aucun SaaS de validation produit (Sell The Trend, Niche Scraper, Ecomhunt, Minea, Helium 10) ne challenge la précision du nom contre une méthode propriétaire et ne propose des variantes plus niches en 1 clic. La Précision Niche fait passer l\'app de "scoreur passif" à "coach actif qui refuse le travail mal fait". 4e jambe du tabouret Google Ads-first, complète Simulateur (leviers), Radar (concurrence) et Pipeline (santé) en couvrant le INPUT (qualité du produit dès l\'ajout). Audit conforme post v0.17 : zéro IA ajoutée (listes statiques curées, pas de LLM), zéro gamification, calcul local sur state.products, exploite la formation Skool transcrite (déjà payée). Axe GOOGLE ADS-INTELLIGENCE (axe 1 SKILL.md), couvre directement la 3e règle non-négociable Arthur sous-exploitée jusqu\'ici.';
+const APP_VERSION = '0.25.0-beta';
+const APP_VERSION_NOTES = 'PAGE SETUP BACKEND — nouvelle vue sidebar entre Précision Niche et Recherche auto (icône bolt cyan, badge live "up"/"down" qui poll /health toutes les 3s ou 8s selon état). 4 cards d\'action : (1) chemin du projet (input prefilled depuis localStorage `projectPath`, defaut "C:\\Users\\maths\\Documents\\recherche produit"), (2) bouton "Télécharger launch_backend.bat" qui génère un .bat client-side avec UTF-8 BOM (29 lignes : cd /d, where python, check serp_scout.py existe, python serp_scout.py + pause), (3) bouton "Télécharger install_autostart.bat" qui génère un .bat (27 lignes) qui crée RobotValidation_Backend.bat dans %APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup (auto-démarrage Windows session), (4) bouton "Stopper" qui appelle l\'endpoint /shutdown nouvellement ajouté côté backend (5 lignes Python : threading + os._exit pour kill propre vs sys.exit qui peut être intercepté par ThreadingHTTPServer). Hero gradient cyan/violet/vert avec orb live 28px conique qui pulse toutes les 1.6s (vert si up, rouge si down, cyan si vérification). Status box live qui re-render uniquement la zone (pas full page) pour ne pas casser le focus de l\'input path. Helpers exposés window._backendUp / window._backendInfo / window._setupPing / window._setupRefreshBadge / setupDownloadLauncher / setupDownloadAutostart / setupShutdownBackend / renderSetup. Polling auto au boot via setTimeout(_setupPollLoop, 800) qui ping /health, met à jour le badge sidebar en couleur (vert "up" / rouge "down" / cyan "?") et re-render la page si on est dessus. Section "Première installation : prérequis Python + dépannage" en <details> collapsible avec instructions install Python + lien python.org + 5 cas de dépannage (Python introuvable, serp_scout.py introuvable, port 7789 occupé, statut reste rouge, désinstaller). Génération .bat utilise Blob + URL.createObjectURL + a.download (zéro dépendance, zéro backend, fonctionne offline). 2 nouvelles icônes ajoutées au registre ICONS (download flèche vers le bas, alert triangle warning). Command palette enrichie avec entrée "nav.setup" (icône bolt, hint "Lancer / installer / redémarrer serp_scout.py · auto-start Windows", kw setup backend python launcher autostart demarrer relancer shutdown). PARI : transformer la friction "tu dois ouvrir un terminal et taper python serp_scout.py" en "1 clic dans le site → 1 double-clic sur le .bat téléchargé → backend up". Avec auto-start installé une seule fois, friction tombe à zéro (backend démarre tout seul à chaque ouverture session Windows). Le bouton Stopper + auto-start = redémarrage à distance depuis le site (puisque shell:startup relance après /shutdown). MÉTRIQUE : 0 ligne CMD à taper pour l\'user (avant : "cd C:\\... && python serp_scout.py" à mémoriser et retaper) · 1 setup unique pour avoir un backend qui démarre tout seul · status visible en permanence (badge sidebar) au lieu de "j\'espère que ça tourne". Limitations honnêtes : navigateur ne peut PAS exécuter directement un .py (sandbox), donc on passe par .bat téléchargé + double-clic — c\'est le compromis le plus simple sans installer un protocole custom Windows. CLEANUP CLÉS SERPAPI — suppression totale du code SerpAPI (front + back) suite demande user explicite "enleve tout ce qui est cle api serp api". — suppression totale du code SerpAPI (front + back) suite demande user explicite "enleve tout ce qui est cle api serp api". Front : virée la modale Settings de gestion des clés (champ principal + clés extra + bouton vérifier quota), retirées les fonctions getSerpKey/setSerpKey/getAllSerpKeys/getSerpKeysExtra/setSerpKeysExtra/fetchAccountQuota/checkSerpQuota/serpDirectFetch/_isQuotaErr/_serpFetchPair, retirée la constante SERPAPI_KEY_STORAGE, retiré window._deadKeys, retirée la mention codetabs proxy dans verifyAds. saveSettings remplacé par closeModal direct. La modale Settings affiche désormais "Mode scrape illimité (Bing FR + DuckDuckGo) - aucune clé requise" avec health-check live du backend (bouton "Re-vérifier le backend" → fetch /health → mode/cache_entries/cache_ttl_days affichés inline). serpFetch simplifié : appelle uniquement le backend local, throw une erreur claire avec instructions ("Lance python serp_scout.py") si offline (mobile/cloud). refreshDiscoverQuota refait pour afficher l\'état du backend local (Backend up + mode + cache_entries + TTL) au lieu des compteurs SerpAPI. runDiscover check SERP_LOCAL_ENDPOINT au lieu de getSerpKey, alert clair en mode web. verifyAds : si pas de backend local, propose juste un lien externe vers adstransparency.google.com (au lieu d\'utiliser une clé user). Command palette : hint mis à jour de "Clé SerpAPI, sync" → "Backend SERP, sync". Back-end serp_scout.py : retirées USE_SERPAPI_FALLBACK, _load_serpapi_keys(), SERPAPI_KEYS, _dead_serpapi_keys, _serpapi_call(), _shopping_serpapi_fallback(), tous les blocs `if USE_SERPAPI_FALLBACK and SERPAPI_KEYS` dans fetch_search/fetch_shopping/verify_ads/quota_summary/main. /health renvoie maintenant {mode:"scrape", primary_source:"bing_fr", fallback_source:"duckduckgo"}. /quota simplifié à un dict immuable {mode:"scrape", unlimited:true, total_searches_left:-1}. verify_ads : best-effort 100% scrape Bing site:operator (la donnée est moins riche que SerpAPI, on l\'accepte). Header docstring du fichier mis à jour (v3, "Tout le code SerpAPI a ete retire en v0.24"). MÉTRIQUE ALGO : 0 clé API à entrer/gérer (avant : 1 principale + N extras dans Settings) · 0€ vs ~50€/mois SerpAPI · illimité vs 250 req/clé/mois · ~150 lignes de code mort viréees du HTML (~7720→7715), ~110 lignes viréees du Python (~700→~590 lignes). PARI : code base nettoyé, plus aucune surface d\'attaque côté clés, plus aucun chemin "fallback" qui pourrait surprendre l\'user en re-tirant une vieille clé d\'un localStorage. Le backend local serp_scout.py (Bing FR + DuckDuckGo) est désormais le SEUL chemin pour la recherche auto et les scans SERP. AUTO-SCORE 8/12 CRITÈRES ARTHUR (Z1 SKILL.md) — l\'algo coche maintenant en local jusqu\'à 8 critères sur 12 depuis les données déjà connues (prix achat/vente, volume mensuel, CPC, niche, scan SERP) au lieu de seulement 3 (c2/c5/c12 via SERP autoChecks). Helper window._autoScoreCriteres(p) retourne {auto, reasons} chiffrés par critère ; window.applyAutoScoreCriteres(p) applique en respectant les choix manuels user (p.criteres_auto track ce qui vient de l\'algo, jamais d\'override sur un critère que l\'user a coché lui-même). Bouton "Auto-scorer (algo)" sur la grille critères + auto-trigger après chaque scan SERP. Badge "ALGO" cyan sur chaque critère auto-rempli avec raison chiffrée italique en sous-ligne. Critères couverts : C1 Marge ×3 (depuis calcMarge ratio ≥3), C2 Concurrence (organic+ads+shopping), C3 Volume+CPA (≥15k OU 5-15k si prix ≥1500€ + CPA viable), C4 Précision niche (depuis _npPrecisionScore : ≥60 valide, <40 refus), C5 Pas d\'institutionnels top 3 (depuis SERP), C6 Marque autour (top 3 organique 0 institutionnel), C8 Besoin d\'expert (forums/blogs/Reddit/YouTube ≥2 dans top 10), C9 Cycle court (prix <300€ Arthur ; >800€ = frein), C12 Search ads (ads ou shopping ≥5). Restent en jugement humain : C7 sourcing, C10 recherche marque, C11 mot-clé non précis. Toggle manuel (toggleCritere/guidedSet) supprime automatiquement le tag p.criteres_auto[cid] — l\'user reprend la main. Note traçabilité auto-écrite dans p.notes au premier auto-score : "[Auto-score algo · DD/MM/YYYY] N/12 critères calculés (X validés, Y manqués) · Z appliqués, W préservés". MÉTRIQUE ALGORITHMIQUE AVANT/APRÈS : produit complet (prix+volume+CPC+SERP scan) → 3/12 auto avant → 9/12 auto après (×3 couverture) ; produit minimal (prix+nom seul) → 0/12 avant → 3/12 après (c1+c4+c9 calculables sans SERP). Test e2e sur 4 cas synthétiques : produit idéal (Aspirateur robot piscine 199€/45€/vol 25k/SERP propre) → 8 validés ✓ + 1 manqué (CPA juste au-dessus) sur 9 calculables. Produit toxique (Canapé 1200€/600€/vol 8k/top 3 institutionnels) → 7 manqués ✓ + 2 validés sur 9 calculables (l\'algo refuse correctement). Idempotent : 2e run = 0 applied / 7 kept / 0 skipped. Préservation user : si user a coché c1=false manuellement, l\'auto-score ne réécrit jamais c1. PARI : transfert de 5 critères de travail manuel (10min de coches) vers 1 clic algo (0,1ms). L\'app passe de "scoreur passif où l\'user remplit la grille" à "moteur d\'inférence Arthur où l\'user valide ce qui demande jugement". BACKEND ILLIMITÉ SANS CLÉ API — refonte complète de serp_scout.py qui pivote du SerpAPI payant (limite mensuelle ~250 req/clé) vers du scraping direct Bing FR + DuckDuckGo, illimité et gratuit. Test E2E validé : aspirateur robot xiaomi → organic 10/10, ads 2 (récupérés via buyer-intent suffix retry " acheter"/" prix"), shopping 20/20 avec prix moyen 347€, autoChecks c2/c12 = TRUE, cache 30j hit en 10ms vs 10s pour cold. Pipeline : urllib stdlib + UA rotation 6 desktop FR + cookies CONSENT pré-acceptés + throttle 1.5s/req Bing + retry backoff 8-30s sur 429. Source primaire Bing FR (HTML statique propre, classes stables b_algo / b_ad / br-gOffCard depuis 2018) car Google direct bloque toute requête sans JS (page enablejs au lieu de SERP). DuckDuckGo HTML en fallback (organic only, jamais bloqué). SerpAPI conservé en fallback ultime opt-in via .serp_env USE_SERPAPI_FALLBACK=1 (utile pour Google Shopping carousels exacts). Décodage URLs Bing en double-pass : base64-url-safe (avec strip prefix "a1") puis URL-decode (Bing wrappe les liens dans bing.com/ck/a?u=BASE64URL et la chaîne décodée est elle-même URL-encodée). Cache TTL 30 jours (vs 24h avant) — divise le volume de requêtes effectives par 30+ pour les rescans. PARI : on supprime totalement la dépendance SerpAPI payante (qui plafonnait à 250 req/clé/mois) au profit d\'un backend zéro-coût zéro-clé-api avec parité fonctionnelle 90% sur Arthur (organic + shopping carousel + auto-checks c2/c5/c12). Si Bing change son DOM, fallback DDG garde l\'organic ; si DDG bloque, fallback SerpAPI ultime garde la parité. PRÉCISION NICHE — règle Arthur n°3 (jamais généraliste) encodée en feature active. Score 0-100 par produit, badge live sur chaque fiche, comparateur de variantes plus niches qui génère 8 alternatives en 1 clic, vue cockpit cross-portefeuille (distribution 4 verdicts, top mots généralistes à virer, podium ULTRA-PRÉCIS, tableau de correction par urgence). Listes statiques curées depuis transcripts Skool c4_precis_niche + c11_motcle_non_precis + tableau_recherche : ~100 mots généralistes français + ~130 modifieurs catégorisés (style/matière/usage/dimension/audience). Score composite : longueur du nom (≥4 mots +20, 3 mots +5, ≤2 mots -18 à -35) + modifieurs trouvés (+12/modif, max +60) + niche déclarée précise (+10 si ≥3 mots) avec plafond automatique si mot généraliste détecté sans modifieur (≤25 = REFUS). 4 verdicts : NICHE ULTRA-PRÉCISE ≥80 vert / PRÉCISE 60-79 cyan / À AFFINER 40-59 jaune / GÉNÉRALISTE — REFUS <40 rouge. Badge sur fiche produit (onglet Infos) avec orb 64px + verdict coloré + 3 raisons chiffrées + bouton "Générer variantes plus niches" en CTA gradient violet/fuchsia. Modale comparateur 8 cards : nom variante + score + verdict pill + chips modifieurs colorisés par catégorie + bouton "Explorer cette variante" qui crée un nouveau produit pré-rempli dans la session courante (variante + niche héritée + note traçabilité). Variantes générées par 8 templates déterministes (seed = hash du nom+niche, donc même input → même suggestions reproductibles) qui combinent style×dimension, usage×matière, style×matière, usage×audience, dimension×style, matière×usage, style×audience, usage×dimension. Nouvelle vue sidebar "Précision Niche" entre Pipeline et Recherche auto (icône target violet, badge live "X à virer" en violet/fuchsia). Hero gradient violet/fuchsia/cyan + bandeau 2 règles non-négo (Précis ≥3 mots+modifieurs / Refus mot généraliste seul) + lien Tunnel. Cockpit 2 cols : orb 160px score moyen pipeline (label adaptatif Excellent/Précis/Mitigé/Trop généraliste) + distribution 4 buckets en barres horizontales colorisées (vert/cyan/jaune/rouge). 2 cards : Top 10 mots généralistes les plus fréquents avec compteur (à virer en priorité), Podium ULTRA-PRÉCIS top 10 (à pousser, cliquable). Tableau de correction par urgence : 24 produits classés du plus généraliste au plus précis avec score colorisé, verdict pill, mot généraliste flag rouge, chips modifieurs (max 2 par catégorie), longueur du nom — clique une ligne pour ouvrir la fiche. Helpers exposés window._npPrecisionScore, _npGenerateVariants, _npGeneralistCount, openNpVariantsModal, npExploreVariant, renderNichePrecision. Command palette enrichie (nav.niche). PARI : aucun SaaS de validation produit (Sell The Trend, Niche Scraper, Ecomhunt, Minea, Helium 10) ne challenge la précision du nom contre une méthode propriétaire et ne propose des variantes plus niches en 1 clic. La Précision Niche fait passer l\'app de "scoreur passif" à "coach actif qui refuse le travail mal fait". 4e jambe du tabouret Google Ads-first, complète Simulateur (leviers), Radar (concurrence) et Pipeline (santé) en couvrant le INPUT (qualité du produit dès l\'ajout). Audit conforme post v0.17 : zéro IA ajoutée (listes statiques curées, pas de LLM), zéro gamification, calcul local sur state.products, exploite la formation Skool transcrite (déjà payée). Axe GOOGLE ADS-INTELLIGENCE (axe 1 SKILL.md), couvre directement la 3e règle non-négociable Arthur sous-exploitée jusqu\'ici.';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.25.0-beta', date: '2026-04-27', time: '15:55', source: 'algo',
+    summary: 'PAGE SETUP BACKEND — nouvelle vue sidebar avec status live + générateur de launch_backend.bat + auto-start Windows + bouton Stopper',
+    items: [
+      {type:'feat', text:'Nouvelle vue sidebar "Setup backend" (icône bolt cyan, entre Précision Niche et Recherche auto). Badge live "up"/"down"/"?" qui poll /health toutes les 3s (down) ou 8s (up). Couleurs adaptatives (vert/rouge/cyan).'},
+      {type:'feat', text:'Hero gradient cyan/violet/vert avec orb live 28px conique qui pulse toutes les 1.6s. Couleur de l\'orb = état du backend (vert up / rouge down / cyan vérification). Status box re-render isolée (pas full page) pour ne pas casser le focus de l\'input path.'},
+      {type:'feat', text:'Card "Chemin du projet" : input pre-filled depuis localStorage `projectPath` (défaut "C:\\Users\\maths\\Documents\\recherche produit"). Persisté à chaque oninput.'},
+      {type:'feat', text:'Card "Lancer le backend" : bouton "Télécharger launch_backend.bat". Génère un .bat client-side avec UTF-8 BOM (29 lignes : cd /d <path>, where python, check serp_scout.py existe, python serp_scout.py + pause sur erreur). Pas de dépendance externe — Blob + URL.createObjectURL + a.download.'},
+      {type:'feat', text:'Card "Auto-démarrage Windows" : bouton "Télécharger install_autostart.bat". Génère un .bat (27 lignes) qui crée RobotValidation_Backend.bat dans %APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup. Une fois installé, le backend démarre automatiquement à chaque ouverture de session Windows.'},
+      {type:'feat', text:'Card "Redémarrer après mise à jour" : bouton "Stopper" qui appelle l\'endpoint /shutdown nouvellement ajouté côté backend Python. Si auto-start est installé, le backend redémarre tout seul → redémarrage à distance depuis le site sans intervention user.'},
+      {type:'feat', text:'Backend serp_scout.py : nouvel endpoint /shutdown qui répond {ok:true, msg:"shutting down in 1s"} puis lance un thread daemon qui sleep 1s + os._exit(0). os._exit garantit la sortie immédiate (vs sys.exit qui peut être intercepté par ThreadingHTTPServer). Sécurisé par le bind 127.0.0.1 (pas accessible depuis l\'extérieur).'},
+      {type:'feat', text:'Section "Première installation : prérequis Python + dépannage" en <details> collapsible. Guide install Python avec lien python.org/downloads + 5 cas de dépannage (Python introuvable, serp_scout.py introuvable, port 7789 occupé, statut reste rouge, comment désinstaller).'},
+      {type:'feat', text:'Helpers exposés : window._backendUp (true/false/null), window._backendInfo (dict /health), _setupPing (poll), _setupRefreshBadge, setupDownloadLauncher, setupDownloadAutostart, setupShutdownBackend, renderSetup. Polling auto au boot via setTimeout(_setupPollLoop, 800).'},
+      {type:'feat', text:'2 nouvelles icônes ajoutées au registre ICONS : download (flèche vers le bas) et alert (triangle warning).'},
+      {type:'feat', text:'Command palette enrichie avec entrée "nav.setup" (icône bolt, hint "Lancer / installer / redémarrer serp_scout.py · auto-start Windows").'},
+      {type:'feat', text:'PARI : transformer la friction "tu dois ouvrir un terminal et taper python serp_scout.py" en "1 clic dans le site → 1 double-clic sur le .bat téléchargé → backend up". Avec auto-start installé une seule fois, friction tombe à zéro (backend démarre seul à chaque session). Le bouton Stopper + auto-start = redémarrage à distance complet depuis le site. MÉTRIQUE : 0 ligne CMD à taper pour l\'user (avant : "cd C:\\... && python serp_scout.py" à mémoriser) · 1 setup unique pour avoir un backend auto-started · status visible permanent (badge sidebar) au lieu de "j\'espère que ça tourne". Limitations honnêtes : navigateur ne peut PAS exécuter directement un .py (sandbox), passage obligé par .bat téléchargé + double-clic.'},
+    ]},
   { v: '0.24.0-beta', date: '2026-04-27', time: '15:35', source: 'algo',
     summary: 'CLEANUP CLÉS SERPAPI — suppression totale du code SerpAPI (front + back) · backend 100% scrape Bing FR + DDG · zéro clé à gérer',
     items: [
@@ -3957,7 +4087,9 @@ const ICONS = {
   medal: '<path d="M12 13a4 4 0 1 1 0 8 4 4 0 0 1 0-8zm0 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 2h10l-1.6 6.4A6 6 0 1 0 8.6 8.4L7 2zm2.6 2 .9 3.6a4 4 0 0 1 3 0L14.4 4H9.6z"/>',
   sword: '<path d="M14.5 2.5 21 9l-2 2-1.5-1.5-7.5 7.5L8 19h-2v-2l1-1.5L14.5 8 13 6.5l1.5-4zM7 17l1.5 1.5L4 23l-2-2 4.5-4.5L7 17z"/>',
   crown: '<path d="M2 7l4 4 6-7 6 7 4-4-2 12H4L2 7zm3 13h14v2H5v-2z"/>',
-  sliders: '<path d="M3 17v2h6v-2H3zm0-7v2h10v-2H3zm0-7v2h14V3H3zm14 18v-2h4v-2h-4v-2h-2v6h2zm-7-7v-2h4V8h-4V6H8v6h2zm-4-2v2h4V8H6z"/>'
+  sliders: '<path d="M3 17v2h6v-2H3zm0-7v2h10v-2H3zm0-7v2h14V3H3zm14 18v-2h4v-2h-4v-2h-2v6h2zm-7-7v-2h4V8h-4V6H8v6h2zm-4-2v2h4V8H6z"/>',
+  download: '<path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z" transform="rotate(180 12 11)"/>',
+  alert: '<path d="M12 2 1 21h22L12 2zm0 6 7.5 13h-15L12 8zm-1 4v4h2v-4h-2zm0 5v2h2v-2h-2z"/>'
 };
 function ico(name, size) {
   const sz = size || 16;
@@ -4020,6 +4152,10 @@ function renderSidebar() {
       </div>
       <div class="nav-item" onclick="openDiscoverModal()" style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(217,70,239,0.06));border:1px solid rgba(139,92,246,0.25);">
         <span class="icon">${ico('search',16)}</span><span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:600">Recherche auto</span>
+      </div>
+      <div class="nav-item ${currentView.type==='setup'?'active':''}" onclick="go({type:'setup'})">
+        <span class="icon" style="color:#22d3ee">${ico('bolt',16)}</span><span>Setup backend</span>
+        <span class="count" id="setupNavBadge" style="background:rgba(34,211,238,0.18);color:#67e8f9;border:1px solid rgba(34,211,238,0.40)">${(window._backendUp===true?'up':window._backendUp===false?'down':'?')}</span>
       </div>
       <div class="nav-item" onclick="openSettingsPrefilled()">
         <span class="icon">${ico('gear',16)}</span><span>Paramètres</span>
@@ -4234,6 +4370,7 @@ function renderMain() {
   else if (currentView.type === 'radar') m.innerHTML = renderRadarComp();
   else if (currentView.type === 'pipeline') m.innerHTML = renderPipeline();
   else if (currentView.type === 'niche') m.innerHTML = renderNichePrecision();
+  else if (currentView.type === 'setup') m.innerHTML = renderSetup();
   else if (currentView.type === 'help') m.innerHTML = renderHelp();
   else if (currentView.type === 'formation') m.innerHTML = renderFormation(currentView.lesson);
   else if (currentView.type === 'changelog') m.innerHTML = renderChangelog();
@@ -7760,6 +7897,262 @@ async function checkBackendStatus() {
   }
 }
 
+/* ═════════ SETUP BACKEND (page guidée + launchers .bat + status live) ═════════
+   Page sidebar qui répond à 4 besoins :
+   1. Ai-je le backend qui tourne ? (orb live + polling /health 3s)
+   2. Comment le lancer ? → bouton qui télécharge launch_backend.bat
+   3. Comment l'avoir auto-démarré avec Windows ? → install_autostart.bat
+   4. Comment le redémarrer après une mise à jour ? → bouton qui call /shutdown
+      puis attend que le polling re-détecte (auto-start le relance).
+   Toutes les actions se passent côté navigateur sauf l'exécution du .bat —
+   sandbox du browser oblige, l'user double-clique le .bat téléchargé.
+*/
+window._backendUp = null;
+window._backendInfo = null;
+
+async function _setupPing() {
+  if (!SERP_LOCAL_ENDPOINT) { window._backendUp = false; return null; }
+  try {
+    const r = await fetch(SERP_LOCAL_ENDPOINT + '/health', { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    window._backendUp = true;
+    window._backendInfo = d;
+    return d;
+  } catch(e) {
+    window._backendUp = false;
+    window._backendInfo = null;
+    return null;
+  }
+}
+
+function _setupRefreshBadge() {
+  const b = document.getElementById('setupNavBadge');
+  if (b) {
+    const v = window._backendUp;
+    b.textContent = v === true ? 'up' : v === false ? 'down' : '?';
+    b.style.background = v === true ? 'rgba(34,197,94,0.18)' : v === false ? 'rgba(248,113,113,0.18)' : 'rgba(34,211,238,0.18)';
+    b.style.color = v === true ? '#86efac' : v === false ? '#fca5a5' : '#67e8f9';
+    b.style.border = v === true ? '1px solid rgba(34,197,94,0.40)' : v === false ? '1px solid rgba(248,113,113,0.40)' : '1px solid rgba(34,211,238,0.40)';
+  }
+}
+
+async function _setupPollLoop() {
+  await _setupPing();
+  _setupRefreshBadge();
+  if (currentView && currentView.type === 'setup') _setupRefreshPage();
+  setTimeout(_setupPollLoop, window._backendUp === true ? 8000 : 3000);
+}
+// Boot le poll au chargement initial (best-effort)
+setTimeout(_setupPollLoop, 800);
+
+const PROJECT_PATH_KEY = 'projectPath';
+function _setupGetProjectPath() {
+  return localStorage.getItem(PROJECT_PATH_KEY) || 'C:\\Users\\maths\\Documents\\recherche produit';
+}
+function _setupSaveProjectPath(p) {
+  if (p && p.trim()) localStorage.setItem(PROJECT_PATH_KEY, p.trim());
+}
+
+function _setupGenLauncherBat(projectPath) {
+  const path = (projectPath || '').replace(/\//g, '\\').replace(/[\r\n]/g,'').trim();
+  return [
+    '@echo off',
+    'title Robot Validation Backend (serp_scout.py)',
+    'echo ============================================',
+    'echo  Robot Validation Produit - SERP Scout v3',
+    'echo ============================================',
+    'echo.',
+    path ? `cd /d "${path}"` : 'cd /d "%~dp0"',
+    'where python >nul 2>&1',
+    'if errorlevel 1 (',
+    '  echo [ERREUR] Python n est pas installe ou pas dans le PATH.',
+    '  echo Telecharge Python : https://www.python.org/downloads/',
+    '  echo Coche "Add Python to PATH" lors de l installation.',
+    '  pause',
+    '  exit /b 1',
+    ')',
+    'if not exist "serp_scout.py" (',
+    '  echo [ERREUR] serp_scout.py introuvable dans %CD%',
+    '  echo Verifie que le dossier projet est bien : %CD%',
+    '  echo Si besoin, edite le chemin "cd /d" dans ce launcher.',
+    '  pause',
+    '  exit /b 1',
+    ')',
+    'echo Backend en cours d execution sur http://localhost:7789',
+    'echo Ferme cette fenetre pour stopper le backend.',
+    'echo.',
+    'python serp_scout.py',
+    'echo.',
+    'echo Le backend s est arrete. Tape une touche pour fermer.',
+    'pause >nul'
+  ].join('\r\n');
+}
+
+function _setupGenAutostartBat(projectPath) {
+  const path = (projectPath || '').replace(/\//g, '\\').replace(/[\r\n]/g,'').trim();
+  return [
+    '@echo off',
+    'title Auto-start setup',
+    'echo ============================================',
+    'echo  Installation auto-demarrage avec Windows',
+    'echo ============================================',
+    'echo.',
+    'set "STARTUP=%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"',
+    'set "TARGET=%STARTUP%\\RobotValidation_Backend.bat"',
+    'echo Creation du raccourci dans :',
+    'echo %STARTUP%',
+    'echo.',
+    '> "%TARGET%" echo @echo off',
+    '>> "%TARGET%" echo title Robot Validation Backend',
+    `>> "%TARGET%" echo cd /d "${path}"`,
+    '>> "%TARGET%" echo where python ^>nul 2^>^&1 ^|^| ^( echo Python introuvable ^& pause ^& exit /b 1 ^)',
+    '>> "%TARGET%" echo if not exist "serp_scout.py" ^( echo serp_scout.py introuvable ^& pause ^& exit /b 1 ^)',
+    '>> "%TARGET%" echo python serp_scout.py',
+    'if errorlevel 1 (',
+    '  echo [ERREUR] Impossible d ecrire le raccourci.',
+    '  pause',
+    '  exit /b 1',
+    ')',
+    'echo OK : le backend se lancera automatiquement au demarrage de Windows.',
+    'echo Pour le desactiver, supprime le fichier :',
+    'echo %TARGET%',
+    'echo.',
+    'pause'
+  ].join('\r\n');
+}
+
+function _setupDownloadBat(filename, content) {
+  // ﻿ BOM utf-8 pour que cmd.exe lise correctement les accents.
+  const blob = new Blob(['﻿' + content], { type: 'application/x-bat;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 200);
+}
+
+function setupDownloadLauncher() {
+  const path = document.getElementById('setupProjectPath')?.value || _setupGetProjectPath();
+  _setupSaveProjectPath(path);
+  _setupDownloadBat('launch_backend.bat', _setupGenLauncherBat(path));
+  const tip = document.getElementById('setupTip');
+  if (tip) tip.innerHTML = `<strong style="color:var(--accent2)">launch_backend.bat téléchargé.</strong> Ouvre tes téléchargements et double-clique dessus pour lancer le backend. Le statut ci-dessus passera vert d'ici 1-3 secondes.`;
+}
+
+function setupDownloadAutostart() {
+  const path = document.getElementById('setupProjectPath')?.value || _setupGetProjectPath();
+  _setupSaveProjectPath(path);
+  _setupDownloadBat('install_autostart.bat', _setupGenAutostartBat(path));
+  const tip = document.getElementById('setupTip');
+  if (tip) tip.innerHTML = `<strong style="color:var(--accent2)">install_autostart.bat téléchargé.</strong> Ouvre tes téléchargements et double-clique. Le backend démarrera automatiquement à chaque ouverture de session Windows. Tu peux fermer la fenêtre noire ensuite.`;
+}
+
+async function setupShutdownBackend() {
+  if (!confirm("Stopper le backend serp_scout.py ?\n\nIl se relancera automatiquement si tu as installé l'auto-start, sinon tu devras relancer launch_backend.bat manuellement.")) return;
+  const tip = document.getElementById('setupTip');
+  try {
+    if (tip) tip.innerHTML = '<em style="color:var(--text3)">Envoi du signal d\'arrêt…</em>';
+    await fetch(SERP_LOCAL_ENDPOINT + '/shutdown', { method: 'GET', cache: 'no-store' });
+  } catch(e) { /* la connexion casse pendant l'arrêt — c'est normal */ }
+  if (tip) tip.innerHTML = '<em style="color:var(--text3)">Backend en cours d\'arrêt… (le statut va passer rouge dans ~3s, puis vert si auto-start activé).</em>';
+  // Force un re-poll plus rapide pour que l'orb se mette à jour
+  setTimeout(_setupPing, 1500);
+  setTimeout(() => { _setupRefreshBadge(); if (currentView.type === 'setup') _setupRefreshPage(); }, 1700);
+}
+
+function _setupRefreshPage() {
+  // Re-render uniquement la zone status pour ne pas perdre le focus de l'input path
+  const sBox = document.getElementById('setupStatusBox');
+  if (sBox) sBox.innerHTML = _setupStatusHtml();
+}
+
+function _setupStatusHtml() {
+  const up = window._backendUp;
+  const info = window._backendInfo || {};
+  const dot = up === true ? '#22c55e' : up === false ? '#f87171' : '#67e8f9';
+  const label = up === true ? 'Backend en marche' : up === false ? 'Backend arrêté' : 'Vérification…';
+  const sub = up === true
+    ? `mode <strong>${escapeHtml(info.mode||'scrape')}</strong> · primary <strong>${escapeHtml(info.primary_source||'bing_fr')}</strong> · ${info.cache_entries||0} requêtes en cache · TTL ${info.cache_ttl_days||30} jours`
+    : up === false
+      ? `localhost:7789 ne répond pas. Lance <code>launch_backend.bat</code> ci-dessous pour démarrer.`
+      : `ping en cours…`;
+  return `
+    <div style="display:flex;align-items:center;gap:14px;padding:18px;border-radius:14px;background:linear-gradient(135deg,rgba(34,211,238,0.06),rgba(139,92,246,0.04));border:1px solid rgba(34,211,238,0.20)">
+      <div class="setup-orb" style="background:radial-gradient(circle, ${dot} 0%, ${dot}55 50%, transparent 80%);box-shadow:0 0 22px ${dot};animation:setupPulse 1.6s ease-in-out infinite"></div>
+      <div style="flex:1">
+        <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px">${label}</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.5">${sub}</div>
+      </div>
+      ${up === true ? `<button class="btn btn-sm" style="background:rgba(248,113,113,0.10);color:var(--red);border-color:rgba(248,113,113,0.30)" onclick="setupShutdownBackend()">${ico('alert',12)} Stopper</button>` : ''}
+    </div>`;
+}
+
+function renderSetup() {
+  const path = _setupGetProjectPath();
+  return `
+  <div class="setup-shell">
+    <div class="setup-hero">
+      <div class="setup-hero-tag">Setup backend</div>
+      <h1 class="setup-hero-title">Le moteur de recherche, en local sur ton PC.</h1>
+      <p class="setup-hero-sub">Le backend <code>serp_scout.py</code> tourne en arrière-plan sur <code>localhost:7789</code> et fait tout le scraping (Bing FR + DuckDuckGo) pour toi. <strong>Aucune clé API, aucun coût, illimité.</strong></p>
+    </div>
+
+    <div id="setupStatusBox">${_setupStatusHtml()}</div>
+
+    <div class="setup-grid">
+      <div class="setup-card">
+        <div class="setup-card-h"><span style="color:var(--accent2)">${ico('bolt',18)}</span> 1. Chemin du projet</div>
+        <p class="setup-card-p">Où as-tu placé le dossier qui contient <code>serp_scout.py</code> ? (Le chemin par défaut est celui de ton install locale.)</p>
+        <input type="text" id="setupProjectPath" value="${escapeHtml(path)}" oninput="_setupSaveProjectPath(this.value)" style="width:100%;padding:9px 12px;border-radius:8px;background:rgba(0,0,0,0.25);border:1px solid var(--border);color:var(--text);font-family:monospace;font-size:12px">
+      </div>
+
+      <div class="setup-card">
+        <div class="setup-card-h"><span style="color:var(--accent2)">${ico('download',18)}</span> 2. Lancer le backend</div>
+        <p class="setup-card-p">Télécharge <code>launch_backend.bat</code> et double-clique dessus. Le backend démarre dans une fenêtre noire (laisse-la ouverte). Le statut ci-dessus passera vert dans 1-3 secondes.</p>
+        <button class="btn btn-primary" onclick="setupDownloadLauncher()" style="margin-top:6px">${ico('download',13)} Télécharger launch_backend.bat</button>
+      </div>
+
+      <div class="setup-card">
+        <div class="setup-card-h"><span style="color:var(--accent2)">${ico('check',18)}</span> 3. Auto-démarrage Windows (recommandé)</div>
+        <p class="setup-card-p">Si tu installes l'auto-start, le backend se lancera tout seul à chaque ouverture de Windows — plus jamais besoin de cliquer sur le launcher. Double-clique le .bat ci-dessous une seule fois pour l'installer.</p>
+        <button class="btn" onclick="setupDownloadAutostart()" style="margin-top:6px;background:linear-gradient(135deg,rgba(34,197,94,0.14),rgba(34,211,238,0.10));border-color:rgba(34,197,94,0.4);color:#86efac">${ico('download',13)} Télécharger install_autostart.bat</button>
+        <p class="setup-card-p" style="margin-top:8px;font-size:11px;color:var(--text3)">Pour désactiver l'auto-start plus tard : supprime le fichier dans <code>%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\RobotValidation_Backend.bat</code></p>
+      </div>
+
+      <div class="setup-card">
+        <div class="setup-card-h"><span style="color:var(--accent2)">${ico('refresh',18)}</span> 4. Redémarrer après une mise à jour</div>
+        <p class="setup-card-p">Quand tu déploies une nouvelle version du backend, clique <strong>Stopper</strong> dans la barre d'état ci-dessus. Si l'auto-start est installé, le backend redémarre automatiquement avec la nouvelle version. Sinon, relance <code>launch_backend.bat</code>.</p>
+      </div>
+    </div>
+
+    <div id="setupTip" style="margin-top:18px;padding:12px 14px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid var(--border);font-size:13px;color:var(--text2);min-height:18px">
+      Astuce : tu peux aussi lancer le backend manuellement en ouvrant un terminal, en allant dans le dossier projet et en tapant <code>python serp_scout.py</code>.
+    </div>
+
+    <details class="setup-details" style="margin-top:18px">
+      <summary style="cursor:pointer;color:var(--text2);font-size:13px;padding:10px;background:rgba(0,0,0,0.15);border-radius:8px">Première installation : prérequis Python + dépannage</summary>
+      <div style="padding:14px 4px;font-size:13px;color:var(--text2);line-height:1.7">
+        <h4 style="color:var(--text);margin-bottom:6px">Prérequis</h4>
+        <ol style="margin-left:20px">
+          <li><strong>Python 3.8+ installé</strong> — vérifie en ouvrant un terminal : <code>python --version</code>. Si "non reconnu", télécharge <a href="https://www.python.org/downloads/" target="_blank" style="color:var(--accent2)">python.org/downloads</a> et coche "Add Python to PATH".</li>
+          <li><strong>Le dossier projet</strong> contient <code>serp_scout.py</code>. Vérifie le chemin dans la section 1 ci-dessus.</li>
+          <li><strong>Le port 7789 est libre</strong>. Si une autre app l'utilise, le backend ne pourra pas démarrer (le launcher affichera l'erreur).</li>
+        </ol>
+        <h4 style="color:var(--text);margin-top:14px;margin-bottom:6px">Dépannage</h4>
+        <ul style="margin-left:20px">
+          <li><strong>"Python introuvable"</strong> → réinstalle Python depuis python.org en cochant "Add Python to PATH". Redémarre le terminal après.</li>
+          <li><strong>"serp_scout.py introuvable"</strong> → vérifie le chemin dans la section 1, puis re-télécharge le launcher.</li>
+          <li><strong>"Address already in use"</strong> → un autre process écoute déjà sur 7789. Ouvre PowerShell et tape <code>Get-Process -Id (Get-NetTCPConnection -LocalPort 7789).OwningProcess</code> pour identifier qui.</li>
+          <li><strong>Le statut reste rouge même après lancement</strong> → vérifie que la fenêtre noire est toujours ouverte (si elle s'est fermée, double-clique le .bat à nouveau). Si elle affiche une erreur, lis le message — c'est généralement Python ou le chemin.</li>
+          <li><strong>Tu veux désinstaller</strong> → supprime <code>%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\RobotValidation_Backend.bat</code> + ferme la fenêtre noire si elle tourne.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+  `;
+}
+
 async function serpFetch(query, force) {
   if (!SERP_LOCAL_ENDPOINT) {
     throw new Error("Backend local indisponible : la recherche auto nécessite que tu sois sur ton PC où serp_scout.py tourne (localhost:7789). Lance le backend puis recharge.");
@@ -9608,6 +10001,7 @@ function _cmdBuildRegistry() {
   cmds.push({ id:'act.newSession', cat:'Actions', icon:'rocket', label:'Nouvelle session de recherche', hint:'Démarre une session datée', kw:'nouvelle session create new', action:() => openSessionModal() });
   cmds.push({ id:'act.newProduct', cat:'Actions', icon:'edit', label:'Nouveau produit', hint:'Ajoute un produit dans la session active', kw:'nouveau produit ajouter add new', shortcut:['Ctrl','N'], action:() => openProductModal() });
   cmds.push({ id:'act.discover', cat:'Actions', icon:'search', label:'Recherche auto (Discover)', hint:'Scrape SerpAPI sur des niches', kw:'discover recherche auto serpapi auto', action:() => openDiscoverModal() });
+  cmds.push({ id:'nav.setup', cat:'Navigation', icon:'bolt', label:'Setup backend', hint:'Lancer / installer / redémarrer serp_scout.py · auto-start Windows', kw:'setup backend serp_scout python launcher autostart auto start install demarrer relancer shutdown', action:() => go({type:'setup'}) });
   cmds.push({ id:'act.settings', cat:'Actions', icon:'gear', label:'Paramètres', hint:'Backend SERP, sync', kw:'paramètres settings préférences config backend serp', action:() => openSettingsPrefilled() });
   cmds.push({ id:'act.sync', cat:'Actions', icon:'cloud', label:'Synchronisation cloud', hint:'jsonblob.com (ID partagé)', kw:'sync synchronisation cloud backup', action:() => openSyncModal() });
 
