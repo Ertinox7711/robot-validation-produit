@@ -8307,7 +8307,12 @@ function renderKeywordTool() {
             </div>
             ${ve.monthly ? _renderTrendSparkline(ve.monthly) : ''}
           </div>
-          <div class="kw-mainstat"><div class="kw-mainstat-l">CPC estimé</div><div class="kw-mainstat-v">${(cpc.estimated||0).toFixed(2)}<span style="font-size:11px;color:var(--text3);font-weight:500">€</span></div><div class="kw-mainstat-s">${cpc.band==='high'?'compétitif':cpc.band==='mid'?'sweet spot':'peu compétitif'}</div></div>
+          <div class="kw-mainstat">
+            <div class="kw-mainstat-l">CPC estimé <span style="font-size:10px;background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.35);border-radius:4px;padding:1px 5px;vertical-align:middle;font-weight:700">PRÉCIS</span></div>
+            <div class="kw-mainstat-v">${(cpc.estimated||0).toFixed(2)}<span style="font-size:11px;color:var(--text3);font-weight:500">€</span></div>
+            <div class="kw-mainstat-s" style="color:${cpc.band==='premium'?'#f87171':cpc.band==='high'?'#f59e0b':cpc.band==='mid'?'#22c55e':cpc.band==='low'?'#fbbf24':'var(--text3)'}">${cpc.bandLabel||(cpc.band==='high'?'compétitif':cpc.band==='mid'?'sweet spot':'peu compétitif')}</div>
+            ${cpc.low!==undefined ? `<div style="font-size:10.5px;color:var(--text3);margin-top:2px">range ${cpc.low.toFixed(2)}€ - ${cpc.high.toFixed(2)}€</div>` : ''}
+          </div>
           <div class="kw-mainstat"><div class="kw-mainstat-l">CPA estimé</div><div class="kw-mainstat-v">${Math.round((cpc.estimated||0)*150)}<span style="font-size:11px;color:var(--text3);font-weight:500">€</span></div><div class="kw-mainstat-s">CPC × 150</div></div>
           <div class="kw-mainstat"><div class="kw-mainstat-l">Résultats Bing</div><div class="kw-mainstat-v">${d.bing_result_count?(d.bing_result_count>=1000000?(Math.round(d.bing_result_count/100000)/10)+'M':Math.round(d.bing_result_count/1000)+'k'):'—'}</div><div class="kw-mainstat-s">popularité</div></div>
         </div>
@@ -8359,6 +8364,17 @@ function renderKeywordTool() {
       </div>
       <p style="font-size:10.5px;color:var(--text3);margin-top:8px;font-style:italic">Volumes BE/CH/CA estimés depuis le volume FR via ratios démographiques (≈7% / 4% / 3%). Précision absolue uniquement pour FR.</p>
       ` : ''}
+      ${cpc.breakdown ? `
+      <h3 style="font-size:13px;margin:18px 0 10px;color:var(--text2)">Décomposition CPC <span style="font-size:10px;color:var(--text3);font-weight:400">(transparence du calcul)</span></h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;font-size:11.5px">
+        <div class="kw-signal"><span class="kw-signal-l">Base (√prix)</span><strong>${cpc.breakdown.base.toFixed(2)}€</strong></div>
+        <div class="kw-signal"><span class="kw-signal-l">× Ads</span><strong>${cpc.breakdown.ads_mult.toFixed(2)}</strong></div>
+        <div class="kw-signal"><span class="kw-signal-l">× Institutionnels</span><strong>${cpc.breakdown.inst_mult.toFixed(2)}</strong></div>
+        <div class="kw-signal"><span class="kw-signal-l">× Shopping</span><strong>${cpc.breakdown.shop_mult.toFixed(2)}</strong></div>
+        <div class="kw-signal"><span class="kw-signal-l">× Intention</span><strong>${cpc.breakdown.intent_mult.toFixed(2)}</strong></div>
+        <div class="kw-signal" style="background:${cpc.breakdown.vert_mult>=1.5?'rgba(248,113,113,0.06)':cpc.breakdown.vert_mult<=0.8?'rgba(34,197,94,0.06)':''};border-color:${cpc.breakdown.vert_mult>=1.5?'rgba(248,113,113,0.25)':cpc.breakdown.vert_mult<=0.8?'rgba(34,197,94,0.20)':''}"><span class="kw-signal-l">× Verticale</span><strong>${cpc.breakdown.vert_mult.toFixed(2)}</strong></div>
+        <div class="kw-signal" style="background:rgba(34,211,238,0.08);border-color:rgba(34,211,238,0.30);grid-column:span 2"><span class="kw-signal-l" style="color:var(--accent2)">= CPC final</span><strong style="color:var(--accent2);font-size:14px">${cpc.estimated.toFixed(2)}€</strong> <span style="color:var(--text3)">range ${cpc.low.toFixed(2)} - ${cpc.high.toFixed(2)}€</span></div>
+      </div>` : ''}
     </div>
 
     <div class="card">
@@ -9253,18 +9269,77 @@ function _browserCpcEstimate(signals) {
   const ad = signals.ads_count || 0;
   const sh = signals.shopping_count || 0;
   const inst = signals.has_inst_top3 ? 1 : 0;
-  // Ratio densité commerciale
-  const commercial = ad * 2 + sh * 0.5 + inst * 4;
-  let cpc;
-  if (commercial >= 22) cpc = 1.80;       // marché ultra-compétitif
-  else if (commercial >= 14) cpc = 1.20;  // compétitif
-  else if (commercial >= 8) cpc = 0.80;   // sweet spot Arthur
-  else if (commercial >= 4) cpc = 0.50;
-  else cpc = 0.30;                         // peu compétitif
+  const medPrice = signals.median_price || 0;     // prix médian shopping (€)
+  const intent = signals.intent_code || 'com';    // 'trans' | 'com' | 'info' | 'nav'
+  const queryStr = (signals.query || '').toLowerCase();
+
+  // ── 1. Base CPC depuis le prix produit (plus cher = annonceurs paient plus) ──
+  // Semrush-style : √prix × coef. €10 → 0.16, €100 → 0.50, €500 → 1.12, €1500 → 1.94
+  let baseCpc;
+  if (medPrice > 0) {
+    baseCpc = Math.max(0.12, Math.sqrt(medPrice) * 0.050);
+  } else {
+    // Fallback si pas de signal prix : densité ads × 0.20
+    baseCpc = 0.30 + Math.min(2.5, ad * 0.18);
+  }
+
+  // ── 2. Multiplicateur ads (auctions ouvertes = bid plus cher) ──
+  // 0 ads → 0.7×, 1 → 1.0×, 2 → 1.15×, 3 → 1.30×, 4+ → 1.45×
+  const adsMult = ad === 0 ? 0.7 : Math.min(1.55, 1 + (ad - 1) * 0.15);
+
+  // ── 3. Multiplicateur institutionnels top 3 (Amazon/Boulanger = bid agressif) ──
+  const instMult = inst ? 1.22 : 1.0;
+
+  // ── 4. Multiplicateur shopping (concurrence merchant) ──
+  const shopMult = Math.min(1.40, 1 + sh * 0.025);
+
+  // ── 5. Multiplicateur intention (Semrush-style) ──
+  const intentMult = intent === 'trans' ? 1.45
+                  : intent === 'com'   ? 1.15
+                  : intent === 'nav'   ? 0.65
+                  : intent === 'info'  ? 0.40
+                  : 1.0;
+
+  // ── 6. Modificateur catégorie verticale (CPC très variable par secteur) ──
+  // Verticales chères : assurance, crédit, avocat, finance, B2B SaaS
+  let vertMult = 1.0;
+  if (/\b(assurance|credit|crédit|mutuelle|avocat|trading|forex|crypto|investissement|prêt|emprunt|hypotheque|immobilier)\b/.test(queryStr)) vertMult = 2.5;
+  else if (/\b(formation|coaching|consulting|logiciel|saas|crm|erp|comptable|expert)\b/.test(queryStr)) vertMult = 1.8;
+  else if (/\b(meilleur|comparatif|avis|test|prix|pas cher|promo|soldes)\b/.test(queryStr)) vertMult = 1.25;
+  else if (/\b(gratuit|free|tutoriel|recette|comment|definition)\b/.test(queryStr)) vertMult = 0.55;
+
+  let cpc = baseCpc * adsMult * instMult * shopMult * intentMult * vertMult;
+
+  // Clamp réaliste
+  cpc = Math.max(0.05, Math.min(15.0, cpc));
+  // Arrondi à 2 décimales (style Semrush)
+  cpc = Math.round(cpc * 100) / 100;
+
+  // Range low-high (style Google Keyword Planner low_bid/high_bid)
+  const low = Math.round(cpc * 0.55 * 100) / 100;
+  const high = Math.round(cpc * 1.75 * 100) / 100;
+
+  // Bands étendus (5 niveaux)
+  let band, bandLabel;
+  if (cpc < 0.25) { band = 'very_low'; bandLabel = 'très bas'; }
+  else if (cpc < 0.65) { band = 'low'; bandLabel = 'bas'; }
+  else if (cpc < 1.30) { band = 'mid'; bandLabel = 'sweet spot'; }
+  else if (cpc < 2.50) { band = 'high'; bandLabel = 'compétitif'; }
+  else { band = 'premium'; bandLabel = 'ultra-compétitif'; }
+
   return {
     estimated: cpc,
-    band: commercial >= 14 ? 'high' : commercial >= 8 ? 'mid' : 'low',
-    note: `Estimation depuis densité commerciale Bing (${ad} ads · ${sh} shopping · top3 inst=${inst})`,
+    low, high,
+    band, bandLabel,
+    breakdown: {
+      base: Math.round(baseCpc * 100) / 100,
+      ads_mult: Math.round(adsMult * 100) / 100,
+      inst_mult: Math.round(instMult * 100) / 100,
+      shop_mult: Math.round(shopMult * 100) / 100,
+      intent_mult: Math.round(intentMult * 100) / 100,
+      vert_mult: Math.round(vertMult * 100) / 100,
+    },
+    note: `Base ${baseCpc.toFixed(2)}€ (prix méd ${medPrice||'?'}€) × ads ${adsMult.toFixed(2)} × inst ${instMult.toFixed(2)} × shop ${shopMult.toFixed(2)} × intent ${intentMult.toFixed(2)} × vert ${vertMult.toFixed(2)}`,
   };
 }
 
@@ -9430,13 +9505,18 @@ async function _browserSerpScan(query, force) {
     result.volumeEstimate = browserVE;
   }
   result.trendsVol = trendsVol || null;
+  // Shopping stats (min/max/médian/p25/p75/buckets/topMerchants/instRatio)
+  result.shoppingStats = _browserShoppingStats(result.shopping);
+  // CPC enrichi : utilise prix médian + intent + query pour précision Semrush-like
+  const _intentTmp = _classifyIntent({ ...result, query, autoChecks: result.autoChecks, organic: result.organic });
   result.cpcEstimate = _browserCpcEstimate({
     ads_count: ads.length,
     shopping_count: (shop.shopping || []).length,
     has_inst_top3: !!result.autoChecks.stats?.has_institutionnels_top3,
+    median_price: result.shoppingStats?.median || 0,
+    intent_code: _intentTmp.code,
+    query,
   });
-  // Shopping stats (min/max/médian/p25/p75/buckets/topMerchants/instRatio)
-  result.shoppingStats = _browserShoppingStats(result.shopping);
   cache[key] = { ts: now, data: result };
   _browserCacheSave(cache);
   result._cached = false;
