@@ -10034,70 +10034,70 @@ function openSettingsPrefilled() {
 // Gammes: '<50', '50-150', '150-400', '400-800', '800+'
 const DISCOVERY_NICHES = [
   // Maison / smart home
-  { q: "robot aspirateur laveur lidar", gammes: ["150-400","400-800"] },
-  { q: "robot aspirateur sans fil", gammes: ["150-400","400-800"] },
-  { q: "purificateur air HEPA", gammes: ["50-150","150-400"] },
-  { q: "déshumidificateur silencieux", gammes: ["150-400"] },
-  { q: "humidificateur ultrasonique", gammes: ["50-150"] },
-  { q: "diffuseur huile essentielle pro", gammes: ["50-150"] },
-  { q: "machine à café espresso semi-pro", gammes: ["400-800","800+"] },
-  { q: "machine sous vide alimentaire", gammes: ["50-150","150-400"] },
-  { q: "chaise gaming ergonomique", gammes: ["150-400","400-800"] },
-  { q: "fauteuil massage shiatsu", gammes: ["400-800","800+"] },
-  { q: "lampe luminothérapie", gammes: ["50-150"] },
-  { q: "miroir LED maquillage hollywood", gammes: ["50-150","150-400"] },
+  { q: "robot aspirateur laveur lidar", gammes: ["150-400","400-800"], cat: "maison" },
+  { q: "robot aspirateur sans fil", gammes: ["150-400","400-800"], cat: "maison" },
+  { q: "purificateur air HEPA", gammes: ["50-150","150-400"], cat: "maison" },
+  { q: "déshumidificateur silencieux", gammes: ["150-400"], cat: "maison" },
+  { q: "humidificateur ultrasonique", gammes: ["50-150"], cat: "maison" },
+  { q: "diffuseur huile essentielle pro", gammes: ["50-150"], cat: "maison" },
+  { q: "machine à café espresso semi-pro", gammes: ["400-800","800+"], cat: "maison" },
+  { q: "machine sous vide alimentaire", gammes: ["50-150","150-400"], cat: "maison" },
+  { q: "chaise gaming ergonomique", gammes: ["150-400","400-800"], cat: "maison" },
+  { q: "fauteuil massage shiatsu", gammes: ["400-800","800+"], cat: "maison" },
+  { q: "lampe luminothérapie", gammes: ["50-150"], cat: "maison" },
+  { q: "miroir LED maquillage hollywood", gammes: ["50-150","150-400"], cat: "maison" },
   // Cuisine
-  { q: "extracteur de jus pressage à froid", gammes: ["150-400","400-800"] },
-  { q: "robot pâtissier multifonction", gammes: ["150-400","400-800"] },
-  { q: "friteuse air fryer xxl", gammes: ["50-150"] },
-  { q: "machine à pâtes fraîches", gammes: ["50-150","150-400"] },
-  { q: "blender chauffant soupe", gammes: ["50-150","150-400"] },
-  { q: "déshydrateur fruits 6 plateaux", gammes: ["50-150","150-400"] },
+  { q: "extracteur de jus pressage à froid", gammes: ["150-400","400-800"], cat: "cuisine" },
+  { q: "robot pâtissier multifonction", gammes: ["150-400","400-800"], cat: "cuisine" },
+  { q: "friteuse air fryer xxl", gammes: ["50-150"], cat: "cuisine" },
+  { q: "machine à pâtes fraîches", gammes: ["50-150","150-400"], cat: "cuisine" },
+  { q: "blender chauffant soupe", gammes: ["50-150","150-400"], cat: "cuisine" },
+  { q: "déshydrateur fruits 6 plateaux", gammes: ["50-150","150-400"], cat: "cuisine" },
   // Sport / fitness
-  { q: "vélo elliptique magnétique", gammes: ["400-800","800+"] },
-  { q: "tapis de course pliable électrique", gammes: ["400-800","800+"] },
-  { q: "rameur magnétique", gammes: ["400-800","800+"] },
-  { q: "presse abdo banc multifonction", gammes: ["150-400","400-800"] },
-  { q: "vélo appartement spinning", gammes: ["400-800","800+"] },
-  { q: "appareil musculation maison", gammes: ["400-800","800+"] },
-  { q: "trampoline fitness avec barre", gammes: ["50-150","150-400"] },
-  { q: "step aerobic réglable", gammes: ["50-150"] },
+  { q: "vélo elliptique magnétique", gammes: ["400-800","800+"], cat: "sport" },
+  { q: "tapis de course pliable électrique", gammes: ["400-800","800+"], cat: "sport" },
+  { q: "rameur magnétique", gammes: ["400-800","800+"], cat: "sport" },
+  { q: "presse abdo banc multifonction", gammes: ["150-400","400-800"], cat: "sport" },
+  { q: "vélo appartement spinning", gammes: ["400-800","800+"], cat: "sport" },
+  { q: "appareil musculation maison", gammes: ["400-800","800+"], cat: "sport" },
+  { q: "trampoline fitness avec barre", gammes: ["50-150","150-400"], cat: "sport" },
+  { q: "step aerobic réglable", gammes: ["50-150"], cat: "sport" },
   // Bien-être / beauté
-  { q: "sauna infrarouge portable", gammes: ["400-800","800+"] },
-  { q: "appareil pressothérapie jambes", gammes: ["150-400","400-800"] },
-  { q: "panneau thérapie infrarouge", gammes: ["400-800","800+"] },
-  { q: "appareil radiofréquence visage", gammes: ["50-150","150-400"] },
-  { q: "épilateur lumière pulsée IPL", gammes: ["150-400","400-800"] },
-  { q: "cryothérapie minceur maison", gammes: ["150-400","400-800"] },
-  { q: "tapis acupression", gammes: ["<50","50-150"] },
-  { q: "appareil micro-courant lifting visage", gammes: ["50-150","150-400"] },
+  { q: "sauna infrarouge portable", gammes: ["400-800","800+"], cat: "bien-etre" },
+  { q: "appareil pressothérapie jambes", gammes: ["150-400","400-800"], cat: "bien-etre" },
+  { q: "panneau thérapie infrarouge", gammes: ["400-800","800+"], cat: "bien-etre" },
+  { q: "appareil radiofréquence visage", gammes: ["50-150","150-400"], cat: "bien-etre" },
+  { q: "épilateur lumière pulsée IPL", gammes: ["150-400","400-800"], cat: "bien-etre" },
+  { q: "cryothérapie minceur maison", gammes: ["150-400","400-800"], cat: "bien-etre" },
+  { q: "tapis acupression", gammes: ["<50","50-150"], cat: "bien-etre" },
+  { q: "appareil micro-courant lifting visage", gammes: ["50-150","150-400"], cat: "bien-etre" },
   // Jardin / extérieur
-  { q: "tondeuse robot connectée", gammes: ["400-800","800+"] },
-  { q: "serre de jardin tunnel", gammes: ["150-400","400-800"] },
-  { q: "plancha gaz inox", gammes: ["150-400","400-800"] },
-  { q: "barbecue fumoir charbon", gammes: ["150-400","400-800"] },
-  { q: "salon de jardin résine tressée", gammes: ["400-800","800+"] },
-  { q: "spa gonflable 6 places", gammes: ["400-800","800+"] },
-  { q: "abri voiture aluminium", gammes: ["400-800","800+"] },
-  { q: "récupérateur eau de pluie 1000L", gammes: ["150-400","400-800"] },
+  { q: "tondeuse robot connectée", gammes: ["400-800","800+"], cat: "jardin" },
+  { q: "serre de jardin tunnel", gammes: ["150-400","400-800"], cat: "jardin" },
+  { q: "plancha gaz inox", gammes: ["150-400","400-800"], cat: "jardin" },
+  { q: "barbecue fumoir charbon", gammes: ["150-400","400-800"], cat: "jardin" },
+  { q: "salon de jardin résine tressée", gammes: ["400-800","800+"], cat: "jardin" },
+  { q: "spa gonflable 6 places", gammes: ["400-800","800+"], cat: "jardin" },
+  { q: "abri voiture aluminium", gammes: ["400-800","800+"], cat: "jardin" },
+  { q: "récupérateur eau de pluie 1000L", gammes: ["150-400","400-800"], cat: "jardin" },
   // Animaux
-  { q: "fontaine à eau chat filtrée", gammes: ["<50","50-150"] },
-  { q: "litière auto-nettoyante", gammes: ["400-800"] },
-  { q: "collier GPS chien sans abonnement", gammes: ["50-150"] },
-  { q: "distributeur croquettes connecté", gammes: ["50-150","150-400"] },
-  { q: "arbre à chat XXL design", gammes: ["50-150","150-400"] },
+  { q: "fontaine à eau chat filtrée", gammes: ["<50","50-150"], cat: "animaux" },
+  { q: "litière auto-nettoyante", gammes: ["400-800"], cat: "animaux" },
+  { q: "collier GPS chien sans abonnement", gammes: ["50-150"], cat: "animaux" },
+  { q: "distributeur croquettes connecté", gammes: ["50-150","150-400"], cat: "animaux" },
+  { q: "arbre à chat XXL design", gammes: ["50-150","150-400"], cat: "animaux" },
   // Auto / moto
-  { q: "aspirateur voiture sans fil 12000pa", gammes: ["<50","50-150"] },
-  { q: "starter batterie portable", gammes: ["50-150"] },
-  { q: "compresseur portable voiture", gammes: ["<50","50-150"] },
-  { q: "caméra de recul wifi", gammes: ["<50","50-150"] },
-  { q: "support téléphone voiture induction", gammes: ["<50"] },
+  { q: "aspirateur voiture sans fil 12000pa", gammes: ["<50","50-150"], cat: "auto" },
+  { q: "starter batterie portable", gammes: ["50-150"], cat: "auto" },
+  { q: "compresseur portable voiture", gammes: ["<50","50-150"], cat: "auto" },
+  { q: "caméra de recul wifi", gammes: ["<50","50-150"], cat: "auto" },
+  { q: "support téléphone voiture induction", gammes: ["<50"], cat: "auto" },
   // Bureau
-  { q: "bureau assis-debout électrique", gammes: ["400-800","800+"] },
-  { q: "chaise ergonomique lombaire", gammes: ["150-400","400-800"] },
-  { q: "moniteur ultrawide 34 pouces", gammes: ["400-800","800+"] },
-  { q: "lampe bureau architecte LED", gammes: ["50-150","150-400"] },
-  { q: "support écran double bras", gammes: ["50-150"] },
+  { q: "bureau assis-debout électrique", gammes: ["400-800","800+"], cat: "bureau" },
+  { q: "chaise ergonomique lombaire", gammes: ["150-400","400-800"], cat: "bureau" },
+  { q: "moniteur ultrawide 34 pouces", gammes: ["400-800","800+"], cat: "bureau" },
+  { q: "lampe bureau architecte LED", gammes: ["50-150","150-400"], cat: "bureau" },
+  { q: "support écran double bras", gammes: ["50-150"], cat: "bureau" },
 ];
 
 function _norm(s) { return (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]/g,' ').replace(/\s+/g,' ').trim(); }
@@ -10144,6 +10144,20 @@ function pickRandomNiche(gamme) {
 function markNicheSeen(n) {
   if (!state._discovered_niches) state._discovered_niches = [];
   if (!state._discovered_niches.includes(n)) state._discovered_niches.push(n);
+}
+function pickRandomNicheDiverse(gamme, tried, triedCats) {
+  let pool = getRemainingNiches(gamme).filter(n => !tried.has(n.q));
+  if (pool.length === 0) {
+    // Reset visited niches for this gamme so we can cycle again
+    const poolQs = new Set(getNichePoolForGamme(gamme).map(n => n.q));
+    state._discovered_niches = (state._discovered_niches || []).filter(q => !poolQs.has(q));
+    pool = getNichePoolForGamme(gamme).filter(n => !tried.has(n.q));
+    if (pool.length === 0) return null;
+  }
+  // Prefer niches from categories we haven't visited yet this run
+  const fresh = pool.filter(n => !triedCats.has(n.cat));
+  const candidates = fresh.length ? fresh : pool;
+  return candidates[Math.floor(Math.random() * candidates.length)].q;
 }
 
 
@@ -10584,28 +10598,31 @@ async function runDiscover() {
     if (multiNiche) {
       // ── Multi-niche batch mode ──
       const tried = new Set();
+      const triedCats = new Set();
       const allResults = []; // [{niche, r, picked}]
-      const maxTries = Math.min(80, nichesNeeded * 4);
+      const maxTries = Math.min(150, Math.max(nichesNeeded * 6, totalTarget * 4));
       let totalCands = 0;
       const queue = manualNiches.length ? [...manualNiches] : [];
       let i = 0;
       while (i < maxTries) {
         if (window._discoverAbort?.aborted) break;
         if (totalCands >= totalTarget) break;
-        if (tried.size >= nichesNeeded) break;
         let niche;
         if (queue.length) niche = queue.shift();
-        else if (manualNiches.length === 0) niche = pickRandomNiche(gamme);
+        else if (manualNiches.length === 0) niche = pickRandomNicheDiverse(gamme, tried, triedCats);
         else break;
         if (!niche || tried.has(niche)) { i++; continue; }
         tried.add(niche);
+        const nicheObj = DISCOVERY_NICHES.find(n => n.q === niche);
+        if (nicheObj?.cat) triedCats.add(nicheObj.cat);
         if (!manualNiches.length) markNicheSeen(niche);
-        btn.textContent = `${tried.size}/${nichesNeeded} niches · ${totalCands}/${totalTarget} produits…`;
+        btn.textContent = `${tried.size} niches · ${totalCands}/${totalTarget} produits…`;
         try {
           const r = await discoverBatch(niche, gamme, seen);
           if (r.inGamme.length > 0) {
             const sorted = sortCands(r.inGamme, gamme);
-            const slice = sorted.slice(0, perNiche);
+            const remaining_needed = totalTarget - totalCands;
+            const slice = sorted.slice(0, Math.min(perNiche, remaining_needed));
             slice.forEach(s => seen.add(_shortKey(s.title)));
             allResults.push({ niche, r, picked: slice });
             totalCands += slice.length;
