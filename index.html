@@ -3950,16 +3950,11 @@ function _gadsUpdateBtn() {
 }
 
 async function _kwGetVolumeFromGoogle(keyword) {
-  if (!gadsIsConnected()) return null;
   try {
     const r = await fetch(GADS_VERCEL_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        keyword,
-        accessToken: _gadsToken.access_token,
-        customerId: _gadsCustomerId,
-      }),
+      body: JSON.stringify({ keyword }),
     });
     if (!r.ok) return null;
     const data = await r.json();
