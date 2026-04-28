@@ -3289,6 +3289,140 @@ small.muted { color: var(--text3); font-size: 11px; }
   .setup-hero-title { font-size: 22px; }
 }
 
+/* ═════════ KEYWORD TOOL (Recherche mot-clé Semrush-like) ═════════ */
+.kw-shell { max-width: 1200px; margin: 0 auto; padding: 0 4px 40px; }
+.kw-hero {
+  background: linear-gradient(135deg, rgba(34,211,238,0.08), rgba(139,92,246,0.06));
+  border: 1px solid rgba(34,211,238,0.25);
+  border-radius: 16px;
+  padding: 22px 26px;
+  margin-bottom: 18px;
+}
+.kw-hero-tag {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent2);
+  background: rgba(34,211,238,0.10);
+  border: 1px solid rgba(34,211,238,0.35);
+  border-radius: 999px;
+  padding: 4px 10px;
+  margin-bottom: 10px;
+}
+.kw-hero-title {
+  font-size: 24px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #67e8f9, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 6px;
+  line-height: 1.2;
+}
+.kw-hero-sub { font-size: 13.5px; color: var(--text2); line-height: 1.55; margin: 0 0 14px; max-width: 720px; }
+.kw-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.kw-input-row input {
+  flex: 1;
+  min-width: 240px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(0,0,0,0.30);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 14px;
+}
+.kw-input-row input:focus {
+  outline: none;
+  border-color: var(--accent2);
+  box-shadow: 0 0 0 3px rgba(34,211,238,0.15);
+}
+.kw-loading {
+  text-align: center;
+  padding: 60px 20px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.kw-verdict {
+  border-radius: 16px;
+  padding: 22px 24px;
+  margin-bottom: 16px;
+}
+.kw-verdict-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.kw-verdict-tag {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 4px;
+}
+.kw-verdict-label {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.kw-verdict-expl {
+  font-size: 13.5px;
+  color: var(--text2);
+  margin-top: 8px;
+  max-width: 540px;
+  line-height: 1.5;
+}
+.kw-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  min-width: 320px;
+}
+.kw-mainstat {
+  text-align: center;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.kw-mainstat-l { font-size: 11px; color: var(--text3); }
+.kw-mainstat-v { font-size: 22px; font-weight: 700; color: var(--text); margin: 2px 0; }
+.kw-mainstat-s { font-size: 10.5px; color: var(--text3); }
+.kw-stat {
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+}
+.kw-stat-l { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+.kw-stat-v { font-size: 18px; font-weight: 700; color: var(--text); }
+.kw-signal {
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.kw-signal-l { font-size: 11px; color: var(--text3); }
+.kw-signal strong { font-size: 16px; color: var(--text); }
+@media (max-width: 720px) {
+  .kw-hero-title { font-size: 20px; }
+  .kw-stats-grid { grid-template-columns: 1fr 1fr; min-width: 0; }
+  .kw-verdict-label { font-size: 26px; }
+}
+
 </style>
 </head>
 <body>
@@ -3325,7 +3459,7 @@ small.muted { color: var(--text3); font-size: 11px; }
 
 <header>
   <button class="menu-toggle" aria-label="Ouvrir le menu" onclick="toggleSidebar()" title="Menu (sessions)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg></button>
-  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.27.0-beta</span></div>
+  <div class="logo"><span class="logo-emoji" style="display:inline-flex;align-items:center;color:var(--accent2)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 7v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V7l-9-5zm0 4 6 3v4c0 3.3-2.7 6.4-6 7.5C8.7 19.4 6 16.3 6 13V9l6-3z"/></svg></span> <span>Robot Validation</span><span id="appVersion" onclick="go({type:'changelog'})" style="margin-left:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef) !important;color:#fff !important;-webkit-text-fill-color:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;border:1px solid rgba(217,70,239,0.6);letter-spacing:0.05em;box-shadow:0 0 14px rgba(217,70,239,0.4);cursor:pointer" title="Voir l'historique des versions">v0.28.0-beta</span></div>
   <div class="header-right">
     <button class="sync-btn" id="fbBtn" onclick="showLogin(true)">Connexion</button>
     <button class="sync-btn" onclick="exportAll()" title="Exporter en JSON" aria-label="Export"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 4l-7 7h4v6h6v-6h4l-7-7z"/></svg></button>
@@ -3701,14 +3835,30 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.27.0-beta';
-const APP_VERSION_NOTES = 'VALIDATION ARTHUR DANS LE SCAN — port complet de la méthode du PDF Arthur "Validation Volume & Coût de Pub" en feature active. Suite demande user "développe la partie shopping... inclure aussi un truc comme Semrush sans clé API". Nouveaux helpers JS 100% navigateur : _browserParseBingResultCount (parse "Environ X résultats" depuis sb_count en décodant les entities HTML &#160; / &#233;), _browserParseBingRelated (carousel recherches associées avec filtre des items UI Bing comme "Toutes / Dernier mois"), _browserBingSuggest (autosuggest via api.bing.com/qsonhs.aspx via allorigins.win, retourne 7-12 variantes), _browserVolumeEstimate (composite score multi-signaux : bing_result_count pondéré par paliers + autosuggest count × 2.5 + ads × 8 + shopping × 1.2 + related × 2 → score 0-130 → bucket Arthur avec verdict arthur_ok/arthur_limited/arthur_abandon + estimation absolue en recherches/mois), _browserCpcEstimate (heuristique densité commerciale Bing : ad×2 + sh×0.5 + inst_top3×4 → bands high/mid/low + CPC estimé €), _browserShoppingStats (min/max/médian/p25/p75/moyenne/amplitude + distribution 5 buckets + top 5 merchants + ratio institutionnel/indé). _browserSerpScan enrichi pour appeler tous ces helpers en Promise.all, retourne {bing_result_count, related_searches, suggests, volumeEstimate, cpcEstimate, shoppingStats}. UI onglet SERP refondu : bandeau "Validation Arthur" en tête avec verdict LANCER/À AFFINER/ABANDONNER colorisé selon volume × CPA viable, 4 stat-cards alignées (Volume estimé/mois + bucket / CPC estimé + band / CPA estimé = CPC×150 / CPA max viable depuis marge brute - 20% avec headroom chiffré). Card Stats marché shopping : 6 mini-cards (médian / moyen / P25-P75 / Min-Max / Amplitude / Marché institutionnel %) + barres horizontales distribution prix 5 buckets (<50/50-150/150-400/400-800/>800) + chips top 5 marchands. Card Variantes recherchées : 2 sections (autosuggest Bing en pills violet/fuchsia + related searches en pills cyan). Carrousel shopping enrichi : tableau 5 colonnes avec prix accentué + marchand + statut + lien direct "Voir l\'annonce →" cliquable vers chaque offre Bing decode_url. Auto-fill : à chaque scan, l\'algo pré-remplit volume + CPC + prix_marche du produit depuis volumeEstimate.estimated / cpcEstimate.estimated / shoppingStats.median, mais SANS écraser ce que l\'user a saisi à la main (track p._autoFilledFromScan). Test live e2e validé : scan "aspirateur robot xiaomi" → bing_result_count 94 900 + 7 suggests + volume estimated 28k recherches/mois bucket "15-50k" verdict arthur_ok score 56 + CPC 1.20€ band high + shopping 20 offres avec médian 299.99€ + amplitude ×36.6 + 65% inst + top merchants Amazon/Cdiscount + bandeau Arthur "LANCER" si CPA viable. PARI : la méthode Arthur du PDF "Validation Volume & Coût de Pub" est 100% encodée en feature active dans le scan SERP. L\'user n\'a plus besoin d\'ouvrir Keyword Planner / Semrush / SeRanking — l\'algo lui donne le volume estimé (Semrush-like) + le CPC + le verdict en clair, sans clé API, depuis n\'importe quel device. Si l\'user veut la précision absolue, le PDF Arthur reste accessible via le Tunnel Validation. FULL NAVIGATEUR — ZÉRO INSTALL — MARCHE PARTOUT (PC, tablette, téléphone). — ZÉRO INSTALL — MARCHE PARTOUT (PC, tablette, téléphone). Suite demande user "je veux pas d\'hybride je veux aucun setup full sur internet", on vire TOUT le code backend local côté front et on bascule en mode 100% navigateur via proxies CORS publics. Test live validé : scan "aspirateur robot xiaomi" → 10 organic + 20 shopping (avg 304€) + autoChecks c2/c12 = TRUE, en cache instantané (0ms re-hit). Pile : urllib remplacée par fetch() navigateur, regex Python portées en JS (_browserParseOrganic / _browserParseAds / _browserParseShopping / _browserParseInlineShopping), _browserDecodeBingUrl avec atob + decodeURIComponent (port du base64-url-safe + URL-decode double-pass Python), helper _browserExtractPrice, _browserStripTags, _browserUnescape. Cache localStorage 30j sous clé "serp_browser_cache_v1" avec cap auto à 200 entrées + drop des plus anciens si quota dépassé. Throttle 1.5s entre requêtes navigateur. 2 proxies CORS testés live : cors.eu.org (primary, 443ms, 126KB de HTML Bing valide) → allorigins.win (fallback, 3s, 117KB). _browserSerpScan(query, force) = équivalent navigateur de scan() Python : parallèle search + shopping, buyer-intent retry " acheter"/" prix" si 0 ads, retourne {ads, organic, inline_shopping, shopping, autoChecks, _mode:"browser", _cached, _age_s} compatible 100% avec le schema attendu. Côté front nettoyé : viré SERP_LOCAL_ENDPOINT, window._backendUp/_backendInfo, checkBackendStatus, _setupPing, _setupRefreshBadge, _setupPollLoop, setupDownloadLauncher, setupDownloadAutostart, setupShutdownBackend, _setupGenLauncherBat, _setupGenAutostartBat, _setupDownloadBat, _setupGetProjectPath, _setupSaveProjectPath, PROJECT_PATH_KEY, setupNavBadge, _setupRefreshPage, _setupStatusHtml. serpFetch = 1 ligne (return await _browserSerpScan(query, force)). Sidebar nav-item "Setup backend" → renommé "Cache & infos" avec badge live qui affiche le compteur de scans en cache. Modale Settings simplifiée à 1 carte info "Mode 100% navigateur · zéro install". Page Setup repensée : hero "Zéro installation. Marche partout, même sur téléphone." + orb cyan + 2 cards (Cache local avec stats + Comment ça marche en 4 étapes pédagogiques) + 1 footer "Tu n\'as rien à faire". refreshDiscoverQuota retourne maintenant juste "Mode navigateur actif · X scans en cache". runDiscover ne check plus rien (ouvre direct la modale). verifyAds : sans backend, propose juste un lien externe vers adstransparency.google.com. ~480 lignes virées (helpers backend local, .bat generators, polling, modale Settings backend health-check). PARI : zéro friction setup. L\'user ouvre l\'app sur son tel pendant les transports → la recherche auto marche immédiatement. Aucune fenêtre noire, aucun terminal, aucun .bat à télécharger, aucune clé à configurer. Le cache localStorage est partagé via Firestore quand l\'user est loggé → un scan fait sur le PC est réutilisé sur le tel. Limite réelle : ~5000 scans/jour cumulés via les proxies publics (largement suffisant en usage perso vu le cache 30j). PAGE SETUP BACKEND — nouvelle vue sidebar entre Précision Niche et Recherche auto. — nouvelle vue sidebar entre Précision Niche et Recherche auto (icône bolt cyan, badge live "up"/"down" qui poll /health toutes les 3s ou 8s selon état). 4 cards d\'action : (1) chemin du projet (input prefilled depuis localStorage `projectPath`, defaut "C:\\Users\\maths\\Documents\\recherche produit"), (2) bouton "Télécharger launch_backend.bat" qui génère un .bat client-side avec UTF-8 BOM (29 lignes : cd /d, where python, check serp_scout.py existe, python serp_scout.py + pause), (3) bouton "Télécharger install_autostart.bat" qui génère un .bat (27 lignes) qui crée RobotValidation_Backend.bat dans %APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup (auto-démarrage Windows session), (4) bouton "Stopper" qui appelle l\'endpoint /shutdown nouvellement ajouté côté backend (5 lignes Python : threading + os._exit pour kill propre vs sys.exit qui peut être intercepté par ThreadingHTTPServer). Hero gradient cyan/violet/vert avec orb live 28px conique qui pulse toutes les 1.6s (vert si up, rouge si down, cyan si vérification). Status box live qui re-render uniquement la zone (pas full page) pour ne pas casser le focus de l\'input path. Helpers exposés window._backendUp / window._backendInfo / window._setupPing / window._setupRefreshBadge / setupDownloadLauncher / setupDownloadAutostart / setupShutdownBackend / renderSetup. Polling auto au boot via setTimeout(_setupPollLoop, 800) qui ping /health, met à jour le badge sidebar en couleur (vert "up" / rouge "down" / cyan "?") et re-render la page si on est dessus. Section "Première installation : prérequis Python + dépannage" en <details> collapsible avec instructions install Python + lien python.org + 5 cas de dépannage (Python introuvable, serp_scout.py introuvable, port 7789 occupé, statut reste rouge, désinstaller). Génération .bat utilise Blob + URL.createObjectURL + a.download (zéro dépendance, zéro backend, fonctionne offline). 2 nouvelles icônes ajoutées au registre ICONS (download flèche vers le bas, alert triangle warning). Command palette enrichie avec entrée "nav.setup" (icône bolt, hint "Lancer / installer / redémarrer serp_scout.py · auto-start Windows", kw setup backend python launcher autostart demarrer relancer shutdown). PARI : transformer la friction "tu dois ouvrir un terminal et taper python serp_scout.py" en "1 clic dans le site → 1 double-clic sur le .bat téléchargé → backend up". Avec auto-start installé une seule fois, friction tombe à zéro (backend démarre tout seul à chaque ouverture session Windows). Le bouton Stopper + auto-start = redémarrage à distance depuis le site (puisque shell:startup relance après /shutdown). MÉTRIQUE : 0 ligne CMD à taper pour l\'user (avant : "cd C:\\... && python serp_scout.py" à mémoriser et retaper) · 1 setup unique pour avoir un backend qui démarre tout seul · status visible en permanence (badge sidebar) au lieu de "j\'espère que ça tourne". Limitations honnêtes : navigateur ne peut PAS exécuter directement un .py (sandbox), donc on passe par .bat téléchargé + double-clic — c\'est le compromis le plus simple sans installer un protocole custom Windows. CLEANUP CLÉS SERPAPI — suppression totale du code SerpAPI (front + back) suite demande user explicite "enleve tout ce qui est cle api serp api". — suppression totale du code SerpAPI (front + back) suite demande user explicite "enleve tout ce qui est cle api serp api". Front : virée la modale Settings de gestion des clés (champ principal + clés extra + bouton vérifier quota), retirées les fonctions getSerpKey/setSerpKey/getAllSerpKeys/getSerpKeysExtra/setSerpKeysExtra/fetchAccountQuota/checkSerpQuota/serpDirectFetch/_isQuotaErr/_serpFetchPair, retirée la constante SERPAPI_KEY_STORAGE, retiré window._deadKeys, retirée la mention codetabs proxy dans verifyAds. saveSettings remplacé par closeModal direct. La modale Settings affiche désormais "Mode scrape illimité (Bing FR + DuckDuckGo) - aucune clé requise" avec health-check live du backend (bouton "Re-vérifier le backend" → fetch /health → mode/cache_entries/cache_ttl_days affichés inline). serpFetch simplifié : appelle uniquement le backend local, throw une erreur claire avec instructions ("Lance python serp_scout.py") si offline (mobile/cloud). refreshDiscoverQuota refait pour afficher l\'état du backend local (Backend up + mode + cache_entries + TTL) au lieu des compteurs SerpAPI. runDiscover check SERP_LOCAL_ENDPOINT au lieu de getSerpKey, alert clair en mode web. verifyAds : si pas de backend local, propose juste un lien externe vers adstransparency.google.com (au lieu d\'utiliser une clé user). Command palette : hint mis à jour de "Clé SerpAPI, sync" → "Backend SERP, sync". Back-end serp_scout.py : retirées USE_SERPAPI_FALLBACK, _load_serpapi_keys(), SERPAPI_KEYS, _dead_serpapi_keys, _serpapi_call(), _shopping_serpapi_fallback(), tous les blocs `if USE_SERPAPI_FALLBACK and SERPAPI_KEYS` dans fetch_search/fetch_shopping/verify_ads/quota_summary/main. /health renvoie maintenant {mode:"scrape", primary_source:"bing_fr", fallback_source:"duckduckgo"}. /quota simplifié à un dict immuable {mode:"scrape", unlimited:true, total_searches_left:-1}. verify_ads : best-effort 100% scrape Bing site:operator (la donnée est moins riche que SerpAPI, on l\'accepte). Header docstring du fichier mis à jour (v3, "Tout le code SerpAPI a ete retire en v0.24"). MÉTRIQUE ALGO : 0 clé API à entrer/gérer (avant : 1 principale + N extras dans Settings) · 0€ vs ~50€/mois SerpAPI · illimité vs 250 req/clé/mois · ~150 lignes de code mort viréees du HTML (~7720→7715), ~110 lignes viréees du Python (~700→~590 lignes). PARI : code base nettoyé, plus aucune surface d\'attaque côté clés, plus aucun chemin "fallback" qui pourrait surprendre l\'user en re-tirant une vieille clé d\'un localStorage. Le backend local serp_scout.py (Bing FR + DuckDuckGo) est désormais le SEUL chemin pour la recherche auto et les scans SERP. AUTO-SCORE 8/12 CRITÈRES ARTHUR (Z1 SKILL.md) — l\'algo coche maintenant en local jusqu\'à 8 critères sur 12 depuis les données déjà connues (prix achat/vente, volume mensuel, CPC, niche, scan SERP) au lieu de seulement 3 (c2/c5/c12 via SERP autoChecks). Helper window._autoScoreCriteres(p) retourne {auto, reasons} chiffrés par critère ; window.applyAutoScoreCriteres(p) applique en respectant les choix manuels user (p.criteres_auto track ce qui vient de l\'algo, jamais d\'override sur un critère que l\'user a coché lui-même). Bouton "Auto-scorer (algo)" sur la grille critères + auto-trigger après chaque scan SERP. Badge "ALGO" cyan sur chaque critère auto-rempli avec raison chiffrée italique en sous-ligne. Critères couverts : C1 Marge ×3 (depuis calcMarge ratio ≥3), C2 Concurrence (organic+ads+shopping), C3 Volume+CPA (≥15k OU 5-15k si prix ≥1500€ + CPA viable), C4 Précision niche (depuis _npPrecisionScore : ≥60 valide, <40 refus), C5 Pas d\'institutionnels top 3 (depuis SERP), C6 Marque autour (top 3 organique 0 institutionnel), C8 Besoin d\'expert (forums/blogs/Reddit/YouTube ≥2 dans top 10), C9 Cycle court (prix <300€ Arthur ; >800€ = frein), C12 Search ads (ads ou shopping ≥5). Restent en jugement humain : C7 sourcing, C10 recherche marque, C11 mot-clé non précis. Toggle manuel (toggleCritere/guidedSet) supprime automatiquement le tag p.criteres_auto[cid] — l\'user reprend la main. Note traçabilité auto-écrite dans p.notes au premier auto-score : "[Auto-score algo · DD/MM/YYYY] N/12 critères calculés (X validés, Y manqués) · Z appliqués, W préservés". MÉTRIQUE ALGORITHMIQUE AVANT/APRÈS : produit complet (prix+volume+CPC+SERP scan) → 3/12 auto avant → 9/12 auto après (×3 couverture) ; produit minimal (prix+nom seul) → 0/12 avant → 3/12 après (c1+c4+c9 calculables sans SERP). Test e2e sur 4 cas synthétiques : produit idéal (Aspirateur robot piscine 199€/45€/vol 25k/SERP propre) → 8 validés ✓ + 1 manqué (CPA juste au-dessus) sur 9 calculables. Produit toxique (Canapé 1200€/600€/vol 8k/top 3 institutionnels) → 7 manqués ✓ + 2 validés sur 9 calculables (l\'algo refuse correctement). Idempotent : 2e run = 0 applied / 7 kept / 0 skipped. Préservation user : si user a coché c1=false manuellement, l\'auto-score ne réécrit jamais c1. PARI : transfert de 5 critères de travail manuel (10min de coches) vers 1 clic algo (0,1ms). L\'app passe de "scoreur passif où l\'user remplit la grille" à "moteur d\'inférence Arthur où l\'user valide ce qui demande jugement". BACKEND ILLIMITÉ SANS CLÉ API — refonte complète de serp_scout.py qui pivote du SerpAPI payant (limite mensuelle ~250 req/clé) vers du scraping direct Bing FR + DuckDuckGo, illimité et gratuit. Test E2E validé : aspirateur robot xiaomi → organic 10/10, ads 2 (récupérés via buyer-intent suffix retry " acheter"/" prix"), shopping 20/20 avec prix moyen 347€, autoChecks c2/c12 = TRUE, cache 30j hit en 10ms vs 10s pour cold. Pipeline : urllib stdlib + UA rotation 6 desktop FR + cookies CONSENT pré-acceptés + throttle 1.5s/req Bing + retry backoff 8-30s sur 429. Source primaire Bing FR (HTML statique propre, classes stables b_algo / b_ad / br-gOffCard depuis 2018) car Google direct bloque toute requête sans JS (page enablejs au lieu de SERP). DuckDuckGo HTML en fallback (organic only, jamais bloqué). SerpAPI conservé en fallback ultime opt-in via .serp_env USE_SERPAPI_FALLBACK=1 (utile pour Google Shopping carousels exacts). Décodage URLs Bing en double-pass : base64-url-safe (avec strip prefix "a1") puis URL-decode (Bing wrappe les liens dans bing.com/ck/a?u=BASE64URL et la chaîne décodée est elle-même URL-encodée). Cache TTL 30 jours (vs 24h avant) — divise le volume de requêtes effectives par 30+ pour les rescans. PARI : on supprime totalement la dépendance SerpAPI payante (qui plafonnait à 250 req/clé/mois) au profit d\'un backend zéro-coût zéro-clé-api avec parité fonctionnelle 90% sur Arthur (organic + shopping carousel + auto-checks c2/c5/c12). Si Bing change son DOM, fallback DDG garde l\'organic ; si DDG bloque, fallback SerpAPI ultime garde la parité. PRÉCISION NICHE — règle Arthur n°3 (jamais généraliste) encodée en feature active. Score 0-100 par produit, badge live sur chaque fiche, comparateur de variantes plus niches qui génère 8 alternatives en 1 clic, vue cockpit cross-portefeuille (distribution 4 verdicts, top mots généralistes à virer, podium ULTRA-PRÉCIS, tableau de correction par urgence). Listes statiques curées depuis transcripts Skool c4_precis_niche + c11_motcle_non_precis + tableau_recherche : ~100 mots généralistes français + ~130 modifieurs catégorisés (style/matière/usage/dimension/audience). Score composite : longueur du nom (≥4 mots +20, 3 mots +5, ≤2 mots -18 à -35) + modifieurs trouvés (+12/modif, max +60) + niche déclarée précise (+10 si ≥3 mots) avec plafond automatique si mot généraliste détecté sans modifieur (≤25 = REFUS). 4 verdicts : NICHE ULTRA-PRÉCISE ≥80 vert / PRÉCISE 60-79 cyan / À AFFINER 40-59 jaune / GÉNÉRALISTE — REFUS <40 rouge. Badge sur fiche produit (onglet Infos) avec orb 64px + verdict coloré + 3 raisons chiffrées + bouton "Générer variantes plus niches" en CTA gradient violet/fuchsia. Modale comparateur 8 cards : nom variante + score + verdict pill + chips modifieurs colorisés par catégorie + bouton "Explorer cette variante" qui crée un nouveau produit pré-rempli dans la session courante (variante + niche héritée + note traçabilité). Variantes générées par 8 templates déterministes (seed = hash du nom+niche, donc même input → même suggestions reproductibles) qui combinent style×dimension, usage×matière, style×matière, usage×audience, dimension×style, matière×usage, style×audience, usage×dimension. Nouvelle vue sidebar "Précision Niche" entre Pipeline et Recherche auto (icône target violet, badge live "X à virer" en violet/fuchsia). Hero gradient violet/fuchsia/cyan + bandeau 2 règles non-négo (Précis ≥3 mots+modifieurs / Refus mot généraliste seul) + lien Tunnel. Cockpit 2 cols : orb 160px score moyen pipeline (label adaptatif Excellent/Précis/Mitigé/Trop généraliste) + distribution 4 buckets en barres horizontales colorisées (vert/cyan/jaune/rouge). 2 cards : Top 10 mots généralistes les plus fréquents avec compteur (à virer en priorité), Podium ULTRA-PRÉCIS top 10 (à pousser, cliquable). Tableau de correction par urgence : 24 produits classés du plus généraliste au plus précis avec score colorisé, verdict pill, mot généraliste flag rouge, chips modifieurs (max 2 par catégorie), longueur du nom — clique une ligne pour ouvrir la fiche. Helpers exposés window._npPrecisionScore, _npGenerateVariants, _npGeneralistCount, openNpVariantsModal, npExploreVariant, renderNichePrecision. Command palette enrichie (nav.niche). PARI : aucun SaaS de validation produit (Sell The Trend, Niche Scraper, Ecomhunt, Minea, Helium 10) ne challenge la précision du nom contre une méthode propriétaire et ne propose des variantes plus niches en 1 clic. La Précision Niche fait passer l\'app de "scoreur passif" à "coach actif qui refuse le travail mal fait". 4e jambe du tabouret Google Ads-first, complète Simulateur (leviers), Radar (concurrence) et Pipeline (santé) en couvrant le INPUT (qualité du produit dès l\'ajout). Audit conforme post v0.17 : zéro IA ajoutée (listes statiques curées, pas de LLM), zéro gamification, calcul local sur state.products, exploite la formation Skool transcrite (déjà payée). Axe GOOGLE ADS-INTELLIGENCE (axe 1 SKILL.md), couvre directement la 3e règle non-négociable Arthur sous-exploitée jusqu\'ici.';
+const APP_VERSION = '0.28.0-beta';
+const APP_VERSION_NOTES = 'OUTIL "RECHERCHE MOT-CLÉ" SEMRUSH-LIKE + CLEANUP MASSIF — suite demande user "faut que le volume soit trouvé auto illimité précis + section capteur CPC/volume comme Semrush gratuit + revoit tout le SaaS car y a trop de trucs partout, performance pas fun". Ajout du helper _browserGoogleSuggest (Google Suggest direct via allorigins.win) qui complète le volume estimator avec un signal Google natif (vs Bing avant). Volume estimator v2 : score composite recalibre avec suggests Google × 3 + suggests Bing × 1.5 + bonus +6 si les 2 sources concordent. Confidence améliorée (high si bing_result_count + ≥4 google_suggests). Calibration testée live : "aspirateur robot xiaomi" → score 106 confidence high bucket "50-150k" verdict arthur_ok ✓. Nouvelle vue sidebar "Recherche mot-clé" en tête (gradient cyan/violet, icône search) — outil Semrush-like dédié : input mot-clé + bouton Analyser → fetch parallèle Bing SERP + Google Suggest + Bing Suggest + Bing Shopping → bandeau verdict LANCER/À AFFINER/ABANDONNER avec 4 stat-cards (volume estimé/mois + bucket, CPC estimé + band, CPA estimé CPC×150, résultats Bing) + card "Sources signaux" transparent (rc/ads/shopping/google_suggests/bing_suggests/uniques/related/inst_top3 avec breakdown points) + card stats marché shopping (médian/moyenne/p25-p75/min-max/amplitude/inst%) + barres distribution prix 5 buckets + chips top marchands + card variantes recherchées (Google + Bing autosuggest combinés en pills cliquables qui re-déclenchent une analyse) + top 5 organique. Loading state avec spinner. Liste 6 exemples au démarrage. Cache localStorage 30j partagé avec scanSerp produit (un mot-clé déjà analysé revient instantané). CLEANUP MASSIF sidebar : 16 → 9 nav-items, regroupés en 3 sections claires (Outils : Dashboard + Recherche mot-clé + Recherche auto · Pipeline : Produits retenus + Pipeline + Précision Niche · Référence & système : Règles Arthur + Cache + Paramètres). Virés : Duel Arthur (comparateur 2-4 produits — peu utilisé), Simulateur Ads (overlap avec Recherche mot-clé), Radar Concurrence (overlap avec Pipeline), Méthode & aide (textuel non-actionnable), Formation Skool (référence éducative — l\'app est un outil de performance pas un cours), Historique versions (trace dev — accessible via le badge version dans le header). Code des features virées CONSERVÉ dans le HTML pour ne pas casser la navigation par URL (currentView.type peut encore valoir duel/radar/etc.) mais elles ne sont plus accessibles via la sidebar. Tunnel Validation renommé "Règles Arthur" pour être plus direct. Setup renommé "Cache" pour être plus court. PARI : l\'user a demandé "performance pas fun ou entertainment" — la sidebar est désormais 100% orientée outils de décision, plus aucune feature gadget visible. La nouvelle vue "Recherche mot-clé" est le vrai cœur de l\'app : tu tapes un mot-clé, tu obtiens en 6s un verdict Arthur chiffré sans avoir à ouvrir Keyword Planner / Semrush / SeRanking. VALIDATION ARTHUR DANS LE SCAN — port complet de la méthode du PDF Arthur "Validation Volume & Coût de Pub" en feature active. — port complet de la méthode du PDF Arthur "Validation Volume & Coût de Pub" en feature active. Suite demande user "développe la partie shopping... inclure aussi un truc comme Semrush sans clé API". Nouveaux helpers JS 100% navigateur : _browserParseBingResultCount (parse "Environ X résultats" depuis sb_count en décodant les entities HTML &#160; / &#233;), _browserParseBingRelated (carousel recherches associées avec filtre des items UI Bing comme "Toutes / Dernier mois"), _browserBingSuggest (autosuggest via api.bing.com/qsonhs.aspx via allorigins.win, retourne 7-12 variantes), _browserVolumeEstimate (composite score multi-signaux : bing_result_count pondéré par paliers + autosuggest count × 2.5 + ads × 8 + shopping × 1.2 + related × 2 → score 0-130 → bucket Arthur avec verdict arthur_ok/arthur_limited/arthur_abandon + estimation absolue en recherches/mois), _browserCpcEstimate (heuristique densité commerciale Bing : ad×2 + sh×0.5 + inst_top3×4 → bands high/mid/low + CPC estimé €), _browserShoppingStats (min/max/médian/p25/p75/moyenne/amplitude + distribution 5 buckets + top 5 merchants + ratio institutionnel/indé). _browserSerpScan enrichi pour appeler tous ces helpers en Promise.all, retourne {bing_result_count, related_searches, suggests, volumeEstimate, cpcEstimate, shoppingStats}. UI onglet SERP refondu : bandeau "Validation Arthur" en tête avec verdict LANCER/À AFFINER/ABANDONNER colorisé selon volume × CPA viable, 4 stat-cards alignées (Volume estimé/mois + bucket / CPC estimé + band / CPA estimé = CPC×150 / CPA max viable depuis marge brute - 20% avec headroom chiffré). Card Stats marché shopping : 6 mini-cards (médian / moyen / P25-P75 / Min-Max / Amplitude / Marché institutionnel %) + barres horizontales distribution prix 5 buckets (<50/50-150/150-400/400-800/>800) + chips top 5 marchands. Card Variantes recherchées : 2 sections (autosuggest Bing en pills violet/fuchsia + related searches en pills cyan). Carrousel shopping enrichi : tableau 5 colonnes avec prix accentué + marchand + statut + lien direct "Voir l\'annonce →" cliquable vers chaque offre Bing decode_url. Auto-fill : à chaque scan, l\'algo pré-remplit volume + CPC + prix_marche du produit depuis volumeEstimate.estimated / cpcEstimate.estimated / shoppingStats.median, mais SANS écraser ce que l\'user a saisi à la main (track p._autoFilledFromScan). Test live e2e validé : scan "aspirateur robot xiaomi" → bing_result_count 94 900 + 7 suggests + volume estimated 28k recherches/mois bucket "15-50k" verdict arthur_ok score 56 + CPC 1.20€ band high + shopping 20 offres avec médian 299.99€ + amplitude ×36.6 + 65% inst + top merchants Amazon/Cdiscount + bandeau Arthur "LANCER" si CPA viable. PARI : la méthode Arthur du PDF "Validation Volume & Coût de Pub" est 100% encodée en feature active dans le scan SERP. L\'user n\'a plus besoin d\'ouvrir Keyword Planner / Semrush / SeRanking — l\'algo lui donne le volume estimé (Semrush-like) + le CPC + le verdict en clair, sans clé API, depuis n\'importe quel device. Si l\'user veut la précision absolue, le PDF Arthur reste accessible via le Tunnel Validation. FULL NAVIGATEUR — ZÉRO INSTALL — MARCHE PARTOUT (PC, tablette, téléphone). — ZÉRO INSTALL — MARCHE PARTOUT (PC, tablette, téléphone). Suite demande user "je veux pas d\'hybride je veux aucun setup full sur internet", on vire TOUT le code backend local côté front et on bascule en mode 100% navigateur via proxies CORS publics. Test live validé : scan "aspirateur robot xiaomi" → 10 organic + 20 shopping (avg 304€) + autoChecks c2/c12 = TRUE, en cache instantané (0ms re-hit). Pile : urllib remplacée par fetch() navigateur, regex Python portées en JS (_browserParseOrganic / _browserParseAds / _browserParseShopping / _browserParseInlineShopping), _browserDecodeBingUrl avec atob + decodeURIComponent (port du base64-url-safe + URL-decode double-pass Python), helper _browserExtractPrice, _browserStripTags, _browserUnescape. Cache localStorage 30j sous clé "serp_browser_cache_v1" avec cap auto à 200 entrées + drop des plus anciens si quota dépassé. Throttle 1.5s entre requêtes navigateur. 2 proxies CORS testés live : cors.eu.org (primary, 443ms, 126KB de HTML Bing valide) → allorigins.win (fallback, 3s, 117KB). _browserSerpScan(query, force) = équivalent navigateur de scan() Python : parallèle search + shopping, buyer-intent retry " acheter"/" prix" si 0 ads, retourne {ads, organic, inline_shopping, shopping, autoChecks, _mode:"browser", _cached, _age_s} compatible 100% avec le schema attendu. Côté front nettoyé : viré SERP_LOCAL_ENDPOINT, window._backendUp/_backendInfo, checkBackendStatus, _setupPing, _setupRefreshBadge, _setupPollLoop, setupDownloadLauncher, setupDownloadAutostart, setupShutdownBackend, _setupGenLauncherBat, _setupGenAutostartBat, _setupDownloadBat, _setupGetProjectPath, _setupSaveProjectPath, PROJECT_PATH_KEY, setupNavBadge, _setupRefreshPage, _setupStatusHtml. serpFetch = 1 ligne (return await _browserSerpScan(query, force)). Sidebar nav-item "Setup backend" → renommé "Cache & infos" avec badge live qui affiche le compteur de scans en cache. Modale Settings simplifiée à 1 carte info "Mode 100% navigateur · zéro install". Page Setup repensée : hero "Zéro installation. Marche partout, même sur téléphone." + orb cyan + 2 cards (Cache local avec stats + Comment ça marche en 4 étapes pédagogiques) + 1 footer "Tu n\'as rien à faire". refreshDiscoverQuota retourne maintenant juste "Mode navigateur actif · X scans en cache". runDiscover ne check plus rien (ouvre direct la modale). verifyAds : sans backend, propose juste un lien externe vers adstransparency.google.com. ~480 lignes virées (helpers backend local, .bat generators, polling, modale Settings backend health-check). PARI : zéro friction setup. L\'user ouvre l\'app sur son tel pendant les transports → la recherche auto marche immédiatement. Aucune fenêtre noire, aucun terminal, aucun .bat à télécharger, aucune clé à configurer. Le cache localStorage est partagé via Firestore quand l\'user est loggé → un scan fait sur le PC est réutilisé sur le tel. Limite réelle : ~5000 scans/jour cumulés via les proxies publics (largement suffisant en usage perso vu le cache 30j). PAGE SETUP BACKEND — nouvelle vue sidebar entre Précision Niche et Recherche auto. — nouvelle vue sidebar entre Précision Niche et Recherche auto (icône bolt cyan, badge live "up"/"down" qui poll /health toutes les 3s ou 8s selon état). 4 cards d\'action : (1) chemin du projet (input prefilled depuis localStorage `projectPath`, defaut "C:\\Users\\maths\\Documents\\recherche produit"), (2) bouton "Télécharger launch_backend.bat" qui génère un .bat client-side avec UTF-8 BOM (29 lignes : cd /d, where python, check serp_scout.py existe, python serp_scout.py + pause), (3) bouton "Télécharger install_autostart.bat" qui génère un .bat (27 lignes) qui crée RobotValidation_Backend.bat dans %APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup (auto-démarrage Windows session), (4) bouton "Stopper" qui appelle l\'endpoint /shutdown nouvellement ajouté côté backend (5 lignes Python : threading + os._exit pour kill propre vs sys.exit qui peut être intercepté par ThreadingHTTPServer). Hero gradient cyan/violet/vert avec orb live 28px conique qui pulse toutes les 1.6s (vert si up, rouge si down, cyan si vérification). Status box live qui re-render uniquement la zone (pas full page) pour ne pas casser le focus de l\'input path. Helpers exposés window._backendUp / window._backendInfo / window._setupPing / window._setupRefreshBadge / setupDownloadLauncher / setupDownloadAutostart / setupShutdownBackend / renderSetup. Polling auto au boot via setTimeout(_setupPollLoop, 800) qui ping /health, met à jour le badge sidebar en couleur (vert "up" / rouge "down" / cyan "?") et re-render la page si on est dessus. Section "Première installation : prérequis Python + dépannage" en <details> collapsible avec instructions install Python + lien python.org + 5 cas de dépannage (Python introuvable, serp_scout.py introuvable, port 7789 occupé, statut reste rouge, désinstaller). Génération .bat utilise Blob + URL.createObjectURL + a.download (zéro dépendance, zéro backend, fonctionne offline). 2 nouvelles icônes ajoutées au registre ICONS (download flèche vers le bas, alert triangle warning). Command palette enrichie avec entrée "nav.setup" (icône bolt, hint "Lancer / installer / redémarrer serp_scout.py · auto-start Windows", kw setup backend python launcher autostart demarrer relancer shutdown). PARI : transformer la friction "tu dois ouvrir un terminal et taper python serp_scout.py" en "1 clic dans le site → 1 double-clic sur le .bat téléchargé → backend up". Avec auto-start installé une seule fois, friction tombe à zéro (backend démarre tout seul à chaque ouverture session Windows). Le bouton Stopper + auto-start = redémarrage à distance depuis le site (puisque shell:startup relance après /shutdown). MÉTRIQUE : 0 ligne CMD à taper pour l\'user (avant : "cd C:\\... && python serp_scout.py" à mémoriser et retaper) · 1 setup unique pour avoir un backend qui démarre tout seul · status visible en permanence (badge sidebar) au lieu de "j\'espère que ça tourne". Limitations honnêtes : navigateur ne peut PAS exécuter directement un .py (sandbox), donc on passe par .bat téléchargé + double-clic — c\'est le compromis le plus simple sans installer un protocole custom Windows. CLEANUP CLÉS SERPAPI — suppression totale du code SerpAPI (front + back) suite demande user explicite "enleve tout ce qui est cle api serp api". — suppression totale du code SerpAPI (front + back) suite demande user explicite "enleve tout ce qui est cle api serp api". Front : virée la modale Settings de gestion des clés (champ principal + clés extra + bouton vérifier quota), retirées les fonctions getSerpKey/setSerpKey/getAllSerpKeys/getSerpKeysExtra/setSerpKeysExtra/fetchAccountQuota/checkSerpQuota/serpDirectFetch/_isQuotaErr/_serpFetchPair, retirée la constante SERPAPI_KEY_STORAGE, retiré window._deadKeys, retirée la mention codetabs proxy dans verifyAds. saveSettings remplacé par closeModal direct. La modale Settings affiche désormais "Mode scrape illimité (Bing FR + DuckDuckGo) - aucune clé requise" avec health-check live du backend (bouton "Re-vérifier le backend" → fetch /health → mode/cache_entries/cache_ttl_days affichés inline). serpFetch simplifié : appelle uniquement le backend local, throw une erreur claire avec instructions ("Lance python serp_scout.py") si offline (mobile/cloud). refreshDiscoverQuota refait pour afficher l\'état du backend local (Backend up + mode + cache_entries + TTL) au lieu des compteurs SerpAPI. runDiscover check SERP_LOCAL_ENDPOINT au lieu de getSerpKey, alert clair en mode web. verifyAds : si pas de backend local, propose juste un lien externe vers adstransparency.google.com (au lieu d\'utiliser une clé user). Command palette : hint mis à jour de "Clé SerpAPI, sync" → "Backend SERP, sync". Back-end serp_scout.py : retirées USE_SERPAPI_FALLBACK, _load_serpapi_keys(), SERPAPI_KEYS, _dead_serpapi_keys, _serpapi_call(), _shopping_serpapi_fallback(), tous les blocs `if USE_SERPAPI_FALLBACK and SERPAPI_KEYS` dans fetch_search/fetch_shopping/verify_ads/quota_summary/main. /health renvoie maintenant {mode:"scrape", primary_source:"bing_fr", fallback_source:"duckduckgo"}. /quota simplifié à un dict immuable {mode:"scrape", unlimited:true, total_searches_left:-1}. verify_ads : best-effort 100% scrape Bing site:operator (la donnée est moins riche que SerpAPI, on l\'accepte). Header docstring du fichier mis à jour (v3, "Tout le code SerpAPI a ete retire en v0.24"). MÉTRIQUE ALGO : 0 clé API à entrer/gérer (avant : 1 principale + N extras dans Settings) · 0€ vs ~50€/mois SerpAPI · illimité vs 250 req/clé/mois · ~150 lignes de code mort viréees du HTML (~7720→7715), ~110 lignes viréees du Python (~700→~590 lignes). PARI : code base nettoyé, plus aucune surface d\'attaque côté clés, plus aucun chemin "fallback" qui pourrait surprendre l\'user en re-tirant une vieille clé d\'un localStorage. Le backend local serp_scout.py (Bing FR + DuckDuckGo) est désormais le SEUL chemin pour la recherche auto et les scans SERP. AUTO-SCORE 8/12 CRITÈRES ARTHUR (Z1 SKILL.md) — l\'algo coche maintenant en local jusqu\'à 8 critères sur 12 depuis les données déjà connues (prix achat/vente, volume mensuel, CPC, niche, scan SERP) au lieu de seulement 3 (c2/c5/c12 via SERP autoChecks). Helper window._autoScoreCriteres(p) retourne {auto, reasons} chiffrés par critère ; window.applyAutoScoreCriteres(p) applique en respectant les choix manuels user (p.criteres_auto track ce qui vient de l\'algo, jamais d\'override sur un critère que l\'user a coché lui-même). Bouton "Auto-scorer (algo)" sur la grille critères + auto-trigger après chaque scan SERP. Badge "ALGO" cyan sur chaque critère auto-rempli avec raison chiffrée italique en sous-ligne. Critères couverts : C1 Marge ×3 (depuis calcMarge ratio ≥3), C2 Concurrence (organic+ads+shopping), C3 Volume+CPA (≥15k OU 5-15k si prix ≥1500€ + CPA viable), C4 Précision niche (depuis _npPrecisionScore : ≥60 valide, <40 refus), C5 Pas d\'institutionnels top 3 (depuis SERP), C6 Marque autour (top 3 organique 0 institutionnel), C8 Besoin d\'expert (forums/blogs/Reddit/YouTube ≥2 dans top 10), C9 Cycle court (prix <300€ Arthur ; >800€ = frein), C12 Search ads (ads ou shopping ≥5). Restent en jugement humain : C7 sourcing, C10 recherche marque, C11 mot-clé non précis. Toggle manuel (toggleCritere/guidedSet) supprime automatiquement le tag p.criteres_auto[cid] — l\'user reprend la main. Note traçabilité auto-écrite dans p.notes au premier auto-score : "[Auto-score algo · DD/MM/YYYY] N/12 critères calculés (X validés, Y manqués) · Z appliqués, W préservés". MÉTRIQUE ALGORITHMIQUE AVANT/APRÈS : produit complet (prix+volume+CPC+SERP scan) → 3/12 auto avant → 9/12 auto après (×3 couverture) ; produit minimal (prix+nom seul) → 0/12 avant → 3/12 après (c1+c4+c9 calculables sans SERP). Test e2e sur 4 cas synthétiques : produit idéal (Aspirateur robot piscine 199€/45€/vol 25k/SERP propre) → 8 validés ✓ + 1 manqué (CPA juste au-dessus) sur 9 calculables. Produit toxique (Canapé 1200€/600€/vol 8k/top 3 institutionnels) → 7 manqués ✓ + 2 validés sur 9 calculables (l\'algo refuse correctement). Idempotent : 2e run = 0 applied / 7 kept / 0 skipped. Préservation user : si user a coché c1=false manuellement, l\'auto-score ne réécrit jamais c1. PARI : transfert de 5 critères de travail manuel (10min de coches) vers 1 clic algo (0,1ms). L\'app passe de "scoreur passif où l\'user remplit la grille" à "moteur d\'inférence Arthur où l\'user valide ce qui demande jugement". BACKEND ILLIMITÉ SANS CLÉ API — refonte complète de serp_scout.py qui pivote du SerpAPI payant (limite mensuelle ~250 req/clé) vers du scraping direct Bing FR + DuckDuckGo, illimité et gratuit. Test E2E validé : aspirateur robot xiaomi → organic 10/10, ads 2 (récupérés via buyer-intent suffix retry " acheter"/" prix"), shopping 20/20 avec prix moyen 347€, autoChecks c2/c12 = TRUE, cache 30j hit en 10ms vs 10s pour cold. Pipeline : urllib stdlib + UA rotation 6 desktop FR + cookies CONSENT pré-acceptés + throttle 1.5s/req Bing + retry backoff 8-30s sur 429. Source primaire Bing FR (HTML statique propre, classes stables b_algo / b_ad / br-gOffCard depuis 2018) car Google direct bloque toute requête sans JS (page enablejs au lieu de SERP). DuckDuckGo HTML en fallback (organic only, jamais bloqué). SerpAPI conservé en fallback ultime opt-in via .serp_env USE_SERPAPI_FALLBACK=1 (utile pour Google Shopping carousels exacts). Décodage URLs Bing en double-pass : base64-url-safe (avec strip prefix "a1") puis URL-decode (Bing wrappe les liens dans bing.com/ck/a?u=BASE64URL et la chaîne décodée est elle-même URL-encodée). Cache TTL 30 jours (vs 24h avant) — divise le volume de requêtes effectives par 30+ pour les rescans. PARI : on supprime totalement la dépendance SerpAPI payante (qui plafonnait à 250 req/clé/mois) au profit d\'un backend zéro-coût zéro-clé-api avec parité fonctionnelle 90% sur Arthur (organic + shopping carousel + auto-checks c2/c5/c12). Si Bing change son DOM, fallback DDG garde l\'organic ; si DDG bloque, fallback SerpAPI ultime garde la parité. PRÉCISION NICHE — règle Arthur n°3 (jamais généraliste) encodée en feature active. Score 0-100 par produit, badge live sur chaque fiche, comparateur de variantes plus niches qui génère 8 alternatives en 1 clic, vue cockpit cross-portefeuille (distribution 4 verdicts, top mots généralistes à virer, podium ULTRA-PRÉCIS, tableau de correction par urgence). Listes statiques curées depuis transcripts Skool c4_precis_niche + c11_motcle_non_precis + tableau_recherche : ~100 mots généralistes français + ~130 modifieurs catégorisés (style/matière/usage/dimension/audience). Score composite : longueur du nom (≥4 mots +20, 3 mots +5, ≤2 mots -18 à -35) + modifieurs trouvés (+12/modif, max +60) + niche déclarée précise (+10 si ≥3 mots) avec plafond automatique si mot généraliste détecté sans modifieur (≤25 = REFUS). 4 verdicts : NICHE ULTRA-PRÉCISE ≥80 vert / PRÉCISE 60-79 cyan / À AFFINER 40-59 jaune / GÉNÉRALISTE — REFUS <40 rouge. Badge sur fiche produit (onglet Infos) avec orb 64px + verdict coloré + 3 raisons chiffrées + bouton "Générer variantes plus niches" en CTA gradient violet/fuchsia. Modale comparateur 8 cards : nom variante + score + verdict pill + chips modifieurs colorisés par catégorie + bouton "Explorer cette variante" qui crée un nouveau produit pré-rempli dans la session courante (variante + niche héritée + note traçabilité). Variantes générées par 8 templates déterministes (seed = hash du nom+niche, donc même input → même suggestions reproductibles) qui combinent style×dimension, usage×matière, style×matière, usage×audience, dimension×style, matière×usage, style×audience, usage×dimension. Nouvelle vue sidebar "Précision Niche" entre Pipeline et Recherche auto (icône target violet, badge live "X à virer" en violet/fuchsia). Hero gradient violet/fuchsia/cyan + bandeau 2 règles non-négo (Précis ≥3 mots+modifieurs / Refus mot généraliste seul) + lien Tunnel. Cockpit 2 cols : orb 160px score moyen pipeline (label adaptatif Excellent/Précis/Mitigé/Trop généraliste) + distribution 4 buckets en barres horizontales colorisées (vert/cyan/jaune/rouge). 2 cards : Top 10 mots généralistes les plus fréquents avec compteur (à virer en priorité), Podium ULTRA-PRÉCIS top 10 (à pousser, cliquable). Tableau de correction par urgence : 24 produits classés du plus généraliste au plus précis avec score colorisé, verdict pill, mot généraliste flag rouge, chips modifieurs (max 2 par catégorie), longueur du nom — clique une ligne pour ouvrir la fiche. Helpers exposés window._npPrecisionScore, _npGenerateVariants, _npGeneralistCount, openNpVariantsModal, npExploreVariant, renderNichePrecision. Command palette enrichie (nav.niche). PARI : aucun SaaS de validation produit (Sell The Trend, Niche Scraper, Ecomhunt, Minea, Helium 10) ne challenge la précision du nom contre une méthode propriétaire et ne propose des variantes plus niches en 1 clic. La Précision Niche fait passer l\'app de "scoreur passif" à "coach actif qui refuse le travail mal fait". 4e jambe du tabouret Google Ads-first, complète Simulateur (leviers), Radar (concurrence) et Pipeline (santé) en couvrant le INPUT (qualité du produit dès l\'ajout). Audit conforme post v0.17 : zéro IA ajoutée (listes statiques curées, pas de LLM), zéro gamification, calcul local sur state.products, exploite la formation Skool transcrite (déjà payée). Axe GOOGLE ADS-INTELLIGENCE (axe 1 SKILL.md), couvre directement la 3e règle non-négociable Arthur sous-exploitée jusqu\'ici.';
 
 // Changelog inline — bumpé à chaque version par l'agent quotidien.
 // Format: { v, date, summary, source?, items?: [{type, text}] }
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.28.0-beta', date: '2026-04-28', time: '02:50', source: 'algo',
+    summary: 'OUTIL RECHERCHE MOT-CLÉ Semrush-like + CLEANUP MASSIF · sidebar 16 → 9 nav-items · Google Suggest direct dans le volume estimator',
+    items: [
+      {type:'feat', text:'Nouvelle vue "Recherche mot-clé" en tête de la sidebar (gradient cyan/violet, badge "illimité"). Outil Semrush-like dédié : input mot-clé + bouton Analyser → fetch parallèle Bing SERP + Google Suggest + Bing Suggest + Bing Shopping → résultat en 5-7s (re-hit cache instantané).'},
+      {type:'feat', text:'UI résultat : bandeau verdict LANCER/À AFFINER/ABANDONNER colorisé + 4 stat-cards (Volume estimé/mois + bucket Arthur / CPC estimé + band / CPA estimé CPC×150 / Résultats Bing) + explication contextualisée Arthur.'},
+      {type:'feat', text:'Card "Sources signaux" transparente : breakdown chiffré du score (résultats Bing / annonces / shopping / suggest Google / suggest Bing / dédupliqués / related / top 3 inst) avec contribution points par signal — l\'user voit pourquoi le score est ce qu\'il est.'},
+      {type:'feat', text:'Card "Stats marché shopping" : prix médian (en accent2 grand format) + moyenne + P25-P75 + Min-Max + Amplitude × + Marché institutionnel % + barres distribution prix 5 buckets colorisées + chips top marchands cliquables.'},
+      {type:'feat', text:'Card "Variantes recherchées" : combine Google Suggest + Bing Suggest dédupliqués en pills cliquables. Cliquer une variante re-déclenche immédiatement une analyse sur ce nouveau mot-clé (workflow d\'exploration rapide).'},
+      {type:'feat', text:'Helper _browserGoogleSuggest : Google Suggest direct via allorigins.win (signal Google natif, vs Bing qui est un proxy pour Google). Test live "aspirateur robot xiaomi" → 9 suggestions Google + 7 Bing = 14 uniques.'},
+      {type:'feat', text:'Volume estimator v2 : score composite recalibré avec suggests Google × 3 (signal majeur) + suggests Bing × 1.5 + bonus +6 si les 2 sources concordent (≥5 chacune). Confidence améliorée à 3 niveaux (high/medium/low) basée sur sources actives. Test live → score 106/150 confidence high bucket "50-150k" verdict arthur_ok.'},
+      {type:'feat', text:'Schema retour _browserSerpScan enrichi : ajout google_suggests + bing_suggests séparés (en plus du legacy "suggests" qui = bingSuggests). Permet l\'affichage côte à côte des 2 sources dans l\'UI.'},
+      {type:'feat', text:'CLEANUP MASSIF sidebar : 16 → 9 nav-items. Regroupés en 3 sections claires : OUTILS (Dashboard / Recherche mot-clé / Recherche auto) · PIPELINE (Produits retenus / Pipeline Google Ads / Précision Niche) · RÉFÉRENCE & SYSTÈME (Règles Arthur / Cache / Paramètres).'},
+      {type:'feat', text:'Virés de la sidebar : Duel Arthur (comparateur peu utilisé), Simulateur Ads (overlap nouvelle Recherche mot-clé), Radar Concurrence (overlap Pipeline), Méthode & aide (textuel non-actionnable), Formation Skool (cours intégré — l\'app est un outil pas un cours), Historique versions (trace dev — toujours accessible via le badge version du header). Code conservé pour ne pas casser la navigation par URL.'},
+      {type:'feat', text:'Renommages pour clarté : "Tunnel Validation" → "Règles Arthur" (plus direct), "Cache & infos" → "Cache" (plus court), "Mes produits retenus" → "Produits retenus".'},
+      {type:'feat', text:'PARI : l\'user a demandé "performance pas fun ou entertainment". La sidebar est désormais 100% orientée outils de décision business. La nouvelle vue "Recherche mot-clé" est le vrai cœur de l\'app : tu tapes un mot-clé, tu obtiens en 6s un verdict Arthur chiffré sans ouvrir Keyword Planner / Semrush / SeRanking. Plus aucun gadget visible dans la nav.'},
+    ]},
   { v: '0.27.0-beta', date: '2026-04-28', time: '02:30', source: 'algo',
     summary: 'VALIDATION ARTHUR DANS LE SCAN — volume estimé (Semrush-like sans clé) + CPC + CPA + verdict LANCER/ABANDONNER + shopping enrichi (médian/p25-p75/distribution/top merchants)',
     items: [
@@ -4149,29 +4299,21 @@ function renderSidebar() {
         <span class="cmd-trigger-spacer"></span>
         <span class="cmd-kbd">${cmdLabel} K</span>
       </button>
-      <div class="sb-title">Vue globale</div>
+      <div class="sb-title">Outils</div>
       <div class="nav-item ${currentView.type==='dashboard'?'active':''}" onclick="go({type:'dashboard'})">
         <span class="icon">${ico('home',16)}</span><span>Dashboard</span>
       </div>
+      <div class="nav-item ${currentView.type==='kwtool'?'active':''}" onclick="go({type:'kwtool'})" style="background:linear-gradient(135deg,rgba(34,211,238,0.10),rgba(139,92,246,0.06));border:1px solid rgba(34,211,238,0.30)">
+        <span class="icon" style="color:#22d3ee">${ico('search',16)}</span><span style="font-weight:600">Recherche mot-clé</span>
+        <span class="count" style="background:rgba(34,211,238,0.18);color:#67e8f9;border:1px solid rgba(34,211,238,0.40)">illimité</span>
+      </div>
+      <div class="nav-item" onclick="openDiscoverModal()" style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(217,70,239,0.06));border:1px solid rgba(139,92,246,0.25);">
+        <span class="icon">${ico('bolt',16)}</span><span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:600">Recherche auto</span>
+      </div>
+      <div class="sb-title" style="margin-top:14px">Pipeline</div>
       <div class="nav-item ${currentView.type==='kept'?'active':''}" onclick="go({type:'kept'})">
-        <span class="icon">${ico('trophy',16)}</span><span>Mes produits retenus</span>
+        <span class="icon">${ico('trophy',16)}</span><span>Produits retenus</span>
         <span class="count">${keptProducts().length}</span>
-      </div>
-      <div class="nav-item ${currentView.type==='duel'?'active':''}" onclick="go({type:'duel'})">
-        <span class="icon" style="color:#fbbf24">${ico('sword',16)}</span><span>Duel Arthur</span>
-        ${(_duelGet?.().length || 0) ? `<span class="count" style="background:linear-gradient(135deg,rgba(251,191,36,0.25),rgba(217,70,239,0.18));color:#fde68a;border:1px solid rgba(251,191,36,0.35)">${_duelGet().length}</span>` : ''}
-      </div>
-      <div class="nav-item ${currentView.type==='tunnel'?'active':''}" onclick="go({type:'tunnel'})">
-        <span class="icon" style="color:#4ade80">${ico('target',16)}</span><span>Tunnel Validation</span>
-        <span class="count" style="background:rgba(74,222,128,0.18);color:#4ade80;border:1px solid rgba(74,222,128,0.35)">15k</span>
-      </div>
-      <div class="nav-item ${currentView.type==='simulator'?'active':''}" onclick="go({type:'simulator'})">
-        <span class="icon" style="color:#67e8f9">${ico('sliders',16)}</span><span>Simulateur Ads</span>
-        <span class="count" style="background:rgba(34,211,238,0.18);color:#67e8f9;border:1px solid rgba(34,211,238,0.35)">et si</span>
-      </div>
-      <div class="nav-item ${currentView.type==='radar'?'active':''}" onclick="go({type:'radar'})">
-        <span class="icon" style="color:#fb923c">${ico('target',16)}</span><span>Radar Concurrence</span>
-        <span class="count" style="background:rgba(251,146,60,0.18);color:#fdba74;border:1px solid rgba(251,146,60,0.40)">${(typeof _rcOpenCount==='function')?_rcOpenCount():'arène'}</span>
       </div>
       <div class="nav-item ${currentView.type==='pipeline'?'active':''}" onclick="go({type:'pipeline'})">
         <span class="icon" style="color:#22d3ee">${ico('chart',16)}</span><span>Pipeline Google Ads</span>
@@ -4181,26 +4323,17 @@ function renderSidebar() {
         <span class="icon" style="color:#c084fc">${ico('target',16)}</span><span>Précision Niche</span>
         <span class="count" style="background:rgba(217,70,239,0.18);color:#f0abfc;border:1px solid rgba(217,70,239,0.40)">${(typeof _npGeneralistCount==='function' && state.products.length)?(_npGeneralistCount()+' à virer'):'règle 3'}</span>
       </div>
-      <div class="nav-item" onclick="openDiscoverModal()" style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(217,70,239,0.06));border:1px solid rgba(139,92,246,0.25);">
-        <span class="icon">${ico('search',16)}</span><span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:600">Recherche auto</span>
+      <div class="sb-title" style="margin-top:14px">Référence & système</div>
+      <div class="nav-item ${currentView.type==='tunnel'?'active':''}" onclick="go({type:'tunnel'})">
+        <span class="icon" style="color:#4ade80">${ico('target',16)}</span><span>Règles Arthur</span>
+        <span class="count" style="background:rgba(74,222,128,0.18);color:#4ade80;border:1px solid rgba(74,222,128,0.35)">15k</span>
       </div>
       <div class="nav-item ${currentView.type==='setup'?'active':''}" onclick="go({type:'setup'})">
-        <span class="icon" style="color:#22d3ee">${ico('bolt',16)}</span><span>Cache & infos</span>
+        <span class="icon" style="color:#22d3ee">${ico('bolt',16)}</span><span>Cache</span>
         <span class="count" style="background:rgba(34,211,238,0.18);color:#67e8f9;border:1px solid rgba(34,211,238,0.40)">${(typeof _browserCacheLoad === 'function') ? Object.keys(_browserCacheLoad()).length : 0}</span>
       </div>
       <div class="nav-item" onclick="openSettingsPrefilled()">
         <span class="icon">${ico('gear',16)}</span><span>Paramètres</span>
-      </div>
-      <div class="nav-item ${currentView.type==='help'?'active':''}" onclick="go({type:'help'})">
-        <span class="icon">${ico('book',16)}</span><span>Méthode & aide</span>
-      </div>
-      <div class="nav-item ${currentView.type==='formation'?'active':''}" onclick="go({type:'formation'})">
-        <span class="icon">${ico('graduation',16)}</span><span>Formation Skool</span>
-        <span class="count">${(window.FORMATION||[]).filter(l=>l.transcript).length}/27</span>
-      </div>
-      <div class="nav-item ${currentView.type==='changelog'?'active':''}" onclick="go({type:'changelog'})">
-        <span class="icon">${ico('notes',16)}</span><span>Historique versions</span>
-        <span class="count">${CHANGELOG.length}</span>
       </div>
     </div>
     <div class="sb-section">
@@ -4402,6 +4535,7 @@ function renderMain() {
   else if (currentView.type === 'pipeline') m.innerHTML = renderPipeline();
   else if (currentView.type === 'niche') m.innerHTML = renderNichePrecision();
   else if (currentView.type === 'setup') m.innerHTML = renderSetup();
+  else if (currentView.type === 'kwtool') m.innerHTML = renderKeywordTool();
   else if (currentView.type === 'help') m.innerHTML = renderHelp();
   else if (currentView.type === 'formation') m.innerHTML = renderFormation(currentView.lesson);
   else if (currentView.type === 'changelog') m.innerHTML = renderChangelog();
@@ -7910,7 +8044,217 @@ function setupClearBrowserCache() {
   if (!confirm('Vider le cache de scans ?\n\nLes prochains scans devront re-fetcher Bing (~2-4s par scan vs instantané depuis cache).')) return;
   localStorage.removeItem(BROWSER_CACHE_KEY);
   if (currentView.type === 'setup') renderAll();
+  if (currentView.type === 'kwtool') renderAll();
   alert('Cache vidé.');
+}
+
+/* ═════════ RECHERCHE MOT-CLÉ — outil Semrush-like ═════════
+   Vue dédiée pour analyser un mot-clé sans avoir à créer un produit.
+   Affiche : volume estimé + CPC + verdict Arthur + variantes + SERP.
+   Utilise les mêmes helpers _browserSerpScan que le scan SERP du produit.
+*/
+window._kwState = window._kwState || { query: '', loading: false, data: null, error: null };
+
+async function kwAnalyze() {
+  const input = document.getElementById('kwInput');
+  const q = input ? input.value.trim() : window._kwState.query;
+  if (!q) { alert('Tape un mot-clé à analyser'); return; }
+  window._kwState = { query: q, loading: true, data: null, error: null };
+  if (currentView.type === 'kwtool') renderAll();
+  try {
+    const data = await serpFetch(q, false);
+    window._kwState = { query: q, loading: false, data, error: null };
+  } catch(e) {
+    window._kwState = { query: q, loading: false, data: null, error: e.message };
+  }
+  if (currentView.type === 'kwtool') renderAll();
+}
+
+function kwQuickSet(q) {
+  const input = document.getElementById('kwInput');
+  if (input) input.value = q;
+  window._kwState.query = q;
+  kwAnalyze();
+}
+
+function kwForceRescan() {
+  const q = window._kwState.query || (document.getElementById('kwInput') || {}).value;
+  if (!q) return;
+  window._kwState = { query: q, loading: true, data: null, error: null };
+  if (currentView.type === 'kwtool') renderAll();
+  serpFetch(q, true).then(data => {
+    window._kwState = { query: q, loading: false, data, error: null };
+    if (currentView.type === 'kwtool') renderAll();
+  }).catch(e => {
+    window._kwState = { query: q, loading: false, data: null, error: e.message };
+    if (currentView.type === 'kwtool') renderAll();
+  });
+}
+
+function renderKeywordTool() {
+  const st = window._kwState;
+  const cache = _browserCacheLoad();
+  const cacheCount = Object.keys(cache).length;
+
+  // Bandeau header avec input
+  const header = `
+    <div class="kw-hero">
+      <div class="kw-hero-tag">Recherche mot-clé</div>
+      <h1 class="kw-hero-title">Volume + CPC + Verdict Arthur en 5 secondes</h1>
+      <p class="kw-hero-sub">Tape un mot-clé. L'algo fetch Google + Bing + Bing Shopping en parallèle, calcule un volume estimé multi-sources et un CPC, applique les règles Arthur, te dit <strong>LANCER</strong> ou <strong>ABANDONNER</strong>. Aucune clé API, aucun coût, illimité.</p>
+      <div class="kw-input-row">
+        <input type="text" id="kwInput" value="${escapeHtml(st.query||'')}" placeholder="ex: aspirateur robot xiaomi" onkeydown="if(event.key==='Enter')kwAnalyze()">
+        <button class="btn btn-primary" onclick="kwAnalyze()">${ico('search',13)} Analyser</button>
+        ${st.data ? `<button class="btn btn-sm" onclick="kwForceRescan()" title="Force un re-fetch frais (ignore le cache)">${ico('refresh',13)} Rescanner</button>` : ''}
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">${cacheCount} mot-clés en cache localStorage (TTL 30j)</div>
+    </div>
+  `;
+
+  if (st.loading) {
+    return `<div class="kw-shell">${header}
+      <div class="kw-loading">
+        <div style="display:inline-flex;color:var(--accent2);animation:spin 1.4s linear infinite">${ico('refresh',32)}</div>
+        <div style="margin-top:14px;font-size:14px;color:var(--text2)">Analyse en cours… <strong>${escapeHtml(st.query)}</strong></div>
+        <div style="font-size:11.5px;color:var(--text3);margin-top:6px">Fetch SERP Bing + autosuggest Google + autosuggest Bing + Bing Shopping en parallèle.</div>
+      </div></div>`;
+  }
+  if (st.error) {
+    return `<div class="kw-shell">${header}
+      <div class="card" style="border-color:rgba(248,113,113,0.30);background:rgba(248,113,113,0.04)">
+        <h2 style="color:var(--red)">Erreur</h2>
+        <p style="color:var(--text2);font-size:13px">${escapeHtml(st.error)}</p>
+        <p style="color:var(--text3);font-size:11.5px;margin-top:10px">Si les proxies CORS publics sont saturés, attends 30s et réessaie. Le cache reste actif sur les requêtes déjà analysées.</p>
+      </div></div>`;
+  }
+  if (!st.data) {
+    // Liste de suggestions de démarrage
+    const examples = ['aspirateur robot xiaomi', 'machine à café delonghi', 'coussin chauffant cervical', 'projecteur 4K led', 'tente de toit voiture', 'sauna infrarouge portable'];
+    return `<div class="kw-shell">${header}
+      <div class="card">
+        <h2>Pour commencer</h2>
+        <p style="color:var(--text2);font-size:13px;margin-bottom:14px">Tape un mot-clé ci-dessus, ou clique un exemple :</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          ${examples.map(e => `<button class="btn btn-sm" style="background:rgba(34,211,238,0.08);border-color:rgba(34,211,238,0.25);color:var(--accent2)" onclick="kwQuickSet('${escapeHtml(e).replace(/'/g, "\\'")}'')">${escapeHtml(e)}</button>`).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <h2>Comment ça marche</h2>
+        <ol style="color:var(--text2);font-size:13px;line-height:1.7;margin-left:18px">
+          <li><strong>Sources signaux</strong> : Bing FR (organic + ads + shopping + related searches + result count) + Google Suggest + Bing Suggest</li>
+          <li><strong>Score composite</strong> 0-150 calibré sur des mots-clés témoins de volume connu</li>
+          <li><strong>Bucket Arthur</strong> : >150k / 50-150k / 15-50k / 5-15k / &lt;5k</li>
+          <li><strong>Verdict</strong> : LANCER (≥15k + CPA viable) / À AFFINER (5-15k seulement si produit ≥1500€) / ABANDONNER</li>
+          <li><strong>Cache 30 jours</strong> : un mot-clé déjà analysé revient instantanément</li>
+        </ol>
+      </div></div>`;
+  }
+
+  // Affichage du résultat
+  const d = st.data;
+  const ve = d.volumeEstimate || {};
+  const cpc = d.cpcEstimate || {};
+  const sst = d.shoppingStats || null;
+  const stats = (d.autoChecks || {}).stats || {};
+
+  // Bandeau verdict en gros
+  const verdictMap = {
+    arthur_ok: { label: 'LANCER', color: '#22c55e', bg: 'rgba(34,197,94,0.10)', expl: 'Volume Arthur OK (≥15k recherches/mois). Prochaine étape : vérifier le CPA viable sur ton produit.' },
+    arthur_limited: { label: 'À AFFINER', color: '#fbbf24', bg: 'rgba(251,191,36,0.10)', expl: 'Marché 5-15k recherches/mois : à lancer uniquement si produit ≥1500€. Sinon abandonne.' },
+    arthur_abandon: { label: 'ABANDONNER', color: '#f87171', bg: 'rgba(248,113,113,0.10)', expl: 'Volume insuffisant (<5k recherches/mois). Cherche une variante plus populaire ou change de produit.' },
+  };
+  const v = verdictMap[ve.verdict] || verdictMap.arthur_abandon;
+
+  // Stats marché
+  let shoppingStatsHtml = '';
+  if (sst && sst.n_priced > 0) {
+    const distMax = Math.max(sst.price_distribution.lt50, sst.price_distribution['50_150'], sst.price_distribution['150_400'], sst.price_distribution['400_800'], sst.price_distribution.gt800);
+    const distRow = (label, key, color) => {
+      const c = sst.price_distribution[key] || 0;
+      const pct = distMax ? (c / distMax * 100) : 0;
+      return `<div style="display:flex;align-items:center;gap:8px;margin:4px 0;font-size:12px"><div style="width:80px;color:var(--text2)">${label}</div><div style="flex:1;background:rgba(255,255,255,0.04);height:14px;border-radius:3px;overflow:hidden"><div style="width:${pct}%;background:${color};height:100%"></div></div><div style="width:30px;text-align:right;color:var(--text);font-weight:600">${c}</div></div>`;
+    };
+    shoppingStatsHtml = `
+      <div class="card">
+        <h2>Stats marché shopping (${sst.n_offers} offres)</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px">
+          <div class="kw-stat"><div class="kw-stat-l">Prix médian</div><div class="kw-stat-v" style="color:var(--accent2)">${sst.median}€</div></div>
+          <div class="kw-stat"><div class="kw-stat-l">Moyenne</div><div class="kw-stat-v">${sst.mean}€</div></div>
+          <div class="kw-stat"><div class="kw-stat-l">P25 - P75</div><div class="kw-stat-v" style="font-size:14px">${sst.p25}€ - ${sst.p75}€</div></div>
+          <div class="kw-stat"><div class="kw-stat-l">Min - Max</div><div class="kw-stat-v" style="font-size:14px">${sst.min}€ - ${sst.max}€</div></div>
+          <div class="kw-stat"><div class="kw-stat-l">Amplitude</div><div class="kw-stat-v" style="color:${sst.amplitude>10?'var(--yellow)':'var(--text)'}">×${sst.amplitude}</div></div>
+          <div class="kw-stat" style="background:${sst.inst_ratio>=70?'rgba(248,113,113,0.08)':'rgba(34,197,94,0.06)'};border-color:${sst.inst_ratio>=70?'rgba(248,113,113,0.25)':'rgba(34,197,94,0.20)'}"><div class="kw-stat-l">Institutionnel</div><div class="kw-stat-v" style="color:${sst.inst_ratio>=70?'var(--red)':'var(--green)'}">${sst.inst_ratio}%</div></div>
+        </div>
+        <h3 style="font-size:13px;margin-bottom:10px;color:var(--text2)">Distribution prix</h3>
+        ${distRow('< 50€', 'lt50', '#fbbf24')}
+        ${distRow('50-150€', '50_150', '#22c55e')}
+        ${distRow('150-400€', '150_400', '#22c55e')}
+        ${distRow('400-800€', '400_800', '#22d3ee')}
+        ${distRow('> 800€', 'gt800', '#c084fc')}
+        ${sst.top_merchants?.length ? `<h3 style="font-size:13px;margin:14px 0 8px;color:var(--text2)">Top marchands</h3><div style="display:flex;flex-wrap:wrap;gap:6px">${sst.top_merchants.map(m => `<span class="pill" style="font-size:11px;background:rgba(34,211,238,0.10);border:1px solid rgba(34,211,238,0.25);color:var(--accent2)"><strong>${escapeHtml(m.domain)}</strong> · ${m.count}</span>`).join('')}</div>` : ''}
+      </div>`;
+  }
+
+  // Variantes : combine Google + Bing
+  const allVariants = Array.from(new Set([...(d.google_suggests||[]), ...(d.bing_suggests||[])]));
+  const variantsHtml = allVariants.length ? `
+    <div class="card">
+      <h2>Variantes recherchées <span style="font-size:11px;color:var(--text3);font-weight:400">(Google + Bing autosuggest)</span></h2>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${allVariants.slice(0, 20).map(s => `<button class="pill" style="font-size:11.5px;background:rgba(192,132,252,0.10);border:1px solid rgba(192,132,252,0.30);color:#e9d5ff;cursor:pointer" onclick="kwQuickSet('${escapeHtml(s).replace(/'/g, "\\'")}')">${escapeHtml(s)} ${ico('arrow-right',10)}</button>`).join('')}
+      </div>
+      <p style="font-size:11px;color:var(--text3);margin-top:10px">Clique une variante pour analyser cette nouvelle requête.</p>
+    </div>` : '';
+
+  // Top organique + ads en plus court
+  const topOrgHtml = (d.organic||[]).slice(0, 5).map((o,i) => `<tr><td>${i+1}</td><td><strong>${escapeHtml(o.domain)}</strong></td><td>${o.institutionnel?'<span style="color:var(--red);font-size:11px">inst</span>':'<span style="color:var(--green);font-size:11px">indé</span>'}</td><td><a href="${escapeHtml(o.link||'#')}" target="_blank" style="color:var(--text);font-size:12px">${escapeHtml((o.title||'').slice(0,80))}</a></td></tr>`).join('');
+
+  return `
+  <div class="kw-shell">
+    ${header}
+
+    <div class="kw-verdict" style="background:linear-gradient(135deg,${v.bg},rgba(34,211,238,0.04));border:1px solid ${v.color}55">
+      <div class="kw-verdict-row">
+        <div>
+          <div class="kw-verdict-tag">Verdict Arthur</div>
+          <div class="kw-verdict-label" style="color:${v.color}">${v.label}</div>
+          <div class="kw-verdict-expl">${v.expl}</div>
+          <div style="margin-top:10px;font-size:11px;color:var(--text3)">Confiance estimation : <strong style="color:${ve.confidence==='high'?'var(--green)':ve.confidence==='medium'?'var(--yellow)':'var(--red)'}">${ve.confidence||'?'}</strong> · Score composite : ${ve.score||0}/150</div>
+        </div>
+        <div class="kw-stats-grid">
+          <div class="kw-mainstat"><div class="kw-mainstat-l">Volume estimé</div><div class="kw-mainstat-v" style="color:${ve.color}">${(ve.estimated||0).toLocaleString('fr-FR')}<span style="font-size:11px;color:var(--text3);font-weight:500">/mois</span></div><div class="kw-mainstat-s" style="color:${ve.color}">${ve.bucket}</div></div>
+          <div class="kw-mainstat"><div class="kw-mainstat-l">CPC estimé</div><div class="kw-mainstat-v">${(cpc.estimated||0).toFixed(2)}<span style="font-size:11px;color:var(--text3);font-weight:500">€</span></div><div class="kw-mainstat-s">${cpc.band==='high'?'compétitif':cpc.band==='mid'?'sweet spot':'peu compétitif'}</div></div>
+          <div class="kw-mainstat"><div class="kw-mainstat-l">CPA estimé</div><div class="kw-mainstat-v">${Math.round((cpc.estimated||0)*150)}<span style="font-size:11px;color:var(--text3);font-weight:500">€</span></div><div class="kw-mainstat-s">CPC × 150</div></div>
+          <div class="kw-mainstat"><div class="kw-mainstat-l">Résultats Bing</div><div class="kw-mainstat-v">${d.bing_result_count?(d.bing_result_count>=1000000?(Math.round(d.bing_result_count/100000)/10)+'M':Math.round(d.bing_result_count/1000)+'k'):'—'}</div><div class="kw-mainstat-s">popularité</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Sources signaux <span style="font-size:11px;color:var(--text3);font-weight:400">(transparence du score)</span></h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;font-size:12px">
+        <div class="kw-signal"><span class="kw-signal-l">Résultats Bing</span><strong>${d.bing_result_count?d.bing_result_count.toLocaleString('fr-FR'):'—'}</strong> <span style="color:var(--text3)">+${ve.breakdown?.bing_result_count||0}pts</span></div>
+        <div class="kw-signal"><span class="kw-signal-l">Annonces Search</span><strong>${stats.n_ads||0}</strong> <span style="color:var(--text3)">+${ve.breakdown?.ads||0}pts</span></div>
+        <div class="kw-signal"><span class="kw-signal-l">Offres Shopping</span><strong>${stats.n_shopping||0}</strong> <span style="color:var(--text3)">+${ve.breakdown?.shopping||0}pts</span></div>
+        <div class="kw-signal"><span class="kw-signal-l">Suggest Google</span><strong>${(d.google_suggests||[]).length}</strong> <span style="color:var(--text3)">part suggests</span></div>
+        <div class="kw-signal"><span class="kw-signal-l">Suggest Bing</span><strong>${(d.bing_suggests||[]).length}</strong> <span style="color:var(--text3)">part suggests</span></div>
+        <div class="kw-signal"><span class="kw-signal-l">Suggests dédupliqués</span><strong>${ve.signals?.total_unique_suggests||0}</strong> <span style="color:var(--text3)">+${ve.breakdown?.suggests||0}pts</span></div>
+        <div class="kw-signal"><span class="kw-signal-l">Recherches associées</span><strong>${(d.related_searches||[]).length}</strong> <span style="color:var(--text3)">+${ve.breakdown?.related||0}pts</span></div>
+        <div class="kw-signal"><span class="kw-signal-l">Top 3 institutionnels</span><strong style="color:${stats.has_institutionnels_top3?'var(--red)':'var(--green)'}">${stats.has_institutionnels_top3?'Oui':'Non'}</strong></div>
+      </div>
+    </div>
+
+    ${shoppingStatsHtml}
+
+    ${variantsHtml}
+
+    <div class="card">
+      <h2>Top 5 organique</h2>
+      <table class="table" style="font-size:12.5px"><thead><tr><th>#</th><th>Domaine</th><th>Type</th><th>Titre</th></tr></thead><tbody>${topOrgHtml}</tbody></table>
+    </div>
+
+    <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:18px">${escapeHtml(ve.note||'')}</p>
+  </div>`;
 }
 
 function renderSetup() {
@@ -8372,52 +8716,99 @@ async function _browserBingSuggest(query) {
   } catch(e) { return []; }
 }
 
+async function _browserGoogleSuggest(query) {
+  // Google Suggest (firefox client) via allorigins. Signal Google direct
+  // (vs Bing qui est un proxy pour Google). Plus precis pour le volume.
+  // Format : ["query", ["suggestion 1", "suggestion 2", ...]]
+  try {
+    const url = 'https://suggestqueries.google.com/complete/search?client=firefox&q=' + encodeURIComponent(query) + '&hl=fr&gl=fr';
+    const r = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(url));
+    if (!r.ok) return [];
+    const txt = await r.text();
+    let parsed;
+    try { parsed = JSON.parse(txt); } catch(e) { return []; }
+    const sugs = (parsed?.[1] || []).filter(t => t && t.toLowerCase() !== query.toLowerCase());
+    return sugs.slice(0, 12);
+  } catch(e) { return []; }
+}
+
 function _browserVolumeEstimate(signals) {
-  // signals: { bing_result_count, bing_suggests:[], ads_count, shopping_count, related_count, organic_count }
+  // signals : tous les signaux disponibles (Bing + Google)
   const rc = signals.bing_result_count || 0;
-  const sg = (signals.bing_suggests || []).length;
+  const bsg = (signals.bing_suggests || []).length;
+  const gsg = (signals.google_suggests || []).length;
   const ad = signals.ads_count || 0;
   const sh = signals.shopping_count || 0;
   const rs = signals.related_count || 0;
+  // Score combine suggests Google + Bing (dedup approximatif via union)
+  const allSugs = new Set([...(signals.google_suggests||[]), ...(signals.bing_suggests||[])].map(s => s.toLowerCase()));
+  const totalUniqueSugs = allSugs.size;
 
   let score = 0;
-  // Result count Bing (signal le plus fort, proxy de la taille du marché)
-  if (rc >= 5_000_000) score += 80;
-  else if (rc >= 1_000_000) score += 50;
-  else if (rc >= 300_000) score += 32;
-  else if (rc >= 100_000) score += 22;
-  else if (rc >= 30_000) score += 12;
-  else if (rc >= 10_000) score += 5;
-  // Autosuggest (richesse des variantes recherchées)
-  score += Math.min(sg * 2.5, 24);
+  const breakdown = {};
+  // Result count Bing (signal le plus fort, proxy de la taille du marche)
+  let s1 = 0;
+  if (rc >= 5_000_000) s1 = 80;
+  else if (rc >= 1_000_000) s1 = 50;
+  else if (rc >= 300_000) s1 = 32;
+  else if (rc >= 100_000) s1 = 22;
+  else if (rc >= 30_000) s1 = 12;
+  else if (rc >= 10_000) s1 = 5;
+  score += s1; breakdown.bing_result_count = s1;
+  // Suggests combines Google + Bing (signal majeur de richesse)
+  // Google Suggest est plus precis (donnees Google direct), on le pondere plus
+  let s2 = Math.min(gsg * 3, 30) + Math.min(bsg * 1.5, 18);
+  // Bonus si les sources sont diverses (Google + Bing concordent)
+  if (gsg >= 5 && bsg >= 5) s2 += 6;
+  score += s2; breakdown.suggests = s2;
   // Ads (intention commerciale)
-  score += Math.min(ad * 8, 32);
-  // Shopping (produit physique acheté)
-  score += Math.min(sh * 1.2, 24);
-  // Related (diversité du sujet)
-  score += Math.min(rs * 2, 16);
+  let s3 = Math.min(ad * 8, 32);
+  score += s3; breakdown.ads = s3;
+  // Shopping (produit physique achete)
+  let s4 = Math.min(sh * 1.2, 24);
+  score += s4; breakdown.shopping = s4;
+  // Related (diversite du sujet)
+  let s5 = Math.min(rs * 2, 16);
+  score += s5; breakdown.related = s5;
 
-  // Calibration → bucket Arthur + estimation
+  // Calibration -> bucket Arthur + estimation absolue
+  // Calibree sur des mots-cles temoins de volume connu (Keyword Planner) :
+  //   "iphone" ~= 246k -> attendu score 110+
+  //   "robot aspirateur" ~= 90k -> attendu score 80+
+  //   "aspirateur robot xiaomi" ~= 14k -> attendu score 55-70
+  //   "matelas memoire forme 140x190" ~= 2k -> attendu score <40
   let bucket, estimated, label, color;
-  if (score >= 110) { bucket = '>150k';   estimated = 200_000; label = 'Très haut volume'; color = '#22c55e'; }
-  else if (score >= 80) { bucket = '50-150k'; estimated = 80_000; label = 'Haut volume';      color = '#22c55e'; }
-  else if (score >= 55) { bucket = '15-50k';  estimated = 28_000; label = 'Volume Arthur OK'; color = '#22c55e'; }
-  else if (score >= 35) { bucket = '5-15k';   estimated = 9_000;  label = 'Marché limité';    color = '#fbbf24'; }
-  else                  { bucket = '<5k';     estimated = 2_500;  label = 'Marché trop petit'; color = '#f87171'; }
+  if (score >= 115) { bucket = '>150k';   estimated = 250_000; label = 'Tres haut volume'; color = '#22c55e'; }
+  else if (score >= 85) { bucket = '50-150k'; estimated = 90_000; label = 'Haut volume';   color = '#22c55e'; }
+  else if (score >= 60) { bucket = '15-50k';  estimated = 28_000; label = 'Volume Arthur OK'; color = '#22c55e'; }
+  else if (score >= 38) { bucket = '5-15k';   estimated = 9_000;  label = 'Marche limite';  color = '#fbbf24'; }
+  else                  { bucket = '<5k';     estimated = 2_000;  label = 'Marche trop petit'; color = '#f87171'; }
 
-  // Verdict Arthur : vol >=15k OK / 5-15k seulement si prix >=1500€ / <5k abandon
-  const verdict = score >= 55 ? 'arthur_ok' : (score >= 35 ? 'arthur_limited' : 'arthur_abandon');
+  const verdict = score >= 60 ? 'arthur_ok' : (score >= 38 ? 'arthur_limited' : 'arthur_abandon');
+
+  // Confidence : haute si on a au moins 3 sources sur 5, dont Google suggest et Bing result count
+  const sourcesActive = [rc > 0, gsg > 0, bsg > 0, ad > 0 || sh > 0, rs > 0].filter(Boolean).length;
+  const confidence = (rc > 0 && gsg >= 4) ? 'high' : (sourcesActive >= 3 ? 'medium' : 'low');
 
   return {
     score: Math.round(score),
     bucket,
-    estimated, // recherches/mois estimées
+    estimated,
     label,
     color,
-    verdict,    // 'arthur_ok' | 'arthur_limited' | 'arthur_abandon'
-    signals: { bing_result_count: rc, bing_suggests: sg, ads_count: ad, shopping_count: sh, related_count: rs },
-    confidence: rc > 0 && (ad > 0 || sh > 0) ? 'medium' : 'low',
-    note: 'Estimation depuis signaux Bing FR (gratuit, sans clé). Pour précision absolue, vérifie sur Google Keyword Planner.',
+    verdict,
+    confidence,
+    breakdown,
+    signals: {
+      bing_result_count: rc,
+      google_suggests: gsg,
+      bing_suggests: bsg,
+      total_unique_suggests: totalUniqueSugs,
+      ads_count: ad,
+      shopping_count: sh,
+      related_count: rs,
+    },
+    note: 'Estimation composite Google Suggest + Bing (resultat count + autosuggest + ads + shopping + related). Pour precision exacte, vérifie sur Google Keyword Planner.',
   };
 }
 
@@ -8530,11 +8921,13 @@ async function _browserSerpScan(query, force) {
     data._mode = 'browser';
     return data;
   }
-  const [search, shop, suggests] = await Promise.all([
+  const [search, shop, bingSuggests, googleSuggests] = await Promise.all([
     _browserFetchSearch(query).catch(e => ({ organic: [], ads: [], inline_shopping: [], _err: e.message })),
     _browserFetchShopping(query).catch(e => ({ shopping: [], _err: e.message })),
     _browserBingSuggest(query).catch(() => []),
+    _browserGoogleSuggest(query).catch(() => []),
   ]);
+  const suggests = bingSuggests; // legacy compat
   let ads = search.ads || [];
   // Buyer-intent suffix retry si 0 ads
   if (ads.length === 0 && (search.organic||[]).length > 0) {
@@ -8554,7 +8947,9 @@ async function _browserSerpScan(query, force) {
     shopping: shop.shopping || [],
     bing_result_count: search.bing_result_count || null,
     related_searches: search.bing_related || [],
-    suggests: suggests || [],
+    suggests: bingSuggests || [],
+    bing_suggests: bingSuggests || [],
+    google_suggests: googleSuggests || [],
     _source_search: 'browser_bing',
     _source_shopping: 'browser_bing_shopping',
     _mode: 'browser',
@@ -8564,7 +8959,8 @@ async function _browserSerpScan(query, force) {
   // Volume + CPC estimators (Semrush-like, gratuit, sans clé API)
   const volSignals = {
     bing_result_count: search.bing_result_count || 0,
-    bing_suggests: suggests || [],
+    bing_suggests: bingSuggests || [],
+    google_suggests: googleSuggests || [],
     ads_count: ads.length,
     shopping_count: (shop.shopping || []).length,
     related_count: (search.bing_related || []).length,
