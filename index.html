@@ -8288,10 +8288,20 @@ function renderKeywordTool() {
           <div class="kw-verdict-tag">Verdict Arthur</div>
           <div class="kw-verdict-label" style="color:${v.color}">${v.label}</div>
           <div class="kw-verdict-expl">${v.expl}</div>
-          <div style="margin-top:10px;font-size:11px;color:var(--text3)">Confiance estimation : <strong style="color:${ve.confidence==='high'?'var(--green)':ve.confidence==='medium'?'var(--yellow)':'var(--red)'}">${ve.confidence||'?'}</strong> · Score composite : ${ve.score||0}/150</div>
+          <div style="margin-top:10px;font-size:11px;color:var(--text3)">Confiance : <strong style="color:${ve.confidence==='high'?'var(--green)':ve.confidence==='medium'?'var(--yellow)':'var(--red)'}">${ve.confidence==='high'?'haute':ve.confidence==='medium'?'moyenne':'basse'}</strong> · Score Bing : ${ve.score||0}/150${ve.source==='google_trends'?` · <span style="color:#22c55e">Trends score ${ve.trends_score}/100</span>`:''}${ve.source!=='google_trends'?' · <span style="color:#f87171;font-size:10px">Google Trends indisponible — fallback Bing</span>':''}</div>
         </div>
         <div class="kw-stats-grid">
-          <div class="kw-mainstat"><div class="kw-mainstat-l">Volume ${ve.source==='keyword_planner'?'<span style="font-size:10px;background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.35);border-radius:4px;padding:1px 5px;vertical-align:middle;font-weight:700">KP OFFICIEL</span>':'estimé'}</div><div class="kw-mainstat-v" style="color:${ve.color}">${(ve.estimated||0).toLocaleString('fr-FR')}<span style="font-size:11px;color:var(--text3);font-weight:500">/mois</span></div><div class="kw-mainstat-s" style="color:${ve.color}">${ve.bucket}</div></div>
+          <div class="kw-mainstat">
+            <div class="kw-mainstat-l">Volume
+              ${ve.source==='google_trends'?'<span style="font-size:10px;background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.35);border-radius:4px;padding:1px 5px;vertical-align:middle;font-weight:700">● GOOGLE TRENDS</span>':'<span style="font-size:10px;color:var(--text3)">estimé Bing</span>'}
+            </div>
+            <div class="kw-mainstat-v" style="color:${ve.color}">${(ve.estimated||0).toLocaleString('fr-FR')}<span style="font-size:11px;color:var(--text3);font-weight:500">/mois</span></div>
+            <div class="kw-mainstat-s" style="color:${ve.color};display:flex;align-items:center;gap:6px">
+              ${ve.bucket}
+              ${ve.trend==='rising'?'<span style="color:#22c55e;font-size:11px;font-weight:700">↑ hausse</span>':ve.trend==='falling'?'<span style="color:#f87171;font-size:11px;font-weight:700">↓ baisse</span>':ve.trend==='stable'?'<span style="color:var(--text3);font-size:11px">→ stable</span>':''}
+            </div>
+            ${ve.monthly ? _renderTrendSparkline(ve.monthly) : ''}
+          </div>
           <div class="kw-mainstat"><div class="kw-mainstat-l">CPC estimé</div><div class="kw-mainstat-v">${(cpc.estimated||0).toFixed(2)}<span style="font-size:11px;color:var(--text3);font-weight:500">€</span></div><div class="kw-mainstat-s">${cpc.band==='high'?'compétitif':cpc.band==='mid'?'sweet spot':'peu compétitif'}</div></div>
           <div class="kw-mainstat"><div class="kw-mainstat-l">CPA estimé</div><div class="kw-mainstat-v">${Math.round((cpc.estimated||0)*150)}<span style="font-size:11px;color:var(--text3);font-weight:500">€</span></div><div class="kw-mainstat-s">CPC × 150</div></div>
           <div class="kw-mainstat"><div class="kw-mainstat-l">Résultats Bing</div><div class="kw-mainstat-v">${d.bing_result_count?(d.bing_result_count>=1000000?(Math.round(d.bing_result_count/100000)/10)+'M':Math.round(d.bing_result_count/1000)+'k'):'—'}</div><div class="kw-mainstat-s">popularité</div></div>
@@ -8302,6 +8312,7 @@ function renderKeywordTool() {
     <div class="card">
       <h2>Sources signaux <span style="font-size:11px;color:var(--text3);font-weight:400">(transparence du score)</span></h2>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;font-size:12px">
+        ${ve.source==='google_trends'?`<div class="kw-signal" style="background:rgba(34,197,94,0.06);border-color:rgba(34,197,94,0.25)"><span class="kw-signal-l" style="color:#22c55e">● Google Trends FR</span><strong style="color:#22c55e">${ve.trends_score}/100</strong> <span style="color:var(--text3)">${ve.trend==='rising'?'↑ hausse':ve.trend==='falling'?'↓ baisse':'→ stable'} · ref: ${ve.note?.match(/réf: ([^·]+)/)?.[1]?.trim()||'—'}</span></div>`:'<div class="kw-signal" style="opacity:0.5"><span class="kw-signal-l">Google Trends FR</span><strong>—</strong> <span style="color:var(--text3)">indisponible</span></div>'}
         <div class="kw-signal"><span class="kw-signal-l">Résultats Bing</span><strong>${d.bing_result_count?d.bing_result_count.toLocaleString('fr-FR'):'—'}</strong> <span style="color:var(--text3)">+${ve.breakdown?.bing_result_count||0}pts</span></div>
         <div class="kw-signal"><span class="kw-signal-l">Annonces Search</span><strong>${stats.n_ads||0}</strong> <span style="color:var(--text3)">+${ve.breakdown?.ads||0}pts</span></div>
         <div class="kw-signal"><span class="kw-signal-l">Offres Shopping</span><strong>${stats.n_shopping||0}</strong> <span style="color:var(--text3)">+${ve.breakdown?.shopping||0}pts</span></div>
@@ -8909,6 +8920,98 @@ async function _browserBingMultiPrefix(query) {
   return Array.from(all);
 }
 
+// ── Google Trends — volume calibré par comparaison (précision Semrush-like) ──
+// Références FR avec leur volume mensuel KP vérifié.
+// L'algo compare le mot-clé cible contre ces 3 refs simultanément :
+//   estimated = ref.vol × (target_avg / ref_avg)
+// → donne un chiffre précis plutôt qu'une bucket coarse.
+const _TRENDS_REFS = [
+  { kw: 'perceuse visseuse',   vol: 9_000  },   // niche basse
+  { kw: 'robot aspirateur',    vol: 74_000 },   // niche mid
+  { kw: 'ordinateur portable', vol: 320_000 },  // niche haute
+];
+
+async function _browserGoogleTrendsVol(keyword) {
+  const PROXY = 'https://api.allorigins.win/raw?url=';
+  const strip = t => t.replace(/^\)\]\}',?\n?/, '');
+  const AB = () => AbortSignal.timeout(9000);
+  try {
+    // Step 1 — explore: récupérer le token TIMESERIES
+    const items = [keyword, ..._TRENDS_REFS.map(r => r.kw)]
+      .map(k => ({ keyword: k, geo: 'FR', time: 'today 12-m' }));
+    const req1 = JSON.stringify({ comparisonItem: items, category: 0, property: '' });
+    const url1 = `https://trends.google.fr/trends/api/explore?hl=fr&tz=-60&req=${encodeURIComponent(req1)}`;
+    const r1 = await fetch(PROXY + encodeURIComponent(url1), { signal: AB() });
+    if (!r1.ok) return null;
+    const j1 = JSON.parse(strip(await r1.text()));
+    const tw = (j1.widgets || []).find(w => w.id === 'TIMESERIES');
+    if (!tw) return null;
+
+    // Step 2 — multiline: récupérer les données mensuelles
+    const compItems = items.map(({ keyword: k }) => ({
+      geo: { country: 'FR' },
+      complexKeywordsRestriction: { keyword: [{ type: 'BROAD', value: k }] },
+    }));
+    const req2 = JSON.stringify({
+      time: 'today 12-m', resolution: 'MONTH', locale: 'fr',
+      comparisonItem: compItems,
+      requestOptions: { property: '', backend: 'IZG', category: 0 },
+    });
+    const url2 = `https://trends.google.fr/trends/api/widgetdata/multiline?hl=fr&tz=-60&req=${encodeURIComponent(req2)}&token=${encodeURIComponent(tw.token)}&user_type=USER_TYPE_LEGIT_USER`;
+    const r2 = await fetch(PROXY + encodeURIComponent(url2), { signal: AB() });
+    if (!r2.ok) return null;
+    const j2 = JSON.parse(strip(await r2.text()));
+
+    const tl = (j2.default || {}).timelineData || [];
+    if (!tl.length) return null;
+
+    // Calculer la moyenne sur 12 mois pour chaque keyword de la comparaison
+    const n = items.length;
+    const avgs = Array.from({ length: n }, (_, i) => {
+      const vals = tl.map(d => (d.value || [])[i] || 0);
+      const nonZero = vals.filter(v => v > 0);
+      return nonZero.length ? Math.round(nonZero.reduce((a, b) => a + b, 0) / nonZero.length) : 0;
+    });
+
+    const [targetAvg, ...refAvgs] = avgs;
+    if (!targetAvg) return { estimated: null, trend: 'no_data', monthly: null, trends_score: 0 };
+
+    // Trouver la référence la plus proche (en score) pour interpoler le volume
+    const scored = _TRENDS_REFS.map((r, i) => ({ ...r, avg: refAvgs[i] || 0 })).filter(r => r.avg > 0);
+    if (!scored.length) return null;
+    const best = scored.reduce((b, r) => Math.abs(r.avg - targetAvg) < Math.abs(b.avg - targetAvg) ? r : b);
+    const estimated = Math.round(best.vol * (targetAvg / best.avg));
+
+    // Direction de tendance (3 derniers mois vs 3 premiers mois)
+    const targetVals = tl.map(d => (d.value || [])[0] || 0);
+    const last3 = targetVals.slice(-3).reduce((a, b) => a + b, 0) / 3;
+    const first3 = targetVals.slice(0, 3).reduce((a, b) => a + b, 0) / 3;
+    const trend = last3 > first3 * 1.2 ? 'rising' : last3 < first3 * 0.8 ? 'falling' : 'stable';
+
+    // Sparkline mensuelle
+    const monthly = tl.map(d => ({
+      label: (d.formattedAxisTime || '').slice(0, 7),
+      val: (d.value || [])[0] || 0,
+    }));
+
+    return { estimated, trend, monthly, trends_score: targetAvg, _ref: best.kw, _refAvg: best.avg };
+  } catch(e) {
+    console.warn('[GoogleTrends]', e.message);
+    return null;
+  }
+}
+
+function _renderTrendSparkline(monthly) {
+  if (!monthly || !monthly.length) return '';
+  const max = Math.max(...monthly.map(m => m.val), 1);
+  const bars = monthly.map(m => {
+    const h = Math.round((m.val / max) * 28);
+    const col = m.val >= max * 0.7 ? '#22c55e' : m.val >= max * 0.4 ? '#fbbf24' : '#64748b';
+    return `<div title="${m.label}: ${m.val}" style="width:6px;height:${Math.max(h,2)}px;background:${col};border-radius:2px;align-self:flex-end"></div>`;
+  }).join('');
+  return `<div style="display:flex;gap:2px;align-items:flex-end;height:30px;margin-top:4px">${bars}</div>`;
+}
+
 function _browserVolumeEstimate(signals) {
   // signals : tous les signaux disponibles (Bing + Google)
   const rc = signals.bing_result_count || 0;
@@ -9098,12 +9201,14 @@ async function _browserSerpScan(query, force) {
     data._mode = 'browser';
     return data;
   }
-  const [search, shop, bingSuggests, googleSuggests, bingMulti] = await Promise.all([
+  const [search, shop, bingSuggests, googleSuggests, bingMulti, trendsVol, kvData] = await Promise.all([
     _browserFetchSearch(query).catch(e => ({ organic: [], ads: [], inline_shopping: [], _err: e.message })),
     _browserFetchShopping(query).catch(e => ({ shopping: [], _err: e.message })),
     _browserBingSuggest(query).catch(() => []),
     _browserGoogleSuggest(query).catch(() => []),
     _browserBingMultiPrefix(query).catch(() => []),
+    _browserGoogleTrendsVol(query).catch(() => null),
+    _kvGet(query).catch(() => null),
   ]);
   const suggests = bingSuggests; // legacy compat
   let ads = search.ads || [];
@@ -9147,7 +9252,31 @@ async function _browserSerpScan(query, force) {
     organic_count: (search.organic || []).length,
   };
   const browserVE = _browserVolumeEstimate(volSignals);
-  result.volumeEstimate = browserVE;
+
+  // Calibration Google Trends — remplace l'estimation Bing par un chiffre précis
+  if (trendsVol && trendsVol.estimated != null) {
+    const vol = trendsVol.estimated;
+    let bucket, label, color, verdict;
+    if      (vol >= 150_000) { bucket = '>150k';   label = 'Très haut volume';  color = '#22c55e'; verdict = 'arthur_ok'; }
+    else if (vol >= 50_000)  { bucket = '50-150k'; label = 'Haut volume';       color = '#22c55e'; verdict = 'arthur_ok'; }
+    else if (vol >= 15_000)  { bucket = '15-50k';  label = 'Volume Arthur OK';  color = '#22c55e'; verdict = 'arthur_ok'; }
+    else if (vol >= 5_000)   { bucket = '5-15k';   label = 'Marché limite';     color = '#fbbf24'; verdict = 'arthur_limited'; }
+    else                     { bucket = '<5k';     label = 'Marché trop petit'; color = '#f87171'; verdict = 'arthur_abandon'; }
+    result.volumeEstimate = {
+      ...browserVE,
+      estimated: vol,
+      bucket, label, color, verdict,
+      source: 'google_trends',
+      confidence: 'high',
+      trend: trendsVol.trend,
+      monthly: trendsVol.monthly,
+      trends_score: trendsVol.trends_score,
+      note: `Volume calibré Google Trends FR (réf: ${trendsVol._ref} · score ${trendsVol.trends_score}/100). Tendance: ${trendsVol.trend}.`,
+    };
+  } else {
+    result.volumeEstimate = browserVE;
+  }
+  result.trendsVol = trendsVol || null;
   result.cpcEstimate = _browserCpcEstimate({
     ads_count: ads.length,
     shopping_count: (shop.shopping || []).length,
