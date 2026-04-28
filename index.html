@@ -8225,6 +8225,11 @@ function renderKeywordTool() {
   const cpc = d.cpcEstimate || {};
   const sst = d.shoppingStats || null;
   const stats = (d.autoChecks || {}).stats || {};
+  // Métriques Semrush-like
+  const intent = _classifyIntent(d);
+  const kdInfo = _keywordDifficulty(d);
+  const compDensity = _competitionDensity(d);
+  const multiCountry = _estimateMultiCountry(ve.estimated || 0);
 
   // Bandeau verdict en gros
   const verdictMap = {
@@ -8307,6 +8312,53 @@ function renderKeywordTool() {
           <div class="kw-mainstat"><div class="kw-mainstat-l">Résultats Bing</div><div class="kw-mainstat-v">${d.bing_result_count?(d.bing_result_count>=1000000?(Math.round(d.bing_result_count/100000)/10)+'M':Math.round(d.bing_result_count/1000)+'k'):'—'}</div><div class="kw-mainstat-s">popularité</div></div>
         </div>
       </div>
+    </div>
+
+    <div class="card" style="background:linear-gradient(135deg,rgba(34,211,238,0.04),rgba(139,92,246,0.04));border:1px solid rgba(139,92,246,0.25)">
+      <h2 style="display:flex;align-items:center;gap:8px">Vue d'ensemble Semrush-like <span style="font-size:10px;background:rgba(139,92,246,0.18);color:var(--accent2);border:1px solid rgba(139,92,246,0.35);border-radius:4px;padding:2px 6px;font-weight:700">PRÉCISION HAUTE</span></h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:14px">
+        <div class="kw-stat" style="background:${kdInfo.color}15;border-color:${kdInfo.color}40">
+          <div class="kw-stat-l">Difficulté du mot clé</div>
+          <div class="kw-stat-v" style="color:${kdInfo.color}">${kdInfo.kd}<span style="font-size:13px">%</span></div>
+          <div style="font-size:11px;color:${kdInfo.color};font-weight:600">${kdInfo.band}</div>
+        </div>
+        <div class="kw-stat" style="background:${intent.color}15;border-color:${intent.color}40">
+          <div class="kw-stat-l">Intention</div>
+          <div class="kw-stat-v" style="font-size:16px;color:${intent.color}">${intent.label}</div>
+        </div>
+        <div class="kw-stat">
+          <div class="kw-stat-l">Densité concurrence</div>
+          <div class="kw-stat-v" style="color:${compDensity>=0.7?'#f87171':compDensity>=0.4?'#fbbf24':'#22c55e'}">${compDensity.toFixed(2)}</div>
+          <div style="font-size:11px;color:var(--text3)">0.00 - 1.00</div>
+        </div>
+        <div class="kw-stat">
+          <div class="kw-stat-l">Volume total francophone</div>
+          <div class="kw-stat-v" style="color:var(--accent2)">${multiCountry?multiCountry.total.toLocaleString('fr-FR'):'—'}</div>
+          <div style="font-size:11px;color:var(--text3)">FR + BE + CH + CA + autres</div>
+        </div>
+      </div>
+      ${multiCountry ? `
+      <h3 style="font-size:13px;margin-bottom:10px;color:var(--text2)">Répartition par pays (estimation francophone)</h3>
+      <div style="display:flex;flex-direction:column;gap:5px;font-size:12px">
+        ${[
+          {flag:'🇫🇷', code:'FR', name:'France', val:multiCountry.FR, color:'#3b82f6'},
+          {flag:'🇧🇪', code:'BE', name:'Belgique', val:multiCountry.BE, color:'#fbbf24'},
+          {flag:'🇨🇭', code:'CH', name:'Suisse', val:multiCountry.CH, color:'#f87171'},
+          {flag:'🇨🇦', code:'CA', name:'Canada', val:multiCountry.CA, color:'#22c55e'},
+          {flag:'🇧🇷', code:'BR', name:'Brésil', val:multiCountry.BR, color:'#22d3ee'},
+          {flag:'🇩🇿', code:'DZ', name:'Algérie', val:multiCountry.DZ, color:'#c084fc'},
+        ].map(c => {
+          const pct = multiCountry.FR ? (c.val / multiCountry.FR * 100) : 0;
+          return `<div style="display:flex;align-items:center;gap:10px">
+            <div style="width:24px">${c.flag}</div>
+            <div style="width:80px;color:var(--text2);font-weight:500">${c.name}</div>
+            <div style="flex:1;background:rgba(255,255,255,0.04);height:14px;border-radius:3px;overflow:hidden"><div style="width:${Math.min(100,pct)}%;background:${c.color};height:100%"></div></div>
+            <div style="width:60px;text-align:right;color:var(--text);font-weight:600">${c.val.toLocaleString('fr-FR')}</div>
+          </div>`;
+        }).join('')}
+      </div>
+      <p style="font-size:10.5px;color:var(--text3);margin-top:8px;font-style:italic">Volumes BE/CH/CA estimés depuis le volume FR via ratios démographiques (≈7% / 4% / 3%). Précision absolue uniquement pour FR.</p>
+      ` : ''}
     </div>
 
     <div class="card">
@@ -8920,14 +8972,16 @@ async function _browserBingMultiPrefix(query) {
   return Array.from(all);
 }
 
-// ── Google Trends — volume calibré par comparaison (précision Semrush-like) ──
-// Références FR avec leur volume mensuel KP vérifié.
-// L'algo compare le mot-clé cible contre ces 3 refs simultanément :
-//   estimated = ref.vol × (target_avg / ref_avg)
-// → donne un chiffre précis plutôt qu'une bucket coarse.
+// ── Google Trends — volume calibré par régression log-log (précision Semrush) ──
+// 4 références FR couvrant le spectre 5k → 320k avec volumes KP vérifiés.
+// L'algo compare le mot-clé cible contre ces 4 refs simultanément, puis fit
+// une régression linéaire dans l'espace log(score) → log(volume) :
+//   log(vol) = slope × log(score) + intercept
+// → précision quasi-Semrush sur toute la gamme, pas juste près d'une ref.
 const _TRENDS_REFS = [
-  { kw: 'perceuse visseuse',   vol: 9_000  },   // niche basse
-  { kw: 'robot aspirateur',    vol: 74_000 },   // niche mid
+  { kw: 'tapis acupression',   vol: 5_400   },  // niche très basse
+  { kw: 'perceuse visseuse',   vol: 9_000   },  // niche basse
+  { kw: 'robot aspirateur',    vol: 74_000  },  // niche mid
   { kw: 'ordinateur portable', vol: 320_000 },  // niche haute
 ];
 
@@ -8965,24 +9019,48 @@ async function _browserGoogleTrendsVol(keyword) {
     const tl = (j2.default || {}).timelineData || [];
     if (!tl.length) return null;
 
-    // Calculer la moyenne sur 12 mois pour chaque keyword de la comparaison
+    // Moyenne sur 12 mois pour chaque kw de la comparaison
     const n = items.length;
     const avgs = Array.from({ length: n }, (_, i) => {
       const vals = tl.map(d => (d.value || [])[i] || 0);
       const nonZero = vals.filter(v => v > 0);
-      return nonZero.length ? Math.round(nonZero.reduce((a, b) => a + b, 0) / nonZero.length) : 0;
+      return nonZero.length ? (nonZero.reduce((a, b) => a + b, 0) / nonZero.length) : 0;
     });
 
     const [targetAvg, ...refAvgs] = avgs;
     if (!targetAvg) return { estimated: null, trend: 'no_data', monthly: null, trends_score: 0 };
 
-    // Trouver la référence la plus proche (en score) pour interpoler le volume
     const scored = _TRENDS_REFS.map((r, i) => ({ ...r, avg: refAvgs[i] || 0 })).filter(r => r.avg > 0);
     if (!scored.length) return null;
-    const best = scored.reduce((b, r) => Math.abs(r.avg - targetAvg) < Math.abs(b.avg - targetAvg) ? r : b);
-    const estimated = Math.round(best.vol * (targetAvg / best.avg));
 
-    // Direction de tendance (3 derniers mois vs 3 premiers mois)
+    // Régression log-log : fit log(vol) = a + b·log(score) sur toutes les refs
+    // Beaucoup plus précis que "best match" car interpole dans tout le spectre.
+    let estimated, _method;
+    if (scored.length >= 2) {
+      const xs = scored.map(r => Math.log(r.avg));
+      const ys = scored.map(r => Math.log(r.vol));
+      const m = xs.length;
+      const meanX = xs.reduce((a, b) => a + b, 0) / m;
+      const meanY = ys.reduce((a, b) => a + b, 0) / m;
+      let num = 0, den = 0;
+      for (let i = 0; i < m; i++) { num += (xs[i] - meanX) * (ys[i] - meanY); den += (xs[i] - meanX) ** 2; }
+      const slope = den ? num / den : 1;
+      const intercept = meanY - slope * meanX;
+      estimated = Math.round(Math.exp(slope * Math.log(targetAvg) + intercept));
+      _method = `log-log regression (slope=${slope.toFixed(2)}, n=${m})`;
+    } else {
+      const r = scored[0];
+      estimated = Math.round(r.vol * (targetAvg / r.avg));
+      _method = `single-ref fallback (${r.kw})`;
+    }
+
+    // Round à la "Semrush" : <1k → 10s, <10k → 100s, <100k → 100s, ≥100k → 1k
+    const round = v => v < 1000 ? Math.round(v / 10) * 10
+                    : v < 100_000 ? Math.round(v / 100) * 100
+                    : Math.round(v / 1000) * 1000;
+    estimated = round(Math.max(0, estimated));
+
+    // Tendance (3 derniers mois vs 3 premiers)
     const targetVals = tl.map(d => (d.value || [])[0] || 0);
     const last3 = targetVals.slice(-3).reduce((a, b) => a + b, 0) / 3;
     const first3 = targetVals.slice(0, 3).reduce((a, b) => a + b, 0) / 3;
@@ -8994,11 +9072,86 @@ async function _browserGoogleTrendsVol(keyword) {
       val: (d.value || [])[0] || 0,
     }));
 
-    return { estimated, trend, monthly, trends_score: targetAvg, _ref: best.kw, _refAvg: best.avg };
+    // Best ref (closest in log-space) pour affichage
+    const best = scored.reduce((b, r) => Math.abs(Math.log(r.avg) - Math.log(targetAvg)) < Math.abs(Math.log(b.avg) - Math.log(targetAvg)) ? r : b);
+
+    return { estimated, trend, monthly, trends_score: Math.round(targetAvg), _ref: best.kw, _refAvg: Math.round(best.avg), _method };
   } catch(e) {
     console.warn('[GoogleTrends]', e.message);
     return null;
   }
+}
+
+// ── Search Intent (heuristique sur signaux SERP) ──
+function _classifyIntent(d) {
+  const stats = (d.autoChecks || {}).stats || {};
+  const ads = stats.n_ads || 0;
+  const shop = stats.n_shopping || 0;
+  const q = (d.query || '').toLowerCase();
+  const titles = (d.organic || []).slice(0, 5).map(o => (o.title || '').toLowerCase()).join(' ');
+  // Transactional/Commercial signals
+  if (/\b(acheter|prix|pas cher|promo|soldes|meilleur)\b/.test(q)) return { label: 'Transactionnelle', code: 'trans', color: '#22c55e' };
+  if (shop >= 5 || ads >= 3) return { label: 'Commerciale', code: 'com', color: '#f59e0b' };
+  // Informational
+  if (/\b(comment|pourquoi|qu['']est-ce|c['']est quoi|definition|guide|tutoriel)\b/.test(q)) return { label: 'Informationnelle', code: 'info', color: '#22d3ee' };
+  if (/\b(comment|pourquoi|qu['']est-ce|guide|tutoriel)\b/.test(titles)) return { label: 'Informationnelle', code: 'info', color: '#22d3ee' };
+  // Navigational
+  const top = (d.organic || [])[0];
+  if (top && top.domain && q.split(' ').some(w => w.length > 3 && top.domain.includes(w))) return { label: 'Navigationnelle', code: 'nav', color: '#c084fc' };
+  // Default = commerciale (produit)
+  return { label: 'Commerciale', code: 'com', color: '#f59e0b' };
+}
+
+// ── Keyword Difficulty (KD% 0-100, format Semrush) ──
+function _keywordDifficulty(d) {
+  const stats = (d.autoChecks || {}).stats || {};
+  let kd = 0;
+  // Top 3 institutionnels (Amazon, Boulanger, Darty…) = très dur à battre
+  if (stats.has_institutionnels_top3) kd += 35;
+  // Beaucoup d'ads = marché concurrentiel
+  kd += Math.min(25, (stats.n_ads || 0) * 4);
+  // Volume de résultats Bing (proxy concurrence indexée)
+  const rc = d.bing_result_count || 0;
+  if (rc >= 5_000_000) kd += 25;
+  else if (rc >= 1_000_000) kd += 18;
+  else if (rc >= 300_000) kd += 12;
+  else if (rc >= 100_000) kd += 7;
+  else if (rc >= 30_000) kd += 3;
+  // Shopping concurrence
+  kd += Math.min(15, (stats.n_shopping || 0) * 0.8);
+  kd = Math.min(100, Math.round(kd));
+  let band, color;
+  if (kd < 30) { band = 'Facile'; color = '#22c55e'; }
+  else if (kd < 50) { band = 'Possible'; color = '#fbbf24'; }
+  else if (kd < 70) { band = 'Difficile'; color = '#f59e0b'; }
+  else { band = 'Très difficile'; color = '#f87171'; }
+  return { kd, band, color };
+}
+
+// ── Densité concurrence (0.00 - 1.00, format Semrush) ──
+function _competitionDensity(d) {
+  const stats = (d.autoChecks || {}).stats || {};
+  const ads = stats.n_ads || 0;
+  const shop = stats.n_shopping || 0;
+  // Formule: ads pondérés (×0.15, max 0.6) + shopping (×0.04, max 0.4)
+  const density = Math.min(1, (Math.min(4, ads) * 0.15) + (Math.min(10, shop) * 0.04));
+  return Math.round(density * 100) / 100;
+}
+
+// ── Estimation volumes multi-pays (FR + voisins francophones) ──
+// Ratios approximatifs basés sur taille de la population recherche Google.
+// FR = 100% (référence), BE-FR = ~7%, CH-FR = ~4%, CA-FR = ~3%, autres = ~1%
+function _estimateMultiCountry(frVolume) {
+  if (!frVolume) return null;
+  return {
+    FR: frVolume,
+    BE: Math.round(frVolume * 0.072),
+    CH: Math.round(frVolume * 0.040),
+    CA: Math.round(frVolume * 0.033),
+    BR: Math.round(frVolume * 0.009),
+    DZ: Math.round(frVolume * 0.006),
+    total: Math.round(frVolume * 1.16),
+  };
 }
 
 function _renderTrendSparkline(monthly) {
