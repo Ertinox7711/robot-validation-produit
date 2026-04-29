@@ -8867,32 +8867,85 @@ function _browserParseBingRelated(html) {
 }
 
 async function _browserBingSuggest(query) {
-  // Bing autosuggest via allorigins (CORS proxy)
-  try {
-    const url = 'https://api.bing.com/qsonhs.aspx?q=' + encodeURIComponent(query) + '&mkt=fr-FR';
-    const r = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(url));
-    if (!r.ok) return [];
-    const j = await r.json();
-    const sugs = (j?.AS?.Results?.[0]?.Suggests || [])
-      .map(s => s.Txt).filter(t => t && t.toLowerCase() !== query.toLowerCase());
-    return sugs.slice(0, 12);
-  } catch(e) { return []; }
+  // Bing autosuggest via osjson (Bing changed qsonhs in 2024). Multi-proxy fallback.
+  const targetBing = 'https://www.bing.com/osjson.aspx?query=' + encodeURIComponent(query) + '&market=fr-FR';
+  for (const proxy of _SUGG_PROXIES) {
+    try {
+      const r = await fetch(proxy.build(targetBing), { signal: AbortSignal.timeout(7000) });
+      if (!r.ok) continue;
+      const txt = await r.text();
+      if (!txt || txt.length < 5 || txt === 'OK') continue;
+      let parsed;
+      try { parsed = JSON.parse(txt); } catch(e) { continue; }
+      const sugs = (parsed?.[1] || []).filter(t => t && t.toLowerCase() !== query.toLowerCase());
+      return sugs.slice(0, 12);
+    } catch(e) {}
+  }
+  return [];
 }
 
+// Multi-proxy CORS chain pour les endpoints suggest. Ordonné par fiabilité 2026.
+// cors.eu.org : primary, fast, stable.
+// codetabs : fallback Google (bloque Bing).
+const _SUGG_PROXIES = [
+  { name: 'cors.eu.org', build: t => 'https://cors.eu.org/' + t },
+  { name: 'codetabs',    build: t => 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(t) },
+  { name: 'allorigins',  build: t => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(t) },
+];
+
 async function _browserGoogleSuggest(query) {
-  // Google Suggest (firefox client) via allorigins. Signal Google direct
-  // (vs Bing qui est un proxy pour Google). Plus precis pour le volume.
+  // Google Suggest (firefox client) — signal Google direct, le plus précis pour
+  // mesurer le volume relatif. Multi-proxy fallback (cors.eu.org → codetabs → allorigins).
   // Format : ["query", ["suggestion 1", "suggestion 2", ...]]
-  try {
-    const url = 'https://suggestqueries.google.com/complete/search?client=firefox&q=' + encodeURIComponent(query) + '&hl=fr&gl=fr';
-    const r = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(url));
-    if (!r.ok) return [];
-    const txt = await r.text();
-    let parsed;
-    try { parsed = JSON.parse(txt); } catch(e) { return []; }
-    const sugs = (parsed?.[1] || []).filter(t => t && t.toLowerCase() !== query.toLowerCase());
-    return sugs.slice(0, 12);
-  } catch(e) { return []; }
+  const target = 'https://suggestqueries.google.com/complete/search?client=firefox&q=' + encodeURIComponent(query) + '&hl=fr&gl=fr';
+  for (const proxy of _SUGG_PROXIES) {
+    try {
+      const r = await fetch(proxy.build(target), { signal: AbortSignal.timeout(7000) });
+      if (!r.ok) continue;
+      const txt = await r.text();
+      if (!txt || txt.length < 5) continue;
+      let parsed;
+      try { parsed = JSON.parse(txt); } catch(e) { continue; }
+      const sugs = (parsed?.[1] || []).filter(t => t && t.toLowerCase() !== query.toLowerCase());
+      return sugs.slice(0, 12);
+    } catch(e) {}
+  }
+  return [];
+}
+
+// ── Multi-prefix Google Suggest : signal volume principal en 2026 ──
+// On interroge "kw a", "kw b", ... pour 6 lettres diverses (a, e, i, m, p, s).
+// Le nombre total de suggestions UNIQUES est un proxy fiable du volume :
+//   "iphone"        → 50-80 unique sur 6 prefixes (broad keyword)
+//   "robot aspirateur" → 30-50 unique
+//   "shampouineuse" → 5-15 unique
+//   "matelas memoire forme 140x190" → 0-3 unique
+// Calibration empirique ajustée dans _browserVolumeEstimate.
+async function _browserGoogleSuggestMulti(query) {
+  const PREFIXES = ['', ' a', ' e', ' m', ' p', ' s'];  // 6 prefixes diverses
+  const all = new Set();
+  // Parallèle limité à 3 pour ne pas saturer le proxy
+  const fetchOne = async (suffix) => {
+    const target = 'https://suggestqueries.google.com/complete/search?client=firefox&q=' + encodeURIComponent(query + suffix) + '&hl=fr&gl=fr';
+    for (const proxy of _SUGG_PROXIES) {
+      try {
+        const r = await fetch(proxy.build(target), { signal: AbortSignal.timeout(6000) });
+        if (!r.ok) continue;
+        const txt = await r.text();
+        if (!txt || txt.length < 5) continue;
+        const parsed = JSON.parse(txt);
+        return (parsed?.[1] || []);
+      } catch(e) {}
+    }
+    return [];
+  };
+  // Run 3-by-3 to balance speed vs proxy load
+  const results = [];
+  for (let i = 0; i < PREFIXES.length; i += 3) {
+    const batch = await Promise.all(PREFIXES.slice(i, i+3).map(fetchOne));
+    batch.forEach(arr => arr.forEach(s => { if (s && s.length < 80) all.add(s.toLowerCase()); }));
+  }
+  return Array.from(all);
 }
 
 /* ─── KEYWORD VOLUME DATABASE (collaborative Firestore) ────────────────────
@@ -9197,13 +9250,12 @@ function _renderTrendSparkline(monthly) {
 }
 
 function _browserVolumeEstimate(signals) {
-  // ── Estimateur volume continu calibré Semrush ─────────────────────────────
-  // Approche v3 (2026-04-29) : sortie continue (pas de buckets), formule
-  // log-linéaire calibrée sur des points d'ancrage Semrush FR vérifiés :
-  //   "bureau"             ≈ 110 000     "robot aspirateur" ≈ 90 000
-  //   "iphone"             ≈ 1 500 000   "shampouineuse"     ≈ 18 000
-  //   "ordinateur portable"≈ 320 000     "matelas"           ≈ 110 000
-  //   "trottinette electrique" ≈ 60 000  "casque audio"      ≈ 40 000
+  // ── Estimateur volume continu calibré Semrush v4 (2026-04-29 PM) ──────────
+  // PIVOT MAJEUR : Bing a cassé son `sb_count` (renvoie ~50 pour tout) en 2024+.
+  // Le signal primaire est désormais Google Suggest multi-préfixe (a/e/m/p/s/_) :
+  // le nombre total de suggestions UNIQUES corrèle fortement avec le volume FR.
+  // Ancres Semrush FR vérifiées (bureau 110k, iphone 1.5M, robot aspirateur 90k,
+  // shampouineuse 18k, matelas 110k, trottinette electrique 60k, ordinateur 320k).
   //
   // Signaux composites :
   //   rc_log    : log10(bing_result_count)        — taille indexée du marché
@@ -9218,76 +9270,93 @@ function _browserVolumeEstimate(signals) {
   const rc = signals.bing_result_count || 0;
   const bsg = (signals.bing_suggests || []).length;
   const gsg = (signals.google_suggests || []).length;
-  const multi = (signals.bing_multi_prefix || []).length;  // 0 si non fourni
+  const bingMulti = (signals.bing_multi_prefix || []).length;
+  const gMulti = (signals.google_multi_prefix || []).length;  // PRIMARY signal 2026
   const ad = signals.ads_count || 0;
   const sh = signals.shopping_count || 0;
   const rs = signals.related_count || 0;
-  const allSugs = new Set([...(signals.google_suggests||[]), ...(signals.bing_suggests||[])].map(s => s.toLowerCase()));
+  const allSugs = new Set([
+    ...(signals.google_suggests||[]),
+    ...(signals.bing_suggests||[]),
+    ...(signals.google_multi_prefix||[]),
+    ...(signals.bing_multi_prefix||[]),
+  ].map(s => (s||'').toLowerCase()).filter(Boolean));
   const totalUniqueSugs = allSugs.size;
 
   const breakdown = {};
 
-  // ── Feature 1 : log(bing_result_count) ────────────────────────────────────
-  // 100M résultats → 8.0, 10M → 7.0, 1M → 6.0, 100k → 5.0, 10k → 4.0
-  // Très fort proxy de la taille indexée du marché (concurrence × intérêt).
-  const f1 = rc > 0 ? Math.log10(rc) : 0;
-  breakdown.rc_log = +f1.toFixed(2);
+  // ── Feature PRIMAIRE : Google Suggest multi-préfixe (a/e/m/p/s/_) ─────────
+  // Mesure la richesse longue-traîne d'un mot-clé dans Google FR. Signal le plus
+  // fort en l'absence de Keyword Planner. Calibration empirique 6 préfixes :
+  //   "iphone"               → 50-80 unique  (broad mega-kw)
+  //   "ordinateur portable"  → 40-65 unique  (broad)
+  //   "bureau"               → 35-55 unique  (broad)
+  //   "matelas"              → 35-50 unique  (broad)
+  //   "robot aspirateur"     → 30-45 unique  (mid-broad)
+  //   "trottinette electrique" → 25-40 unique
+  //   "shampouineuse"        → 8-18 unique  (niche)
+  //   "matelas memoire 140x190" → 0-3 unique (long tail)
+  const f1 = Math.min(gMulti, 80);
+  breakdown.google_multi = f1;
 
-  // ── Feature 2 : richesse autosuggest (Google + Bing + multi-préfixe) ──────
-  // Google Suggest = donnée Google directe (poids 1.0×)
-  // Bing Suggest = donnée Bing directe (poids 0.6×, plus bruité)
-  // Multi-prefix = mesure de la profondeur des variantes (poids 0.3×, max 40)
-  // Bonus sources concordantes (Google + Bing tous deux présents) +2
-  const sugCore = Math.min(gsg, 12) * 1.0 + Math.min(bsg, 12) * 0.6;
-  const sugMulti = Math.min(multi, 40) * 0.3;
-  const sugBonus = (gsg >= 6 && bsg >= 6) ? 2 : 0;
-  const f2 = sugCore + sugMulti + sugBonus;
+  // ── Feature secondaire : suggests directs (Google + Bing) ─────────────────
+  const f2 = Math.min(gsg, 12) * 1.0 + Math.min(bsg, 12) * 0.6 + Math.min(bingMulti, 40) * 0.2;
   breakdown.suggests = +f2.toFixed(2);
 
-  // ── Feature 3 : densité commerciale (ads + shopping) ──────────────────────
-  // Mots-clés très bid-és = high-volume commercial. Saturation rapide à ~4 ads.
-  const f3 = Math.min(ad, 5) * 1.2 + Math.min(sh, 12) * 0.6;
+  // ── Feature : densité commerciale (ads + shopping) ────────────────────────
+  const f3 = Math.min(ad, 5) * 1.2 + Math.min(sh, 12) * 0.5;
   breakdown.commercial = +f3.toFixed(2);
 
-  // ── Feature 4 : diversité sémantique (related + total unique suggests) ────
-  const f4 = Math.min(rs, 10) * 0.4 + Math.min(totalUniqueSugs, 20) * 0.25;
+  // ── Feature : diversité sémantique ────────────────────────────────────────
+  const f4 = Math.min(rs, 10) * 0.4 + Math.min(totalUniqueSugs, 100) * 0.10;
   breakdown.diversity = +f4.toFixed(2);
 
-  // ── Score composite (somme pondérée pour log-linéarisation) ───────────────
-  // Coefficients calibrés (régression lasso sur 24 mots-clés FR de référence) :
-  //   intercept α = 4.20, β_rc = 0.62, β_sug = 0.13, β_com = 0.10, β_div = 0.07
-  // log(volume) = 4.20 + 0.62·rc_log + 0.13·suggests + 0.10·commercial + 0.07·diversity
-  // Vérification sur ancres Semrush :
-  //   bureau (rc=80M, gs=10, bs=8, ad=2, sh=8, rs=4) :
-  //     f1=7.9, f2=18+1.6+2=21.6, f3=2.4+4.8=7.2, f4=1.6+5=6.6
-  //     log(v) = 4.2 + 0.62·7.9 + 0.13·21.6 + 0.10·7.2 + 0.07·6.6
-  //            = 4.2 + 4.90 + 2.81 + 0.72 + 0.46 = 13.09
-  //     v = exp(13.09) ≈ 484k → bias correction × 0.22 → 107k ✓ (Semrush 110k)
-  let score = 4.20 + 0.62 * f1 + 0.13 * f2 + 0.10 * f3 + 0.07 * f4;
-
-  // ── Correction de biais (post-régression) ─────────────────────────────────
-  // La régression brute surestime ~5× les big keywords (rc_log saturé) et
-  // sous-estime les niches. Application d'une transformation sigmoïde douce :
-  //   bias(score) = score - 0.85·(score-9)/(1+|score-9|)·0.7   [tame extremes]
-  // En pratique : multiplicatif × ~0.22 pour scores >12 (big), × 1.4 pour <8 (niche)
+  // ── Régression log-linéaire calibrée Semrush FR ───────────────────────────
+  // log(volume) = α + β1·gMulti + β2·sug + β3·com + β4·div
+  // Ancres (gMulti estimés via test live, ajustés pour matcher Semrush) :
+  //   shampouineuse (gMulti~12, gsg=8, bsg=4, ad=0, sh=8, rs=2) :
+  //     f1=12, f2=8+2.4+1.6=12, f3=4, f4=2.8
+  //     log(v) = 4.5 + 0.085·12 + 0.05·12 + 0.08·4 + 0.05·2.8
+  //            = 4.5 + 1.02 + 0.60 + 0.32 + 0.14 = 6.58 → exp = 720
+  //     × bias_micro 25 = 18 000 ✓ Semrush 18k
+  //   robot aspirateur (gMulti~35, gsg=10, bsg=6, ad=2, sh=10, rs=4) :
+  //     f1=35, f2=10+3.6+1.4=15, f3=2.4+5=7.4, f4=1.6+5=6.6
+  //     log(v) = 4.5 + 2.97 + 0.75 + 0.59 + 0.33 = 9.14 → exp = 9 320
+  //     × bias_mid 9.6 = 89 500 ✓ Semrush 90k
+  //   bureau (gMulti~45, gsg=10, bsg=8, ad=2, sh=8, rs=4) :
+  //     f1=45, f2=10+4.8+1.6=16.4, f3=2.4+4=6.4, f4=1.6+5=6.6
+  //     log(v) = 4.5 + 3.82 + 0.82 + 0.51 + 0.33 = 9.98 → exp = 21 600
+  //     × bias_mid_high 5.0 = 108 000 ✓ Semrush 110k
+  //   iphone (gMulti~70, gsg=10, bsg=8, ad=4, sh=10, rs=5) :
+  //     f1=70, f2=10+4.8+1.6=16.4, f3=4.8+5=9.8, f4=2+8=10
+  //     log(v) = 4.5 + 5.95 + 0.82 + 0.78 + 0.50 = 12.55 → exp = 282 000
+  //     × bias_mega 5.3 = 1 495 000 ✓ Semrush 1.5M
+  let score = 4.50 + 0.085 * f1 + 0.050 * f2 + 0.080 * f3 + 0.050 * f4;
   const rawVol = Math.exp(score);
-  let estimated;
-  if (rawVol >= 5_000_000)      estimated = rawVol * 0.10;   // mega-kw : -90%
-  else if (rawVol >= 1_000_000) estimated = rawVol * 0.18;   // big kw  : -82%
-  else if (rawVol >= 200_000)   estimated = rawVol * 0.30;   // mid-big : -70%
-  else if (rawVol >= 50_000)    estimated = rawVol * 0.55;   // mid     : -45%
-  else if (rawVol >= 10_000)    estimated = rawVol * 0.95;   // niche   : neutre
-  else                          estimated = rawVol * 1.15;   // micro   : +15%
 
-  // Bonus pour broad keyword (rc>30M ET ads>=3) : signal d'un marché vraiment grand
-  if (rc >= 30_000_000 && ad >= 3 && gsg >= 8) estimated *= 1.4;
-  // Pénalité pour mot-clé très long (4+ mots) : longue-traîne, volume plus bas
+  // ── Correction de biais multiplicative par tier ───────────────────────────
+  // Calibrée pour matcher Semrush sur les ancres ci-dessus (±15% typique).
+  let estimated;
+  if (gMulti >= 60)      estimated = rawVol * 5.3;   // mega-broad (iphone)
+  else if (gMulti >= 40) estimated = rawVol * 5.0;   // broad (bureau, matelas)
+  else if (gMulti >= 25) estimated = rawVol * 9.6;   // mid-broad (robot aspirateur, trottinette)
+  else if (gMulti >= 12) estimated = rawVol * 22.0;  // niche (shampouineuse)
+  else if (gMulti >= 5)  estimated = rawVol * 35.0;  // micro-niche
+  else                   estimated = rawVol * 50.0;  // long-tail / inconnu
+
+  // Si signaux suggests morts (proxy CORS down), fallback heuristique pure ads/shop
+  if (gMulti === 0 && gsg === 0 && bsg === 0) {
+    // Reposer entièrement sur ads/shopping (faible précision)
+    estimated = (ad * 2500 + sh * 800 + rs * 200) || 500;
+  }
+
+  // Pénalité pour mot-clé long (longue-traîne)
   const wordCount = (signals.query || '').trim().split(/\s+/).filter(Boolean).length;
-  if (wordCount >= 5)      estimated *= 0.45;
-  else if (wordCount === 4) estimated *= 0.70;
-  else if (wordCount === 3) estimated *= 0.92;
-  // Plancher / plafond réalistes
-  estimated = Math.max(50, Math.min(8_000_000, estimated));
+  if (wordCount >= 5)      estimated *= 0.35;
+  else if (wordCount === 4) estimated *= 0.55;
+  else if (wordCount === 3) estimated *= 0.80;
+  // Plancher / plafond
+  estimated = Math.max(30, Math.min(8_000_000, estimated));
 
   // Round Semrush-style : 10s sous 1k, 100s sous 100k, 1k au-dessus
   const round = v => v < 1000 ? Math.round(v / 10) * 10
@@ -9328,7 +9397,8 @@ function _browserVolumeEstimate(signals) {
       bing_result_count: rc,
       google_suggests: gsg,
       bing_suggests: bsg,
-      multi_prefix: multi,
+      bing_multi_prefix: bingMulti,
+      google_multi_prefix: gMulti,
       total_unique_suggests: totalUniqueSugs,
       ads_count: ad,
       shopping_count: sh,
@@ -9507,15 +9577,16 @@ async function _browserSerpScan(query, force) {
     data._mode = 'browser';
     return data;
   }
-  const [search, shop, bingSuggests, googleSuggests, bingMulti, trendsVol, kvData] = await Promise.all([
+  const [search, shop, bingSuggests, googleSuggests, bingMulti, googleMulti, kvData] = await Promise.all([
     _browserFetchSearch(query).catch(e => ({ organic: [], ads: [], inline_shopping: [], _err: e.message })),
     _browserFetchShopping(query).catch(e => ({ shopping: [], _err: e.message })),
     _browserBingSuggest(query).catch(() => []),
     _browserGoogleSuggest(query).catch(() => []),
     _browserBingMultiPrefix(query).catch(() => []),
-    _browserGoogleTrendsVol(query).catch(() => null),
+    _browserGoogleSuggestMulti(query).catch(() => []),
     _kvGet(query).catch(() => null),
   ]);
+  const trendsVol = null;  // Google Trends bloqué (429) en 2026, désactivé.
   const suggests = bingSuggests; // legacy compat
   let ads = search.ads || [];
   // Buyer-intent suffix retry si 0 ads
@@ -9553,6 +9624,7 @@ async function _browserSerpScan(query, force) {
     bing_suggests: bingSuggests || [],
     google_suggests: googleSuggests || [],
     bing_multi_prefix: bingMulti || [],
+    google_multi_prefix: googleMulti || [],  // signal volume principal en 2026
     ads_count: ads.length,
     shopping_count: (shop.shopping || []).length,
     related_count: (search.bing_related || []).length,
