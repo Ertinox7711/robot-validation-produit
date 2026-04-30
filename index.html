@@ -10204,14 +10204,27 @@ async function scrapeSupplierPrice(pid) {
     const data = await r.json();
 
     if (!data.found) {
-      window._spCache[pid] = { state: 'error', msg: 'Données produit non détectées — saisir le prix manuellement' };
+      window._spCache[pid] = {
+        state: 'error',
+        msg: data.message || 'Données produit non détectées',
+        reason: data.reason || '',
+        url
+      };
     } else {
-      window._spCache[pid] = { state: 'ok', title: data.title || '', image: data.image || '', price: data.price || '' };
+      window._spCache[pid] = { state: 'ok', title: data.title || '', image: data.image || '', price: data.price || '', url };
     }
   } catch(e) {
-    window._spCache[pid] = { state: 'error', msg: 'Erreur scraping : ' + (e.message || 'timeout') };
+    window._spCache[pid] = { state: 'error', msg: 'Erreur réseau : ' + (e.message || 'timeout'), url };
   }
   _spRenderPreview(pid);
+}
+
+function _spManualPrice(pid) {
+  const input = document.getElementById('sp-manual-' + pid);
+  if (!input) return;
+  const v = parseFloat(String(input.value).replace(',','.'));
+  if (isNaN(v) || v <= 0) { input.style.borderColor = '#f87171'; return; }
+  confirmSupplierPrice(pid, String(v));
 }
 
 function _spRenderPreview(pid) {
@@ -10224,19 +10237,37 @@ function _spRenderPreview(pid) {
     return;
   }
   if (c.state === 'error') {
-    el.innerHTML = `<div style="font-size:12px;color:#f87171;padding:6px 0">❌ ${escapeHtml(c.msg)}</div>`;
+    const isSPA = c.reason === 'spa_shell';
+    el.innerHTML = `
+      <div style="padding:10px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:8px;margin-top:6px">
+        <div style="font-size:12px;color:#fca5a5;margin-bottom:8px">⚠️ ${escapeHtml(c.msg)}</div>
+        ${isSPA ? `<div style="font-size:11px;color:var(--text3);margin-bottom:8px">Astuce : ouvre la page, regarde le prix, saisis-le ci-dessous.</div>` : ''}
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          ${c.url ? `<a href="${escapeHtml(c.url)}" target="_blank" rel="noopener" style="padding:5px 10px;font-size:11px;font-weight:600;background:rgba(255,255,255,0.08);color:var(--text);border:1px solid rgba(255,255,255,0.15);border-radius:6px;text-decoration:none;white-space:nowrap">↗ Ouvrir page</a>` : ''}
+          <input id="sp-manual-${pid}" type="number" step="0.01" placeholder="Prix achat (€)" style="flex:1;min-width:120px;padding:5px 8px;font-size:12px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.15);color:var(--text);border-radius:6px" onkeydown="if(event.key==='Enter')_spManualPrice('${pid}')">
+          <button onclick="_spManualPrice('${pid}')" style="padding:5px 12px;font-size:11px;font-weight:700;background:#4ade80;color:#000;border:none;border-radius:6px;cursor:pointer">✓ OK</button>
+        </div>
+      </div>`;
     return;
   }
   el.innerHTML = `
-    <div style="display:flex;align-items:center;gap:10px;padding:8px;background:rgba(255,255,255,0.04);border-radius:8px;border:1px solid rgba(255,255,255,0.08);margin-top:6px">
-      ${c.image ? `<img src="${escapeHtml(c.image)}" style="width:64px;height:64px;object-fit:contain;border-radius:6px;flex-shrink:0;background:#111" onerror="this.style.display='none'">` : ''}
-      <div style="flex:1;min-width:0">
-        ${c.title ? `<div style="font-size:11px;color:var(--text2);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escapeHtml(c.title)}">${escapeHtml(c.title)}</div>` : ''}
-        <div style="font-size:15px;font-weight:700;color:${c.price?'#4ade80':'var(--text3)'}">
-          ${c.price ? c.price + ' €' : '<span style="font-size:11px">Prix non détecté — saisir manuellement</span>'}
+    <div style="padding:8px;background:rgba(255,255,255,0.04);border-radius:8px;border:1px solid rgba(255,255,255,0.08);margin-top:6px">
+      <div style="display:flex;align-items:center;gap:10px">
+        ${c.image ? `<img src="${escapeHtml(c.image)}" style="width:64px;height:64px;object-fit:contain;border-radius:6px;flex-shrink:0;background:#111" onerror="this.style.display='none'">` : ''}
+        <div style="flex:1;min-width:0">
+          ${c.title ? `<div style="font-size:11px;color:var(--text2);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escapeHtml(c.title)}">${escapeHtml(c.title)}</div>` : ''}
+          <div style="font-size:15px;font-weight:700;color:${c.price?'#4ade80':'var(--text3)'}">
+            ${c.price ? c.price + ' €' : '<span style="font-size:11px">Prix non détecté</span>'}
+          </div>
         </div>
+        ${c.price ? `<button onclick="confirmSupplierPrice('${pid}','${c.price}')" style="padding:5px 12px;font-size:12px;font-weight:700;background:#4ade80;color:#000;border:none;border-radius:6px;cursor:pointer;flex-shrink:0">✓ OK</button>` : ''}
       </div>
-      ${c.price ? `<button onclick="confirmSupplierPrice('${pid}','${c.price}')" style="padding:5px 12px;font-size:12px;font-weight:700;background:#4ade80;color:#000;border:none;border-radius:6px;cursor:pointer;flex-shrink:0">✓ OK</button>` : ''}
+      ${!c.price ? `
+      <div style="display:flex;gap:6px;align-items:center;margin-top:8px;flex-wrap:wrap">
+        ${c.url ? `<a href="${escapeHtml(c.url)}" target="_blank" rel="noopener" style="padding:5px 10px;font-size:11px;font-weight:600;background:rgba(255,255,255,0.08);color:var(--text);border:1px solid rgba(255,255,255,0.15);border-radius:6px;text-decoration:none;white-space:nowrap">↗ Voir prix</a>` : ''}
+        <input id="sp-manual-${pid}" type="number" step="0.01" placeholder="Prix achat (€)" style="flex:1;min-width:120px;padding:5px 8px;font-size:12px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.15);color:var(--text);border-radius:6px" onkeydown="if(event.key==='Enter')_spManualPrice('${pid}')">
+        <button onclick="_spManualPrice('${pid}')" style="padding:5px 12px;font-size:11px;font-weight:700;background:#4ade80;color:#000;border:none;border-radius:6px;cursor:pointer">✓ OK</button>
+      </div>` : ''}
     </div>`;
 }
 
