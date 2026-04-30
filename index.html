@@ -9689,14 +9689,14 @@ async function _browserSerpScan(query, force) {
     else if (vol >= 15_000)  { bucket = '15-50k';  label = 'Volume Arthur OK';  color = '#22c55e'; verdict = 'arthur_ok'; }
     else if (vol >= 5_000)   { bucket = '5-15k';   label = 'Marché limite';     color = '#fbbf24'; verdict = 'arthur_limited'; }
     else                     { bucket = '<5k';     label = 'Marché trop petit'; color = '#f87171'; verdict = 'arthur_abandon'; }
-    const srcLabel = kwReal._backend_source === 'serpapi_kp' ? 'Google KP réel' :
+    const srcLabel = (kwReal._backend_source === 'serpapi_kp' || kwReal._backend_source === 'google_ads_kp') ? 'Google KP réel' :
                      kwReal._backend_source === 'google_trends_calibrated' ? 'Trends calibré' : 'Estimé';
     result.volumeEstimate = {
       ...browserVE,
       estimated: vol,
       bucket, label, color, verdict,
       source: kwReal._backend_source || 'vercel_kw',
-      confidence: kwReal._backend_source === 'serpapi_kp' ? 'high' : 'medium',
+      confidence: (kwReal._backend_source === 'serpapi_kp' || kwReal._backend_source === 'google_ads_kp') ? 'high' : 'medium',
       competition: kwReal.competition,
       competition_index: kwReal.competition_index,
       cpc_low: kwReal.cpc_low,
