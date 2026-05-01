@@ -3978,7 +3978,7 @@ function pendingProducts() { return state.products.filter(p => !p.status || p.st
 function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
 // App version — bumped at every deploy. Shown as a pill next to the logo.
-const APP_VERSION = '0.37.27-beta';
+const APP_VERSION = '0.37.28-beta';
 
 const APP_VERSION_NOTES = 'OUTIL "RECHERCHE MOT-CLÉ" SEMRUSH-LIKE + CLEANUP MASSIF — suite demande user "faut que le volume soit trouvé auto illimité précis + section capteur CPC/volume comme Semrush gratuit + revoit tout le SaaS car y a trop de trucs partout, performance pas fun". Ajout du helper _browserGoogleSuggest (Google Suggest direct via allorigins.win) qui complète le volume estimator avec un signal Google natif (vs Bing avant). Volume estimator v2 : score composite recalibre avec suggests Google × 3 + suggests Bing × 1.5 + bonus +6 si les 2 sources concordent. Confidence améliorée (high si bing_result_count + ≥4 google_suggests). Calibration testée live : "aspirateur robot xiaomi" → score 106 confidence high bucket "50-150k" verdict arthur_ok ✓. Nouvelle vue sidebar "Recherche mot-clé" en tête (gradient cyan/violet, icône search) — outil Semrush-like dédié : input mot-clé + bouton Analyser → fetch parallèle Bing SERP + Google Suggest + Bing Suggest + Bing Shopping → bandeau verdict LANCER/À AFFINER/ABANDONNER avec 4 stat-cards (volume estimé/mois + bucket, CPC estimé + band, CPA estimé CPC×150, résultats Bing) + card "Sources signaux" transparent (rc/ads/shopping/google_suggests/bing_suggests/uniques/related/inst_top3 avec breakdown points) + card stats marché shopping (médian/moyenne/p25-p75/min-max/amplitude/inst%) + barres distribution prix 5 buckets + chips top marchands + card variantes recherchées (Google + Bing autosuggest combinés en pills cliquables qui re-déclenchent une analyse) + top 5 organique. Loading state avec spinner. Liste 6 exemples au démarrage. Cache localStorage 30j partagé avec scanSerp produit (un mot-clé déjà analysé revient instantané). CLEANUP MASSIF sidebar : 16 → 9 nav-items, regroupés en 3 sections claires (Outils : Dashboard + Recherche mot-clé + Recherche auto · Pipeline : Produits retenus + Pipeline + Précision Niche · Référence & système : Règles Arthur + Cache + Paramètres). Virés : Duel Arthur (comparateur 2-4 produits — peu utilisé), Simulateur Ads (overlap avec Recherche mot-clé), Radar Concurrence (overlap avec Pipeline), Méthode & aide (textuel non-actionnable), Formation Skool (référence éducative — l\'app est un outil de performance pas un cours), Historique versions (trace dev — accessible via le badge version dans le header). Code des features virées CONSERVÉ dans le HTML pour ne pas casser la navigation par URL (currentView.type peut encore valoir duel/radar/etc.) mais elles ne sont plus accessibles via la sidebar. Tunnel Validation renommé "Règles Arthur" pour être plus direct. Setup renommé "Cache" pour être plus court. PARI : l\'user a demandé "performance pas fun ou entertainment" — la sidebar est désormais 100% orientée outils de décision, plus aucune feature gadget visible. La nouvelle vue "Recherche mot-clé" est le vrai cœur de l\'app : tu tapes un mot-clé, tu obtiens en 6s un verdict Arthur chiffré sans avoir à ouvrir Keyword Planner / Semrush / SeRanking. VALIDATION ARTHUR DANS LE SCAN — port complet de la méthode du PDF Arthur "Validation Volume & Coût de Pub" en feature active. — port complet de la méthode du PDF Arthur "Validation Volume & Coût de Pub" en feature active. Suite demande user "développe la partie shopping... inclure aussi un truc comme Semrush sans clé API". Nouveaux helpers JS 100% navigateur : _browserParseBingResultCount (parse "Environ X résultats" depuis sb_count en décodant les entities HTML &#160; / &#233;), _browserParseBingRelated (carousel recherches associées avec filtre des items UI Bing comme "Toutes / Dernier mois"), _browserBingSuggest (autosuggest via api.bing.com/qsonhs.aspx via allorigins.win, retourne 7-12 variantes), _browserVolumeEstimate (composite score multi-signaux : bing_result_count pondéré par paliers + autosuggest count × 2.5 + ads × 8 + shopping × 1.2 + related × 2 → score 0-130 → bucket Arthur avec verdict arthur_ok/arthur_limited/arthur_abandon + estimation absolue en recherches/mois), _browserCpcEstimate (heuristique densité commerciale Bing : ad×2 + sh×0.5 + inst_top3×4 → bands high/mid/low + CPC estimé €), _browserShoppingStats (min/max/médian/p25/p75/moyenne/amplitude + distribution 5 buckets + top 5 merchants + ratio institutionnel/indé). _browserSerpScan enrichi pour appeler tous ces helpers en Promise.all, retourne {bing_result_count, related_searches, suggests, volumeEstimate, cpcEstimate, shoppingStats}. UI onglet SERP refondu : bandeau "Validation Arthur" en tête avec verdict LANCER/À AFFINER/ABANDONNER colorisé selon volume × CPA viable, 4 stat-cards alignées (Volume estimé/mois + bucket / CPC estimé + band / CPA estimé = CPC×150 / CPA max viable depuis marge brute - 20% avec headroom chiffré). Card Stats marché shopping : 6 mini-cards (médian / moyen / P25-P75 / Min-Max / Amplitude / Marché institutionnel %) + barres horizontales distribution prix 5 buckets (<50/50-150/150-400/400-800/>800) + chips top 5 marchands. Card Variantes recherchées : 2 sections (autosuggest Bing en pills violet/fuchsia + related searches en pills cyan). Carrousel shopping enrichi : tableau 5 colonnes avec prix accentué + marchand + statut + lien direct "Voir l\'annonce →" cliquable vers chaque offre Bing decode_url. Auto-fill : à chaque scan, l\'algo pré-remplit volume + CPC + prix_marche du produit depuis volumeEstimate.estimated / cpcEstimate.estimated / shoppingStats.median, mais SANS écraser ce que l\'user a saisi à la main (track p._autoFilledFromScan). Test live e2e validé : scan "aspirateur robot xiaomi" → bing_result_count 94 900 + 7 suggests + volume estimated 28k recherches/mois bucket "15-50k" verdict arthur_ok score 56 + CPC 1.20€ band high + shopping 20 offres avec médian 299.99€ + amplitude ×36.6 + 65% inst + top merchants Amazon/Cdiscount + bandeau Arthur "LANCER" si CPA viable. PARI : la méthode Arthur du PDF "Validation Volume & Coût de Pub" est 100% encodée en feature active dans le scan SERP. L\'user n\'a plus besoin d\'ouvrir Keyword Planner / Semrush / SeRanking — l\'algo lui donne le volume estimé (Semrush-like) + le CPC + le verdict en clair, sans clé API, depuis n\'importe quel device. Si l\'user veut la précision absolue, le PDF Arthur reste accessible via le Tunnel Validation. FULL NAVIGATEUR — ZÉRO INSTALL — MARCHE PARTOUT (PC, tablette, téléphone). — ZÉRO INSTALL — MARCHE PARTOUT (PC, tablette, téléphone). Suite demande user "je veux pas d\'hybride je veux aucun setup full sur internet", on vire TOUT le code backend local côté front et on bascule en mode 100% navigateur via proxies CORS publics. Test live validé : scan "aspirateur robot xiaomi" → 10 organic + 20 shopping (avg 304€) + autoChecks c2/c12 = TRUE, en cache instantané (0ms re-hit). Pile : urllib remplacée par fetch() navigateur, regex Python portées en JS (_browserParseOrganic / _browserParseAds / _browserParseShopping / _browserParseInlineShopping), _browserDecodeBingUrl avec atob + decodeURIComponent (port du base64-url-safe + URL-decode double-pass Python), helper _browserExtractPrice, _browserStripTags, _browserUnescape. Cache localStorage 30j sous clé "serp_browser_cache_v1" avec cap auto à 200 entrées + drop des plus anciens si quota dépassé. Throttle 1.5s entre requêtes navigateur. 2 proxies CORS testés live : cors.eu.org (primary, 443ms, 126KB de HTML Bing valide) → allorigins.win (fallback, 3s, 117KB). _browserSerpScan(query, force) = équivalent navigateur de scan() Python : parallèle search + shopping, buyer-intent retry " acheter"/" prix" si 0 ads, retourne {ads, organic, inline_shopping, shopping, autoChecks, _mode:"browser", _cached, _age_s} compatible 100% avec le schema attendu. Côté front nettoyé : viré SERP_LOCAL_ENDPOINT, window._backendUp/_backendInfo, checkBackendStatus, _setupPing, _setupRefreshBadge, _setupPollLoop, setupDownloadLauncher, setupDownloadAutostart, setupShutdownBackend, _setupGenLauncherBat, _setupGenAutostartBat, _setupDownloadBat, _setupGetProjectPath, _setupSaveProjectPath, PROJECT_PATH_KEY, setupNavBadge, _setupRefreshPage, _setupStatusHtml. serpFetch = 1 ligne (return await _browserSerpScan(query, force)). Sidebar nav-item "Setup backend" → renommé "Cache & infos" avec badge live qui affiche le compteur de scans en cache. Modale Settings simplifiée à 1 carte info "Mode 100% navigateur · zéro install". Page Setup repensée : hero "Zéro installation. Marche partout, même sur téléphone." + orb cyan + 2 cards (Cache local avec stats + Comment ça marche en 4 étapes pédagogiques) + 1 footer "Tu n\'as rien à faire". refreshDiscoverQuota retourne maintenant juste "Mode navigateur actif · X scans en cache". runDiscover ne check plus rien (ouvre direct la modale). verifyAds : sans backend, propose juste un lien externe vers adstransparency.google.com. ~480 lignes virées (helpers backend local, .bat generators, polling, modale Settings backend health-check). PARI : zéro friction setup. L\'user ouvre l\'app sur son tel pendant les transports → la recherche auto marche immédiatement. Aucune fenêtre noire, aucun terminal, aucun .bat à télécharger, aucune clé à configurer. Le cache localStorage est partagé via Firestore quand l\'user est loggé → un scan fait sur le PC est réutilisé sur le tel. Limite réelle : ~5000 scans/jour cumulés via les proxies publics (largement suffisant en usage perso vu le cache 30j). PAGE SETUP BACKEND — nouvelle vue sidebar entre Précision Niche et Recherche auto. — nouvelle vue sidebar entre Précision Niche et Recherche auto (icône bolt cyan, badge live "up"/"down" qui poll /health toutes les 3s ou 8s selon état). 4 cards d\'action : (1) chemin du projet (input prefilled depuis localStorage `projectPath`, defaut "C:\\Users\\maths\\Documents\\recherche produit"), (2) bouton "Télécharger launch_backend.bat" qui génère un .bat client-side avec UTF-8 BOM (29 lignes : cd /d, where python, check serp_scout.py existe, python serp_scout.py + pause), (3) bouton "Télécharger install_autostart.bat" qui génère un .bat (27 lignes) qui crée RobotValidation_Backend.bat dans %APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup (auto-démarrage Windows session), (4) bouton "Stopper" qui appelle l\'endpoint /shutdown nouvellement ajouté côté backend (5 lignes Python : threading + os._exit pour kill propre vs sys.exit qui peut être intercepté par ThreadingHTTPServer). Hero gradient cyan/violet/vert avec orb live 28px conique qui pulse toutes les 1.6s (vert si up, rouge si down, cyan si vérification). Status box live qui re-render uniquement la zone (pas full page) pour ne pas casser le focus de l\'input path. Helpers exposés window._backendUp / window._backendInfo / window._setupPing / window._setupRefreshBadge / setupDownloadLauncher / setupDownloadAutostart / setupShutdownBackend / renderSetup. Polling auto au boot via setTimeout(_setupPollLoop, 800) qui ping /health, met à jour le badge sidebar en couleur (vert "up" / rouge "down" / cyan "?") et re-render la page si on est dessus. Section "Première installation : prérequis Python + dépannage" en <details> collapsible avec instructions install Python + lien python.org + 5 cas de dépannage (Python introuvable, serp_scout.py introuvable, port 7789 occupé, statut reste rouge, désinstaller). Génération .bat utilise Blob + URL.createObjectURL + a.download (zéro dépendance, zéro backend, fonctionne offline). 2 nouvelles icônes ajoutées au registre ICONS (download flèche vers le bas, alert triangle warning). Command palette enrichie avec entrée "nav.setup" (icône bolt, hint "Lancer / installer / redémarrer serp_scout.py · auto-start Windows", kw setup backend python launcher autostart demarrer relancer shutdown). PARI : transformer la friction "tu dois ouvrir un terminal et taper python serp_scout.py" en "1 clic dans le site → 1 double-clic sur le .bat téléchargé → backend up". Avec auto-start installé une seule fois, friction tombe à zéro (backend démarre tout seul à chaque ouverture session Windows). Le bouton Stopper + auto-start = redémarrage à distance depuis le site (puisque shell:startup relance après /shutdown). MÉTRIQUE : 0 ligne CMD à taper pour l\'user (avant : "cd C:\\... && python serp_scout.py" à mémoriser et retaper) · 1 setup unique pour avoir un backend qui démarre tout seul · status visible en permanence (badge sidebar) au lieu de "j\'espère que ça tourne". Limitations honnêtes : navigateur ne peut PAS exécuter directement un .py (sandbox), donc on passe par .bat téléchargé + double-clic — c\'est le compromis le plus simple sans installer un protocole custom Windows. CLEANUP CLÉS SERPAPI — suppression totale du code SerpAPI (front + back) suite demande user explicite "enleve tout ce qui est cle api serp api". — suppression totale du code SerpAPI (front + back) suite demande user explicite "enleve tout ce qui est cle api serp api". Front : virée la modale Settings de gestion des clés (champ principal + clés extra + bouton vérifier quota), retirées les fonctions getSerpKey/setSerpKey/getAllSerpKeys/getSerpKeysExtra/setSerpKeysExtra/fetchAccountQuota/checkSerpQuota/serpDirectFetch/_isQuotaErr/_serpFetchPair, retirée la constante SERPAPI_KEY_STORAGE, retiré window._deadKeys, retirée la mention codetabs proxy dans verifyAds. saveSettings remplacé par closeModal direct. La modale Settings affiche désormais "Mode scrape illimité (Bing FR + DuckDuckGo) - aucune clé requise" avec health-check live du backend (bouton "Re-vérifier le backend" → fetch /health → mode/cache_entries/cache_ttl_days affichés inline). serpFetch simplifié : appelle uniquement le backend local, throw une erreur claire avec instructions ("Lance python serp_scout.py") si offline (mobile/cloud). refreshDiscoverQuota refait pour afficher l\'état du backend local (Backend up + mode + cache_entries + TTL) au lieu des compteurs SerpAPI. runDiscover check SERP_LOCAL_ENDPOINT au lieu de getSerpKey, alert clair en mode web. verifyAds : si pas de backend local, propose juste un lien externe vers adstransparency.google.com (au lieu d\'utiliser une clé user). Command palette : hint mis à jour de "Clé SerpAPI, sync" → "Backend SERP, sync". Back-end serp_scout.py : retirées USE_SERPAPI_FALLBACK, _load_serpapi_keys(), SERPAPI_KEYS, _dead_serpapi_keys, _serpapi_call(), _shopping_serpapi_fallback(), tous les blocs `if USE_SERPAPI_FALLBACK and SERPAPI_KEYS` dans fetch_search/fetch_shopping/verify_ads/quota_summary/main. /health renvoie maintenant {mode:"scrape", primary_source:"bing_fr", fallback_source:"duckduckgo"}. /quota simplifié à un dict immuable {mode:"scrape", unlimited:true, total_searches_left:-1}. verify_ads : best-effort 100% scrape Bing site:operator (la donnée est moins riche que SerpAPI, on l\'accepte). Header docstring du fichier mis à jour (v3, "Tout le code SerpAPI a ete retire en v0.24"). MÉTRIQUE ALGO : 0 clé API à entrer/gérer (avant : 1 principale + N extras dans Settings) · 0€ vs ~50€/mois SerpAPI · illimité vs 250 req/clé/mois · ~150 lignes de code mort viréees du HTML (~7720→7715), ~110 lignes viréees du Python (~700→~590 lignes). PARI : code base nettoyé, plus aucune surface d\'attaque côté clés, plus aucun chemin "fallback" qui pourrait surprendre l\'user en re-tirant une vieille clé d\'un localStorage. Le backend local serp_scout.py (Bing FR + DuckDuckGo) est désormais le SEUL chemin pour la recherche auto et les scans SERP. AUTO-SCORE 8/12 CRITÈRES ARTHUR (Z1 SKILL.md) — l\'algo coche maintenant en local jusqu\'à 8 critères sur 12 depuis les données déjà connues (prix achat/vente, volume mensuel, CPC, niche, scan SERP) au lieu de seulement 3 (c2/c5/c12 via SERP autoChecks). Helper window._autoScoreCriteres(p) retourne {auto, reasons} chiffrés par critère ; window.applyAutoScoreCriteres(p) applique en respectant les choix manuels user (p.criteres_auto track ce qui vient de l\'algo, jamais d\'override sur un critère que l\'user a coché lui-même). Bouton "Auto-scorer (algo)" sur la grille critères + auto-trigger après chaque scan SERP. Badge "ALGO" cyan sur chaque critère auto-rempli avec raison chiffrée italique en sous-ligne. Critères couverts : C1 Marge ×3 (depuis calcMarge ratio ≥3), C2 Concurrence (organic+ads+shopping), C3 Volume+CPA (≥15k OU 5-15k si prix ≥1500€ + CPA viable), C4 Précision niche (depuis _npPrecisionScore : ≥60 valide, <40 refus), C5 Pas d\'institutionnels top 3 (depuis SERP), C6 Marque autour (top 3 organique 0 institutionnel), C8 Besoin d\'expert (forums/blogs/Reddit/YouTube ≥2 dans top 10), C9 Cycle court (prix <300€ Arthur ; >800€ = frein), C12 Search ads (ads ou shopping ≥5). Restent en jugement humain : C7 sourcing, C10 recherche marque, C11 mot-clé non précis. Toggle manuel (toggleCritere/guidedSet) supprime automatiquement le tag p.criteres_auto[cid] — l\'user reprend la main. Note traçabilité auto-écrite dans p.notes au premier auto-score : "[Auto-score algo · DD/MM/YYYY] N/12 critères calculés (X validés, Y manqués) · Z appliqués, W préservés". MÉTRIQUE ALGORITHMIQUE AVANT/APRÈS : produit complet (prix+volume+CPC+SERP scan) → 3/12 auto avant → 9/12 auto après (×3 couverture) ; produit minimal (prix+nom seul) → 0/12 avant → 3/12 après (c1+c4+c9 calculables sans SERP). Test e2e sur 4 cas synthétiques : produit idéal (Aspirateur robot piscine 199€/45€/vol 25k/SERP propre) → 8 validés ✓ + 1 manqué (CPA juste au-dessus) sur 9 calculables. Produit toxique (Canapé 1200€/600€/vol 8k/top 3 institutionnels) → 7 manqués ✓ + 2 validés sur 9 calculables (l\'algo refuse correctement). Idempotent : 2e run = 0 applied / 7 kept / 0 skipped. Préservation user : si user a coché c1=false manuellement, l\'auto-score ne réécrit jamais c1. PARI : transfert de 5 critères de travail manuel (10min de coches) vers 1 clic algo (0,1ms). L\'app passe de "scoreur passif où l\'user remplit la grille" à "moteur d\'inférence Arthur où l\'user valide ce qui demande jugement". BACKEND ILLIMITÉ SANS CLÉ API — refonte complète de serp_scout.py qui pivote du SerpAPI payant (limite mensuelle ~250 req/clé) vers du scraping direct Bing FR + DuckDuckGo, illimité et gratuit. Test E2E validé : aspirateur robot xiaomi → organic 10/10, ads 2 (récupérés via buyer-intent suffix retry " acheter"/" prix"), shopping 20/20 avec prix moyen 347€, autoChecks c2/c12 = TRUE, cache 30j hit en 10ms vs 10s pour cold. Pipeline : urllib stdlib + UA rotation 6 desktop FR + cookies CONSENT pré-acceptés + throttle 1.5s/req Bing + retry backoff 8-30s sur 429. Source primaire Bing FR (HTML statique propre, classes stables b_algo / b_ad / br-gOffCard depuis 2018) car Google direct bloque toute requête sans JS (page enablejs au lieu de SERP). DuckDuckGo HTML en fallback (organic only, jamais bloqué). SerpAPI conservé en fallback ultime opt-in via .serp_env USE_SERPAPI_FALLBACK=1 (utile pour Google Shopping carousels exacts). Décodage URLs Bing en double-pass : base64-url-safe (avec strip prefix "a1") puis URL-decode (Bing wrappe les liens dans bing.com/ck/a?u=BASE64URL et la chaîne décodée est elle-même URL-encodée). Cache TTL 30 jours (vs 24h avant) — divise le volume de requêtes effectives par 30+ pour les rescans. PARI : on supprime totalement la dépendance SerpAPI payante (qui plafonnait à 250 req/clé/mois) au profit d\'un backend zéro-coût zéro-clé-api avec parité fonctionnelle 90% sur Arthur (organic + shopping carousel + auto-checks c2/c5/c12). Si Bing change son DOM, fallback DDG garde l\'organic ; si DDG bloque, fallback SerpAPI ultime garde la parité. PRÉCISION NICHE — règle Arthur n°3 (jamais généraliste) encodée en feature active. Score 0-100 par produit, badge live sur chaque fiche, comparateur de variantes plus niches qui génère 8 alternatives en 1 clic, vue cockpit cross-portefeuille (distribution 4 verdicts, top mots généralistes à virer, podium ULTRA-PRÉCIS, tableau de correction par urgence). Listes statiques curées depuis transcripts Skool c4_precis_niche + c11_motcle_non_precis + tableau_recherche : ~100 mots généralistes français + ~130 modifieurs catégorisés (style/matière/usage/dimension/audience). Score composite : longueur du nom (≥4 mots +20, 3 mots +5, ≤2 mots -18 à -35) + modifieurs trouvés (+12/modif, max +60) + niche déclarée précise (+10 si ≥3 mots) avec plafond automatique si mot généraliste détecté sans modifieur (≤25 = REFUS). 4 verdicts : NICHE ULTRA-PRÉCISE ≥80 vert / PRÉCISE 60-79 cyan / À AFFINER 40-59 jaune / GÉNÉRALISTE — REFUS <40 rouge. Badge sur fiche produit (onglet Infos) avec orb 64px + verdict coloré + 3 raisons chiffrées + bouton "Générer variantes plus niches" en CTA gradient violet/fuchsia. Modale comparateur 8 cards : nom variante + score + verdict pill + chips modifieurs colorisés par catégorie + bouton "Explorer cette variante" qui crée un nouveau produit pré-rempli dans la session courante (variante + niche héritée + note traçabilité). Variantes générées par 8 templates déterministes (seed = hash du nom+niche, donc même input → même suggestions reproductibles) qui combinent style×dimension, usage×matière, style×matière, usage×audience, dimension×style, matière×usage, style×audience, usage×dimension. Nouvelle vue sidebar "Précision Niche" entre Pipeline et Recherche auto (icône target violet, badge live "X à virer" en violet/fuchsia). Hero gradient violet/fuchsia/cyan + bandeau 2 règles non-négo (Précis ≥3 mots+modifieurs / Refus mot généraliste seul) + lien Tunnel. Cockpit 2 cols : orb 160px score moyen pipeline (label adaptatif Excellent/Précis/Mitigé/Trop généraliste) + distribution 4 buckets en barres horizontales colorisées (vert/cyan/jaune/rouge). 2 cards : Top 10 mots généralistes les plus fréquents avec compteur (à virer en priorité), Podium ULTRA-PRÉCIS top 10 (à pousser, cliquable). Tableau de correction par urgence : 24 produits classés du plus généraliste au plus précis avec score colorisé, verdict pill, mot généraliste flag rouge, chips modifieurs (max 2 par catégorie), longueur du nom — clique une ligne pour ouvrir la fiche. Helpers exposés window._npPrecisionScore, _npGenerateVariants, _npGeneralistCount, openNpVariantsModal, npExploreVariant, renderNichePrecision. Command palette enrichie (nav.niche). PARI : aucun SaaS de validation produit (Sell The Trend, Niche Scraper, Ecomhunt, Minea, Helium 10) ne challenge la précision du nom contre une méthode propriétaire et ne propose des variantes plus niches en 1 clic. La Précision Niche fait passer l\'app de "scoreur passif" à "coach actif qui refuse le travail mal fait". 4e jambe du tabouret Google Ads-first, complète Simulateur (leviers), Radar (concurrence) et Pipeline (santé) en couvrant le INPUT (qualité du produit dès l\'ajout). Audit conforme post v0.17 : zéro IA ajoutée (listes statiques curées, pas de LLM), zéro gamification, calcul local sur state.products, exploite la formation Skool transcrite (déjà payée). Axe GOOGLE ADS-INTELLIGENCE (axe 1 SKILL.md), couvre directement la 3e règle non-négociable Arthur sous-exploitée jusqu\'ici.';
 
@@ -3987,6 +3987,12 @@ const APP_VERSION_NOTES = 'OUTIL "RECHERCHE MOT-CLÉ" SEMRUSH-LIKE + CLEANUP MAS
 // `source` : "interne" ou nom du SaaS qui a inspiré
 // `type` : 'feat' (nouvelle feature), 'fix' (bug), 'ux' (polish), 'perf', 'doc'
 const CHANGELOG = [
+  { v: '0.37.28-beta', date: '2026-05-01', time: '14:36', source: 'interne',
+    summary: 'Recherche auto live progress: barre %, log temps reel par niche, currentNiche affichee, erreurs collectees + resume final detaille (productives/vides/erreurs)',
+    items: [
+      {type:'feat', text:'Recherche auto live progress: barre %, log temps reel par niche, currentNiche affichee, erreurs collectees + resume final detaille (productives/vides/erreurs)'},
+    ]
+  },
   { v: '0.37.27-beta', date: '2026-05-01', time: '14:24', source: 'interne',
     summary: 'Modal Importer images: multi-select (badge numero ordre 1/2/3 cyan), bouton Toutes/Aucune, etoile primaire toggle separe, dl PNG telecharge uniquement les selectionnees. Bouton Regenerer (sans le mot synonymes). Confirme: regenerate split sur regex HTML tags = modifie SEULEMENT phrases, jamais code/style/class',
     items: [
@@ -12938,6 +12944,77 @@ function competitorAdd(c) {
   alert('Concurrent ajouté à la session.');
 }
 
+// Live progress state (shared across runDiscover invocation)
+window._discoverProg = null;
+
+function _renderDiscoverProgress() {
+  const p = window._discoverProg; if (!p) return '';
+  const pct = Math.min(100, Math.round(((p.candsFound) / Math.max(1, p.totalTarget)) * 100));
+  const nichePct = Math.min(100, Math.round((p.nichesTried / Math.max(1, p.nichesNeeded)) * 100));
+  const logHtml = p.log.slice(-40).map(l => {
+    const c = l.type === 'ok' ? '#34d399' : l.type === 'warn' ? '#f59e0b' : l.type === 'err' ? '#f87171' : l.type === 'info' ? '#a78bfa' : '#94a3b8';
+    const icoSvg = l.type === 'ok' ? ico('check',11) : l.type === 'warn' ? ico('alert',11) : l.type === 'err' ? ico('cross',11) : l.type === 'info' ? ico('search',11) : ico('bolt',11);
+    return `<div style="display:flex;gap:8px;align-items:flex-start;padding:4px 8px;font-size:11px;line-height:1.5;font-family:ui-monospace,monospace;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--text3);min-width:48px;flex-shrink:0">${l.t}</span><span style="color:${c};display:inline-flex;flex-shrink:0;margin-top:2px">${icoSvg}</span><span style="color:${l.type==='err'?c:'var(--text2)'};flex:1;word-break:break-word">${escapeHtml(l.msg)}</span></div>`;
+  }).join('');
+  const currNiche = p.currentNiche ? `<span style="color:var(--accent2);font-weight:600">${escapeHtml(p.currentNiche)}</span>` : '<span style="color:var(--text3)">—</span>';
+  const errBadge = p.errors.length ? `<span class="pill danger" style="font-size:10px">${p.errors.length} erreur${p.errors.length>1?'s':''}</span>` : '';
+  const cancelBtn = p.done ? '' : `<button onclick="cancelDiscover()" style="background:rgba(248,113,113,0.15);color:var(--red);border:1px solid rgba(248,113,113,0.4);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:inherit">Annuler</button>`;
+  return `
+    <div style="border:1px solid var(--border);border-radius:14px;padding:16px;background:linear-gradient(135deg,rgba(139,92,246,0.06),rgba(217,70,239,0.04));margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        ${p.done ? `<span style="color:var(--green);display:inline-flex">${ico('check',18)}</span>` : `<div style="width:18px;height:18px;border:2px solid var(--accent);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;flex-shrink:0"></div>`}
+        <strong style="font-size:13px;color:var(--text);flex:1">${p.done ? 'Scan terminé' : 'Recherche en cours…'}</strong>
+        ${errBadge}
+        ${cancelBtn}
+      </div>
+      <div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:4px"><span>Produits trouvés</span><span><strong style="color:var(--accent2)">${p.candsFound}</strong> / ${p.totalTarget}</span></div>
+        <div style="height:8px;border-radius:4px;background:rgba(255,255,255,0.05);overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s ease"></div></div>
+      </div>
+      <div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:4px"><span>Niches scannées</span><span>${p.nichesTried} / ${p.nichesNeeded} cible · ${p.nichesAttempted} tentées</span></div>
+        <div style="height:6px;border-radius:3px;background:rgba(255,255,255,0.05);overflow:hidden"><div style="height:100%;width:${nichePct}%;background:rgba(167,139,250,0.6);transition:width .3s ease"></div></div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:10px;padding:6px 10px;border-radius:6px;background:rgba(0,0,0,0.25);border:1px solid var(--border)">Niche actuelle : ${currNiche}</div>
+      <div style="border:1px solid var(--border);border-radius:8px;background:rgba(0,0,0,0.3);max-height:240px;overflow-y:auto" id="discoverLog">${logHtml || '<div style="padding:14px;text-align:center;color:var(--text3);font-size:11px">Initialisation…</div>'}</div>
+    </div>`;
+}
+
+function _progLog(type, msg) {
+  if (!window._discoverProg) return;
+  const d = new Date();
+  const t = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+  window._discoverProg.log.push({ type, msg, t });
+  if (type === 'err') window._discoverProg.errors.push(msg);
+  _progRefresh();
+}
+
+function _progRefresh() {
+  const res = document.getElementById('discoverResults');
+  if (!res) return;
+  const existing = res.querySelector('[data-prog-panel]');
+  const html = _renderDiscoverProgress();
+  if (existing) {
+    const wrap = document.createElement('div');
+    wrap.innerHTML = html;
+    const newPanel = wrap.firstElementChild;
+    if (newPanel) {
+      newPanel.setAttribute('data-prog-panel','1');
+      existing.replaceWith(newPanel);
+      const log = newPanel.querySelector('#discoverLog');
+      if (log) log.scrollTop = log.scrollHeight;
+    }
+  } else {
+    const wrap = document.createElement('div');
+    wrap.innerHTML = html;
+    const panel = wrap.firstElementChild;
+    if (panel) {
+      panel.setAttribute('data-prog-panel','1');
+      res.insertBefore(panel, res.firstChild);
+    }
+  }
+}
+
 async function runDiscover() {
   const mode = document.getElementById('discoverMode').value;
   const gamme = document.getElementById('discoverGamme').value;
@@ -12945,10 +13022,21 @@ async function runDiscover() {
   const btn = document.getElementById('discoverBtn');
   const res = document.getElementById('discoverResults');
   btn.disabled = true;
-  res.innerHTML = `<div style="text-align:center;padding:30px;color:var(--text2)"><div style="display:inline-block;width:24px;height:24px;border:2px solid var(--accent);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;"></div><div style="font-size:12px;color:var(--text3);margin-top:14px">${mode==='auto'?'Sélection de la niche optimale…':'Recherche en cours…'}</div></div>`;
+  res.innerHTML = '';
   if (!document.getElementById('_spinStyle')) {
     const sty = document.createElement('style'); sty.id = '_spinStyle'; sty.textContent = '@keyframes spin{to{transform:rotate(360deg)}}'; document.head.appendChild(sty);
   }
+  // Init progress state
+  const _totalTargetInit = Math.max(1, Math.min(500, parseInt(document.getElementById('discoverTotal')?.value || '50', 10) || 50));
+  const _nichesNeededInit = Math.max(1, Math.min(50, parseInt(document.getElementById('discoverNiches')?.value || '10', 10) || 10));
+  window._discoverProg = {
+    totalTarget: _totalTargetInit, nichesNeeded: _nichesNeededInit,
+    nichesTried: 0, nichesAttempted: 0, candsFound: 0,
+    currentNiche: '', log: [], errors: [], done: false, gamme,
+    nichesEmpty: [], nichesError: [], nichesOk: []
+  };
+  _progLog('info', `Démarrage — cible ${_totalTargetInit} produits sur ${_nichesNeededInit} niches · gamme ${gamme||'libre'}`);
+  _progRefresh();
   let result;
   let q;
   const seen = getSeenKeys();
@@ -12987,7 +13075,7 @@ async function runDiscover() {
       const queue = manualNiches.length ? [...manualNiches] : [];
       let i = 0;
       while (i < maxTries) {
-        if (window._discoverAbort?.aborted) break;
+        if (window._discoverAbort?.aborted) { _progLog('warn', 'Annulation demandée par l\'utilisateur'); break; }
         if (totalCands >= totalTarget) break;
         let niche;
         if (queue.length) niche = queue.shift();
@@ -12999,8 +13087,15 @@ async function runDiscover() {
         if (nicheObj?.cat) triedCats.add(nicheObj.cat);
         if (!manualNiches.length) markNicheSeen(niche);
         btn.textContent = `${tried.size} niches · ${totalCands}/${totalTarget} produits…`;
+        // Live progress update
+        window._discoverProg.currentNiche = niche;
+        window._discoverProg.nichesAttempted = tried.size;
+        _progLog('info', `Scan niche « ${niche} »${nicheObj?.cat?' ['+nicheObj.cat+']':''}`);
         try {
           const r = await discoverBatch(niche, gamme, seen);
+          if (r.query !== niche) _progLog('warn', `« ${niche} » → 0 résultat, élargi en « ${r.query} »`);
+          const adsN = r.data?.autoChecks?.stats?.n_ads || 0;
+          const instTop = r.data?.autoChecks?.stats?.has_institutionnels_top3;
           if (r.inGamme.length > 0) {
             const sorted = sortCands(r.inGamme, gamme);
             const remaining_needed = totalTarget - totalCands;
@@ -13008,17 +13103,46 @@ async function runDiscover() {
             slice.forEach(s => seen.add(_shortKey(s.title)));
             allResults.push({ niche, r, picked: slice });
             totalCands += slice.length;
+            window._discoverProg.candsFound = totalCands;
+            window._discoverProg.nichesTried = allResults.length;
+            window._discoverProg.nichesOk.push(niche);
+            const tags = [`${slice.length} ajouté${slice.length>1?'s':''}`];
+            if (r.totalRaw) tags.push(`${r.totalRaw} brut`);
+            if (r.filteredOut > 0) tags.push(`-${r.filteredOut} hors gamme`);
+            if (adsN) tags.push(`${adsN} ads`);
+            if (instTop) tags.push('inst. top3');
+            _progLog('ok', `« ${niche} » → ${tags.join(' · ')}`);
+          } else {
+            window._discoverProg.nichesEmpty.push(niche);
+            const reason = r.totalRaw === 0 ? 'aucun résultat SERP' : (r.filteredOut > 0 ? `${r.totalRaw} produits mais hors gamme ${gamme}` : 'tout déjà vu (déduplication)');
+            _progLog('warn', `« ${niche} » → 0 candidat (${reason})`);
           }
-        } catch(e) { console.warn('niche fail', niche, e); }
+        } catch(e) {
+          console.warn('niche fail', niche, e);
+          window._discoverProg.nichesError.push({ niche, err: e.message || String(e) });
+          _progLog('err', `« ${niche} » → erreur : ${e.message || e}`);
+        }
+        _progRefresh();
         i++;
       }
       document.getElementById('discoverCancelBtn').style.display = 'none';
+      window._discoverProg.done = true;
+      window._discoverProg.currentNiche = '';
       if (allResults.length === 0) {
-        res.innerHTML = `<div class="empty" style="padding:30px">
+        _progLog('err', `Aucun candidat trouvé sur ${tried.size} niches en gamme ${gamme||'libre'}`);
+        _progRefresh();
+        const errPanel = window._discoverProg.errors.length ? `
+          <div style="margin-top:12px;padding:12px;border-radius:10px;background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.3)">
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--red);margin-bottom:6px;font-weight:600">Erreurs (${window._discoverProg.errors.length})</div>
+            ${window._discoverProg.errors.slice(0,10).map(e => `<div style="font-size:11px;color:var(--text2);padding:3px 0;font-family:ui-monospace,monospace">${escapeHtml(e)}</div>`).join('')}
+          </div>` : '';
+        const empty = document.createElement('div');
+        empty.innerHTML = `<div class="empty" style="padding:30px">
           <div style="color:var(--accent2);margin-bottom:8px;">${ico('target',32)}</div>
           <h3 style="font-size:14px">Aucun produit trouvé en gamme ${gamme||'libre'}</h3>
           <p style="font-size:12px">Essayé ${tried.size} niches — rien dans cette tranche.<br>Essaie une autre gamme.</p>
-        </div>`;
+        </div>${errPanel}`;
+        res.appendChild(empty);
         btn.disabled=false; btn.innerHTML = `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('bolt',14)}</span>Surprends-moi (autre niche)`;
         return;
       }
@@ -13066,6 +13190,10 @@ async function runDiscover() {
       markSeenKeys(flat.map(f => f.s.title));
       save();
       renderSidebar();
+      _progLog('ok', `Terminé : ${added} produits ajoutés sur ${allResults.length} niches`);
+      if (window._discoverProg.nichesEmpty.length) _progLog('warn', `${window._discoverProg.nichesEmpty.length} niche(s) sans candidat`);
+      if (window._discoverProg.nichesError.length) _progLog('err', `${window._discoverProg.nichesError.length} niche(s) en erreur`);
+      _progRefresh();
       // Render summary
       const nicheRows = allResults.map(ar => {
         const stats = ar.r.data.autoChecks?.stats || {};
@@ -13076,13 +13204,29 @@ async function runDiscover() {
           <span class="pill" style="font-size:10px;">${ar.picked.length} produits</span>${adsTag}${instTag}
         </div>`;
       }).join('');
-      res.innerHTML = `
+      const emptyPanel = window._discoverProg.nichesEmpty.length ? `
+        <div style="margin-top:14px;padding:12px;border-radius:10px;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.25)">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#f59e0b;margin-bottom:6px;font-weight:600">${window._discoverProg.nichesEmpty.length} niche(s) sans candidat</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">${window._discoverProg.nichesEmpty.map(n => `<span class="pill warning" style="font-size:10px">${escapeHtml(n)}</span>`).join('')}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:8px">Causes possibles : aucun résultat SERP, tous hors gamme prix, ou déjà vus dans une session précédente.</div>
+        </div>` : '';
+      const errPanel = window._discoverProg.nichesError.length ? `
+        <div style="margin-top:14px;padding:12px;border-radius:10px;background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.3)">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--red);margin-bottom:6px;font-weight:600">${window._discoverProg.nichesError.length} niche(s) en erreur</div>
+          ${window._discoverProg.nichesError.slice(0,8).map(e => `<div style="font-size:11px;color:var(--text2);padding:4px 0;font-family:ui-monospace,monospace;border-bottom:1px solid rgba(255,255,255,0.04)"><strong style="color:var(--red)">${escapeHtml(e.niche)}</strong> — ${escapeHtml(e.err)}</div>`).join('')}
+          <div style="font-size:10px;color:var(--text3);margin-top:8px">Probable rate-limit proxy CORS public — relance dans 30s ou réduis le nombre de niches.</div>
+        </div>` : '';
+      const summaryPanel = document.createElement('div');
+      summaryPanel.innerHTML = `
         <div style="padding:14px;border-radius:12px;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);color:var(--green);font-size:14px;margin-bottom:14px;text-align:center;font-weight:600;">
-          ${added} produits ajoutés à la session · ${allResults.length} niches couvertes
+          ${added} produits ajoutés à la session · ${allResults.length}/${tried.size} niches productives
         </div>
-        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:8px;font-weight:600;">Niches explorées</div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:8px;font-weight:600;">Niches productives</div>
         ${nicheRows}
+        ${emptyPanel}
+        ${errPanel}
       `;
+      res.appendChild(summaryPanel);
       btn.disabled = false;
       btn.innerHTML = `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('bolt',14)}</span>Surprends-moi (autre lot)`;
       refreshDiscoverStats();
@@ -13269,8 +13413,12 @@ async function runDiscover() {
       }
     }
   } catch (e) {
-    res.innerHTML = '<div class="empty" style="padding:30px"><h3 style="color:var(--red)">Erreur</h3><p>'+escapeHtml(e.message)+'</p></div>';
+    if (window._discoverProg) { _progLog('err', `Erreur fatale : ${e.message || e}`); window._discoverProg.done = true; _progRefresh(); }
+    const errBox = document.createElement('div');
+    errBox.innerHTML = '<div class="empty" style="padding:30px"><h3 style="color:var(--red)">Erreur</h3><p>'+escapeHtml(e.message)+'</p></div>';
+    res.appendChild(errBox);
   }
+  if (window._discoverProg) { window._discoverProg.done = true; window._discoverProg.currentNiche = ''; _progRefresh(); }
   btn.disabled = false;
   btn.innerHTML = mode === 'auto'
     ? `<span style="display:inline-flex;margin-right:6px;vertical-align:-2px;">${ico('bolt',14)}</span>Surprends-moi (autre niche)`
