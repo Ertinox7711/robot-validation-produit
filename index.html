@@ -10193,28 +10193,48 @@ async function scrapeSupplierPrice(pid) {
   window._spCache[pid] = { state: 'loading' };
   _spRenderPreview(pid);
 
+  // Try local serp_scout first (residential IP bypasses bot detection)
+  let data = null;
+  let lastError = null;
   try {
-    const r = await fetch('https://backend-vercel-seven-black.vercel.app/api/scrape-supplier', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url }),
-      signal: AbortSignal.timeout(50000),
+    const lr = await fetch('http://localhost:7789/scrape_product?url=' + encodeURIComponent(url), {
+      signal: AbortSignal.timeout(20000),
     });
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    const data = await r.json();
-
-    if (!data.found || data.blocked) {
-      window._spCache[pid] = {
-        state: 'error',
-        msg: data.message || 'Données produit non détectées',
-        reason: data.reason || (data.blocked ? 'bot_protection' : ''),
-        url
-      };
-    } else {
-      window._spCache[pid] = { state: 'ok', title: data.title || '', image: data.image || '', price: data.price || '', url };
+    if (lr.ok) {
+      const ld = await lr.json();
+      if (ld && ld.found) data = ld;
+      else if (ld && ld.blocked) data = ld;
     }
-  } catch(e) {
-    window._spCache[pid] = { state: 'error', msg: 'Erreur réseau : ' + (e.message || 'timeout'), url };
+  } catch(e) { /* not running, fallback to Vercel */ }
+
+  // Fallback to Vercel backend (Puppeteer + sparticuz/chromium)
+  if (!data || (!data.found && !data.blocked)) {
+    try {
+      const r = await fetch('https://backend-vercel-seven-black.vercel.app/api/scrape-supplier', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+        signal: AbortSignal.timeout(50000),
+      });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      data = await r.json();
+    } catch(e) {
+      lastError = e.message || 'timeout';
+    }
+  }
+
+  // Set cache based on final result
+  if (!data) {
+    window._spCache[pid] = { state: 'error', msg: 'Erreur réseau : ' + (lastError || 'aucune réponse'), url };
+  } else if (!data.found || data.blocked) {
+    window._spCache[pid] = {
+      state: 'error',
+      msg: data.message || 'Données produit non détectées',
+      reason: data.reason || (data.blocked ? 'bot_protection' : ''),
+      url
+    };
+  } else {
+    window._spCache[pid] = { state: 'ok', title: data.title || '', image: data.image || '', price: data.price || '', url };
   }
   _spRenderPreview(pid);
 }
