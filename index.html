@@ -10198,16 +10198,16 @@ async function scrapeSupplierPrice(pid) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url }),
-      signal: AbortSignal.timeout(18000),
+      signal: AbortSignal.timeout(50000),
     });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const data = await r.json();
 
-    if (!data.found) {
+    if (!data.found || data.blocked) {
       window._spCache[pid] = {
         state: 'error',
         msg: data.message || 'Données produit non détectées',
-        reason: data.reason || '',
+        reason: data.reason || (data.blocked ? 'bot_protection' : ''),
         url
       };
     } else {
@@ -10233,7 +10233,7 @@ function _spRenderPreview(pid) {
   const c = window._spCache[pid];
   if (!c) { el.innerHTML = ''; return; }
   if (c.state === 'loading') {
-    el.innerHTML = `<div style="font-size:12px;color:var(--text3);padding:6px 0">⏳ Récupération en cours…</div>`;
+    el.innerHTML = `<div style="font-size:12px;color:var(--text3);padding:6px 0">⏳ Récupération en cours… (peut prendre ~20s pour sites JS)</div>`;
     return;
   }
   if (c.state === 'error') {
